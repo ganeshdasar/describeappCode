@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4510" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DescBasicinfoViewController">
+            <connections>
+                <outlet property="_headerView" destination="aVy-H0-EeS" id="g9B-qm-5VV"/>
+                <outlet property="backGroundImageView" destination="K3l-eZ-bwq" id="IgA-5e-dLo"/>
+                <outlet property="bioTxt" destination="aY7-4I-cwI" id="Blk-cC-weK"/>
+                <outlet property="birthdayTxt" destination="9ly-ng-Y7N" id="bzJ-sI-U2T"/>
+                <outlet property="btnfemale" destination="mDC-I1-97r" id="JXZ-O0-Ana"/>
+                <outlet property="btnmale" destination="ssN-WH-y5D" id="wZU-0Y-HfN"/>
+                <outlet property="cityTxt" destination="Pnf-j9-VKJ" id="Hva-2E-Nrw"/>
+                <outlet property="cityTxtImageView" destination="TNa-Wo-MEe" id="i0F-rl-nox"/>
+                <outlet property="cityTxtImgView" destination="TNa-Wo-MEe" id="yoW-mt-3cb"/>
+                <outlet property="datePicker" destination="fMF-uV-vvy" id="z7T-c1-cFf"/>
+                <outlet property="datePickerView" destination="KAm-05-5Hf" id="JBD-Wi-mUM"/>
+                <outlet property="dateofBirthImgView" destination="B4g-ec-slp" id="dGH-6u-Leb"/>
+                <outlet property="profileEditCancelBtn" destination="fsx-R0-Yee" id="aoZ-5a-uZo"/>
+                <outlet property="profileEditDoneBtn" destination="iwc-2S-Id6" id="FVg-x1-w2i"/>
+                <outlet property="profilePicContainerView" destination="jQq-o9-tpc" id="NcN-Xa-T9Y"/>
+                <outlet property="profilePicOverlayView" destination="A0z-zs-svH" id="Wg5-qu-dN4"/>
+                <outlet property="profileTapGestureRef" destination="RPs-u1-ST9" id="hh6-FN-9yA"/>
+                <outlet property="profileimgbtn" destination="Yqs-ya-z2X" id="vnZ-iQ-fR1"/>
+                <outlet property="txtBioImgView" destination="fhC-GI-EPE" id="WFX-Ub-76A"/>
+                <outlet property="userprofileImg" destination="4z9-Ro-cy7" id="SEG-fV-Aub"/>
+                <outlet property="view" destination="1" id="3"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="1">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="K3l-eZ-bwq">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_thumb_stroke_profile.png" id="4z9-Ro-cy7">
+                    <rect key="frame" x="123" y="89" width="75" height="75"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="txt_field_1.png" id="TNa-Wo-MEe">
+                    <rect key="frame" x="25" y="189" width="270" height="42"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                </imageView>
+                <textField opaque="NO" clipsSubviews="YES" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="city" minimumFontSize="17" id="Pnf-j9-VKJ">
+                    <rect key="frame" x="30" y="189" width="260" height="42"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="p1g-1K-uEP"/>
+                    </connections>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ssN-WH-y5D">
+                    <rect key="frame" x="25" y="241" width="47" height="42"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" image="male_active.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="male_inactive.png"/>
+                    <connections>
+                        <action selector="maleClicked:" destination="-1" eventType="touchUpInside" id="1ag-bG-ZC6"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mDC-I1-97r">
+                    <rect key="frame" x="61" y="241" width="47" height="42"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" title="Button" image="female_inactive.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="female_active.png"/>
+                    <connections>
+                        <action selector="femaleClicked:" destination="-1" eventType="touchUpInside" id="Ej3-cH-y86"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="txt_field_birthday.png" id="B4g-ec-slp">
+                    <rect key="frame" x="118" y="241" width="177" height="42"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="birthday" minimumFontSize="17" id="9ly-ng-Y7N">
+                    <rect key="frame" x="122" y="245" width="167" height="34"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="07N-Zf-X9U"/>
+                    </connections>
+                </textField>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="txt_field_bio.png" id="fhC-GI-EPE">
+                    <rect key="frame" x="25" y="293" width="270" height="125"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="aY7-4I-cwI">
+                    <rect key="frame" x="25" y="293" width="270" height="165"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <rect key="contentStretch" x="0.0" y="1" width="1" height="1"/>
+                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="1a4-6O-QbY"/>
+                    </connections>
+                </textView>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Yqs-ya-z2X">
+                    <rect key="frame" x="123" y="89" width="75" height="75"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <state key="normal">
+                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="selectprofileimg:" destination="-1" eventType="touchUpInside" id="W4i-Q4-9td"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="4Fa-5A-rdo">
+                    <rect key="frame" x="118" y="241" width="177" height="42"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                    <state key="normal">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="selectTheDate:" destination="-1" eventType="touchUpInside" id="P7V-vX-UNI"/>
+                    </connections>
+                </button>
+                <view contentMode="scaleToFill" id="aVy-H0-EeS" customClass="DHeaderView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" id="A0z-zs-svH" customClass="CMPassTouchesView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb_user_profile.png" id="AyZ-4k-WeF">
+                            <rect key="frame" x="82" y="49" width="155" height="155"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </imageView>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="fsx-R0-Yee">
+                            <rect key="frame" x="81" y="234" width="70" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" backgroundImage="btn_txt_black_change.png">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="cancelProfilePicChanges:" destination="-1" eventType="touchUpInside" id="jrE-HW-AG8"/>
+                            </connections>
+                        </button>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="iwc-2S-Id6">
+                            <rect key="frame" x="168" y="234" width="70" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" backgroundImage="btn_txt_black_done.png">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="doneProfilePicChange:" destination="-1" eventType="touchUpInside" id="ko7-5B-WeD"/>
+                            </connections>
+                        </button>
+                        <view contentMode="scaleToFill" id="jQq-o9-tpc">
+                            <rect key="frame" x="122" y="89" width="75" height="75"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="y5i-1Q-TbG" appends="YES" id="f50-7J-vLz"/>
+                        <outletCollection property="gestureRecognizers" destination="DyK-zK-9I2" appends="YES" id="0RL-nO-zgI"/>
+                    </connections>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+        </view>
+        <view contentMode="scaleToFill" id="KAm-05-5Hf" userLabel="distancePickerView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="206"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <navigationBar contentMode="scaleToFill" id="gMG-WZ-PCu">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <color key="barTintColor" red="0.231372565" green="0.64705884459999996" blue="0.60784316059999999" alpha="1" colorSpace="deviceRGB"/>
+                    <textAttributes key="titleTextAttributes">
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </textAttributes>
+                    <items>
+                        <navigationItem title="Date of birth" id="YDi-CR-KIk">
+                            <barButtonItem key="rightBarButtonItem" title="Done" id="iXT-pP-J1c">
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <action selector="dateDoneClicked:" destination="-1" id="qzN-QG-qbX"/>
+                                </connections>
+                            </barButtonItem>
+                        </navigationItem>
+                    </items>
+                </navigationBar>
+                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" id="fMF-uV-vvy">
+                    <rect key="frame" x="0.0" y="44" width="320" height="162"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <date key="date" timeIntervalSinceReferenceDate="410951498.69580299">
+                        <!--2014-01-09 09:11:38 +0000-->
+                    </date>
+                    <timeZone key="timeZone" name="America/Los_Angeles">
+                        <data key="data">
+VFppZgAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAC5AAAABAAAABCepkign7sVkKCGKqChmveQ
+y4kaoNIj9HDSYSYQ1v50INiArZDa/tGg28CQENzes6DdqayQ3r6VoN+JjpDgnneg4WlwkOJ+WaDjSVKQ
+5F47oOUpNJDmR1gg5xJREOgnOiDo8jMQ6gccIOrSFRDr5v4g7LH3EO3G4CDukdkQ76/8oPBxuxDxj96g
+8n/BkPNvwKD0X6OQ9U+ioPY/hZD3L4Sg+CiiEPkPZqD6CIQQ+viDIPvoZhD82GUg/chIEP64RyD/qCoQ
+AJgpIAGIDBACeAsgA3EokARhJ6AFUQqQBkEJoAcw7JAHjUOgCRDOkAmtvyAK8LCQC+CvoAzZzRANwJGg
+DrmvEA+priAQmZEQEYmQIBJ5cxATaXIgFFlVEBVJVCAWOTcQFyk2IBgiU5AZCRggGgI1kBryNKAb4heQ
+HNIWoB3B+ZAesfigH6HbkCB2KyAhgb2QIlYNICNq2hAkNe8gJUq8ECYV0SAnKp4QJ/7toCkKgBAp3s+g
+KupiECu+saAs036QLZ6ToC6zYJAvfnWgMJNCkDFnkiAycySQM0d0IDRTBpA1J1YgNjLokDcHOCA4HAUQ
+OOcaIDn75xA6xvwgO9vJEDywGKA9u6sQPo/6oD+bjRBAb9ygQYSpkEJPvqBDZIuQRC+goEVEbZBF89Mg
+Ry2KEEfTtSBJDWwQSbOXIErtThBLnLOgTNZqkE18laBOtkyQT1x3oFCWLpBRPFmgUnYQkFMcO6BUVfKQ
+VPwdoFY11JBW5TogWB7xEFjFHCBZ/tMQWqT+IFvetRBchOAgXb6XEF5kwiBfnnkQYE3eoGGHlZBiLcCg
+Y2d3kGQNoqBlR1mQZe2EoGcnO5BnzWagaQcdkGmtSKBq5v+Qa5ZlIGzQHBBtdkcgbq/+EG9WKSBwj+AQ
+cTYLIHJvwhBzFe0gdE+kEHT/CaB2OMCQdt7roHgYopB4vs2gefiEkHqer6B72GaQfH6RoH24SJB+XnOg
+f5gqkAABAAECAwEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
+AQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
+AQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
+AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
+</data>
+                    </timeZone>
+                </datePicker>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+        </view>
+        <pinchGestureRecognizer id="y5i-1Q-TbG">
+            <connections>
+                <action selector="profilePicPinchGesture:" destination="-1" id="Tbp-yS-cei"/>
+            </connections>
+        </pinchGestureRecognizer>
+        <panGestureRecognizer minimumNumberOfTouches="1" id="DyK-zK-9I2">
+            <connections>
+                <action selector="profilePicPanGesture:" destination="-1" id="A4b-Qv-EZe"/>
+            </connections>
+        </panGestureRecognizer>
+        <tapGestureRecognizer id="RPs-u1-ST9">
+            <connections>
+                <action selector="profilePicTapped:" destination="-1" id="HqE-iv-QIP"/>
+            </connections>
+        </tapGestureRecognizer>
+    </objects>
+    <resources>
+        <image name="btn_txt_black_change.png" width="70" height="26"/>
+        <image name="btn_txt_black_done.png" width="70" height="26"/>
+        <image name="female_active.png" width="47" height="42"/>
+        <image name="female_inactive.png" width="47" height="42"/>
+        <image name="male_active.png" width="47" height="42"/>
+        <image name="male_inactive.png" width="47" height="42"/>
+        <image name="thumb_user_profile.png" width="155" height="155"/>
+        <image name="txt_field_1.png" width="540" height="84"/>
+        <image name="txt_field_bio.png" width="540" height="250"/>
+        <image name="txt_field_birthday.png" width="354" height="84"/>
+        <image name="user_thumb_stroke_profile.png" width="150" height="150"/>
+    </resources>
+</document>

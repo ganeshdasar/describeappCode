@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+    <dependencies>
+        <deployment defaultVersion="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMRecordViewController">
+            <connections>
+                <outlet property="cameraContainerView" destination="cqC-D7-OTq" id="AGy-ek-xhG"/>
+                <outlet property="cancelButton" destination="Yve-zQ-0cG" id="o6v-aN-3xg"/>
+                <outlet property="listButton" destination="XC6-8B-kJH" id="lyF-hP-r4M"/>
+                <outlet property="nextButton" destination="b78-go-sOB" id="6Mc-J8-MI0"/>
+                <outlet property="photoCollectionView" destination="1U2-ND-EhZ" id="b8O-Fr-yZi"/>
+                <outlet property="prevButton" destination="Hf3-RY-R7e" id="4rs-Ct-J6d"/>
+                <outlet property="selectedImageView" destination="JeS-NX-ZG9" id="sU4-mv-JhC"/>
+                <outlet property="videoPreviewView" destination="3lA-Km-r4t" id="9mn-eQ-s6y"/>
+                <outlet property="videoProgressIndicator" destination="6ul-Ig-Stx" id="HQN-bz-HXr"/>
+                <outlet property="view" destination="YZ4-az-1EO" id="veD-F2-feJ"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="YZ4-az-1EO">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="1U2-ND-EhZ">
+                    <rect key="frame" x="0.0" y="406" width="320" height="162"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="5" minimumInteritemSpacing="5" id="Fx3-dh-3TJ">
+                        <size key="itemSize" width="58" height="58"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="5" minY="20" maxX="5" maxY="20"/>
+                    </collectionViewFlowLayout>
+                    <cells/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="b8J-Mv-MtY"/>
+                        <outlet property="delegate" destination="-1" id="aD5-b7-NRR"/>
+                    </connections>
+                </collectionView>
+                <view contentMode="scaleToFill" id="Yah-v1-PLx">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <imageView contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg_nav_comp.png" id="jKG-dP-8QQ">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        </imageView>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" Record" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="vCK-5T-sOZ">
+                            <rect key="frame" x="0.0" y="20" width="100" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XC6-8B-kJH">
+                            <rect key="frame" x="139" y="24" width="35" height="35"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" backgroundImage="btn_nav_comp_menu.png">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="listOptionClicked:" destination="-1" eventType="touchUpInside" id="nRK-vY-Zmc"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Hf3-RY-R7e">
+                            <rect key="frame" x="182" y="24" width="35" height="35"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" backgroundImage="btn_nav_comp_back.png">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="prevButtonSelected:" destination="-1" eventType="touchUpInside" id="Fua-7X-x86"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="b78-go-sOB">
+                            <rect key="frame" x="230" y="24" width="35" height="35"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" backgroundImage="btn_nav_comp_next.png">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="nextOptionClicked:" destination="-1" eventType="touchUpInside" id="S55-BO-BcU"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Yve-zQ-0cG">
+                            <rect key="frame" x="273" y="24" width="35" height="35"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" backgroundImage="btn_nav_std_cancel.png">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dissmissOptionClicked:" destination="-1" eventType="touchUpInside" id="NVL-UM-RiU"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </view>
+                <view multipleTouchEnabled="YES" contentMode="scaleToFill" id="cqC-D7-OTq">
+                    <rect key="frame" x="0.0" y="82" width="320" height="320"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <imageView multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="JeS-NX-ZG9">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <connections>
+                                <outletCollection property="gestureRecognizers" destination="4pN-5V-HmQ" appends="YES" id="X0k-pT-XPQ"/>
+                            </connections>
+                        </imageView>
+                        <view contentMode="scaleToFill" id="3lA-Km-r4t">
+                            <rect key="frame" x="232" y="11" width="78" height="78"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <outletCollection property="gestureRecognizers" destination="RzV-0D-vcK" appends="YES" id="UXS-iV-Mdx"/>
+                            </connections>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" red="0.66357816359999999" green="1" blue="0.52356920330000001" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" id="6ul-Ig-Stx">
+                    <rect key="frame" x="0.0" y="400" width="320" height="2"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="tintColor" red="1" green="0.29678840690000002" blue="0.2238166717" alpha="1" colorSpace="calibratedRGB"/>
+                </progressView>
+            </subviews>
+            <color key="backgroundColor" red="0.96470588239999999" green="0.96470588239999999" blue="0.96470588239999999" alpha="1" colorSpace="calibratedRGB"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+        </view>
+        <tapGestureRecognizer id="4pN-5V-HmQ">
+            <connections>
+                <action selector="startOrPauseVideoRecording:" destination="-1" id="ohj-tJ-CDl"/>
+            </connections>
+        </tapGestureRecognizer>
+        <tapGestureRecognizer id="RzV-0D-vcK">
+            <connections>
+                <action selector="startOrPauseVideoRecording:" destination="-1" id="7gM-WP-DTs"/>
+            </connections>
+        </tapGestureRecognizer>
+    </objects>
+    <resources>
+        <image name="bg_nav_comp.png" width="320" height="64"/>
+        <image name="btn_nav_comp_back.png" width="35" height="35"/>
+        <image name="btn_nav_comp_menu.png" width="35" height="35"/>
+        <image name="btn_nav_comp_next.png" width="35" height="35"/>
+        <image name="btn_nav_std_cancel.png" width="35" height="35"/>
+    </resources>
+</document>

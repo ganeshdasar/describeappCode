@@ -1,0 +1,45 @@
+/* 
+  Localizable.strings
+  Describe
+
+  Created by NuncSys on 07/02/14.
+  Copyright (c) 2014 App. All rights reserved.
+*/
+
+
+"WEL_ExistingSocialNetWorkUserAlert message" =
+"Sorry, this Facebook/Google+ account is already associated with another Describe Identity as <username123>. Do you want to sign in as <username123> instead?";
+
+"Sign_UpUserNameInvalidMessage " = "Username must have at least 6 characters. You may only use alphabets, numbers and _ in your username.";
+"Sign_upPasswordInvalidMessage " = "Your password must have at least 8 characters";
+
+"Sign_upemailInvalidMessage" = "Please enter a valid email address.";
+
+"Sign_upInvalidUserNamemessageFromserver" = "Sorry, this username is not available.";
+
+"Sign_upInvalidemailmessageFromServer" ="Sorry, this email address is already associated with another Describe Identity.";
+
+"Sign_upInvalidNameAndemilmessagefrom server" = "Sorry, this username is not available. Also, the email address is already associated with another Describe Identity";
+
+"Sign_inUserNameInvalidMessge" = "Please enter a valid username";
+
+
+"Sign_inPasswordInvalidMessage" = "Please enter a valid password..";
+
+"Sign_inUserNameAndPasswordInvalidMessageFromServer" = "The username or password you have entered is incorrect.";
+
+"ResetPwd_emailVarification" = "Please enter a valid email address.";
+
+"RestPwd_WrongemailVerificationFrom server" = "There is no Describe Identity associated with this email address.";
+
+"RestPwd_pwsswordGenarateMessageVerification" = "An email with instructions to reset the password has been sent to this email address";
+
+
+
+
+
+
+
+
+
+

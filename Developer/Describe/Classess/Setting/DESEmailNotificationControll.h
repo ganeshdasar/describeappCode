@@ -1,0 +1,16 @@
+//
+//  DESEmailNotificationControll.h
+//  Describe
+//
+//  Created by NuncSys on 16/02/14.
+//  Copyright (c) 2014 App. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "DHeaderView.h"
+@interface DESEmailNotificationControll : UIViewController
+@property (weak, nonatomic) IBOutlet DHeaderView *_HeaderView;
+@property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
+@property (weak, nonatomic) IBOutlet UITableView *emailNotificationTbl;
+
+@end

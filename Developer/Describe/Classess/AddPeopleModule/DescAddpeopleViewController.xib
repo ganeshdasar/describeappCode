@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4510" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DescAddpeopleViewController">
+            <connections>
+                <outlet property="_headerView" destination="tTn-oL-HQn" id="4jZ-Q9-6mR"/>
+                <outlet property="_searchBarComponent" destination="RM9-wA-IgN" id="U3a-gt-egP"/>
+                <outlet property="_segmentComponent" destination="vor-kK-NX6" id="LGt-IT-BVe"/>
+                <outlet property="backGroundImg" destination="TvP-X0-2Xs" id="BTb-XQ-uZp"/>
+                <outlet property="searchDisplayController" destination="sw0-ZL-3Px" id="tLp-5i-EnD"/>
+                <outlet property="socialComponent" destination="ztK-SY-Svu" id="Bg1-Em-KC8"/>
+                <outlet property="view" destination="1" id="3"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="1">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bg_std_4in.png" translatesAutoresizingMaskIntoConstraints="NO" id="TvP-X0-2Xs">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tTn-oL-HQn" customClass="DHeaderView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RM9-wA-IgN" customClass="DSearchBarComponent">
+                    <rect key="frame" x="0.0" y="64" width="320" height="42"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="0.69411764710000001" green="0.69411764710000001" blue="0.69019607839999997" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vor-kK-NX6" customClass="DSegmentComponent">
+                    <rect key="frame" x="0.0" y="106" width="320" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ztK-SY-Svu" customClass="DSocialComponent">
+                    <rect key="frame" x="0.0" y="136" width="320" height="86"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ajK-cb-jrr" customClass="DPeopleListComponent">
+                    <rect key="frame" x="0.0" y="230" width="320" height="567"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+        </view>
+        <view contentMode="scaleToFill" id="t29-wl-jZo">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="454"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+        </view>
+        <searchDisplayController id="sw0-ZL-3Px">
+            <connections>
+                <outlet property="delegate" destination="-1" id="RRh-72-AjV"/>
+                <outlet property="searchContentsController" destination="-1" id="GfB-bi-ZaV"/>
+                <outlet property="searchResultsDataSource" destination="-1" id="ti1-nN-KHq"/>
+                <outlet property="searchResultsDelegate" destination="-1" id="A4M-hQ-XKB"/>
+            </connections>
+        </searchDisplayController>
+    </objects>
+    <resources>
+        <image name="bg_std_4in.png" width="320" height="568"/>
+    </resources>
+</document>
