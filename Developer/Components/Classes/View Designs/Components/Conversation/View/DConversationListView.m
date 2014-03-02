@@ -14,7 +14,7 @@
 @interface DConversationListView ()<UITableViewDataSource, UITableViewDelegate, DConversationDelegate>
 {
     UITableView *_listView ;
-    NSMutableArray *_conversationList;
+  //  NSMutableArray *_conversationList;
     NSIndexPath *_currentExpandingIndexPath;
     UIView *_tempContent;
     BOOL _isNeedToExpandUserCommentView;
@@ -25,7 +25,7 @@
 @end
 
 @implementation DConversationListView
-
+@synthesize _conversationList;
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -46,10 +46,11 @@
 
 -(void)createConversationListView
 {
-    [self dummyConversationList];
+    //[self dummyConversationList];
     _listView = [[UITableView alloc] initWithFrame:self.bounds];
     [_listView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [_listView setBackgroundColor:[UIColor clearColor]];
+    _listView.showsVerticalScrollIndicator =NO;
     [_listView setDataSource:self];
     [_listView setDelegate:self];
     

@@ -13,7 +13,8 @@
 #import "UIColor+DesColors.h"
 #import "DESAppDelegate.h"
 #import "DesPeopleSortingComponent.h"
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
+#import "Constant.h"
+
 
 @interface DescSignupViewController ()<MBProgressHUDDelegate>{
     IBOutlet DHeaderView *_headerView;
@@ -57,7 +58,7 @@
     [self designHeaderView];
     [self intilizTextFieldColors];
     [self setTheUserDataInTextFields];
-    NSLog(@"user data dic %@",self.userDataDic);
+//    NSLog(@"user data dic %@",self.userDataDic);
     // Do any additional setup after loading the view from its nib.
 }
 -(void)setBackGroundimageView{
@@ -70,6 +71,7 @@
         
     }
 }
+
 #pragma mark Design HeadeView
 
 -(void)designHeaderView

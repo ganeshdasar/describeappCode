@@ -11,6 +11,7 @@
 
 #define BaseURLString @"http://mirusstudent.com/service/describe-service/"
 
+#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
 
 
 

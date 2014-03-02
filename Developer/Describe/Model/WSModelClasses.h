@@ -25,6 +25,13 @@
 
 -(void)getThePeopleListFromServer:(NSDictionary *) responceDict error:(NSError*)error;
 
+-(void)getThePostConversationDetailsFromServer:(NSDictionary *) responceDict error:(NSError*)error;
+
+-(void)getTheGenaralFeedsFromServer:(NSDictionary *) responceDict error:(NSError *) error;
+
+-(void)getTheUserProfileDataFromServer:(NSDictionary *) responceDict error:(NSError *) error;
+
+
 @end
 
 @interface WSModelClasses : NSObject
@@ -76,5 +83,21 @@
 
 #pragma mark - Post composition
 - (void)postComposition:(NSDictionary *)argDict;
+
+#pragma mark getTheGenaralFeedService
+//http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/PageValue=0/
+-(void)getTheGenaralFeedServices:(NSString *)inUserId
+                        andPageValue:(NSString *)inPageValue;
+
+
+#pragma mark GetTheConversationDetails
+-(void)getThePostConversationDetails:(NSString *)inUserId
+                                     andPostId:(NSString *)inPostId;
+
+#pragma mark getTheUserProfiles
+//http://mirusstudent.com/service/describe-service/getUserProfile/format=json/UserUID=1/ProfileUserUID=4
+
+-(void)getTheUserProfiles:(NSString *)inUserId
+           andProfileUserId:(NSString *)inProfileUserID;
 
 @end

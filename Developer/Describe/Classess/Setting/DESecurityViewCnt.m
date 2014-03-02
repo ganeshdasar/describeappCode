@@ -8,7 +8,7 @@
 
 #import "DESecurityViewCnt.h"
 #import "UIColor+DesColors.h"
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
+#import "Constant.h"
 
 @interface DESecurityViewCnt ()<UITextFieldDelegate>{
  IBOutlet   DHeaderView * _headerView;

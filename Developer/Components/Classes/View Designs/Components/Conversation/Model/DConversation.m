@@ -20,5 +20,16 @@
 @synthesize showFullConversation;
 @synthesize showAllLikes;
 @synthesize profilePic;
+/*@synthesize authUserUID;
+ @synthesize comment;
+ @synthesize likeCount;
+ @synthesize postUID;
+ @synthesize conversationID;
+ @synthesize conversationMadeTime;
+ @synthesize conversationType;
+ @synthesize conversationUserID;
+ @synthesize conversationUserProfilePicture;
+ @synthesize conversationUsername;
+*/
 
 @end

@@ -9,7 +9,8 @@
 #import "DESEditAccountDetailsViewController.h"
 #import "DHeaderView.h"
 #import "UIColor+DesColors.h"
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
+#import "Constant.h"
+
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -542,7 +543,7 @@
 
 }
 -(void)alertView:(UIAlertView *)inalertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    UITextField *textField = [inalertView textFieldAtIndex:0];
+    //UITextField *textField = [inalertView textFieldAtIndex:0];
     switch (buttonIndex) {
         case 0:
             

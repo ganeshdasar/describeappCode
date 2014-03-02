@@ -11,7 +11,8 @@
 #import "UIColor+DesColors.h"
 #import "WSModelClasses.h"
 #import "MBProgressHUD.h"
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
+#import "Constant.h"
+
 
 @interface DescResetpwdViewController ()<WSModelClassDelegate>
 {

@@ -495,6 +495,7 @@
 		2FD7A591189364B300331D8B /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FD7A590189364B300331D8B /* AssetsLibrary.framework */; };
 		2FD7A5931893664C00331D8B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FD7A5921893664C00331D8B /* SystemConfiguration.framework */; };
 		2FDA4DED18AA1CF000124993 /* DSocialComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FDA4DEC18AA1CF000124993 /* DSocialComponent.m */; };
+		2FE230CB18C302E2001A9D66 /* DESocialConnectios.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE230CA18C302E2001A9D66 /* DESocialConnectios.m */; };
 		2FF0FC9C1871DB7200893917 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FF0FC9B1871DB7200893917 /* Foundation.framework */; };
 		2FF0FC9E1871DB7200893917 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FF0FC9D1871DB7200893917 /* CoreGraphics.framework */; };
 		2FF0FCA01871DB7200893917 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FF0FC9F1871DB7200893917 /* UIKit.framework */; };
@@ -1001,6 +1002,8 @@
 		2FD7A5921893664C00331D8B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2FDA4DEB18AA1CF000124993 /* DSocialComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSocialComponent.h; sourceTree = "<group>"; };
 		2FDA4DEC18AA1CF000124993 /* DSocialComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSocialComponent.m; sourceTree = "<group>"; };
+		2FE230C918C302E2001A9D66 /* DESocialConnectios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DESocialConnectios.h; path = Classess/DESocialConnectios.h; sourceTree = "<group>"; };
+		2FE230CA18C302E2001A9D66 /* DESocialConnectios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DESocialConnectios.m; path = Classess/DESocialConnectios.m; sourceTree = "<group>"; };
 		2FF0FC981871DB7200893917 /* Describe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Describe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FF0FC9B1871DB7200893917 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2FF0FC9D1871DB7200893917 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -2181,6 +2184,8 @@
 				18B5A8BF188DB75200CD26FF /* DescWelcomeViewController.h */,
 				18B5A8C0188DB75200CD26FF /* DescWelcomeViewController.m */,
 				18B5A8C1188DB75200CD26FF /* DescWelcomeViewController.xib */,
+				2FE230C918C302E2001A9D66 /* DESocialConnectios.h */,
+				2FE230CA18C302E2001A9D66 /* DESocialConnectios.m */,
 				2FC4D6EF18AA3C6B00FCABB6 /* SignIn */,
 				2FC4D6F718AA3CDD00FCABB6 /* SignUp */,
 				2FC4D6FF18AA3D3000FCABB6 /* basicInfo */,
@@ -2754,6 +2759,7 @@
 				2FB4BAE018910B280033BDF4 /* AFHTTPRequestOperation.m in Sources */,
 				07354D7D18B9F5CD008B98F3 /* DPromterListView.m in Sources */,
 				07E5E4A618C1D090000E489B /* CMAVCameraHandler.m in Sources */,
+				2FE230CB18C302E2001A9D66 /* DESocialConnectios.m in Sources */,
 				2FC4D71218AA3E3800FCABB6 /* DesPeopleSortingComponent.m in Sources */,
 				07354D7B18B9F5CD008B98F3 /* DPost.m in Sources */,
 				07354D8118B9F5CD008B98F3 /* DSegmentViewList.m in Sources */,

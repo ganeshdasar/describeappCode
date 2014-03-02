@@ -18,6 +18,7 @@
 @end
 
 @implementation DConversationViewController
+@synthesize conversationListArray;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -56,7 +57,8 @@
 
 
 -(void)designHeaderView
-{    
+{
+    
     UIButton *addButton, *reloadButton, *moreButton;
     
     addButton = [[UIButton alloc] init];
@@ -76,7 +78,9 @@
 
 -(void)designConversationView
 {
+    _conversationListView._conversationList =  self.conversationListArray;
     [_conversationListView designConversationListView];
+    
 }
 
 
