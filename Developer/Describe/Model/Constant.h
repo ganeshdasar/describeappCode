@@ -57,4 +57,7 @@
 #define USER_MODAL_KEY_UID                              @"UserUID"
 #define USER_MODAL_KEY_USERNAME                         @"Username"
 
+#define FACEBOOKACCESSTOKENKEY @"facebookTokenKey"
+#define FACEBOOKEXPIRATIONDATE @ "facebookexpirationDate"
+
 #endif

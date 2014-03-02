@@ -130,11 +130,9 @@
     self.facebookBtn.hidden = inHidden;
     self.googlePlusBtn.hidden = inHidden;
     self.emailBtn.hidden = inHidden;
-    
 }
 - (IBAction)signUpTheUser:(id)sender
 {
-    
     if (!isClicked) {
         self.twitterBtn.frame = BUTTONFRAME;
         self.facebookBtn.frame = BUTTONFRAME;
@@ -155,25 +153,23 @@
     
 }
 
-
 - (IBAction)addPeople:(id)sender
 {
-    
     DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:Nil];
     [self.navigationController pushViewController:addPeople animated:YES];
-    
 }
+
 - (IBAction)goToSetting:(id)sender
 {
     DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
     [self.navigationController pushViewController:setting animated:YES];
 }
-#pragma mark signUp Actions
 
 #pragma mark Social Network integration
 
 #pragma mark FacebookIntegration
-- (IBAction)loginWithFacebookAction:(id)sender
+
+-  (IBAction)loginWithFacebookAction:(id)sender
 {
     [self showLoadView];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
@@ -181,9 +177,10 @@
     [DESocialConnectios sharedInstance].delegate =self;
     
 }
+
 #pragma mark socialConnection Delegate methods
 
-- (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
+-  (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
 {
 
     WSModelClasses * dataClass = [WSModelClasses sharedHandler];
@@ -201,6 +198,7 @@
     }
     
 }
+
 - (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
 {
     
@@ -235,22 +233,22 @@
     
     
 }
+
 #pragma mark Alerview And delegate methods
+
 -(void)showAlert:(NSString*)title message:(NSString*)inMessage tag:(int)InAlertTag
 {
     UIAlertView * alert = [[UIAlertView alloc]initWithTitle:title message:inMessage delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
     alert.tag =  InAlertTag;
     [alert show];
-    
-    
 }
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    
     DescSigninViewController * signInView = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
     [self.navigationController pushViewController:signInView animated:NO];
-    
 }
+
 #pragma mark googlePlusintegration
 - (IBAction)loginWithgooglePlusAction:(id)sender
 {
@@ -265,9 +263,8 @@
 {
     DescSignupViewController * signUpView = [[DescSignupViewController alloc]initWithNibName:@"DescSignupViewController" bundle:Nil];
     [self.navigationController pushViewController:signUpView animated:NO];
-    
-    
 }
+
 -(void)showLoadView
 {
     HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
@@ -276,10 +273,10 @@
     HUD.labelText = @"Loading";
     [HUD show:YES];
 }
+
 #pragma mark ActionSheet Delegate Methods
 
-
-- (void)didDisconnectWithError:(NSError *)error
+-  (void)didDisconnectWithError:(NSError *)error
 {
     if (error) {
         NSLog(@"Received error %@", error);
@@ -287,12 +284,10 @@
         
     }
 }
--(void)chekInterConnectionMessage
+
+- (void)chekInterConnectionMessage
 {
-    
     ///Something's wrong with the network, attempting to reconnect.
-    
-    
 }
 
 

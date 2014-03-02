@@ -87,7 +87,7 @@ static WSModelClasses *_sharedInstance;
 }
 
 #pragma mark BasicInfo
-- (void)postBasicInfoWithUserUID:(NSString*)inUID
+-  (void)postBasicInfoWithUserUID:(NSString*)inUID
                      userBioData:(NSString*)inBioData
                         userCity:(NSString*)inUserCity
                          userDob:(NSString*)inUserDob
@@ -96,9 +96,6 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
 
-   //send dummy data
-   // http://mirusstudent.com/service/describe-service/setUserBasicInfo /format=xml/UserUID=4/UserBiodata=xcxvcxvxv/UserCity=hyderabad/UserDob=1986-12-12/UserGender=1/profilePic=data of the image/
-    
     inImage =[UIImage imageNamed:@"user.png"];
     inUID = @"1";
     inBioData = @"osjdjafjsjflkjsalfjlskajfds";
@@ -121,36 +118,9 @@ static WSModelClasses *_sharedInstance;
               NSLog(@"%s Error: %@",  __func__, error.localizedDescription);
           }
      ];
-//    [manager POST:[NSString stringWithFormat:@"%@setUserBasicInfo",BaseURLString]
-//       parameters:parameters
-//constructingBodyWithBlock:^(id<AFMultipartFormData> formData){
-//    [formData appendPartWithFileData:UIImageJPEGRepresentation(image, 0.7)
-//                                name:@"file"
-//                            fileName:@"photo.png"
-//                            mimeType:@"image/png"];
-//}
-//          success:^(AFHTTPRequestOperation *operation, id responseObject){
-//              NSLog(@"Success: %@", responseObject);
-//          }
-//          failure:^(AFHTTPRequestOperation *operation, NSError *error){
-//              NSLog(@"Error %@", operation.responseString);
-//          }];
-
-   /* AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:[NSString stringWithFormat:@"%@setUserBasicInfo", BaseURLString]
-       parameters:userDetails
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              [self postbasicInfoResult:responseObject error:nil];
-          }
-          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-              [self postbasicInfoResult:nil error:error];
-          }
-     ];*/
 }
 
-
-
-- (void)postbasicInfoResult:(id)inResult error:(NSError*)inError
+-  (void)postbasicInfoResult:(id)inResult error:(NSError*)inError
 {
     if(_delegate && [_delegate respondsToSelector:@selector(basicinfoStatus:error:)]) {
         [_delegate basicinfoStatus:inResult error:nil];

@@ -24,6 +24,7 @@
 + (instancetype)sharedInstance;
 - (void)googlePlusSignIn;
 -(void)facebookSignIn;
+-(void)removeTheAccessTokenInUserDefaults;
 
 @property (nonatomic,strong) NSMutableArray * googlePlusFriendsListArry;
 @property (nonatomic,strong) NSMutableArray * facebookFriendsListArray;

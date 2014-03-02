@@ -171,20 +171,16 @@
     
 }
 #pragma mark ButtonActions
--(void)goToPeviousScreen:(id)sender
+
+- (void)goToPeviousScreen:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
     
 }
--(void)goToAddPeopleScreen:(id)sender
-{
-   //For testing i am commented this code
- [[WSModelClasses sharedHandler]getTheUserProfiles:@"" andProfileUserId:@""];
 
-    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-    [self.navigationController pushViewController:addPeople animated:NO];
-    return;
-    
+- (void)goToAddPeopleScreen:(id)sender
+{
+   
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate  =self;
     NSString * gender =Nil;
@@ -194,16 +190,14 @@
         gender = @"0";
 
     }
-    
-    
     [modelClass postBasicInfoWithUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob:@"1980-02-21" userGender:gender profilePic:self.userprofileImg.image];
-  
-    
-    
-    
-    
+    return;
+
+    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+    [self.navigationController pushViewController:addPeople animated:NO];
 }
-- (void)didReceiveMemoryWarning
+
+-  (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -211,7 +205,6 @@
 
 - (IBAction)maleClicked:(id)sender
 {
-    
     self.isGenderMale = YES;
     [self.btnmale setImage:[UIImage imageNamed:@"male_active.png"] forState:UIControlStateNormal];
     [self.btnfemale setImage:[UIImage imageNamed:@"female_inactive.png"] forState:UIControlStateNormal];
@@ -249,14 +242,13 @@
         openLibrary.delegate = self;
         [self presentViewController:openLibrary animated:YES completion:nil];
     }
-    
     else if(buttonIndex == 2) {
         //cancel
         [self hideAndShowView:NO];
     }
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+-  (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     [profilePicAspectController placeSelectedImage:info[UIImagePickerControllerOriginalImage] withCropRect:CGRectNull];
     
@@ -542,8 +534,8 @@ return [searchResultPlaces objectAtIndex:indexPath.row];
     return Nil;
 }
 #pragma mark tableview delegate method
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 

@@ -50,7 +50,8 @@ IBOutlet DHeaderView *_headerView;
     [self intilizTextFieldColors];
 }
 
--(void)setBackGroundimageView{
+- (void)setBackGroundimageView
+{
     if (isiPhone5)
     {
         self.backGroundImage.image = [UIImage imageNamed:@"bg_std_4in.png"];
@@ -60,7 +61,8 @@ IBOutlet DHeaderView *_headerView;
     }
 }
 #pragma mark Design HeadeView
--(void)designHeaderView
+
+- (void)designHeaderView
 {
     //back button
     backButton = [[UIButton alloc] init];

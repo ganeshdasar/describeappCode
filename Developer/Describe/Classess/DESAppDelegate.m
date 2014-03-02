@@ -172,12 +172,12 @@
         // Show the user the logged-out UI
     }
 }
+
 // Show the user the logged-in UI
 - (void)userLoggedIn
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"getUserDetail" object:nil];
     // Set the button title as "Log out"
-    
 }
 
 @end
