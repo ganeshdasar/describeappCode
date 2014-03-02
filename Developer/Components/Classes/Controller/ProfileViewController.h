@@ -49,6 +49,8 @@ typedef enum {
 @property (strong, nonatomic) IBOutlet UIPinchGestureRecognizer *profilePinGesture;
 @property (strong, nonatomic) IBOutlet UIPanGestureRecognizer *profilePicPanGesture;
 
+@property (nonatomic, strong) NSNumber *profileUserID;
+
 - (IBAction)changeOptionSelected:(id)sender;
 - (IBAction)doneOptionSelected:(id)sender;
 

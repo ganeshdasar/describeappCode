@@ -8,6 +8,8 @@
 
 #import "ProfileViewController.h"
 #import "DBAspectFillViewController.h"
+#import "WSModelClasses.h"
+#import "UsersModel.h"
 
 typedef enum {
     kProfileModeNormal = 1,
@@ -19,7 +21,7 @@ typedef enum {
 #define PHOTO_SELECTION_ACTIONSHEET_TAG         10
 #define FOLLOW_SELECTION_ACTIONSHEET_TAG        15
 
-@interface ProfileViewController () <DBAspectFillViewControllerDelegate>
+@interface ProfileViewController () <DBAspectFillViewControllerDelegate, WSModelClassDelegate>
 {
     CGFloat lastScale;
     CGPoint lastPanPoint;
@@ -29,6 +31,7 @@ typedef enum {
 @property (nonatomic, assign) ProfileMode changeProfileModeRequest;
 @property (nonatomic, strong) DBAspectFillViewController *canvasImageViewController;
 @property (nonatomic, strong) DBAspectFillViewController *profilePicImageViewController;
+@property (nonatomic, strong) UsersModel *profileUserModel;
 
 @end
 
@@ -49,6 +52,13 @@ typedef enum {
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    if(_profileUserID) {
+        [self fetchUserModelForUserId:_profileUserID];
+    }
+    else {
+        [self fetchUserModelForUserId:[NSNumber numberWithInteger:45]];
+    }
     
     // hide the navigation bar
     self.navigationController.navigationBarHidden = YES;
@@ -79,6 +89,45 @@ typedef enum {
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Fetch UserModel from server
+
+- (void)fetchUserModelForUserId:(NSNumber *)userID
+{
+    [[WSModelClasses sharedHandler] setDelegate:self];
+    [[WSModelClasses sharedHandler] getProfileDetailsForUserID:[userID stringValue]];
+}
+
+- (void)getTheUserProfileDataFromServer:(NSDictionary *)responceDict error:(NSError *)error
+{
+    if(error) {
+        NSLog(@"%s error = %@", __func__, error.localizedDescription);
+    }
+    else {
+        NSLog(@"%s responseDict = %@", __func__, responceDict);
+        NSMutableDictionary *profileDict = [[NSMutableDictionary alloc] initWithDictionary:responceDict[@"UserProfile"] copyItems:YES];
+        if(profileDict[@"ProfileCanvas"]) {
+            [profileDict setObject:profileDict[@"ProfileCanvas"] forKey:USER_MODAL_KEY_PROFILECANVAS];
+        }
+        
+        UsersModel *modelObj = [[UsersModel alloc] initWithDictionary:profileDict];
+        _profileUserModel = modelObj;
+        [self showProfileDetailOnView];
+    }
+}
+
+- (void)showProfileDetailOnView
+{
+    _fullNameLabel.text = _profileUserModel.fullName ? _profileUserModel.fullName : @"";
+    _usernameLabel.text = _profileUserModel.userName ? _profileUserModel.userName : @"";
+    _cityLabel.text = _profileUserModel.city ? _profileUserModel.city : @"";
+    _bioLabel.text = _profileUserModel.biodata ? _profileUserModel.biodata : @"";
+    _postsCountLabel.text = _profileUserModel.postCount ? [_profileUserModel.postCount stringValue] : @"0";
+    _followingCountLabel.text = _profileUserModel.followingCount ? [_profileUserModel.followingCount stringValue] : @"";
+    _followersCountLabel.text = _profileUserModel.followerCount ? [_profileUserModel.followerCount stringValue] : @"";
+    
+    _profileStatusTxtView.text = _profileUserModel.statusMessage ? _profileUserModel.statusMessage : @"";
 }
 
 #pragma mark - Edit mode Button methods

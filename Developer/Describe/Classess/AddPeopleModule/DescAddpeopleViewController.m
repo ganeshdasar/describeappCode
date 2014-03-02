@@ -14,9 +14,9 @@
 #import "WSModelClasses.h"
 #import "DSocialComponent.h"
 #import "UIColor+DesColors.h"
-
 #import "DPostsViewController.h"
 #import "Constant.h"
+#import "ProfileViewController.h"
 
 
 @interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate>
@@ -123,8 +123,14 @@
     [socialComponent  designSocialNetworkConnectionsWithButtons:@[facebookBtn,googlePlusBtn]];
     
 }
--(void)goToFeedScreen:(UIButton*)inButton{
-    
+
+- (void)goToFeedScreen:(UIButton*)inButton
+{
+//    ProfileViewController *profileController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
+//    profileController.profileUserID = [NSNumber numberWithInteger:45];
+//    [self.navigationController pushViewController:profileController animated:YES];
+//    
+//    return;
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
     
     

@@ -175,12 +175,10 @@
 - (void)goToPeviousScreen:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
-    
 }
 
-- (void)goToAddPeopleScreen:(id)sender
+-(void)goToAddPeopleScreen:(id)sender
 {
-   
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate  =self;
     NSString * gender =Nil;

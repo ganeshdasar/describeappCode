@@ -12,6 +12,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netdb.h>
+
 static WSModelClasses *_sharedInstance;
 
 @implementation WSModelClasses
@@ -39,6 +40,10 @@ static WSModelClasses *_sharedInstance;
     [manager GET:ur
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSDictionary *responseDict = (NSDictionary *)responseObject;
+             NSDictionary *userDataDict = (NSDictionary *)responseDict[@"DataTable"][0][@"UserData"];
+             UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:userDataDict];
+             _loggedInUserModel = userModelObj;
              [self loginStatus:responseObject error:nil];
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -313,19 +318,20 @@ static WSModelClasses *_sharedInstance;
 
 #pragma mark getTheUserProfiles
 //http://mirusstudent.com/service/describe-service/getUserProfile/format=json/UserUID=1/ProfileUserUID=4
-- (void)getTheUserProfiles:(NSString *)inUserId
-          andProfileUserId:(NSString *)inProfileUserID
+- (void)getProfileDetailsForUserID:(NSString *)profileUserID
 {
-    inUserId = @"1";
-    inProfileUserID = @"45";
+//    inUserId = @"1";
+//    inProfileUserID = @"45";
     
-    NSString *ur = [NSString stringWithFormat:@"%@getUserProfile/format=json/UserUID=%@/ProfileUserUID=%@", BaseURLString,inUserId,inProfileUserID];
+    NSString *ur = [NSString stringWithFormat:@"%@getUserProfile/format=json/UserUID=%@/ProfileUserUID=%@", BaseURLString, [_loggedInUserModel.userID stringValue], profileUserID];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             [self getTheProfiles:responseObject error:nil];
+             NSDictionary *responseDict = (NSDictionary *)responseObject;
+             NSDictionary *profileDict = responseDict[@"DataTable"][0];
+             [self getTheProfiles:profileDict error:nil];
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
              [self getTheProfiles:responseObject error:nil];
@@ -335,7 +341,7 @@ static WSModelClasses *_sharedInstance;
 
 - (void)getTheProfiles:(id)inResponce error:(id)inError
 {
-    if(_delegate && [_delegate respondsToSelector:@selector(getThePostConversationDetailsFromServer:error:)]) {
+    if(_delegate && [_delegate respondsToSelector:@selector(getTheUserProfileDataFromServer:error:)]) {
         [_delegate getTheUserProfileDataFromServer:inResponce error:inError];
     }
 }

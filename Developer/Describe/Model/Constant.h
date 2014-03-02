@@ -39,7 +39,7 @@
 
 #define USER_MODAL_KEY_BLOCKEDSTATUS                    @"BlockedUserStatus"
 #define USER_MODAL_KEY_FOLLOWINGSTATUS                  @"FollowingStatus"
-#define USER_MODAL_KEY_PROFILECANVAS                    @"ProfileCanvas"
+#define USER_MODAL_KEY_PROFILECANVAS                    @"UserProfileCanvas"
 #define USER_MODAL_KEY_BIODATA                          @"UserBiodata"
 #define USER_MODAL_KEY_CITY                             @"UserCity"
 #define USER_MODAL_KEY_COMMENTSCOUNT                    @"UserCommentsCount"
