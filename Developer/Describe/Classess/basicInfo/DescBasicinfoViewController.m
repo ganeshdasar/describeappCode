@@ -178,10 +178,7 @@
 }
 -(void)goToAddPeopleScreen:(id)sender
 {
-   //For testing i am commented this code
- [[WSModelClasses sharedHandler]getTheUserProfiles:@"" andProfileUserId:@""];
-
-    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+   DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
     [self.navigationController pushViewController:addPeople animated:NO];
     return;
     

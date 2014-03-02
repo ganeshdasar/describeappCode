@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "UsersModel.h"
 
 @protocol WSModelClassDelegate <NSObject>
 
@@ -37,6 +38,7 @@
 @interface WSModelClasses : NSObject
 
 @property (nonatomic, assign) id <WSModelClassDelegate> delegate;
+@property (nonatomic, strong) UsersModel *loggedInUserModel;
 
 - (BOOL)networkReachable;
 
@@ -86,18 +88,17 @@
 
 #pragma mark getTheGenaralFeedService
 //http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/PageValue=0/
--(void)getTheGenaralFeedServices:(NSString *)inUserId
-                        andPageValue:(NSString *)inPageValue;
+- (void)getTheGenaralFeedServices:(NSString *)inUserId
+                     andPageValue:(NSString *)inPageValue;
 
 
 #pragma mark GetTheConversationDetails
--(void)getThePostConversationDetails:(NSString *)inUserId
-                                     andPostId:(NSString *)inPostId;
+- (void)getThePostConversationDetails:(NSString *)inUserId
+                            andPostId:(NSString *)inPostId;
 
 #pragma mark getTheUserProfiles
 //http://mirusstudent.com/service/describe-service/getUserProfile/format=json/UserUID=1/ProfileUserUID=4
 
--(void)getTheUserProfiles:(NSString *)inUserId
-           andProfileUserId:(NSString *)inProfileUserID;
+- (void)getProfileDetailsForUserID:(NSString *)profileUserID;
 
 @end
