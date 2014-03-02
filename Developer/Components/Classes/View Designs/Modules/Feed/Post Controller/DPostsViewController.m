@@ -15,6 +15,7 @@
 #import "DPostHeaderView.h"
 #import "CMViewController.h"
 #import "CMPhotoModel.h"
+#import "CMAVCameraHandler.h"
 
 @interface DPostsViewController ()<DPostHeaderViewDelegate>
 {   
@@ -369,18 +370,30 @@
 
 
 #pragma mark Event Actions -
--(void)addPost:(id)sender
+- (void)pushToCompositionScreen
 {
     _compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
     [self.navigationController pushViewController:_compositionViewController animated:YES];
 }
 
--(void)reloadPostList:(id)sender
+- (void)addPost:(id)sender
+{
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Would you like to continue previous composition?", @"") delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];
+        [alert show];
+    }
+    else {
+        [self pushToCompositionScreen];
+    }
+}
+
+- (void)reloadPostList:(id)sender
 {
     
 }
 
--(void)morePost:(id)sender
+- (void)morePost:(id)sender
 {
     
 }
@@ -421,6 +434,63 @@
     DUser *user = [headerView user];
     NSLog(@"user profile id:%@", user.userId);
     
+}
+
+#pragma mark - UIAlertViewDelegate Method
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
+    NSMutableDictionary *compositionDict = nil;
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSData *data = [NSData dataWithContentsOfFile:compositionPath];
+        compositionDict = [[NSMutableDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+    }
+    
+    if(buttonIndex == 0) {
+        // remove the previous images and video from path
+        [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:nil];
+        if(compositionDict != nil && compositionDict[COMPOSITION_VIDEO_PATH_KEY]) {
+            NSString *videoPath = compositionDict[COMPOSITION_VIDEO_PATH_KEY];
+            if([[NSFileManager defaultManager] fileExistsAtPath:videoPath]) {
+                NSError *error;
+                BOOL success = [[NSFileManager defaultManager] removeItemAtPath:videoPath error:&error];
+                if(!success) {
+                    NSLog(@"%s success = %d, error = %@", __func__, success, error.localizedDescription);
+                }
+            }
+        }
+        
+        if(compositionDict != nil && compositionDict[COMPOSITION_IMAGE_ARRAY_KEY]) {
+            NSArray *compositionArray = compositionDict[COMPOSITION_IMAGE_ARRAY_KEY];
+            for(NSDictionary *aDict in compositionArray) {
+                if(aDict[COMPOSITION_ARRAY_DICT_ORIGINAL_IMG_PATH_KEY]) {
+                    NSString *imgPath = aDict[COMPOSITION_ARRAY_DICT_ORIGINAL_IMG_PATH_KEY];
+                    if([[NSFileManager defaultManager] fileExistsAtPath:imgPath]) {
+                        NSError *error;
+                        BOOL success = [[NSFileManager defaultManager] removeItemAtPath:imgPath error:&error];
+                        if(!success) {
+                            NSLog(@"%s success = %d, error = %@", __func__, success, error.localizedDescription);
+                        }
+                    }
+                }
+            }
+        }
+        
+        if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+            NSError *error;
+            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:compositionPath error:&error];
+            if(!success) {
+                NSLog(@"%s success = %d, error = %@", __func__, success, error.localizedDescription);
+            }
+        }
+    }
+    else {
+        if(compositionDict != nil && compositionDict[COMPOSITION_VIDEO_PATH_KEY]) {
+            [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:compositionDict[COMPOSITION_VIDEO_PATH_KEY]];
+        }
+    }
+    
+    [self pushToCompositionScreen];
 }
 
 @end

@@ -73,4 +73,8 @@
 - (void)sendTheSocialFriensToServeUserUID:(NSString*)inUserUID
                                   gateWay:(NSString*)inGateWay
                                       IDs:(NSString*)inIDs;
+
+#pragma mark - Post composition
+- (void)postComposition:(NSDictionary *)argDict;
+
 @end

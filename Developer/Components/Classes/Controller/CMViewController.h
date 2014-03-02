@@ -10,8 +10,6 @@
 #import "LXReorderableCollectionViewFlowLayout.h"
 #import "CMAVCameraHandler.h"
 
-#define COMPOSITION_TEMP_FOLDER_PATH            [NSString stringWithFormat:@"%@/Library/Caches/Composition", NSHomeDirectory()]
-
 @interface CMViewController : UIViewController <LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate, CMAVCameraHandlerDelegate>
 
 @property (weak, nonatomic) IBOutlet UICollectionView *photoCollectionView;

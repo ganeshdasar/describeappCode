@@ -118,6 +118,7 @@
 {
 #if !(TARGET_IPHONE_SIMULATOR)
 
+    [[CMAVCameraHandler sharedHandler] changeCapturesSessionPreset:AVCaptureSessionPresetPhoto];
     [[CMAVCameraHandler sharedHandler] setDelegate:self];
     [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:currentCameraMode];
     [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_cameraContainerView];
@@ -168,11 +169,12 @@
 {
     NSMutableArray *listArray = [[NSMutableArray alloc] init];
     
-    NSString *arrayPath = [NSString stringWithFormat:@"%@/compositionArray.plist", COMPOSITION_TEMP_FOLDER_PATH];
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
     NSMutableArray *compositionArray = nil;
-    if([[NSFileManager defaultManager] fileExistsAtPath:arrayPath]) {
-        NSData *data = [NSData dataWithContentsOfFile:arrayPath];
-        compositionArray = [[NSMutableArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSData *data = [NSData dataWithContentsOfFile:compositionPath];
+        NSDictionary *compositionDict = [[NSDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+        compositionArray = [[NSMutableArray alloc] initWithArray:compositionDict[COMPOSITION_IMAGE_ARRAY_KEY] copyItems:YES];
     }
     
     // create photo list of ten items
@@ -296,17 +298,19 @@
     [self.capturedPhotoList insertObject:modelObject atIndex:toIndexPath.item];
     
     // change the position of objects in saved plist too
-    NSString *arrayPath = [NSString stringWithFormat:@"%@/compositionArray.plist", COMPOSITION_TEMP_FOLDER_PATH];
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
     NSMutableArray *compositionArray = nil;
-    if([[NSFileManager defaultManager] fileExistsAtPath:arrayPath]) {
-        NSData *data = [NSData dataWithContentsOfFile:arrayPath];
-        compositionArray = [[NSMutableArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSData *data = [NSData dataWithContentsOfFile:compositionPath];
+        NSMutableDictionary *compositionDict = [[NSMutableDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+        compositionArray = [[NSMutableArray alloc] initWithArray:compositionDict[COMPOSITION_IMAGE_ARRAY_KEY] copyItems:YES];
         
         NSDictionary *fromDict = [[NSDictionary alloc] initWithDictionary:compositionArray[fromIndexPath.item]];
         [compositionArray removeObjectAtIndex:fromIndexPath.item];
         [compositionArray insertObject:fromDict atIndex:toIndexPath.item];
         
-        BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionArray toFile:arrayPath];
+        [compositionDict setObject:compositionArray forKey:COMPOSITION_IMAGE_ARRAY_KEY];
+        BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionDict toFile:compositionPath];
         if(!arraySuccess) {
 //            NSLog(@"arraySuccess = %d", arraySuccess);
         }
@@ -480,7 +484,7 @@
 - (IBAction)backOptionClicked:(id)sender
 {
 //    NSLog(@"Dismiss the current view and navigate to previous screen.");
-    
+    [self removeCameraView];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

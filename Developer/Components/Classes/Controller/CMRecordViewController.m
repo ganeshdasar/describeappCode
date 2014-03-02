@@ -15,9 +15,9 @@
 
 @interface CMRecordViewController ()
 {
-    float progressVal;
+    CGFloat progressVal;
     NSTimer *progressTimer;
-    float currentVideoTime;
+    CGFloat currentVideoTime;
 }
 
 @property (assign) NSInteger selectedImageIndex;
@@ -121,10 +121,12 @@
 {
 #if !(TARGET_IPHONE_SIMULATOR)
 
+    [[CMAVCameraHandler sharedHandler] changeCapturesSessionPreset:AVCaptureSessionPresetLow];
     [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:kCameraDeviceFront];
     [[CMAVCameraHandler sharedHandler] removeVideoAudioOutput];
     [[CMAVCameraHandler sharedHandler] addvideoAudioOutputForUsingAssetLibrary];
     [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_videoPreviewView];
+    [[CMAVCameraHandler sharedHandler] setDelegate:self];
     
 #endif
 }
@@ -259,7 +261,9 @@
         // the recording is paused
         self.pauseStateIndex = self.selectedImageIndex;
         CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[self.pauseStateIndex];
-        modelObj.pauseTime = currentVideoTime;
+        if(modelObj.originalImagePath) {
+            modelObj.pauseTime = currentVideoTime;
+        }
     }
 
 #endif
@@ -320,6 +324,8 @@
     if(self.selectedImageIndex != -1) {
         CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[self.selectedImageIndex];
         modelObj.isRecorded = YES;
+        NSLog(@"duration = %f", currentVideoTime - modelObj.startAppearanceTime - 0.1);
+        modelObj.duration = currentVideoTime - modelObj.startAppearanceTime - 0.1;  // we are removing 0.1 here because 0.1 is added to currentVideoTime before it came here; so getting actualValue
     }
     
     self.selectedImageIndex++;
@@ -342,7 +348,12 @@
     if(isRecordingDone) {
         // Stop video recording
         if([[CMAVCameraHandler sharedHandler] isVideoRecordingStarted] && ![[CMAVCameraHandler sharedHandler] isRecordingPaused]) {
-            [self startOrPauseVideoRecording:nil];
+            if(self.selectedImageIndex >= self.capturedPhotoList.count) {
+                [[CMAVCameraHandler sharedHandler] startOrStopRecordingVideo];
+            }
+            else {
+                [self startOrPauseVideoRecording:nil];
+            }
         }
         
     }
@@ -375,8 +386,6 @@
 }
 
 #pragma mark - Application entering background handling
-
-
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     
@@ -391,5 +400,21 @@
     
 }
 
+#pragma mark - CMAVCameraHandlerDelegate Methods
+
+- (void)didStartedVideoRecordingAtPath:(NSString *)recordingPath
+{
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSData *data = [NSData dataWithContentsOfFile:compositionPath];
+        NSMutableDictionary *compositionDict = [[NSMutableDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+        [compositionDict setObject:recordingPath forKey:COMPOSITION_VIDEO_PATH_KEY];
+        
+        BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionDict toFile:compositionPath];
+        if(!arraySuccess) {
+            NSLog(@"%s arraySuccess = %d", __func__, arraySuccess);
+        }
+    }
+}
 
 @end

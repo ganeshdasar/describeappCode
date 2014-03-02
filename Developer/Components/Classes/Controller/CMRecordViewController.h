@@ -10,7 +10,7 @@
 #import "LXReorderableCollectionViewFlowLayout.h"
 #import "CMAVCameraHandler.h"
 
-@interface CMRecordViewController : UIViewController
+@interface CMRecordViewController : UIViewController <CMAVCameraHandlerDelegate>
 
 @property (weak, nonatomic) IBOutlet UICollectionView *photoCollectionView;
 @property (weak, nonatomic) IBOutlet UIView *cameraContainerView;

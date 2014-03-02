@@ -12,6 +12,8 @@
 #import "CMShareCompositionCell.h"
 #import "CMPhotoModel.h"
 #import "DPost.h"
+#import "CMAVCameraHandler.h"
+#import "CMShareSocialCell.h"
 
 #define LOCATION_CELLIDENTIFIER             @"LocationCell"
 #define COMPOSITION_CELLIDENTIFIER          @"CompositionCell"
@@ -44,6 +46,8 @@ typedef enum {
     DPostImage *_imagePost;
 }
 
+@property (nonatomic, strong) NSString *totalVideoDuration;
+
 @end
 
 @implementation CMShareViewController
@@ -62,32 +66,22 @@ typedef enum {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    DPostVideo *video = [[DPostVideo alloc] init];
-    [video setDuration:@"25"];
-    [video setUrl:[[NSBundle mainBundle] pathForResource:@"444" ofType:@"mp4"]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoRecordingDone:) name:NOTIFICATION_VIDEO_RECORDING_COMPLETED object:nil];
     
     _imagePost = [[DPostImage alloc] init];
     
     NSMutableArray *images = [[NSMutableArray alloc] init];
-    {
-        CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-        [photoModel setEditedImage:[UIImage imageNamed:@"1.jpg"]];
-        [photoModel setDuration:8];
-        [images addObject:photoModel];
+    for(CMPhotoModel *modelObj in _capturedPhotoList) {
+        if(modelObj.originalImagePath) {
+            [images addObject:modelObj];
+        }
     }
-    {
-        CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-        [photoModel setEditedImage:[UIImage imageNamed:@"2.jpg"]];
-        [photoModel setDuration:10];
-        [images addObject:photoModel];
-    }
+    
     [_imagePost setImages:images];
+    [self videoRecordingDone:nil];
     
    // [_imagePost setImages:[[NSArray alloc] initWithObjects:@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg", nil]];
    // [_imagePost setDurationList:[[NSArray alloc] initWithObjects:@"10",@"2",@"1",@"4",@"3", nil]];
-    [_imagePost setVideo:video];
-    
-    
     
     
     UINib *nib = [UINib nibWithNibName:@"CMShareCompositionCell" bundle:nil];
@@ -119,6 +113,24 @@ typedef enum {
     categoryController.delegate = self;
 }
 
+- (void)videoRecordingDone:(NSNotification *)notification
+{
+    if([[CMAVCameraHandler sharedHandler] isRecordingDone]) {
+        DPostVideo *video = [[DPostVideo alloc] init];
+        NSArray *imgArray = _imagePost.images;
+        if(imgArray) {
+            CMPhotoModel *lastPhoto = (CMPhotoModel *)[imgArray lastObject];
+            CGFloat totalDuration = lastPhoto.startAppearanceTime + lastPhoto.duration;
+            [video setDuration:[NSString stringWithFormat:@"%0.2f", totalDuration]];
+            
+            _totalVideoDuration = [NSString stringWithFormat:@"%0.2f", totalDuration];
+        }
+        
+        [video setUrl:[[CMAVCameraHandler sharedHandler] videoFilenamePath]];   //[[NSBundle mainBundle] pathForResource:@"444" ofType:@"mp4"]
+        [_imagePost setVideo:video];
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -139,7 +151,33 @@ typedef enum {
 
 - (IBAction)prevOptionClicked:(id)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"You will lose your recorded video, if you navigate back. Do you still want to navigate back.", @"") delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Cancel", nil];
+    [alert show];
+}
+
+#pragma mark - UIAlertViewDelegate Method
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+//    NSLog(@"buttonIndex = %d", buttonIndex);
+    if(buttonIndex == 0) {
+        NSString *path = [[CMAVCameraHandler sharedHandler] videoFilenamePath];
+        if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            NSError *err;
+            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&err];
+            if(!success) {
+                NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
+            }
+        }
+        
+        [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:nil];
+        for(CMPhotoModel *modelObj in self.capturedPhotoList) {
+            if(modelObj.originalImagePath) {
+                [modelObj resetRecordingValues];
+            }
+        }
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - Share cell action methods
@@ -152,6 +190,55 @@ typedef enum {
 - (IBAction)shareButtonClicked:(id)sender
 {
     NSLog(@"%s", __func__);
+    NSMutableDictionary *argDict = [[NSMutableDictionary alloc] init];
+    
+    NSInteger imgCount = 1;
+    NSMutableArray *imgTimeArray = [NSMutableArray array];
+    for(CMPhotoModel *modelObj in _imagePost.images) {
+        NSData *imageData = UIImagePNGRepresentation(modelObj.editedImage);
+        NSString *encodedImgString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        [argDict setObject:encodedImgString forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
+        
+        [imgTimeArray addObject:[NSString stringWithFormat:@"%0.2f", modelObj.duration]];
+        
+        imgCount++;
+    }
+    
+    if(imgCount < 10) {
+        for (; imgCount <= 10; imgCount++) {
+            [argDict setObject:@"" forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
+        }
+    }
+    
+    NSData *videoData = [NSData dataWithContentsOfFile:_imagePost.video.url];
+    NSString *videoEncodedString = [videoData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    [argDict setObject:@"45" forKey:@"UserUID"];
+    [argDict setObject:[imgTimeArray componentsJoinedByString:@","] forKey:@"imageTimesArr"];
+    [argDict setObject:@"No Category" forKey:@"txtCategory"];
+    [argDict setObject:@"Hyderabad" forKey:@"txtLocation"];
+    [argDict setObject:@"17.366, 78.476" forKey:@"txtLatLongitude"];
+    [argDict setObject:@"NO" forKey:@"shareFB"];
+    [argDict setObject:@"NO" forKey:@"shareGoogle"];
+    [argDict setObject:@"NO" forKey:@"shareTwitter"];
+    [argDict setObject:@"SampleComposition" forKey:@"txtTag1"];
+    [argDict setObject:@"MakeComposition" forKey:@"txtTag2"];
+    [argDict setObject:videoEncodedString forKey:@"movFile"];
+    [argDict setObject:_totalVideoDuration forKey:@"clip_duration"];
+    //    [argDict setObject:@"" forKey:@"imgCount"];
+    //    [argDict setObject:@"" forKey:@"imgFile1"];
+    //    [argDict setObject:@"" forKey:@"imgFile2"];
+    //    [argDict setObject:@"" forKey:@"imgFile3"];
+    //    [argDict setObject:@"" forKey:@"imgFile4"];
+    //    [argDict setObject:@"" forKey:@"imgFile5"];
+    //    [argDict setObject:@"" forKey:@"imgFile6"];
+    //    [argDict setObject:@"" forKey:@"imgFile7"];
+    //    [argDict setObject:@"" forKey:@"imgFile8"];
+    //    [argDict setObject:@"" forKey:@"imgFile9"];
+    //    [argDict setObject:@"" forKey:@"imgFile10"];
+    
+    NSLog(@"%s sending to url", __func__);
+    [[WSModelClasses sharedHandler] postComposition:(NSDictionary *)argDict];
 }
 
 #pragma mark - UITableDatasource methods
@@ -258,6 +345,11 @@ typedef enum {
             
         case ShareSectionShare:
         {
+            CMShareSocialCell *socialCell = (CMShareSocialCell *)cell;
+            [socialCell.fbButton addTarget:self action:@selector(socailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [socialCell.gpButton addTarget:self action:@selector(socailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [socialCell.twButton addTarget:self action:@selector(socailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [socialCell.shareButton addTarget:self action:@selector(shareButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             break;
         }
             

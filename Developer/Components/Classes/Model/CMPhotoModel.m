@@ -19,12 +19,12 @@
     self = [super init];
     if(self) {
         
-        if(photoDict != nil && photoDict[@"CropRectKey"]) {
-            _cropRect = [photoDict[@"CropRectKey"] CGRectValue];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_CROP_RECT_KEY]) {
+            _cropRect = [photoDict[COMPOSITION_ARRAY_DICT_CROP_RECT_KEY] CGRectValue];
         }
         
-        if(photoDict != nil && photoDict[@"OriginalImagePathKey"]) {
-            _originalImagePath = photoDict[@"OriginalImagePathKey"];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_ORIGINAL_IMG_PATH_KEY]) {
+            _originalImagePath = photoDict[COMPOSITION_ARRAY_DICT_ORIGINAL_IMG_PATH_KEY];
             NSData *imgData = [NSData dataWithContentsOfFile:_originalImagePath];
             if(imgData) {
                 _originalImage = [UIImage imageWithData:imgData];
@@ -35,24 +35,28 @@
             }
         }
         
-        if(photoDict != nil && photoDict[@"IndexNumberKey"]) {
-            _indexNumber = [photoDict[@"IndexNumberKey"] integerValue];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_INDEXNUMBER_KEY]) {
+            _indexNumber = [photoDict[COMPOSITION_ARRAY_DICT_INDEXNUMBER_KEY] integerValue];
         }
         
-        if(photoDict != nil && photoDict[@"IsRecordedKey"]) {
-            _isRecorded = [photoDict[@"IsRecordedKey"] boolValue];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_IS_RECORDED_KEY]) {
+            _isRecorded = [photoDict[COMPOSITION_ARRAY_DICT_IS_RECORDED_KEY] boolValue];
         }
         
-        if(photoDict != nil && photoDict[@"StartAppearanceKey"]) {
-            _startAppearanceTime = [photoDict[@"StartAppearanceKey"] floatValue];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_START_APPEARANCE_KEY]) {
+            _startAppearanceTime = [photoDict[COMPOSITION_ARRAY_DICT_START_APPEARANCE_KEY] floatValue];
         }
         
-        if(photoDict != nil && photoDict[@"EndAppearanceKey"]) {
-            _endAppearanceTime = [photoDict[@"EndAppearanceKey"] floatValue];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_END_APPEARANCE_KEY]) {
+            _endAppearanceTime = [photoDict[COMPOSITION_ARRAY_DICT_END_APPEARANCE_KEY] floatValue];
         }
         
-        if(photoDict != nil && photoDict[@"PauseKey"]) {
-            _pauseTime = [photoDict[@"PauseKey"] floatValue];
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_PAUSE_KEY]) {
+            _pauseTime = [photoDict[COMPOSITION_ARRAY_DICT_PAUSE_KEY] floatValue];
+        }
+        
+        if(photoDict != nil && photoDict[COMPOSITION_ARRAY_DICT_VIDEO_DURATION_KEY]) {
+            _duration = [photoDict[COMPOSITION_ARRAY_DICT_VIDEO_DURATION_KEY] floatValue];
         }
     }
     
@@ -145,14 +149,27 @@
     return uniqueFileName;
 }
 
+- (void)resetRecordingValues
+{
+    _isRecorded = NO;
+    _startAppearanceTime = 0.0f;
+    _endAppearanceTime = 0.0f;
+    _pauseTime = 0.0f;
+    _duration = 0.0f;
+    
+    [self saveModelToCompositionArray];
+}
+
 - (void)saveModelToCompositionArray
 {
     BOOL insert = NO;
-    NSString *arrayPath = [NSString stringWithFormat:@"%@/compositionArray.plist", COMPOSITION_TEMP_FOLDER_PATH];
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
+    NSMutableDictionary *compositionDict = nil;
     NSMutableArray *compositionArray = nil;
-    if([[NSFileManager defaultManager] fileExistsAtPath:arrayPath]) {
-        NSData *data = [NSData dataWithContentsOfFile:arrayPath];
-        compositionArray = [[NSMutableArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSData *data = [NSData dataWithContentsOfFile:compositionPath];
+        compositionDict = [[NSMutableDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+        compositionArray = [[NSMutableArray alloc] initWithArray:compositionDict[COMPOSITION_IMAGE_ARRAY_KEY] copyItems:YES];
     }
     else {
         compositionArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -167,13 +184,14 @@
         modelDict = [[NSMutableDictionary alloc] initWithDictionary:compositionArray[_indexNumber-1] copyItems:YES];
     }
     
-    [modelDict setObject:[NSNumber numberWithInteger:_indexNumber] forKey:@"IndexNumberKey"];
-    [modelDict setObject:_originalImagePath forKey:@"OriginalImagePathKey"];
-    [modelDict setObject:[NSValue valueWithCGRect:_cropRect] forKey:@"CropRectKey"];
-    [modelDict setObject:[NSNumber numberWithBool:_isRecorded] forKey:@"IsRecordedKey"];
-    [modelDict setObject:[NSNumber numberWithFloat:_startAppearanceTime] forKey:@"StartAppearanceKey"];
-    [modelDict setObject:[NSNumber numberWithFloat:_endAppearanceTime] forKey:@"EndAppearanceKey"];
-    [modelDict setObject:[NSNumber numberWithFloat:_pauseTime] forKey:@"PauseKey"];
+    [modelDict setObject:[NSNumber numberWithInteger:_indexNumber] forKey:COMPOSITION_ARRAY_DICT_INDEXNUMBER_KEY];
+    [modelDict setObject:_originalImagePath forKey:COMPOSITION_ARRAY_DICT_ORIGINAL_IMG_PATH_KEY];
+    [modelDict setObject:[NSValue valueWithCGRect:_cropRect] forKey:COMPOSITION_ARRAY_DICT_CROP_RECT_KEY];
+    [modelDict setObject:[NSNumber numberWithBool:_isRecorded] forKey:COMPOSITION_ARRAY_DICT_IS_RECORDED_KEY];
+    [modelDict setObject:[NSNumber numberWithFloat:_startAppearanceTime] forKey:COMPOSITION_ARRAY_DICT_START_APPEARANCE_KEY];
+    [modelDict setObject:[NSNumber numberWithFloat:_endAppearanceTime] forKey:COMPOSITION_ARRAY_DICT_END_APPEARANCE_KEY];
+    [modelDict setObject:[NSNumber numberWithFloat:_pauseTime] forKey:COMPOSITION_ARRAY_DICT_PAUSE_KEY];
+    [modelDict setObject:[NSNumber numberWithFloat:_duration] forKey:COMPOSITION_ARRAY_DICT_VIDEO_DURATION_KEY];
     
     if(insert) {
         [compositionArray addObject:modelDict];
@@ -182,7 +200,8 @@
         [compositionArray replaceObjectAtIndex:_indexNumber-1 withObject:modelDict];
     }
     
-    BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionArray toFile:arrayPath];
+    [compositionDict setObject:compositionArray forKey:COMPOSITION_IMAGE_ARRAY_KEY];
+    BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionDict toFile:compositionPath];
     if(!arraySuccess) {
 //        NSLog(@"arraySuccess = %d", arraySuccess);
     }
@@ -190,17 +209,19 @@
 
 - (void)removeModelFromCompositionArray
 {
-    NSString *arrayPath = [NSString stringWithFormat:@"%@/compositionArray.plist", COMPOSITION_TEMP_FOLDER_PATH];
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
     NSMutableArray *compositionArray = nil;
-    if([[NSFileManager defaultManager] fileExistsAtPath:arrayPath]) {
-        NSData *data = [NSData dataWithContentsOfFile:arrayPath];
-        compositionArray = [[NSMutableArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSData *data = [NSData dataWithContentsOfFile:compositionPath];
+        NSMutableDictionary *compositionDict = [[NSMutableDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
+        compositionArray = [[NSMutableArray alloc] initWithArray:compositionDict[COMPOSITION_IMAGE_ARRAY_KEY] copyItems:YES];
         
         NSDictionary *modelDict = compositionArray[_indexNumber-1];
         if(modelDict) {
             [compositionArray removeObject:modelDict];
             
-            BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionArray toFile:arrayPath];
+            [compositionDict setObject:compositionArray forKey:COMPOSITION_IMAGE_ARRAY_KEY];
+            BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionDict toFile:compositionPath];
             if(!arraySuccess) {
 //                NSLog(@"arraySuccess = %d", arraySuccess);
             }

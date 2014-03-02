@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *fbButton;
 @property (weak, nonatomic) IBOutlet UIButton *gpButton;
 @property (weak, nonatomic) IBOutlet UIButton *twButton;
+@property (weak, nonatomic) IBOutlet UIButton *shareButton;
 
 @end

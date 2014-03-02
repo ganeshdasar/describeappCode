@@ -18,84 +18,84 @@
 - (id)initWithDictionary:(NSDictionary *)userDict
 {
     if(self = [super init]) {
-        if(userDict[@"userID"] && [NotificationModel isValidValue:userDict[@"userID"]] ) {
-            self.userID = [NSNumber numberWithInteger:[userDict[@"userID"] integerValue]];
+        if(userDict[USER_MODAL_KEY_UID] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_UID]] ) {
+            self.userID = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_UID] integerValue]];
         }
         
         if(userDict[@"userEmail"] && [NotificationModel isValidValue:userDict[@"userEmail"]] ) {
             self.userEmail = userDict[@"userEmail"];
         }
         
-        if(userDict[@"userName"] && [NotificationModel isValidValue:userDict[@"userName"]] ) {
-            self.userName = userDict[@"userName"];
+        if(userDict[USER_MODAL_KEY_USERNAME] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_USERNAME]] ) {
+            self.userName = userDict[USER_MODAL_KEY_USERNAME];
         }
         
-        if(userDict[@"fullName"] && [NotificationModel isValidValue:userDict[@"fullName"]] ) {
-            self.fullName = userDict[@"fullName"];
+        if(userDict[USER_MODAL_KEY_FULLNAME] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_FULLNAME]] ) {
+            self.fullName = userDict[USER_MODAL_KEY_FULLNAME];
         }
         
-        if(userDict[@"dobDate"] && [NotificationModel isValidValue:userDict[@"dobDate"]] ) {
-            self.dobDate = [NSNumber numberWithDouble:[userDict[@"spotWord"] doubleValue]];
+        if(userDict[USER_MODAL_KEY_DOB] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_DOB]] ) {
+            self.dobDate = [NSNumber numberWithDouble:[userDict[USER_MODAL_KEY_DOB] doubleValue]];
         }
         
-        if(userDict[@"gender"] && [NotificationModel isValidValue:userDict[@"gender"]] ) {
-            self.gender = [NSNumber numberWithInteger:[userDict[@"gender"] integerValue]];
+        if(userDict[USER_MODAL_KEY_GENDER] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_GENDER]] ) {
+            self.gender = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_GENDER] integerValue]];
         }
         
-        if(userDict[@"profileImageName"] && [NotificationModel isValidValue:userDict[@"profileImageName"]] ) {
-            self.profileImageName = userDict[@"profileImageName"];
+        if(userDict[USER_MODAL_KEY_PROFILEPIC] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_PROFILEPIC]] ) {
+            self.profileImageName = userDict[USER_MODAL_KEY_PROFILEPIC];
         }
         
-        if(userDict[@"canvasImageName"] && [NotificationModel isValidValue:userDict[@"canvasImageName"]] ) {
-            self.canvasImageName = userDict[@"canvasImageName"];
+        if(userDict[USER_MODAL_KEY_PROFILECANVAS] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_PROFILECANVAS]] ) {
+            self.canvasImageName = userDict[USER_MODAL_KEY_PROFILECANVAS];
         }
         
-        if(userDict[@"snippetImageName"] && [NotificationModel isValidValue:userDict[@"snippetImageName"]] ) {
-            self.snippetImageName = userDict[@"snippetImageName"];
+        if(userDict[USER_MODAL_KEY_SNIPPETIMAGE] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_SNIPPETIMAGE]] ) {
+            self.snippetImageName = userDict[USER_MODAL_KEY_SNIPPETIMAGE];
         }
         
-        if(userDict[@"snippetPosition"] && [NotificationModel isValidValue:userDict[@"snippetPosition"]] ) {
-            self.snippetPosition = userDict[@"snippetPosition"];
+        if(userDict[USER_MODAL_KEY_SNIPPETPOSITION] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_SNIPPETPOSITION]] ) {
+            self.snippetPosition = userDict[USER_MODAL_KEY_SNIPPETPOSITION];
         }
         
-        if(userDict[@"statusMessage"] && [NotificationModel isValidValue:userDict[@"statusMessage"]] ) {
-            self.statusMessage = userDict[@"statusMessage"];
+        if(userDict[USER_MODAL_KEY_STATUSMESSAGE] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_STATUSMESSAGE]] ) {
+            self.statusMessage = userDict[USER_MODAL_KEY_STATUSMESSAGE];
         }
         
-        if(userDict[@"biodata"] && [NotificationModel isValidValue:userDict[@"biodata"]] ) {
-            self.biodata = userDict[@"biodata"];
+        if(userDict[USER_MODAL_KEY_BIODATA] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_BIODATA]] ) {
+            self.biodata = userDict[USER_MODAL_KEY_BIODATA];
         }
         
-        if(userDict[@"city"] && [NotificationModel isValidValue:userDict[@"city"]] ) {
-            self.city = userDict[@"city"];
+        if(userDict[USER_MODAL_KEY_CITY] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_CITY]] ) {
+            self.city = userDict[USER_MODAL_KEY_CITY];
         }
         
-        if(userDict[@"likesCount"] && [NotificationModel isValidValue:userDict[@"likesCount"]] ) {
-            self.likesCount = [NSNumber numberWithInteger:[userDict[@"likesCount"] integerValue]];
+        if(userDict[USER_MODAL_KEY_LIKESCOUNT] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_LIKESCOUNT]] ) {
+            self.likesCount = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_LIKESCOUNT] integerValue]];
         }
         
-        if(userDict[@"commentsCount"] && [NotificationModel isValidValue:userDict[@"commentsCount"]] ) {
-            self.commentsCount = [NSNumber numberWithInteger:[userDict[@"commentsCount"] integerValue]];
+        if(userDict[USER_MODAL_KEY_COMMENTSCOUNT] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_COMMENTSCOUNT]] ) {
+            self.commentsCount = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_COMMENTSCOUNT] integerValue]];
         }
         
-        if(userDict[@"postCount"] && [NotificationModel isValidValue:userDict[@"postCount"]] ) {
-            self.postCount = [NSNumber numberWithInteger:[userDict[@"postCount"] integerValue]];
+        if(userDict[USER_MODAL_KEY_POSTCOUNT] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_POSTCOUNT]] ) {
+            self.postCount = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_POSTCOUNT] integerValue]];
         }
         
-        if(userDict[@"followingCount"] && [NotificationModel isValidValue:userDict[@"followingCount"]] ) {
-            self.followingCount = [NSNumber numberWithInteger:[userDict[@"followingCount"] integerValue]];
+        if(userDict[USER_MODAL_KEY_FOLLOWINGCOUNT] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_FOLLOWINGCOUNT]] ) {
+            self.followingCount = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_FOLLOWINGCOUNT] integerValue]];
         }
         
-        if(userDict[@"followerCount"] && [NotificationModel isValidValue:userDict[@"followerCount"]] ) {
-            self.followerCount = [NSNumber numberWithInteger:[userDict[@"followerCount"] integerValue]];
+        if(userDict[USER_MODAL_KEY_FOLLOWERCOUNT] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_FOLLOWERCOUNT]] ) {
+            self.followerCount = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_FOLLOWERCOUNT] integerValue]];
         }
         
-        if(userDict[@"followingStatus"] && [NotificationModel isValidValue:userDict[@"followingStatus"]] ) {
-            self.followingStatus = [userDict[@"followingStatus"] boolValue];
+        if(userDict[USER_MODAL_KEY_FOLLOWINGSTATUS] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_FOLLOWINGSTATUS]] ) {
+            self.followingStatus = [userDict[USER_MODAL_KEY_FOLLOWINGSTATUS] boolValue];
         }
         
-        if(userDict[@"blockedStatus"] && [NotificationModel isValidValue:userDict[@"blockedStatus"]] ) {
-            self.blockedStatus = [userDict[@"blockedStatus"] boolValue];
+        if(userDict[USER_MODAL_KEY_BLOCKEDSTATUS] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_BLOCKEDSTATUS]] ) {
+            self.blockedStatus = [userDict[USER_MODAL_KEY_BLOCKEDSTATUS] boolValue];
         }
         
         if(userDict[@"isLoggedInUser"] && [NotificationModel isValidValue:userDict[@"isLoggedInUser"]] ) {

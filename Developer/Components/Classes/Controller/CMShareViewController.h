@@ -10,8 +10,9 @@
 #import "SPGooglePlacesAutocompleteViewController.h"
 #import "CMCategoryVC.h"
 #import "CMShareCompositionCell.h"
+#import "WSModelClasses.h"
 
-@interface CMShareViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SPGooglePlacesAutocompleteViewControllerDelegate, CMCategoryVCDelegate, CMShareCompositionCellDelegate>
+@interface CMShareViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SPGooglePlacesAutocompleteViewControllerDelegate, CMCategoryVCDelegate, CMShareCompositionCellDelegate, UIAlertViewDelegate, WSModelClassDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *shareTableView;
 @property (weak, nonatomic) IBOutlet UIView *locationContainerView;

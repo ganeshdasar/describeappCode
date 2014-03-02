@@ -20,6 +20,7 @@ typedef enum {
 
 @optional
 - (void)didFinishCapturingStillImage:(UIImage *)image error:(NSError *)error withContextInfo:(void *)contextInfo;
+- (void)didStartedVideoRecordingAtPath:(NSString *)recordingPath;
 
 @end
 
@@ -27,6 +28,8 @@ typedef enum {
 
 @property (nonatomic, assign) AVCaptureFlashMode flashMode;
 @property (nonatomic, assign)id <CMAVCameraHandlerDelegate> delegate;
+@property (nonatomic, readonly) BOOL isRecordingDone;
+@property (nonatomic, strong) NSString *videoFilenamePath;
 
 + (instancetype)sharedHandler;
 
@@ -49,6 +52,8 @@ typedef enum {
 - (void)removeVideoAudioOutput;
 
 - (void)addVideoInputFromFrontCamera:(CameraDevice)cameraMode;
+
+- (void)changeCapturesSessionPreset:(NSString *)presetString;
 
 - (void)showCameraPreviewInView:(UIView *)previewView;
 

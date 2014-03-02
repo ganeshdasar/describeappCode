@@ -24,5 +24,6 @@
 
 - (id)initWithDictionary:(NSDictionary *)photoDict;
 - (void)setCropRect:(CGRect)rect;
+- (void)resetRecordingValues;
 
 @end

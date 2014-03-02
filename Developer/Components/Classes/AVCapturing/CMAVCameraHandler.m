@@ -44,7 +44,6 @@
     
 }
 
-@property (nonatomic, strong) NSString *videoFilename;
 @property (nonatomic, strong) AVCaptureDeviceInput *frontFaceCamera;
 @property (nonatomic, strong) AVCaptureDeviceInput *rearFaceCamera;
 
@@ -74,7 +73,7 @@ static CMAVCameraHandler *_sharedInstance = nil;
         _flashMode = AVCaptureFlashModeAuto;
         
         _captureSession = [[AVCaptureSession alloc] init];
-        _captureSession.sessionPreset = AVCaptureSessionPresetMedium;
+        _captureSession.sessionPreset = AVCaptureSessionPresetPhoto;
         
         _captureQueue = dispatch_queue_create("uk.co.gdcl.cameraengine.capture", DISPATCH_QUEUE_SERIAL);
         
@@ -86,6 +85,15 @@ static CMAVCameraHandler *_sharedInstance = nil;
     }
     
     return self;
+}
+
+- (void)changeCapturesSessionPreset:(NSString *)presetString
+{
+    if(_captureSession) {
+        [_captureSession beginConfiguration];
+        [_captureSession setSessionPreset:presetString];
+        [_captureSession commitConfiguration];
+    }
 }
 
 - (void)getDeviceVideoInputs
@@ -318,7 +326,9 @@ static CMAVCameraHandler *_sharedInstance = nil;
 - (void)addStillImageOutput
 {
     _stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
-    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG,AVVideoCodecKey, [NSNumber numberWithInt:320], AVVideoWidthKey, [NSNumber numberWithInt:320], AVVideoHeightKey, nil];
+//    NSLog(@"availableImageDataCodecTypes = %@", [_stillImageOutput availableImageDataCodecTypes]);
+//    NSLog(@"availableImageDataCVPixelFormatTypes = %@", [_stillImageOutput availableImageDataCVPixelFormatTypes]);
+    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG, AVVideoCodecKey, [NSNumber numberWithInt:320], AVVideoWidthKey, [NSNumber numberWithInt:320], AVVideoHeightKey, nil];
     [_stillImageOutput setOutputSettings:outputSettings];
     
     [_captureSession addOutput:_stillImageOutput];
@@ -395,6 +405,7 @@ static CMAVCameraHandler *_sharedInstance = nil;
             _discont = NO;
             _timeOffset = CMTimeMake(0, 0);
             _isCapturing = YES;
+            _isRecordingDone = NO;
         }
         else {
             // serialize with audio and video capture
@@ -406,17 +417,17 @@ static CMAVCameraHandler *_sharedInstance = nil;
 //                    _encoder.writer = nil;
                     _isCapturing = NO;
                     _encoder = nil;
+                    _isRecordingDone = YES;
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_VIDEO_RECORDING_COMPLETED object:nil];
                     
                     // Copy recorded video path and store it in secured place
 //                    NSString* filename = [NSString stringWithFormat:@"%lf.mp4", [[NSDate date] timeIntervalSince1970]];
-                    __block NSString* path = [NSString stringWithFormat:@"%@/Documents/%@", NSHomeDirectory(), _videoFilename];
+                    __block NSString* path = _videoFilenamePath;
                     NSURL* url = [NSURL fileURLWithPath:path];
                     
-                    
-                    
                     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-                    [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error){
-                        
+                    [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error) {
                         //.......................
                         //To Do: Share this Url as video file path for that post....
                         //.......................
@@ -424,8 +435,6 @@ static CMAVCameraHandler *_sharedInstance = nil;
                         
                         NSLog(@"save completed error = %@, url = %@, path = %@", error, [assetURL absoluteString], path);
                         if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-                            
-                            
 //                            NSError *err;
 //                            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
 //                            NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
@@ -507,10 +516,16 @@ static CMAVCameraHandler *_sharedInstance = nil;
                 return;
             }
             
-            _videoFilename = [NSString stringWithFormat:@"%ld.mp4", (long)[[NSDate date] timeIntervalSince1970]];
-            NSString* path = [NSString stringWithFormat:@"%@/Documents/%@", NSHomeDirectory(), _videoFilename];
-            NSLog(@"path for video recording = %@", path);
-            _encoder = [VideoEncoder encoderForPath:path Height:_cy width:_cx channels:_channels samples:_samplerate];
+            if(_videoFilenamePath == nil) {
+                NSString *videoFilename = [NSString stringWithFormat:@"%ld.mp4", (long)[[NSDate date] timeIntervalSince1970]];
+                _videoFilenamePath = [NSString stringWithFormat:@"%@/Documents/%@", NSHomeDirectory(), videoFilename];
+//                NSLog(@"path for video recording = %@", _videoFilenamePath);
+            }
+            
+            if(_delegate != nil && [_delegate respondsToSelector:@selector(didStartedVideoRecordingAtPath:)]) {
+                [_delegate didStartedVideoRecordingAtPath:_videoFilenamePath];
+            }
+            _encoder = [VideoEncoder encoderForPath:_videoFilenamePath Height:_cy width:_cx channels:_channels samples:_samplerate];
         }
         
         if (_discont)

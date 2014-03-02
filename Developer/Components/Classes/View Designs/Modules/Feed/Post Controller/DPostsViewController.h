@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DPostsViewController : UIViewController
+@interface DPostsViewController : UIViewController <UIAlertViewDelegate>
 
 @end

@@ -136,6 +136,8 @@ static WSModelClasses *_sharedInstance;
 #pragma mark ResetPassword
 - (void)resetPassword:(NSString*)inUserEmailID
 {
+    if (![self checkTheInterConnection]) return;
+    
     NSString *ur = [NSString stringWithFormat:@"%@getUserForgotPassword/format=json/userEmailID=%@", BaseURLString,inUserEmailID];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -161,6 +163,8 @@ static WSModelClasses *_sharedInstance;
                    searchType:(NSString*)inSearchType
                    searchWord:(NSString*)inSearchString;
 {
+    if (![self checkTheInterConnection]) return;
+    
     //http://mirusstudent.com/service/describe-service/getSearchPeople/format=json/UserUID=1/SearchWord=a
     NSString *ur = [NSString stringWithFormat:@"%@getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,inUserID,inSearchString];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -186,6 +190,8 @@ static WSModelClasses *_sharedInstance;
 - (void)checkTheSocialIDwithDescriveServerCheckType:(NSString*) inCheckType
                                      andCheckValue:(NSString*)inCheckValue
 {
+    if (![self checkTheInterConnection]) return;
+    
     //http://www.mirusstudent.com/service/describe-service/checkExistUsers/format=json/
     //chkType=Username/chkValue=shekardfdf
     
@@ -212,6 +218,8 @@ static WSModelClasses *_sharedInstance;
                                   gateWay:(NSString*)inGateWay
                                       IDs:(NSString*)inIDs
 {
+    if (![self checkTheInterConnection]) return;
+    
     //http://mirusstudent.com/service/describe-service/postInvitations/UserUID=1/GateWay=FB/IDs=100002615683191,100007710180215,
     NSDictionary* userDetails = @{@"UserUID":inUserUID, @"GateWay":inGateWay,@"IDs":inIDs};
     
@@ -227,6 +235,25 @@ static WSModelClasses *_sharedInstance;
               if(_delegate && [_delegate respondsToSelector:@selector(getThePeopleListFromServer:error:)]) {
                   [_delegate getThePeopleListFromServer:nil error:nil];
               }
+          }
+     ];
+}
+
+#pragma mark - Post composition
+- (void)postComposition:(NSDictionary *)argDict
+{
+    if (![self checkTheInterConnection]) return;
+    
+    NSString *postURLString = [NSString stringWithFormat:@"%@insertPost", BaseURLString];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:postURLString
+       parameters:argDict
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"%s %@", __func__, responseObject);
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"%s %@", __func__, error.localizedDescription);
           }
      ];
 }
