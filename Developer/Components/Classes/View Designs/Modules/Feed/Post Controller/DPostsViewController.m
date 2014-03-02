@@ -15,8 +15,9 @@
 #import "DPostHeaderView.h"
 #import "CMViewController.h"
 #import "CMPhotoModel.h"
-
-@interface DPostsViewController ()<DPostHeaderViewDelegate>
+#import "WSModelClasses.h"
+#import "DConversation.h"
+@interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate>
 {   
     IBOutlet DHeaderView *_headerView;
     IBOutlet DPostListView *_listView;
@@ -387,6 +388,9 @@
 
 -(void)rightSwipeGesture:(UISwipeGestureRecognizer *)rightSwipeGesture
 {
+    //mar 2
+    [self getTheConverSationData];
+    return;
     //NSLog(@"Right Swipe Gesture Activated");
     DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
     [self.navigationController pushViewController:conversationController animated:YES];
@@ -399,18 +403,24 @@
 
 -(void)moreButtonClicked:(id)sender
 {
+    [self getTheConverSationData];
+    return;
     DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
     [self.navigationController pushViewController:conversationController animated:YES];
 }
 
 -(void)commentButtonClicked:(id)sender
 {
+    [self getTheConverSationData];
+    return;
     DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
     [self.navigationController pushViewController:conversationController animated:NO];
 }
 
 -(void)likesAndCommentButtonClicked:(id)sender
 {
+    [self getTheConverSationData];
+    return;
     DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
     [self.navigationController pushViewController:conversationController animated:YES];
 }
@@ -420,6 +430,42 @@
     //Navigate to the profile screen...
     DUser *user = [headerView user];
     NSLog(@"user profile id:%@", user.userId);
+    
+}
+-(void)getTheConverSationData{
+    
+    WSModelClasses * dataClass = [WSModelClasses sharedHandler];
+    dataClass.delegate =self;
+    [dataClass getThePostConversationDetails:@"" andPostId:@""];
+    
+    
+}
+-(void)getThePostConversationDetailsFromServer:(NSDictionary *) responceDict error:(NSError*)error{
+    
+    
+    NSLog(@"converstion data from server %@",responceDict);
+    NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
+    for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
+        
+        DConversation * data = [[DConversation alloc]init];
+    //    data.authUserUID = [dic valueForKey:@"AuthUserUID"];
+        data.comment = [dic valueForKey:@"Comment"];
+        data.numberOfLikes = [[dic valueForKey:@"LikeCount"]integerValue];
+        data.postId = [dic valueForKey:@"PostUID"];
+        //data.conversationID = [dic valueForKey:@"conversationID"];
+        data.elapsedTime = [dic valueForKey:@"conversationMadeTime"];
+        data.type = [[dic valueForKey:@"conversationType"]integerValue];
+       // data.conversationUserID = [dic valueForKey:@"conversationUserID"];
+        data.profilePic = [dic valueForKey:@"conversationUserProfilePicture"];
+        data.username = [dic valueForKey:@"conversationUsername"];
+        [conversatonDataArray addObject:data];
+        
+    }
+    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+    conversationController.conversationListArray = conversatonDataArray;
+    [self.navigationController pushViewController:conversationController animated:YES];
+    
+
     
 }
 

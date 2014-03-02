@@ -14,13 +14,13 @@
 #import "DESAppDelegate.h"
 #import "WSModelClasses.h"
 #import "DBAspectFillViewController.h"
+#import "Constant.h"
 
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
 #define FEMALEBTNFRAME
 #define BIRTHDAYFRAME
 #define BIOTEXTFRAME
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
 
 @interface DescBasicinfoViewController ()<WSModelClassDelegate,UITextViewDelegate,NSLayoutManagerDelegate>{
     IBOutlet DHeaderView *_headerView;
@@ -179,8 +179,13 @@
 -(void)goToAddPeopleScreen:(id)sender
 {
    //For testing i am commented this code
+ [[WSModelClasses sharedHandler]getTheUserProfiles:@"" andProfileUserId:@""];
+
+    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+    [self.navigationController pushViewController:addPeople animated:NO];
+    return;
     
-    /*WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate  =self;
     NSString * gender =Nil;
     if (isGenderMale) {
@@ -193,9 +198,7 @@
     
     [modelClass postBasicInfoWithUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob:@"1980-02-21" userGender:gender profilePic:self.userprofileImg.image];
   
-*/
-    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-    [self.navigationController pushViewController:addPeople animated:NO];
+    
     
     
     

@@ -12,7 +12,8 @@
 #import "DESPushNotificationControl.h"
 #import "DESEmailNotificationControll.h"
 #import "UIColor+DesColors.h"
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
+#import "Constant.h"
+
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -146,7 +147,9 @@
         cell.selectedBackgroundView = nil;
   //cell.backgroundView = [self createBackGroundImageView:[UIImage imageNamed:@"set_element.png"]];
     }
+    
 //    [tableView setSeparatorColor:[UIColor textPlaceholderColor]];
+    
 
     switch (indexPath.section) {
         case DSettingTypeAccount:

@@ -16,9 +16,8 @@
 #import "UIColor+DesColors.h"
 
 #import "DPostsViewController.h"
+#import "Constant.h"
 
-
-#define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
 
 @interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate>
 {
@@ -126,8 +125,13 @@
 }
 -(void)goToFeedScreen:(UIButton*)inButton{
     
+    [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
+    
+    
     DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];
+    
+    
 }
 
 #pragma mark SegmentView Actions

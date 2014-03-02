@@ -49,6 +49,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+       
         // Initialization code...
         _conversation = conversation;
         _commentTextHeight = 48.0;
@@ -66,9 +67,11 @@
 
 - (id)initWithConversation:(DConversation *)conversation
 {
+    
+   
     self = [super init];
     if (self) {
-        // Initialization code...
+               // Initialization code...
         _conversation = conversation;
         _commentTextHeight = 48.0;
         _subTitleYPosition = 26.0;
@@ -200,6 +203,25 @@
     [_contentView addSubview:_icon];
     [_icon.layer setCornerRadius:20];
     [_icon.layer setMasksToBounds:YES];
+}
+-(void)downloadUserImageview:(NSString*)inUrlString{
+    dispatch_queue_t backgroundQueue =
+    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(backgroundQueue, ^{
+        NSData *avatarData = nil;
+        NSString *imageURLString = inUrlString;
+        if (imageURLString) {
+            NSURL *imageURL = [NSURL URLWithString:imageURLString];
+            avatarData = [NSData dataWithContentsOfURL:imageURL];
+        }
+        if (avatarData) {
+            // Update UI from the main thread when available
+            dispatch_async(dispatch_get_main_queue(), ^{
+               _icon.image = [UIImage imageWithData:avatarData];
+                
+            });
+        }
+    });
 }
 
 -(void)createElapsedTime:(NSString *)elapsedTime
@@ -388,10 +410,8 @@
         default:
             break;
     }
-
-   
-    
     return height;
+    
 }
 
 
@@ -399,6 +419,7 @@
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
+    
     
 }
 
@@ -409,10 +430,10 @@
 
 -(void)textViewDidChangedText:(NSNotification *)notification
 {
+    
     UITextView *textView = (UITextView *)[notification object];
     
-    CGSize commentSize = [textView.text sizeWithFont:SUBTITLE_FONT constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:NSLineBreakByWordWrapping];
-    
+  CGSize commentSize = [textView.text sizeWithFont:SUBTITLE_FONT constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:NSLineBreakByWordWrapping];
     
     float height = 0;
     if(commentSize.height > _textViewMinimumHeight)

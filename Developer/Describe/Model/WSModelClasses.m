@@ -96,25 +96,47 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
 
-    NSData *imageData = UIImageJPEGRepresentation(inImage,0.9f);
-	//NSLog(@"url string for photo is:%@",urlString);
-	// setting up the request object now
-	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-	[request setHTTPMethod:@"POST"];
-	NSString *boundary = @"---------------------------14737809831466499882746641449";
-	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
-	[request addValue:contentType forHTTPHeaderField: @"Content-Type"];
-	//retrieving user name for uploading image
-	NSMutableData *body = [NSMutableData data];
-	[body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-	[body appendData:[@"Content-Disposition: form-data; name=\"userfile\"; filename=\"test.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-	[body appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-	[body appendData:[NSData dataWithData:imageData]];
-	[body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+   //send dummy data
+   // http://mirusstudent.com/service/describe-service/setUserBasicInfo /format=xml/UserUID=4/UserBiodata=xcxvcxvxv/UserCity=hyderabad/UserDob=1986-12-12/UserGender=1/profilePic=data of the image/
     
-    NSDictionary* userDetails = @{@"UserUID": inUID, @"UserBiodata":inBioData,@"UserCity":inUserCity,@"UserDob":inUserDob,@"UserGender":inuserGender,@"profilePic":body};
+    inImage =[UIImage imageNamed:@"user.png"];
+    inUID = @"1";
+    inBioData = @"osjdjafjsjflkjsalfjlskajfds";
+    inUserCity = @"hyderabad";
+    inUserDob = @"1986-12-12";
+    inuserGender = @"1";
     
+    NSData *imgData = UIImagePNGRepresentation(inImage);
+    NSString *imgEncodedString = [imgData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    NSDictionary* parameters = @{@"UserUID": inUID, @"UserBiodata":inBioData,@"UserCity":inUserCity,@"UserDob":inUserDob,@"UserGender":inuserGender,@"profilePic":imgEncodedString};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+
+    [manager POST:[NSString stringWithFormat:@"%@setUserBasicInfo",BaseURLString]
+       parameters:parameters
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"%s Success: %@",  __func__, responseObject);
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"%s Error: %@",  __func__, error.localizedDescription);
+          }
+     ];
+//    [manager POST:[NSString stringWithFormat:@"%@setUserBasicInfo",BaseURLString]
+//       parameters:parameters
+//constructingBodyWithBlock:^(id<AFMultipartFormData> formData){
+//    [formData appendPartWithFileData:UIImageJPEGRepresentation(image, 0.7)
+//                                name:@"file"
+//                            fileName:@"photo.png"
+//                            mimeType:@"image/png"];
+//}
+//          success:^(AFHTTPRequestOperation *operation, id responseObject){
+//              NSLog(@"Success: %@", responseObject);
+//          }
+//          failure:^(AFHTTPRequestOperation *operation, NSError *error){
+//              NSLog(@"Error %@", operation.responseString);
+//          }];
+
+   /* AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:[NSString stringWithFormat:@"%@setUserBasicInfo", BaseURLString]
        parameters:userDetails
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -123,8 +145,10 @@ static WSModelClasses *_sharedInstance;
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               [self postbasicInfoResult:nil error:error];
           }
-     ];
+     ];*/
 }
+
+
 
 - (void)postbasicInfoResult:(id)inResult error:(NSError*)inError
 {
@@ -229,6 +253,121 @@ static WSModelClasses *_sharedInstance;
               }
           }
      ];
+}
+
+#pragma mark getTheGenaralFeedService
+//http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/PageValue=0/
+-(void)getTheGenaralFeedServices:(NSString *)inUserId
+                    andPageValue:(NSString *)inPageValue
+{
+    inUserId  = @"45";
+    inPageValue = @"0";
+    
+    NSString *ur = [NSString stringWithFormat:@"%@getFeeds/format=json/UserUID=%@/PageValue=%@", BaseURLString,inUserId,inPageValue];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             
+             [self gettheFeeds:responseObject error:nil];
+             
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             
+             [self gettheFeeds:responseObject error:nil];
+             
+         }
+     ];
+
+    
+}
+-(void)gettheFeeds:(id)responce error:(id)inError
+{
+
+    if(_delegate && [_delegate respondsToSelector:@selector(getTheGenaralFeedsFromServer:error:)])
+    {
+        
+        [_delegate getTheGenaralFeedsFromServer:responce error:inError];
+        
+    }
+    
+}
+#pragma mark GetTheConversationDetails
+-(void)getThePostConversationDetails:(NSString *)inUserId
+                           andPostId:(NSString *)inPostId
+{
+    //http://mirusstudent.com/service/describe-service/getPostConversationDetails/format=json/UserUID=1/PostUID=11
+    
+    inUserId = @"1";
+    inPostId = @"11";
+    
+    NSString *ur = [NSString stringWithFormat:@"%@getPostConversationDetails/format=json/UserUID=%@/PostUID=%@", BaseURLString,inUserId,inPostId];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             
+             [self getTheCoverSationDetails:responseObject andError:nil];
+             
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             
+             [self getTheCoverSationDetails:responseObject andError:nil];
+             
+         }
+     ];
+
+    
+    
+}
+-(void)getTheCoverSationDetails:(id)inResult andError:(id)inError
+{
+    if(_delegate && [_delegate respondsToSelector:@selector(getThePostConversationDetailsFromServer:error:)])
+    {
+  
+        [_delegate getThePostConversationDetailsFromServer:inResult error:inError];
+        
+    }
+    
+}
+#pragma mark getTheUserProfiles
+//http://mirusstudent.com/service/describe-service/getUserProfile/format=json/UserUID=1/ProfileUserUID=4
+
+-(void)getTheUserProfiles:(NSString *)inUserId
+         andProfileUserId:(NSString *)inProfileUserID
+{
+    
+    inUserId = @"1";
+    inProfileUserID = @"45";
+    
+    NSString *ur = [NSString stringWithFormat:@"%@getUserProfile/format=json/UserUID=%@/ProfileUserUID=%@", BaseURLString,inUserId,inProfileUserID];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             [self getTheProfiles:responseObject error:nil];
+             
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             
+             [self getTheProfiles:responseObject error:nil];
+
+         }
+     ];
+}
+-(void)getTheProfiles:(id)inResponce error:(id)inError
+{
+    if(_delegate && [_delegate respondsToSelector:@selector(getThePostConversationDetailsFromServer:error:)])
+    {
+        
+        [_delegate getTheUserProfileDataFromServer:inResponce error:inError];
+        
+    }
+
+    
 }
 
 #pragma mark CheckThe Internet conncetion

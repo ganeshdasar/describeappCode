@@ -23,12 +23,12 @@
 @class GTLPlusPersonEmailsItem;
 @class GTLAuthScopePlusUserinfoEmail;
 @class GPPSignInButton;
-
+@class DESocialConnectios;
 
 @interface DescWelcomeViewController : UIViewController<UIActionSheetDelegate,GPPSignInDelegate>{
     DESAppDelegate *appDelegate;
     BOOL isClicked;
-
+    
 }
 
 @property (weak, nonatomic) IBOutlet UIButton *signUpBtn;
@@ -47,7 +47,6 @@
 - (IBAction)SigninClicked:(id)sender;
 - (IBAction)signUpTheUser:(id)sender;
 - (IBAction)addPeople:(id)sender;
-- (IBAction)loginWithTwitterAction:(id)sender;
 - (IBAction)loginWithFacebookAction:(id)sender;
 - (IBAction)loginWithgooglePlusAction:(id)sender;
 - (IBAction)loginWithEmailAction:(id)sender;
@@ -55,6 +54,5 @@
 @property (weak, nonatomic) IBOutlet UIButton *goToSetting;
 - (IBAction)goToSetting:(id)sender;
 
--(void)checkTheuserSocialIdWithDescriveServer:(NSDictionary*)inUserDataDic;
 
 @end
