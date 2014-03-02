@@ -152,7 +152,7 @@
 
 + (NSString*)isValidStringFromDatabase:(sqlite3_stmt *)selectStatement forbindingIndex:(NSInteger)index
 {
-   NSString *valueString = [DatabaseModel isStringValid:[NSString stringWithFormat:@"%s", sqlite3_column_text(selectStatement, index)]]?[NSString stringWithFormat:@"%s", sqlite3_column_text(selectStatement, index)]:@"";
+   NSString *valueString = [DatabaseModel isStringValid:[NSString stringWithFormat:@"%s", sqlite3_column_text(selectStatement, index)]]?[NSString stringWithFormat:@"%s", sqlite3_column_text(selectStatement, index)]:nil;
     
     return valueString;
 }

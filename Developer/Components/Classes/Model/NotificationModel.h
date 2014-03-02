@@ -33,5 +33,6 @@ typedef enum {
 @property (nonatomic, assign) BOOL readStatus;
 
 - (id)initWithDictionary:(NSDictionary *)notificationDict;
++ (BOOL)isValidValue:(id)value;
 
 @end
