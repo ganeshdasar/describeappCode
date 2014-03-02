@@ -283,7 +283,7 @@ static WSModelClasses *_sharedInstance;
 }
 
 #pragma mark getTheGenaralFeedService
-//http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/PageValue=0/
+
 - (void)getTheGenaralFeedServices:(NSString *)inUserId
                     andPageValue:(NSString *)inPageValue
 {
