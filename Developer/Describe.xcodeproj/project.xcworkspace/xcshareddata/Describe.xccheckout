@@ -5,36 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>65381437-F475-43A0-A973-7313CAEB156D</string>
+	<string>0014EA12-1462-477C-991A-EFF6C635D31C</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Describe</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>D1F859DC-08DF-47AF-85D6-AEB7C8F50B86</key>
-		<string>https://github.com/Describe/MVPDescribe.git</string>
+		<key>E2897D32-DFF2-4E62-B089-A7FAE040FFA9</key>
+		<string>https://github.com/billionmacros/describeappCode.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Describe.xcodeproj/project.xcworkspace</string>
+	<string>Developer/Describe.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>D1F859DC-08DF-47AF-85D6-AEB7C8F50B86</key>
-		<string>../..</string>
+		<key>E2897D32-DFF2-4E62-B089-A7FAE040FFA9</key>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/Describe/MVPDescribe.git</string>
+	<string>https://github.com/billionmacros/describeappCode.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>D1F859DC-08DF-47AF-85D6-AEB7C8F50B86</string>
+	<string>E2897D32-DFF2-4E62-B089-A7FAE040FFA9</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>D1F859DC-08DF-47AF-85D6-AEB7C8F50B86</string>
+			<string>E2897D32-DFF2-4E62-B089-A7FAE040FFA9</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Developer</string>
+			<string>describeappCode</string>
 		</dict>
 	</array>
 </dict>
