@@ -25,9 +25,9 @@ static DESocialConnectios *_sharedInstance;
     });
     return _sharedInstance;
 }
-// Google Plus
-#pragma mark Get the Friends List from google plus
 
+
+#pragma mark Get the Friends List from google plus
 - (void)googlePlusSignIn
 {
     GPPSignIn *signedIn = [GPPSignIn sharedInstance];
@@ -39,6 +39,8 @@ static DESocialConnectios *_sharedInstance;
     signedIn.actions = [NSArray arrayWithObjects:@"http://schemas.google.com/ListenActivity",nil];
     [signedIn authenticate];
 }
+
+
 - (GTLServicePlus *)plusService
 {
     static GTLServicePlus* service = nil;
@@ -55,6 +57,7 @@ static DESocialConnectios *_sharedInstance;
     return service;
 }
 
+
 - (void)finishedWithAuth: (GTMOAuth2Authentication *)auth
                    error: (NSError *) error
 {
@@ -65,14 +68,14 @@ static DESocialConnectios *_sharedInstance;
         NSLog(@"Error is %@",[error description]);
     } else {
         __block NSArray* peoplesList;
-            GTLPlusPerson *person = [GPPSignIn sharedInstance].googlePlusUser;
+        GTLPlusPerson *person = [GPPSignIn sharedInstance].googlePlusUser;
         [dataDic setObject:person.name forKey:@"name"];
         [dataDic setObject:auth.userEmail forKey:@"email"];
         [dataDic setObject:person.identifier forKey:@"id"];
         [dataDic setObject:person.displayName forKey:@"displayName"];
         [dataDic setObject:person.url forKey:@"url"];
         [dataDic setObject:person.gender forKey:@"gender"];
-            GTLServicePlus* plusService = [[GTLServicePlus alloc] init];
+        GTLServicePlus* plusService = [[GTLServicePlus alloc] init];
         plusService.retryEnabled = YES;
         [plusService setAuthorizer:[GPPSignIn sharedInstance].authentication];
         GTLQueryPlus *query =
@@ -88,23 +91,21 @@ static DESocialConnectios *_sharedInstance;
                     } else {
                         peoplesList = peopleFeed.items;
                     }
-                                  for (GTLPlusPerson *person  in peoplesList) {
-                       // NSLog(@"Person name is %@", person.displayName);
-                        //NSLog(@"Person ID is %@", person.identifier);
-                        //NSLog(@"Person Image is %@", person.image);
+                    for (GTLPlusPerson *person  in peoplesList) {
+                        
                         ModelData * data = [[ModelData alloc]init];
                         data.userId = person.identifier;
                         [self.googlePlusFriendsListArry addObject:data];
                     }
                     if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
                         [self.delegate googlePlusResponce:dataDic andFriendsList:self.googlePlusFriendsListArry];
-                                        }
-                                }];
-        }
+                    }
+                }];
+    }
 }
 
-#pragma mark facebook signIn
 
+#pragma mark facebook signIn
 - (void)facebookSignIn
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -114,29 +115,29 @@ static DESocialConnectios *_sharedInstance;
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
         || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
-
-            // Close the session and remove the access token from the cache
+        
+        // Close the session and remove the access token from the cache
         // The session state handler (in the app delegate) will be called automatically
         
         [FBSession.activeSession closeAndClearTokenInformation];
-            // If the session state is not any of the two "open" states when the button is clicked
+        // If the session state is not any of the two "open" states when the button is clicked
     } else {
         // Open a session showing the user the login UI
         // You must ALWAYS ask for basic_info permissions when opening a session
-        //,@"friends_birthday"
         [FBSession openActiveSessionWithReadPermissions:@[@"basic_info",@"user_photos",@"read_friendlists",@"email",@"user_birthday",@"friends_about_me"]
                                            allowLoginUI:YES
                                       completionHandler:
          ^(FBSession *session, FBSessionState state, NSError *error) {
-                      // Retrieve the app delegate
+             // Retrieve the app delegate
              [self insertTheFacebookAccessTokenData:session.accessTokenData.accessToken andExpirationData:session.accessTokenData.expirationDate];
              DESAppDelegate* appdelegate =(DESAppDelegate*) [UIApplication sharedApplication].delegate;
              // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
              [appdelegate sessionStateChanged:session state:state error:error];
-                  }];
+         }];
     }
 
 }
+
 
 - (void)getUserDetail
 {
@@ -176,17 +177,22 @@ static DESocialConnectios *_sharedInstance;
                           }];
 }
 
+
 -(void)insertTheFacebookAccessTokenData:(NSString*)inAccessToken andExpirationData:(NSDate*)inExpirationDate
 {
     [[NSUserDefaults standardUserDefaults]setObject:inAccessToken forKey:FACEBOOKACCESSTOKENKEY];
     [[NSUserDefaults standardUserDefaults]setObject:inExpirationDate forKey:FACEBOOKEXPIRATIONDATE];
 
 }
+
+
 -(void)removeTheAccessTokenInUserDefaults
 {
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKEXPIRATIONDATE];
 
 }
+
+
 @end
-/*CAALlCDsqHn0BALu57o8cHc89Y627KMCIpSUzzrQve4hBbUernCAeMinmArO8zZAZCbH9tUQfKNxjZCE9sIaVbZChocBvcjzZBibD5rvmHI4ZB6PwKtqJYni3hB741SJatPSUiizwhyWfVNyZClrQpNQQVUEpkOwwTBijbt6r4fZCifLA0HQdXTU70lIrhOEChnaB2xPhtz03bw0LAC1xuyjD  eepire date2014-05-01 06:21:38 +0000*/
+

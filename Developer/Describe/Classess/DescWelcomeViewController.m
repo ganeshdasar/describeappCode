@@ -31,15 +31,13 @@
 @synthesize socialUserDataDic;
 @synthesize googlePlusFriendsListArry;
 
-
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
 }
 
 
 #pragma mark Life Cycles -
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+-  (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -48,7 +46,8 @@
     return self;
 }
 
-- (void)viewDidLoad
+
+-  (void)viewDidLoad
 {
     isClicked = NO;
     [self setNeedsStatusBarAppearanceUpdate];
@@ -68,70 +67,64 @@
     {
         self.welcomeScrennImage.frame = FRAME;
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_3.5in.png"];
-        
-        
         //Iphone  3.5 inch
     }
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    // Do any additional setup after loading the view from its nib.
 }
 
 
-- (void)didReceiveMemoryWarning
+-  (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidAppear:(BOOL)animated
+
+-  (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [HUD hide:YES];
-    
-    
 }
 
--(void)viewWillAppear:(BOOL)animated
+
+- (void)viewWillAppear:(BOOL)animated
 {
-    
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor = [UIColor headerColor];
-    
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_topbar.png"] forBarMetrics:UIBarMetricsDefault];
-    
     self.navigationController.navigationController.navigationBar.translucent = NO;
-    
 }
 
 #pragma mark Event Actions -
 
-- (IBAction)basicInfoAction:(id)sender
+-  (IBAction)basicInfoAction:(id)sender
 {
-    
     DescBasicinfoViewController * basic = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:Nil];
     [self.navigationController pushViewController:basic animated:YES];
     return;
-    
     DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:Nil];
     [self.navigationController pushViewController:addPeople animated:YES];
-    
 }
 
-- (IBAction)SigninClicked:(id)sender
+
+-  (IBAction)SigninClicked:(id)sender
 {
-    
     DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
     [self.navigationController pushViewController:signin animated:NO];
 }
--(void)buttonHidderAction:(BOOL)inHidden
+
+
+- (void)buttonHidderAction:(BOOL)inHidden
 {
     self.twitterBtn.hidden = inHidden;
     self.facebookBtn.hidden = inHidden;
     self.googlePlusBtn.hidden = inHidden;
     self.emailBtn.hidden = inHidden;
 }
-- (IBAction)signUpTheUser:(id)sender
+
+
+-  (IBAction)signUpTheUser:(id)sender
 {
     if (!isClicked) {
         self.twitterBtn.frame = BUTTONFRAME;
@@ -150,36 +143,35 @@
         [UIView commitAnimations];
         isClicked = YES;
     }
-    
 }
 
-- (IBAction)addPeople:(id)sender
+
+-  (IBAction)addPeople:(id)sender
 {
     DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:Nil];
     [self.navigationController pushViewController:addPeople animated:YES];
 }
 
-- (IBAction)goToSetting:(id)sender
+
+-  (IBAction)goToSetting:(id)sender
 {
     DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
     [self.navigationController pushViewController:setting animated:YES];
 }
 
-#pragma mark Social Network integration
 
 #pragma mark FacebookIntegration
-
 -  (IBAction)loginWithFacebookAction:(id)sender
 {
     [self showLoadView];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
     [[DESocialConnectios sharedInstance] facebookSignIn];
     [DESocialConnectios sharedInstance].delegate =self;
-    
 }
 
-#pragma mark socialConnection Delegate methods
 
+
+#pragma mark socialConnection Delegate methods
 -  (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
 {
 
@@ -190,52 +182,39 @@
     if (delegate.isFacebook) {
         self.facebookFriendsListArray = inFriendsList;
         [dataClass checkTheSocialIDwithDescriveServerCheckType:@"FB" andCheckValue:[responseDict valueForKey:@"id"]];
-        
     }else if (delegate.isGooglePlus){
         self.googlePlusFriendsListArry = inFriendsList;
         [dataClass checkTheSocialIDwithDescriveServerCheckType:@"GPLUS" andCheckValue:[responseDict valueForKey:@"id"]];
-        
     }
-    
 }
+
 
 - (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
 {
-    
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
-    
     if ([[[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
         [HUD hide:YES];
-        
         DescSignupViewController * signUpView = [[DescSignupViewController alloc]initWithNibName:@"DescSignupViewController" bundle:Nil];
-        
         if (delegate.isFacebook) {
             signUpView.userDataDic =  self.socialUserDataDic;
             signUpView.socialUserFriendsList = self.facebookFriendsListArray;
             [self.navigationController pushViewController:signUpView animated:NO];
-            
         }else if (delegate.isGooglePlus){
             signUpView.userDataDic =  self.socialUserDataDic;
             signUpView.socialUserFriendsList = self.googlePlusFriendsListArry;
             [self.navigationController pushViewController:signUpView animated:NO];
         }
-        
     }else{
         if (delegate.isFacebook) {
             [self showAlert:@"Describe" message:@"Sorry, this Facebook account is already associated with another Describe Identity" tag:100];
-            
         }else if (delegate.isGooglePlus){
             [self showAlert:@"Describe" message:@"Sorry, this Google+ account is already associated with another Describe Identity" tag:100];
-            
         }
-        
     }
-    
-    
 }
 
-#pragma mark Alerview And delegate methods
 
+#pragma mark Alerview And delegate methods
 -(void)showAlert:(NSString*)title message:(NSString*)inMessage tag:(int)InAlertTag
 {
     UIAlertView * alert = [[UIAlertView alloc]initWithTitle:title message:inMessage delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
@@ -243,11 +222,13 @@
     [alert show];
 }
 
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     DescSigninViewController * signInView = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
     [self.navigationController pushViewController:signInView animated:NO];
 }
+
 
 #pragma mark googlePlusintegration
 - (IBAction)loginWithgooglePlusAction:(id)sender
@@ -256,16 +237,17 @@
     [[DESocialConnectios sharedInstance] googlePlusSignIn];
     [DESocialConnectios sharedInstance].delegate = self;
     [self showLoadView];
-    
 }
 
-- (IBAction)loginWithEmailAction:(id)sender
+
+-  (IBAction)loginWithEmailAction:(id)sender
 {
     DescSignupViewController * signUpView = [[DescSignupViewController alloc]initWithNibName:@"DescSignupViewController" bundle:Nil];
     [self.navigationController pushViewController:signUpView animated:NO];
 }
 
--(void)showLoadView
+
+- (void)showLoadView
 {
     HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:HUD];
@@ -274,21 +256,18 @@
     [HUD show:YES];
 }
 
-#pragma mark ActionSheet Delegate Methods
 
+#pragma mark ActionSheet Delegate Methods
 -  (void)didDisconnectWithError:(NSError *)error
 {
     if (error) {
-        NSLog(@"Received error %@", error);
     } else {
-        
     }
 }
 
-- (void)chekInterConnectionMessage
+
+-  (void)chekInterConnectionMessage
 {
     ///Something's wrong with the network, attempting to reconnect.
 }
-
-
 @end

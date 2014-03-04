@@ -24,9 +24,13 @@
 
 @implementation DescResetpwdViewController
 @synthesize RPjsonArray,RPresponseData;
--(UIStatusBarStyle)preferredStatusBarStyle{
+
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
     return UIStatusBarStyleLightContent;
 }
+
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -35,6 +39,7 @@
     }
     return self;
 }
+
 
 - (void)viewDidLoad
 {
@@ -46,16 +51,21 @@
     [self intilizTextFieldColors];
     // Do any additional setup after loading the view from its nib.
 }
--(void)setBackGroundimageView{
+
+
+- (void)setBackGroundimageView
+{
     if (isiPhone5)
     {
         self.backGroundImageView.image = [UIImage imageNamed:@"bg_std_4in.png"];
     }else{
         self.backGroundImageView.image = [UIImage imageNamed:@"bg_std_3.5in.png"];
-        }
+    }
 }
+
+
 #pragma  Design Header view
--(void)designHeaderView
+-  (void)designHeaderView
 {
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
@@ -65,19 +75,27 @@
     [nextButton addTarget:self action:@selector(getThePaasword:) forControlEvents:UIControlEventTouchUpInside];
     [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton]];
 }
--(void)intilizTextFieldColors{
+
+
+- (void)intilizTextFieldColors
+{
    self.txtemail.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: [UIColor textPlaceholderColor]}];
     [self.txtemail setTextColor:[UIColor textFieldTextColor]];
-   
 }
--(void)goToBack:(id)sender{
+
+
+- (void)goToBack:(id)sender
+{
     [self.navigationController popViewControllerAnimated:YES];
 }
 -(void)backClicked:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
--(void)getThePaasword:(id)inSender{
+
+
+- (void)getThePaasword:(id)inSender
+{
    WSModelClasses * data = [WSModelClasses sharedHandler];
     data.delegate  =self;
     [data resetPassword:self.txtemail.text];
@@ -86,8 +104,10 @@
     HUD.labelText = @"Loading";
     [HUD show:YES];
 }
+
+
 #pragma mark receive passwod delegate method
-- (void)resetPasswordStatus:(NSDictionary *)responseDict error:(NSError *)error{
+-  (void)resetPasswordStatus:(NSDictionary *)responseDict error:(NSError *)error{
     [HUD hide:YES];
     NSString * message = [[responseDict valueForKeyPath:@"DataTable.ReplyData.Msg"]objectAtIndex:0];
     if ([message isEqualToString:@"Your Email ID is not registered with us."]) {
@@ -105,11 +125,11 @@
     switch (alertView.tag) {
         case 120:
             [self.txtemail becomeFirstResponder];
-        break;
+            break;
         case 121:
             [self.navigationController popViewControllerAnimated:YES];
-        break;
-                default:
+            break;
+        default:
             break;
     }
 
@@ -123,7 +143,7 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if ([self validateEmailWithString:self.txtemail.text]) {
-            [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton,nextButton]];
+        [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton,nextButton]];
         [textField resignFirstResponder];
     }else{
         UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Validation" message:@" Please enter a valid email address." delegate:self cancelButtonTitle:@"oK" otherButtonTitles:Nil, nil];
@@ -132,6 +152,7 @@
     }
     return YES;
 }
+
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
@@ -142,12 +163,17 @@
         [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton]];
     }
 }
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string; {
+
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
+{
     if ([string isEqualToString:@""]) {
     [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton]];
     }
     return YES;
 }
+
+
 - (BOOL) validateEmailWithString:(NSString *)emailStr
 {
     NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{0,5}";

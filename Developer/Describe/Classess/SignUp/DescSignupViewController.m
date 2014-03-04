@@ -48,60 +48,59 @@
     return self;
 }
 
-- (void)viewDidLoad
+
+-  (void)viewDidLoad
 {
     [self setNeedsStatusBarAppearanceUpdate];
-    
     [self.userNameTxt becomeFirstResponder];
     [super viewDidLoad];
     [self setBackGroundimageView];
     [self designHeaderView];
     [self intilizTextFieldColors];
     [self setTheUserDataInTextFields];
-//    NSLog(@"user data dic %@",self.userDataDic);
     // Do any additional setup after loading the view from its nib.
 }
--(void)setBackGroundimageView{
-    
+
+
+- (void)setBackGroundimageView
+{
     if (isiPhone5)
     {
         self.backGroundImageView.image = [UIImage imageNamed:@"bg_std_4in.png"];
     }else{
         self.backGroundImageView.image = [UIImage imageNamed:@"bg_std_3.5in.png"];
-        
     }
 }
 
-#pragma mark Design HeadeView
 
--(void)designHeaderView
+#pragma mark Design HeadeView
+- (void)designHeaderView
 {
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(goToBack:) forControlEvents:UIControlEventTouchUpInside];
-
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
     [nextButton addTarget:self action:@selector(goToBasicInfoView:) forControlEvents:UIControlEventTouchUpInside];
-
     [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton]];
-    
 }
--(void)setTheUserDataInTextFields{
-    
+
+
+- (void)setTheUserDataInTextFields
+{
     DESAppDelegate * appDelegate = (DESAppDelegate*)[UIApplication sharedApplication].delegate;
     if (appDelegate.isFacebook == YES) {
         self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
         self.nameTxt.text = [NSString stringWithFormat:@"%@ %@",[self.userDataDic valueForKey:@"first_name"],[self.userDataDic valueForKey:@"last_name"]];
-
     }else if (appDelegate.isGooglePlus == YES){
         self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
         self.nameTxt.text = [NSString stringWithFormat:@"%@ ",[self.userDataDic valueForKey:@"displayName"]];
-        
     }
 }
--(void)intilizTextFieldColors{
-    
+
+
+- (void)intilizTextFieldColors
+{
     self.userNameTxt.tag = USERNAME_TEXT_FIELD_TAG;
     self.userNameTxt.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"username" attributes:@{NSForegroundColorAttributeName: [UIColor textPlaceholderColor]}];
     [self.userNameTxt setTextColor:[UIColor textFieldTextColor]];
@@ -117,23 +116,26 @@
     self.nameTxt.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"name" attributes:@{NSForegroundColorAttributeName: [UIColor textPlaceholderColor]}];
     [self.nameTxt setTextColor:[UIColor textFieldTextColor]];
     self.nameTxt.tag= NAME_TEXT_FIELD_TAG;
-
- 
 }
--(void)goToBack:(id)sender{
+
+- (void)goToBack:(id)sender
+{
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
--(void)backClicked:(id)sender
+
+
+- (void)backClicked:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
-    
 }
--(void)goToBasicInfoView:(id)sender {
+
+
+- (void)goToBasicInfoView:(id)sender
+{
     [userNameTxt resignFirstResponder];
     [pwdTxt resignFirstResponder];
     [emailTxt resignFirstResponder];
     [nameTxt resignFirstResponder];
-    
     if (![self userNameTextFieldValidation])
         return;
     if (![self passwordTextFiledValidataion])
@@ -142,12 +144,12 @@
         return;
     if (![self fullNameTextFiledValidataion])
         return;
-    
     [self sendTheparametersToServer];
-    
 }
 
--(void)sendTheparametersToServer{
+
+- (void)sendTheparametersToServer
+{
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate  =self;
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
@@ -161,17 +163,16 @@
         outhID =[self.userDataDic valueForKey:@"id"];
     }
     [modelClass postSignUpWithUsername:userNameTxt.text password:pwdTxt.text email:emailTxt.text fullName:nameTxt.text OAuthType:outhType OAuthID:outhID];//FB,GP,
-    
     HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:HUD];
     HUD.delegate = self;
     HUD.labelText = @"Loading";
     [HUD show:YES];
-    
 }
+
 #pragma  mark TextField Validation
--(BOOL)emailTextFieldValidataion{
-    
+- (BOOL)emailTextFieldValidataion
+{
     if([emailTxt.text length]==0)
 	{
         [self showAlert:@"Validation" message:@"Please enter email"];
@@ -183,33 +184,37 @@
     return YES;
 }
 
--(BOOL)userNameTextFieldValidation{
-    
-     if(([userNameTxt.text length]==0 ))
+
+- (BOOL)userNameTextFieldValidation
+{
+    if(([userNameTxt.text length]==0 ))
     {
         [self showAlert:@"Validation" message:@"Please enter your username."];
-            return NO;
+        return NO;
 	}else if ([self.userNameTxt.text length]<6){
-        
-         [self showAlert:@"Validation" message:@"Username must have at least 6 characters. You may only use alphabets, numbers and _ in your username."];
+        [self showAlert:@"Validation" message:@"Username must have at least 6 characters. You may only use alphabets, numbers and _ in your username."];
         return NO;
     }
     return YES;
 }
--(BOOL)passwordTextFiledValidataion{
-    
+
+
+- (BOOL)passwordTextFiledValidataion
+{
     if([pwdTxt.text length]==0)
 	{
         [self showAlert:@"Validation" message:@"Your password must have at least 8 characters. "];
         return NO;
 	}else if ([pwdTxt.text length]<8){
         [self showAlert:@"Validation" message:@"Your password must have at least 8 characters."];
-          return NO;
+        return NO;
     }
     return YES;
-    
 }
--(BOOL)fullNameTextFiledValidataion{
+
+
+-  (BOOL)fullNameTextFiledValidataion
+{
     if([nameTxt.text length]==0)
 	{
         [self showAlert:@"Validation" message:@"Please enter your name"];
@@ -221,99 +226,88 @@
     return YES;
 }
 
+
 #pragma mark AlertView Method
--(void)showAlert:(NSString *)inTitle message:(NSString*)inMessage{
+- (void)showAlert:(NSString *)inTitle message:(NSString*)inMessage
+{
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:inTitle message:inMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
     [alert show];
 }
-#pragma mark ServerResponce Delegate Method
-- (void)signUpStatus:(NSDictionary *)responseDict error:(NSError *)error{
-    
-    //  [self sendTheSocialFriensListToDescribeServe];
-    NSLog(@"responce dic %@ error %@",responseDict,error);
-    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
 
+
+#pragma mark ServerResponce Delegate Method
+- (void)signUpStatus:(NSDictionary *)responseDict error:(NSError *)error
+{
+    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
     NSString * message = [[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
-    //Testing
     if ([message isEqualToString:@"TRUE"]) {
-        //Testing
-        
     [[NSUserDefaults standardUserDefaults]setValue:[[responseDict valueForKeyPath:@"DataTable.UserData.UserUID"]objectAtIndex:0] forKey:@"USERID"];
-        
         if (delegate.isFacebook) {
             [self sendTheSocialFriensListToDescribeServer];
-
         }else if (delegate.isGooglePlus){
             [self sendTheSocialFriensListToDescribeServer];
-
         }else{
-            
             [self goToBasicInfoScreen];
             [HUD hide:YES];
-
         }
-        
     }else{
         [HUD hide:YES];
         [self showAlert:@"AuthenticationFail" message:message];
     }
 }
 
+
 #pragma mark SendTheuserFriensLsitToServer
--(void)sendTheSocialFriensListToDescribeServer{
-    
+- (void)sendTheSocialFriensListToDescribeServer
+{
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate  =self;
-    
     if (delegate.isFacebook) {
-        //Testing
          [modelClass sendTheSocialFriensToServeUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ]    gateWay: @"fb"  IDs:[DesPeopleSortingComponent appendingTheFriendsIDsWithComma:self.socialUserFriendsList  ]];
-        
        // [modelClass sendTheSocialFriensToServeUserUID:@"1"   gateWay: @"FB"  IDs:[DesPeopleSortingComponent appendingTheFriendsIDsWithComma:self.socialUserFriendsList  ]];
     }
     else if (delegate.isGooglePlus){
             [modelClass sendTheSocialFriensToServeUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ]    gateWay: @"gplus"  IDs:[DesPeopleSortingComponent appendingTheFriendsIDsWithComma:self.socialUserFriendsList] ];
-        
     }
-    
 }
-//Responce
--(void)getThePeopleListFromServer:(NSDictionary *) responceDict error:(NSError*)error;{
-    
+
+
+- (void)getThePeopleListFromServer:(NSDictionary *) responceDict error:(NSError*)error;
+{
     [self goToBasicInfoScreen];
-    
     [DesPeopleSortingComponent facebookFriendsListFiltring:Nil andLocalfacebookFriendsList:self.socialUserFriendsList ];
-    
     [HUD hide:YES];
-    
 }
--(void)goToBasicInfoScreen{
-    
+
+
+- (void)goToBasicInfoScreen
+{
     DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
     [self.navigationController pushViewController:basicInfo animated:NO];
 }
 
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
--(BOOL)checkTheTextFileds{
+
+- (BOOL)checkTheTextFileds
+{
     if (isUserNameFilled == YES && isPwsFilled == YES && isEmailFilled == YES && isNameFilled == YES) {
         [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton,nextButton]];
         return YES;
     }else{
         [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton]];
-
     }
     return NO;
 }
-#pragma mark Textfield Delegate Methods
 
+
+#pragma mark Textfield Delegate Methods
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-
     [textField resignFirstResponder];
     if (textField.tag == USERNAME_TEXT_FIELD_TAG){
         if ([self userNameTextFieldValidation]) {
@@ -327,7 +321,6 @@
             return NO;
         }
     }
-    
     else if (textField.tag == PASSWORD_TEXT_FIELD_TAG){
         if ([self passwordTextFiledValidataion]) {
             isPwsFilled = YES;
@@ -363,20 +356,19 @@
             isNameFilled = NO;
             return NO;
         }
-        
     }
-    
-    
-  
     return YES;
 }
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+
+
+-  (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
       return YES;
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField{
-    
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
     if ([self.userNameTxt.text length]!=0 &&! [self.userNameTxt.text length]<6) {
         isUserNameFilled =YES;
     }
@@ -394,8 +386,10 @@
 	}
     [self checkTheTextFileds];
 }
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;{
-    
+
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
+{
     if ([string isEqualToString:@""]) {
         return  YES;
     }
@@ -409,34 +403,31 @@
             }else{
                 return YES;
             }
-           
         }else if (textField.tag == PASSWORD_TEXT_FIELD_TAG){
-            
             return YES;
-            
         }else if (textField.tag == EMAIL_TEXT_FIELD_TAG){
             return YES;
-
         }else if (textField.tag == NAME_TEXT_FIELD_TAG){
             if ([self.nameTxt.text length]==30) {
                 return NO;
             }else{
                 return YES;
             }
-            
         }
     }
-       return YES;
-    
-}// return NO to not change text
+    return YES;
+}
+
+
 - (BOOL) validateEmailWithString:(NSString *)emailStr
 {
     NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{0,5}";
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:emailStr];
-    
 }
-- (void)textFieldDidEndEditing:(UITextField *)textField
+
+
+-  (void)textFieldDidEndEditing:(UITextField *)textField
 {
 
 }

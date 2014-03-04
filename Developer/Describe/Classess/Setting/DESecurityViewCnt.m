@@ -16,7 +16,6 @@
     NSArray * securityNamesArray;
 
 }
-
 @end
 
 @implementation DESecurityViewCnt
@@ -51,22 +50,31 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
--(void)createHeadderView{
+
+
+-(void)createHeadderView
+{
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     [_headerView designHeaderViewWithTitle:@"Settings" andWithButtons:@[backButton]];
 }
--(void)back:(UIButton*)inButton{
+
+-(void)back:(UIButton*)inButton
+{
     [self.navigationController popViewControllerAnimated:YES];
     
     
 }
 
--(void)intilizeArray{
+
+-(void)intilizeArray
+{
     securityNamesArray = [[NSArray alloc]initWithObjects:@"Email",@"Password", nil];
     
 }
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -74,33 +82,28 @@
 }
 
 
-
-
 #pragma mark tablewview delegate and datasource methods
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
+
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return securityNamesArray.count;
 }
+
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     NSString *identifier = [NSString stringWithFormat:@"identifier_%d_%ld",indexPath.section, (long)indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    
-    if(cell == nil)
-    {
+    if(cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         cell.selectedBackgroundView = nil;
-        
-        
-    }
+        }
     UITextField * name = [self createDetailTextField:cell];
     name.tag = indexPath.row;
     name.textColor = [UIColor textFieldTextColor];
@@ -114,26 +117,35 @@
     return cell;
 }
 
--(UITextField*)createDetailTextField:(UITableViewCell*)inTableViewCell{
+
+-(UITextField*)createDetailTextField:(UITableViewCell*)inTableViewCell
+{
     
     UITextField * textField = [[UITextField alloc]initWithFrame:CGRectMake(100, 0, 220, 40)];
     textField.delegate = self;
     return textField;
 
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
     return 15;
 }
 
-#pragma textFieldDelegate Methods
 
+#pragma textFieldDelegate Methods
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;{
-    if ([string isEqualToString:@""]) {
+    if ([string isEqualToString:@""])
+    {
         return  YES;
     }
     return YES;
 }
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
+
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
     if (textField.tag == Email_TAG) {
         if (![self validateEmailWithString:textField.text]) {
             UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Validation" message:@" Please enter a valid email address." delegate:self cancelButtonTitle:@"oK" otherButtonTitles:Nil, nil];
@@ -149,14 +161,18 @@
     [textField resignFirstResponder];
     return YES;
 }
+
+
 - (BOOL) validateEmailWithString:(NSString *)emailStr
 {
     NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{0,5}";
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:emailStr];
 }
--(BOOL)passwordTextFiledValidataion:(NSString*)inString{
-    
+
+
+-(BOOL)passwordTextFiledValidataion:(NSString*)inString
+{
     if([inString length]==0)
 	{
     [self showAlert:@"Validation" message:@"Your password must have at least 8 characters. "];
@@ -168,7 +184,10 @@
     return YES;
     
 }
--(void)showAlert:(NSString *)inTitle message:(NSString*)inMessage{
+
+
+-(void)showAlert:(NSString *)inTitle message:(NSString*)inMessage
+{
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:inTitle message:inMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
     [alert show];
 }
