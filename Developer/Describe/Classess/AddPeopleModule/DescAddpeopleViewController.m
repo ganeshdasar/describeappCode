@@ -91,6 +91,7 @@
     weRecommendBtn = [[UIButton alloc] init];
     [weRecommendBtn setTitle: @"We recommend" forState: UIControlStateNormal];
     [weRecommendBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
+    weRecommendBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [weRecommendBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
     [weRecommendBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_1.png"] forState:UIControlStateNormal];
     weRecommendBtn.selected = YES;
@@ -99,6 +100,7 @@
     invitationsBtn = [[UIButton alloc] init];
     [invitationsBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_2.png"] forState:UIControlStateNormal];
     [invitationsBtn setTitle: @"Invitations" forState: UIControlStateNormal];
+    invitationsBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [invitationsBtn addTarget:self action:@selector(getTheInvitationsDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
     [invitationsBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [invitationsBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
@@ -183,13 +185,56 @@
 #pragma mark Design PeopleListView
 -(void)designPeopleListView{
     
+    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID AndRange:@"0"];
+    [WSModelClasses sharedHandler].delegate = self;
+}
+
+
+- (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
+{
+    WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
+    if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    switch (serviceType) {
+        case kWebserviesType_addPeople:
+        {
+            [self parsingTheData:responseDict];
+            break;
+        }
+            
+        default:
+            break;
+    }
+
+    
+}
+
+-(void)parsingTheData:(NSDictionary*)responceDict
+{
+    NSMutableArray  * peopleArray = [[NSMutableArray alloc]init];
+    
+    for (NSMutableDictionary * dic in [responceDict valueForKey:@"DataTable"]) {
+        SearchPeopleData * data =  [[SearchPeopleData alloc]init];
+        data.followingStatus = [dic valueForKeyPath:@"DescribeSuggestedUsers.FollowingStatus"];
+        data.profileUserEmail = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserEmail"];
+        data.profileUserFullName = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserFullName"];
+        data.profileUserProfilePicture = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserProfilePicture"];
+        data.profileUserUID = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserUID"];
+        data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
+        [peopleArray addObject:data];
+    }
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     
-    _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-108) andPeopleList:nil];
-     [self.view addSubview:_peoplelistView];
+    _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-108) andPeopleList:(NSArray*)peopleArray];
+    [self.view addSubview:_peoplelistView];
+
     
 }
+
 -(void)addSearchBarView{
     isSearching = YES;
     [_searchBarComponent designSerachBar];

@@ -156,10 +156,10 @@
     NSString * outhType =@"";
     NSString * outhID = @"";
     if (delegate.isFacebook) {
-        outhType     =@"FB";
+        outhType     =@"fb";
         outhID =[self.userDataDic valueForKey:@"id"];
     }else if (delegate.isGooglePlus){
-        outhType =@"GP";
+        outhType =@"gplus";
         outhID =[self.userDataDic valueForKey:@"id"];
     }
     [modelClass postSignUpWithUsername:userNameTxt.text password:pwdTxt.text email:emailTxt.text fullName:nameTxt.text OAuthType:outhType OAuthID:outhID];//FB,GP,
@@ -238,37 +238,16 @@
 #pragma mark ServerResponce Delegate Method
 - (void)signUpStatus:(NSDictionary *)responseDict error:(NSError *)error
 {
-    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+
     NSString * message = [[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
     if ([message isEqualToString:@"TRUE"]) {
+        
     [[NSUserDefaults standardUserDefaults]setValue:[[responseDict valueForKeyPath:@"DataTable.UserData.UserUID"]objectAtIndex:0] forKey:@"USERID"];
-        if (delegate.isFacebook) {
-            [self sendTheSocialFriensListToDescribeServer];
-        }else if (delegate.isGooglePlus){
-            [self sendTheSocialFriensListToDescribeServer];
-        }else{
             [self goToBasicInfoScreen];
             [HUD hide:YES];
-        }
     }else{
         [HUD hide:YES];
         [self showAlert:@"AuthenticationFail" message:message];
-    }
-}
-
-
-#pragma mark SendTheuserFriensLsitToServer
-- (void)sendTheSocialFriensListToDescribeServer
-{
-    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
-    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
-    modelClass.delegate  =self;
-    if (delegate.isFacebook) {
-         [modelClass sendTheSocialFriensToServeUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ]    gateWay: @"fb"  IDs:[DesPeopleSortingComponent appendingTheFriendsIDsWithComma:self.socialUserFriendsList  ]];
-       // [modelClass sendTheSocialFriensToServeUserUID:@"1"   gateWay: @"FB"  IDs:[DesPeopleSortingComponent appendingTheFriendsIDsWithComma:self.socialUserFriendsList  ]];
-    }
-    else if (delegate.isGooglePlus){
-            [modelClass sendTheSocialFriensToServeUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ]    gateWay: @"gplus"  IDs:[DesPeopleSortingComponent appendingTheFriendsIDsWithComma:self.socialUserFriendsList] ];
     }
 }
 

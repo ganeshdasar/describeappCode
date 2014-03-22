@@ -47,6 +47,7 @@
 #define USER_MODAL_KEY_FOLLOWERCOUNT                    @"UserFollowerCount"
 #define USER_MODAL_KEY_FOLLOWINGCOUNT                   @"UserFollowingCount"
 #define USER_MODAL_KEY_FULLNAME                         @"UserFullName"
+#define USER_MODAL_KEY_EMAIL                                 @"UserEmail"
 #define USER_MODAL_KEY_GENDER                           @"UserGender"
 #define USER_MODAL_KEY_LIKESCOUNT                       @"UserLikesCount"
 #define USER_MODAL_KEY_POSTCOUNT                        @"UserPostCount"
@@ -57,9 +58,12 @@
 #define USER_MODAL_KEY_UID                              @"UserUID"
 #define USER_MODAL_KEY_USERNAME                         @"Username"
 
-#define FACEBOOKACCESSTOKENKEY @"facebookTokenKey"
-#define FACEBOOKEXPIRATIONDATE @"facebookexpirationDate"
-
+#define FACEBOOKACCESSTOKENKEY                @"facebookTokenKey"
+#define FACEBOOKEXPIRATIONDATE            @"facebookexpirationDate"
+#define GOOGLEPLUESACCESSTOKEN          @"googlePlusaccesstokenKey"
+#define GOOGLEPLUSEXPIRATIONDATE      @"googleplusExpirationDate"
+#define FACEBOK_ID                                      @"facebokk_id"
+#define Google_plus_ID                                    @"googleplus_id"
 // Notification Model class key
 #define NOTIFICATION_MODEL_KEY_NOTIFICATIONID           @"NotificationId"
 #define NOTIFICATION_MODEL_KEY_POSTUID                  @"PostUID"

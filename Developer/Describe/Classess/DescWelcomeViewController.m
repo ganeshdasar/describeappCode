@@ -17,6 +17,7 @@
 #import "DUserData.h"
 #import "Constant.h"
 #import "DESocialConnectios.h"
+#import "UsersModel.h"
 #define FRAME CGRectMake(0, 0, 320, 480);
 #define BUTTONFRAME CGRectMake(121, 363, 70, 26);
 
@@ -59,7 +60,6 @@
         // this is iphone 4 inch
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_4in.png"];
         self.facebookBtn.frame = BUTTONFRAME;
-        self.twitterBtn.frame = BUTTONFRAME;
         self.googlePlusBtn.frame = BUTTONFRAME;
         self.emailBtn.frame = BUTTONFRAME;
     }
@@ -96,18 +96,8 @@
     self.navigationController.navigationController.navigationBar.translucent = NO;
 }
 
+
 #pragma mark Event Actions -
-
--  (IBAction)basicInfoAction:(id)sender
-{
-    DescBasicinfoViewController * basic = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:Nil];
-    [self.navigationController pushViewController:basic animated:YES];
-    return;
-    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:Nil];
-    [self.navigationController pushViewController:addPeople animated:YES];
-}
-
-
 -  (IBAction)SigninClicked:(id)sender
 {
     DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
@@ -117,7 +107,6 @@
 
 - (void)buttonHidderAction:(BOOL)inHidden
 {
-    self.twitterBtn.hidden = inHidden;
     self.facebookBtn.hidden = inHidden;
     self.googlePlusBtn.hidden = inHidden;
     self.emailBtn.hidden = inHidden;
@@ -127,14 +116,12 @@
 -  (IBAction)signUpTheUser:(id)sender
 {
     if (!isClicked) {
-        self.twitterBtn.frame = BUTTONFRAME;
         self.facebookBtn.frame = BUTTONFRAME;
         self.googlePlusBtn.frame = BUTTONFRAME;
         self.emailBtn.frame = BUTTONFRAME;
         [self buttonHidderAction:NO];
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration: 1.0];
-        self.twitterBtn.frame = CGRectMake(125, 388, 70, 26);
         self.facebookBtn.frame =CGRectMake(125, 316, 70, 26);
         self.googlePlusBtn.frame = CGRectMake(125, 352, 70, 26);;
         self.emailBtn.frame = CGRectMake(125, 424, 70, 26);
@@ -143,20 +130,6 @@
         [UIView commitAnimations];
         isClicked = YES;
     }
-}
-
-
--  (IBAction)addPeople:(id)sender
-{
-    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:Nil];
-    [self.navigationController pushViewController:addPeople animated:YES];
-}
-
-
--  (IBAction)goToSetting:(id)sender
-{
-    DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
-    [self.navigationController pushViewController:setting animated:YES];
 }
 
 
@@ -170,7 +143,6 @@
 }
 
 
-
 #pragma mark socialConnection Delegate methods
 -  (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
 {
@@ -180,15 +152,52 @@
     self.socialUserDataDic = responseDict;
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
     if (delegate.isFacebook) {
-        self.facebookFriendsListArray = inFriendsList;
-        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"FB" andCheckValue:[responseDict valueForKey:@"id"]];
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"fb" andCheckValue:[responseDict valueForKey:@"id"]];
     }else if (delegate.isGooglePlus){
-        self.googlePlusFriendsListArry = inFriendsList;
-        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"GPLUS" andCheckValue:[responseDict valueForKey:@"id"]];
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"gplus" andCheckValue:[responseDict valueForKey:@"id"]];
     }
 }
 
 
+-(void)saveTheUserDetailsOfFacebook:(NSDictionary*)inDic
+{
+    NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
+    [dic setValue: [inDic valueForKey:@"email"] forKey:USER_MODAL_KEY_EMAIL];
+    [dic setValue: [inDic valueForKey:@"first_name"] forKey:USER_MODAL_KEY_USERNAME];
+    [dic setValue: [inDic valueForKey:@"last_name"] forKey:USER_MODAL_KEY_FULLNAME];
+    if ([[inDic valueForKey:@"gender"]isEqualToString:@"male"]) {
+        [dic setValue:[NSNumber numberWithInteger:1] forKey:USER_MODAL_KEY_GENDER];
+    }else{
+        [dic setValue:[NSNumber numberWithInteger:0] forKey:USER_MODAL_KEY_GENDER];
+    }
+    [dic setValue: [inDic valueForKey:@"location.name"] forKey:USER_MODAL_KEY_CITY];
+    [dic setValue: [inDic valueForKey:@"birthday"] forKey:USER_MODAL_KEY_DOB];
+    [dic setValue: [inDic valueForKeyPath:@"picture.data.url"] forKey:USER_MODAL_KEY_PROFILEPIC];
+    UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
+    [WSModelClasses sharedHandler].loggedInUserModel = data;
+    
+}
+
+-(void)saveTheUserDetailsOfGooglePlus:(NSDictionary *)inDic
+{
+
+    NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
+    [dic setValue: [inDic valueForKey:@"email"] forKey:USER_MODAL_KEY_EMAIL];
+    [dic setValue: [inDic valueForKey:@"name"] forKey:USER_MODAL_KEY_USERNAME];
+    [dic setValue: [inDic valueForKey:@"displayName"] forKey:USER_MODAL_KEY_FULLNAME];
+    if ([[inDic valueForKey:@"gender"]isEqualToString:@"male"]) {
+        [dic setValue:[NSNumber numberWithInteger:1] forKey:USER_MODAL_KEY_GENDER];
+    }else{
+        [dic setValue:[NSNumber numberWithInteger:0] forKey:USER_MODAL_KEY_GENDER];
+    }
+    [dic setValue: [inDic valueForKey:@"city"] forKey:USER_MODAL_KEY_CITY];
+    [dic setValue: [inDic valueForKey:@"dob"] forKey:USER_MODAL_KEY_DOB];
+    [dic setValue: [inDic valueForKeyPath:@"url"] forKey:USER_MODAL_KEY_PROFILEPIC];
+    UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
+    [WSModelClasses sharedHandler].loggedInUserModel = data;
+ 
+    
+}
 - (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
 {
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
@@ -197,18 +206,18 @@
         DescSignupViewController * signUpView = [[DescSignupViewController alloc]initWithNibName:@"DescSignupViewController" bundle:Nil];
         if (delegate.isFacebook) {
             signUpView.userDataDic =  self.socialUserDataDic;
-            signUpView.socialUserFriendsList = self.facebookFriendsListArray;
+            [self saveTheUserDetailsOfFacebook:self.socialUserDataDic];
             [self.navigationController pushViewController:signUpView animated:NO];
         }else if (delegate.isGooglePlus){
             signUpView.userDataDic =  self.socialUserDataDic;
-            signUpView.socialUserFriendsList = self.googlePlusFriendsListArry;
+            [self saveTheUserDetailsOfGooglePlus:self.socialUserDataDic];
             [self.navigationController pushViewController:signUpView animated:NO];
         }
     }else{
         if (delegate.isFacebook) {
-            [self showAlert:@"Describe" message:@"Sorry, this Facebook account is already associated with another Describe Identity" tag:100];
+            [self showAlert:@"Describe" message:@"This Facebook account is already associated with another Describe Identity. Do you want to sign in as " " instead."  tag:100];
         }else if (delegate.isGooglePlus){
-            [self showAlert:@"Describe" message:@"Sorry, this Google+ account is already associated with another Describe Identity" tag:100];
+            [self showAlert:@"Describe" message:@"This Google+ account is already associated with another Describe Identity" tag:100];
         }
     }
 }
@@ -225,11 +234,57 @@
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    DescSigninViewController * signInView = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
-    [self.navigationController pushViewController:signInView animated:NO];
+    switch (buttonIndex) {
+        case 0:{
+            DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+            if (delegate.isFacebook){
+                [WSModelClasses sharedHandler].delegate = self;
+                [[WSModelClasses sharedHandler]signInWithSocialNetwork:@"fb" andGateWauTokern:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOK_ID]];
+                
+            }else if (delegate.isGooglePlus){
+                [WSModelClasses sharedHandler].delegate = self;
+                [[WSModelClasses sharedHandler]signInWithSocialNetwork:@"gplus" andGateWauTokern:[[NSUserDefaults standardUserDefaults]valueForKey:Google_plus_ID]];
+            }
+        }
+            break;
+            case 1:
+            
+            break;
+        default:
+            break;
+    }
 }
 
+- (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
+{
+    WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
+    if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    switch (serviceType) {
+        case kWebserviesType_SignIn:
+        {
+            [HUD hide:YES];
+            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
+                [self gotoAddpeopleScreen];
+            }else{
+                
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
 
+-(void)gotoAddpeopleScreen
+{
+    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+    [self.navigationController pushViewController:addPeople animated:YES];
+    
+}
 #pragma mark googlePlusintegration
 - (IBAction)loginWithgooglePlusAction:(id)sender
 {
