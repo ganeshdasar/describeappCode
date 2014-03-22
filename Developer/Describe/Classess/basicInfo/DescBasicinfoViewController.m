@@ -15,6 +15,7 @@
 #import "WSModelClasses.h"
 #import "DBAspectFillViewController.h"
 #import "Constant.h"
+#import "NotificationsViewController.h"
 
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
@@ -31,6 +32,8 @@
     float lastScale;
     CGPoint lastPanPoint;
     BOOL isEditingPic;
+    
+    UsersModel *profileUserDetail;
 }
 
 @property (nonatomic, strong) UIImage *previousPicRef;
@@ -43,10 +46,10 @@
 @synthesize userBasicInfoDic;
 @synthesize isGenderMale;
 
--(UIStatusBarStyle)preferredStatusBarStyle{
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
     return UIStatusBarStyleLightContent;
 }
-
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -60,7 +63,6 @@
     return self;
 }
 
-
 - (void)viewDidLoad
 {
         [super viewDidLoad];
@@ -73,6 +75,11 @@
         [self createProfilePicAspectView];
 }
 
+-  (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
 
 -  (void)designTheView
 {
@@ -93,7 +100,6 @@
     self.bioTxt.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20];
 }
 
-
 - (void)createProfilePicAspectView
 {
     _profilePicContainerView.layer.cornerRadius = CGRectGetHeight(_profilePicContainerView.frame)/2.0f;
@@ -108,7 +114,6 @@
     [profilePicAspectController.imageView addGestureRecognizer:_profileTapGestureRef];
 }
 
-
 - (void)setBackGroundimageView
 {
     if (isiPhone5)
@@ -118,7 +123,6 @@
         self.backGroundImageView.image = [UIImage imageNamed:@"bg_std_3.5in.png"];
     }
 }
-
 
 #pragma mark Design HeadeView
 - (void)fillTheBasicInfoDataInFields
@@ -137,7 +141,6 @@
         [self downloadUserImageview:[self.userBasicInfoDic valueForKeyPath:@"url"]];
     }
 }
-
 
 - (void)downloadUserImageview:(NSString*)inUrlString
 {
@@ -159,7 +162,6 @@
     });
 }
 
-
 - (void)designHeaderView
 {
     backButton = [[UIButton alloc] init];
@@ -171,37 +173,22 @@
     [_headerView designHeaderViewWithTitle:@"Basic Info" andWithButtons:@[nextButton]];
 }
 
-
 #pragma mark ButtonActions
 - (void)goToPeviousScreen:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-
 - (void)goToAddPeopleScreen:(id)sender
 {
-    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
-    modelClass.delegate  =self;
-    NSString * gender =Nil;
-    if (isGenderMale) {
-        gender = @"1";
-    }else{
-        gender = @"0";
-    }
-    [modelClass postBasicInfoWithUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob:@"1980-02-21" userGender:gender profilePic:self.userprofileImg.image];
+    [self saveBasicInfoDetails];
     return;
-    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-    [self.navigationController pushViewController:addPeople animated:NO];
+//    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+//    [self.navigationController pushViewController:addPeople animated:NO];
+    
+    NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+    [self.navigationController pushViewController:notificationController animated:YES];
 }
-
-
--  (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 
 -  (IBAction)maleClicked:(id)sender
 {
@@ -210,7 +197,6 @@
     [self.btnfemale setImage:[UIImage imageNamed:@"female_inactive.png"] forState:UIControlStateNormal];
 }
 
-
 - (IBAction)femaleClicked:(id)sender
 {
     self.isGenderMale = NO;
@@ -218,16 +204,80 @@
     [self.btnfemale setImage:[UIImage imageNamed:@"female_active.png"] forState:UIControlStateNormal];
 }
 
-
-
-- (IBAction)selectprofileimg:(id)sender {
-    
+- (IBAction)profilePicTapped:(id)sender
+{
+    if(isEditingPic) {
+        return;
+    }
+    [self hideAndShowView:YES];
+    _previousPicRef = profilePicAspectController.imageView.image;
     UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"ChooseSource" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera",@"PhotoLibrary", nil];
     [chooseOption showInView:self.view];
 }
 
+- (IBAction)selectTheDate:(id)sender
+{
+    self.datePicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.datePicker.datePickerMode = UIDatePickerModeDate;
+    CGRect rect;
+	rect = [self.datePickerView frame];
+    CGSize result = [[UIScreen mainScreen] bounds].size;
+    if (result.height < 500){
+        rect.origin.y = 160;
+    }
+    else{
+        rect.origin.y = 340;
+    }
+ 	rect.size.height = 280;
+    self.datePickerView.frame = rect;
+	[self.view addSubview:self.datePickerView];
+}
 
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+- (IBAction)dateDoneClicked:(id)sender
+{
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateStyle:NSDateFormatterLongStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+    self.birthdayTxt.text=[dateFormatter stringFromDate:[self.datePicker date]];
+    [self.birthdayTxt setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0]];
+    [self.datePickerView removeFromSuperview];
+}
+
+- (IBAction)cancelProfilePicChanges:(id)sender
+{
+    isEditingPic = NO;
+    _profileEditCancelBtn.hidden = YES;
+    _profileEditDoneBtn.hidden = YES;
+    //    _completeProfileView.hidden = YES;
+    _profilePicOverlayView.backgroundColor = [UIColor clearColor];
+    [profilePicAspectController enableTouches:NO];
+    [_profilePicOverlayView setDontPassTouch:NO];
+    [self hideAndShowView:NO];
+    [profilePicAspectController placeSelectedImage:_previousPicRef withCropRect:CGRectNull];
+}
+
+- (IBAction)doneProfilePicChange:(id)sender
+{
+    isEditingPic = NO;
+    UIImage *croppedImage = [profilePicAspectController getImageCroppedAtVisibleRect:profilePicAspectController.cropRect];
+    [profilePicAspectController placeSelectedImage:croppedImage withCropRect:CGRectNull];
+    _profileEditCancelBtn.hidden = YES;
+    _profileEditDoneBtn.hidden = YES;
+    //    _completeProfileView.hidden = YES;
+    _profilePicOverlayView.backgroundColor = [UIColor clearColor];
+    [profilePicAspectController enableTouches:NO];
+    [_profilePicOverlayView setDontPassTouch:NO];
+    [self hideAndShowView:NO];
+}
+
+- (IBAction)selectprofileimg:(id)sender
+{
+    UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"ChooseSource" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera",@"PhotoLibrary", nil];
+    [chooseOption showInView:self.view];
+}
+
+#pragma mark - UIActionsheet delegate method
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if(buttonIndex==0) {
         if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -249,7 +299,7 @@
     }
 }
 
-
+#pragma mark - UIImagePickerController Delegate Methods
 -  (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     [profilePicAspectController placeSelectedImage:info[UIImagePickerControllerOriginalImage] withCropRect:CGRectNull];
@@ -261,7 +311,6 @@
     [profilePicAspectController enableTouches:YES];
     [_profilePicOverlayView setDontPassTouch:YES];
 }
-
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
@@ -275,49 +324,7 @@
     [self hideAndShowView:NO];
 }
 
-
-- (IBAction)profilePicTapped:(id)sender
-{
-    if(isEditingPic) {
-        return;
-    }
-    [self hideAndShowView:YES];
-    _previousPicRef = profilePicAspectController.imageView.image;
-    UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"ChooseSource" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera",@"PhotoLibrary", nil];
-    [chooseOption showInView:self.view];
-}
-
-
-- (IBAction)selectTheDate:(id)sender
-{
-    self.datePicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    self.datePicker.datePickerMode = UIDatePickerModeDate;
-    CGRect rect;
-	rect = [self.datePickerView frame];
-    CGSize result = [[UIScreen mainScreen] bounds].size;
-    if (result.height < 500){
-        rect.origin.y = 160;
-    }
-    else{
-        rect.origin.y = 340;
-    }
- 	rect.size.height = 280;
-    self.datePickerView.frame = rect;
-	[self.view addSubview:self.datePickerView];
-}
-
-
-- (IBAction)dateDoneClicked:(id)sender
-{
-    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateStyle:NSDateFormatterLongStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-    self.birthdayTxt.text=[dateFormatter stringFromDate:[self.datePicker date]];
-      [self.birthdayTxt setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0]];
-    [self.datePickerView removeFromSuperview];
-}
-
-
+#pragma mark - Gesture recognizer methods
 - (IBAction)profilePicPinchGesture:(id)sender
 {
     if(!isEditingPic) {
@@ -333,7 +340,6 @@
     CGFloat scale = 1.0 - (lastScale - pinchGesture.scale);
     [profilePicAspectController.imageContentScrollView setZoomScale:scale animated:YES];
 }
-
 
 - (IBAction)profilePicPanGesture:(id)sender
 {
@@ -376,42 +382,12 @@
     [profilePicAspectController calculateCropRectForSelectImage];
 }
 
-- (IBAction)cancelProfilePicChanges:(id)sender
-{
-    isEditingPic = NO;
-    _profileEditCancelBtn.hidden = YES;
-    _profileEditDoneBtn.hidden = YES;
-    //    _completeProfileView.hidden = YES;
-    _profilePicOverlayView.backgroundColor = [UIColor clearColor];
-    [profilePicAspectController enableTouches:NO];
-    [_profilePicOverlayView setDontPassTouch:NO];
-    [self hideAndShowView:NO];
-    [profilePicAspectController placeSelectedImage:_previousPicRef withCropRect:CGRectNull];
-}
-
-
-- (IBAction)doneProfilePicChange:(id)sender
-{
-    isEditingPic = NO;
-    UIImage *croppedImage = [profilePicAspectController getImageCroppedAtVisibleRect:profilePicAspectController.cropRect];
-    [profilePicAspectController placeSelectedImage:croppedImage withCropRect:CGRectNull];
-    _profileEditCancelBtn.hidden = YES;
-    _profileEditDoneBtn.hidden = YES;
-    //    _completeProfileView.hidden = YES;
-    _profilePicOverlayView.backgroundColor = [UIColor clearColor];
-    [profilePicAspectController enableTouches:NO];
-    [_profilePicOverlayView setDontPassTouch:NO];
-    [self hideAndShowView:NO];
-}
-
-
-- (void) dueDateChanged:(UIDatePicker *)sender
+- (void)dueDateChanged:(UIDatePicker *)sender
 {
     NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateStyle:NSDateFormatterLongStyle];
     [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
 }
-
 
 #pragma mark textField Delegate Method
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
@@ -439,7 +415,6 @@
     return YES;
 }
 
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
@@ -449,7 +424,6 @@
     return YES;
 }
 
-
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if (textField.tag==11) {
@@ -457,7 +431,6 @@
     }
     return YES;
 }
-
 
 - (void)textFieldAnimation:(BOOL)inAnimation
 {
@@ -478,7 +451,7 @@
     self.cityTableView.hidden = YES;
 }
 
-
+#pragma mark - UITextviewDelegate Method
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
  replacementText:(NSString *)text
 {
@@ -491,33 +464,65 @@
     }
     // For any other character return TRUE so that the text gets added to the view
     return TRUE;
-
-
 }
-#pragma mark service delegate method
-- (void)basicinfoStatus:(NSDictionary *)responseDict error:(NSError *)error
+
+#pragma mark - Webservices Methods
+- (void)saveBasicInfoDetails
 {
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    modelClass.delegate = self;
+    
+    NSString * gender = nil;
+    if (isGenderMale) {
+        gender = @"1";
+    }
+    else{
+        gender = @"0";
+    }
+    
+    [modelClass postBasicInfoWithUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob:@"1980-02-21" userGender:gender profilePic:profilePicAspectController.imageView.image];
 }
 
+#pragma mark WebService Delegate method
+- (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
+{
+    WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
+    if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
+    switch (serviceType) {
+        case kWebservicesType_SaveBasicInfo:
+        {
+            
+            break;
+        }
+            
+        default:
+            break;
+    }
+}
 
-#pragma mark -
-#pragma mark connection
+#pragma mark - GooglePlaces Delegate Method
 - (SPGooglePlacesAutocompletePlace *)placeAtIndexPath:(NSIndexPath *)indexPath
 {
     if (searchResultPlaces.count)
         return [searchResultPlaces objectAtIndex:indexPath.row];
     return Nil;
 }
+
 #pragma mark tableview delegate method
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return [searchResultPlaces count];
 }
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -534,7 +539,6 @@
     return cell;
 }
 
-
 -  (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     self.cityTxt.text = [self placeAtIndexPath:indexPath].name;
@@ -546,7 +550,6 @@
 {
     return 30;
 }
-
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section;
 {
@@ -562,11 +565,11 @@
     [field addTarget:self action:@selector(footerSelected) forControlEvents:UIControlEventAllTouchEvents];
     return footer;
 }
+
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
 {
     return 30;
 }
-
 
 - (void)footerSelected
 {
@@ -574,13 +577,10 @@
     [self textFieldAnimation:NO];
 }
 
-
 - (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect
 {
     return 16;
-    
 }
-
 
 - (void)hideAndShowView:(BOOL)inBool
 {

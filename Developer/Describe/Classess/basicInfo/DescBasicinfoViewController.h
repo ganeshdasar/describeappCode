@@ -14,8 +14,8 @@
     NSArray *searchResultPlaces;
     SPGooglePlacesAutocompleteQuery *searchQuery;
     BOOL shouldBeginEditing;
-
 }
+
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *cityTxtImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *userprofileImg;

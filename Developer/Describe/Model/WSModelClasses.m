@@ -12,6 +12,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netdb.h>
+#import "NotificationModel.h"
 
 static WSModelClasses *_sharedInstance;
 
@@ -34,7 +35,7 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
 
-    NSString *ur = [NSString stringWithFormat:@"%@getUserSignin/format=json/Username=%@/UserPwd=%@", BaseURLString,username,password];
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserSignin/format=json/Username=%@/UserPwd=%@", BaseURLString,username,password];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -73,7 +74,7 @@ static WSModelClasses *_sharedInstance;
     NSDictionary* userDetails = @{@"Username": username, @"UserEmail":email,@"UserPwd":password,@"UserFullName":fullName,@"OAuthType":gatewayName,@"OAuthID":idFromGateway};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:[NSString stringWithFormat:@"%@postUserSignup", BaseURLString]
+    [manager POST:[NSString stringWithFormat:@"%@/postUserSignup", BaseURLString]
        parameters:userDetails
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               [self postSignUpResult:responseObject error:Nil];
@@ -101,35 +102,39 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
 
-    inImage =[UIImage imageNamed:@"user.png"];
+//    inImage =[UIImage imageNamed:@"user.png"];
     inUID = @"1";
     inBioData = @"osjdjafjsjflkjsalfjlskajfds";
     inUserCity = @"hyderabad";
     inUserDob = @"1986-12-12";
     inuserGender = @"1";
     
-    NSData *imgData = UIImagePNGRepresentation(inImage);
-    NSString *imgEncodedString = [imgData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSData *imgData = UIImageJPEGRepresentation(inImage, 0.8);
+    NSString *imgEncodedString = [imgData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    if(imgEncodedString == nil) {
+        imgEncodedString = @"";
+    }
     
-    NSDictionary* parameters = @{@"UserUID": inUID, @"UserBiodata":inBioData,@"UserCity":inUserCity,@"UserDob":inUserDob,@"UserGender":inuserGender,@"profilePic":imgEncodedString};
+    NSDictionary* parameters = @{@"UserUID": inUID, @"UserBiodata":inBioData,@"UserCity":inUserCity,@"UserDob":inUserDob,@"UserGender":inuserGender, @"profilePic":imgEncodedString};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
 
-    [manager POST:[NSString stringWithFormat:@"%@setUserBasicInfo",BaseURLString]
+    [manager POST:[NSString stringWithFormat:@"%@/setUserBasicInfo",BaseURLString]
        parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSLog(@"%s Success: %@",  __func__, responseObject);
+              if(_delegate != nil && [_delegate respondsToSelector:@selector(didFinishWSConnectionWithResponse:)]) {
+                  NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebservicesType_SaveBasicInfo]};
+                  [_delegate didFinishWSConnectionWithResponse:responseDict];
+              }
           }
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"%s Error: %@",  __func__, error.localizedDescription);
+              if(_delegate != nil && [_delegate respondsToSelector:@selector(didFinishWSConnectionWithResponse:)]) {
+                  NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebservicesType_SaveBasicInfo]};
+                  [_delegate didFinishWSConnectionWithResponse:responseDict];
+              }
           }
      ];
-}
-
--  (void)postbasicInfoResult:(id)inResult error:(NSError*)inError
-{
-    if(_delegate && [_delegate respondsToSelector:@selector(basicinfoStatus:error:)]) {
-        [_delegate basicinfoStatus:inResult error:nil];
-    }
 }
 
 #pragma mark ResetPassword
@@ -137,7 +142,7 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
     
-    NSString *ur = [NSString stringWithFormat:@"%@getUserForgotPassword/format=json/userEmailID=%@", BaseURLString,inUserEmailID];
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserForgotPassword/format=json/userEmailID=%@", BaseURLString,inUserEmailID];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil
@@ -165,7 +170,7 @@ static WSModelClasses *_sharedInstance;
     if (![self checkTheInterConnection]) return;
     
     //http://mirusstudent.com/service/describe-service/getSearchPeople/format=json/UserUID=1/SearchWord=a
-    NSString *ur = [NSString stringWithFormat:@"%@getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,inUserID,inSearchString];
+    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,inUserID,inSearchString];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil
@@ -194,7 +199,7 @@ static WSModelClasses *_sharedInstance;
     //http://www.mirusstudent.com/service/describe-service/checkExistUsers/format=json/
     //chkType=Username/chkValue=shekardfdf
     
-    NSString *ur = [NSString stringWithFormat:@"%@checkExistUsers/format=json/chkType=%@/chkValue=%@", BaseURLString,inCheckType,inCheckValue];
+    NSString *ur = [NSString stringWithFormat:@"%@/checkExistUsers/format=json/chkType=%@/chkValue=%@", BaseURLString,inCheckType,inCheckValue];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -223,7 +228,7 @@ static WSModelClasses *_sharedInstance;
     NSDictionary* userDetails = @{@"UserUID":inUserUID, @"GateWay":inGateWay,@"IDs":inIDs};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:[NSString stringWithFormat:@"%@postInvitations",BaseURLString]
+    [manager POST:[NSString stringWithFormat:@"%@/postInvitations",BaseURLString]
        parameters:userDetails
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               if(_delegate && [_delegate respondsToSelector:@selector(getThePeopleListFromServer:error:)]) {
@@ -243,17 +248,70 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
     
-    NSString *postURLString = [NSString stringWithFormat:@"%@insertPost", BaseURLString];
+    NSString *postURLString = [NSString stringWithFormat:@"%@/insertPost", BaseURLString];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:postURLString
        parameters:argDict
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSLog(@"%s %@", __func__, responseObject);
+              NSLog(@"%s %s", __func__, [responseObject bytes]);
           }
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"%s %@", __func__, error.localizedDescription);
           }
+     ];
+}
+
+#pragma mark - Get Notifications
+- (void)getNotificationListForUser:(NSNumber *)userId
+                         withSubId:(NSNumber *)subId
+                     andPageNumber:(NSNumber *)pageNo
+{
+    if (![self checkTheInterConnection]) return;
+    
+    //2.	http://mirusstudent.com/service/describe-service/getNotifications/format=json/UserUID=4/ SubId=36/PageValue=0
+    
+    NSString *getNotificationURL = nil;
+    if(subId == nil) {
+        getNotificationURL = [NSString stringWithFormat:@"%@/getNotifications/format=json/UserUID=%@/PageValue=%@", BaseURLString, userId.stringValue, pageNo.stringValue];
+    }
+    else {
+        getNotificationURL = [NSString stringWithFormat:@"%@/getNotifications/format=json/UserUID=%@/SubId=%@/PageValue=%@", BaseURLString, userId.stringValue, subId.stringValue, pageNo.stringValue];
+    }
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    
+    [manager GET:getNotificationURL
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSLog(@"%s %@", __func__, responseObject);
+              if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didFinishFetchingNotification:error:)]) {
+                  NSDictionary *responseDict = (NSDictionary *)responseObject[@"DataTable"][0];
+                  NSArray *notificationListArray = nil;
+                  if([responseDict[@"NotificationsData"] isKindOfClass:[NSDictionary class]]) {
+                      notificationListArray = @[responseDict[@"NotificationsData"]];
+                  }
+                  else {
+                      notificationListArray = responseDict[@"NotificationsData"];
+//                      [self.delegate didFinishFetchingNotification:responseDict[@"NotificationsData"] error:nil];
+                  }
+                  
+                  NSMutableArray *notificationModelArray = [[NSMutableArray alloc] initWithCapacity:notificationListArray.count];
+                  for(NSDictionary *notificationDict in notificationListArray) {
+                      NotificationModel *notificationModel = [[NotificationModel alloc] initWithDictionary:notificationDict];
+                      [notificationModelArray addObject:notificationModel];
+                      notificationModel = nil;
+                  }
+                  
+                  [self.delegate didFinishFetchingNotification:(NSArray *)notificationModelArray error:nil];
+              }
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             NSLog(@"%s %@", __func__, error.localizedDescription);
+             if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didFinishFetchingNotification:error:)]) {
+                 [self.delegate didFinishFetchingNotification:nil error:error];
+             }
+         }
      ];
 }
 
@@ -265,7 +323,7 @@ static WSModelClasses *_sharedInstance;
     inUserId  = @"45";
     inPageValue = @"0";
     
-    NSString *ur = [NSString stringWithFormat:@"%@getFeeds/format=json/UserUID=%@/PageValue=%@", BaseURLString,inUserId,inPageValue];
+    NSString *ur = [NSString stringWithFormat:@"%@/getFeeds/format=json/UserUID=%@/PageValue=%@", BaseURLString,inUserId,inPageValue];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -295,7 +353,7 @@ static WSModelClasses *_sharedInstance;
     inUserId = @"1";
     inPostId = @"11";
     
-    NSString *ur = [NSString stringWithFormat:@"%@getPostConversationDetails/format=json/UserUID=%@/PostUID=%@", BaseURLString,inUserId,inPostId];
+    NSString *ur = [NSString stringWithFormat:@"%@/getPostConversationDetails/format=json/UserUID=%@/PostUID=%@", BaseURLString,inUserId,inPostId];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -323,7 +381,7 @@ static WSModelClasses *_sharedInstance;
 //    inUserId = @"1";
 //    inProfileUserID = @"45";
     
-    NSString *ur = [NSString stringWithFormat:@"%@getUserProfile/format=json/UserUID=%@/ProfileUserUID=%@", BaseURLString, [_loggedInUserModel.userID stringValue], profileUserID];
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserProfile/format=json/UserUID=%@/ProfileUserUID=%@", BaseURLString, [_loggedInUserModel.userID stringValue], profileUserID];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur

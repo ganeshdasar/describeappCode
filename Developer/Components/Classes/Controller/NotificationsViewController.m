@@ -7,10 +7,16 @@
 //
 
 #import "NotificationsViewController.h"
+#import "WSModelClasses.h"
 
-@interface NotificationsViewController ()
+@interface NotificationsViewController () <WSModelClassDelegate>
 
 @property (nonatomic, strong) NSMutableArray *notificationListArray;
+@property (assign) BOOL isRefresh;
+@property (assign) NSInteger selectedRow;
+@property (assign) NSInteger similarCount;
+@property (assign) NSInteger mainPageNumber;
+@property (assign) NSInteger childPageNumber;
 
 @end
 
@@ -31,10 +37,13 @@
 	// Do any additional setup after loading the view.
     self.navigationController.navigationBarHidden = YES;
     
+    _selectedRow = -1;   // default value, when no row is selected
+    
 //    NSLog(@"FontFamily = %@", [UIFont fontNamesForFamilyName:@"Helvetica Neue"]);
     
     _notificationListArray = [[NSMutableArray alloc] init];
     
+    [self refreshNotificationData:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -47,15 +56,18 @@
 {
 //TODO - REMOVE TEMP CODE
     //fetching data from temp file for notification
-    [_notificationListArray removeAllObjects];
-    NSArray *anArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"NotificationsResponse" ofType:@"plist"]];
-    for(int i = 0; i < anArray.count; i++) {
-        NotificationModel *model = [[NotificationModel alloc] initWithDictionary:anArray[i]];
-        [_notificationListArray addObject:model];
-        model = nil;
-    }
-
-    [_notificationTableview reloadData];
+//    [_notificationListArray removeAllObjects];
+//    NSArray *anArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"NotificationsResponse" ofType:@"plist"]];
+//    for(int i = 0; i < anArray.count; i++) {
+//        NotificationModel *model = [[NotificationModel alloc] initWithDictionary:anArray[i]];
+//        [_notificationListArray addObject:model];
+//        model = nil;
+//    }
+//
+//    [_notificationTableview reloadData];
+    
+    _selectedRow = -1;
+    [self getNotificationListWithNotificationID:nil];
 }
 
 - (IBAction)showMenuOptions:(id)sender
@@ -110,24 +122,27 @@
 {
     NSLog(@"%s", __func__);
     NotificationModel *model = _notificationListArray[indexpath.row];
-    if([model.similarCount integerValue] > 1 && model.similarData && model.similarData.count) {
-        NSInteger startInsertIndex = indexpath.row + 1;
-        NSMutableArray *fadeRowIndexpathArray = [[NSMutableArray alloc] initWithCapacity:0];
-        for(NotificationModel *modelObj in model.similarData) {
-            [_notificationListArray insertObject:modelObj atIndex:startInsertIndex];
-            [fadeRowIndexpathArray addObject:[NSIndexPath indexPathForRow:startInsertIndex inSection:0]];
-            startInsertIndex++;
-        }
-        
-        model.similarData = nil;
-        model.similarCount = [NSNumber numberWithInteger:1];
-        
-        [_notificationTableview beginUpdates];
-        
-        [_notificationTableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:indexpath.row inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-        [_notificationTableview insertRowsAtIndexPaths:fadeRowIndexpathArray withRowAnimation:UITableViewRowAnimationFade];
-        
-        [_notificationTableview endUpdates];
+    if([model.similarCount integerValue] > 1 ) {
+        _selectedRow = indexpath.row;
+        _similarCount = model.similarCount.integerValue;
+        [self getNotificationListWithNotificationID:model.notificationId];
+//        NSInteger startInsertIndex = indexpath.row + 1;
+//        NSMutableArray *fadeRowIndexpathArray = [[NSMutableArray alloc] initWithCapacity:0];
+//        for(NotificationModel *modelObj in model.similarData) {
+//            [_notificationListArray insertObject:modelObj atIndex:startInsertIndex];
+//            [fadeRowIndexpathArray addObject:[NSIndexPath indexPathForRow:startInsertIndex inSection:0]];
+//            startInsertIndex++;
+//        }
+//        
+//        model.similarData = nil;
+//        model.similarCount = [NSNumber numberWithInteger:1];
+//        
+//        [_notificationTableview beginUpdates];
+//        
+//        [_notificationTableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:indexpath.row inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+//        [_notificationTableview insertRowsAtIndexPaths:fadeRowIndexpathArray withRowAnimation:UITableViewRowAnimationFade];
+//        
+//        [_notificationTableview endUpdates];
     }
     
 }
@@ -136,6 +151,57 @@
 {
     NSLog(@"%s", __func__);
 
+}
+
+#pragma mark - Fetching Notification from API
+
+- (void)getNotificationListWithNotificationID:(NSNumber *)notificationId
+{
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    modelClass.delegate = self;
+    
+    [modelClass getNotificationListForUser:[NSNumber numberWithInteger:4] withSubId:notificationId andPageNumber:[NSNumber numberWithInteger:0]];
+}
+
+- (void)didFinishFetchingNotification:(NSArray *)responseList error:(NSError *)error
+{
+    if(_selectedRow != -1) {
+        NSInteger startInsertIndex = _selectedRow + 1;
+        NSMutableArray *fadeRowIndexpathArray = [[NSMutableArray alloc] initWithCapacity:0];
+        for(NotificationModel *modelObj in responseList) {
+            [_notificationListArray insertObject:modelObj atIndex:startInsertIndex];
+            [fadeRowIndexpathArray addObject:[NSIndexPath indexPathForRow:startInsertIndex inSection:0]];
+            startInsertIndex++;
+        }
+        
+        NotificationModel *model = (NotificationModel *)_notificationListArray[_selectedRow];
+        model.similarCount = [NSNumber numberWithInteger:1];
+        
+        _similarCount = _similarCount - fadeRowIndexpathArray.count;
+        
+        if(_similarCount < 2) {
+            _selectedRow = -1;
+            _similarCount = -1;
+        }
+        else {
+            [self getNotificationListWithNotificationID:model.notificationId];
+        }
+
+        [_notificationTableview beginUpdates];
+
+        [_notificationTableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_selectedRow inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        [_notificationTableview insertRowsAtIndexPaths:fadeRowIndexpathArray withRowAnimation:UITableViewRowAnimationFade];
+
+        [_notificationTableview endUpdates];
+    }
+    else {  // will come here if its firstTime or refreshButton is pressed
+        [_notificationListArray removeAllObjects];
+        for(NotificationModel *modelObj in responseList) {
+            [_notificationListArray addObject:modelObj];
+        }
+        
+        [_notificationTableview reloadData];
+    }
 }
 
 @end

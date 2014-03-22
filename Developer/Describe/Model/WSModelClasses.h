@@ -9,14 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "UsersModel.h"
 
+typedef enum {
+    kWebservicesType_SaveBasicInfo = 0,
+}WebservicesType;
+
 @protocol WSModelClassDelegate <NSObject>
 
 @optional
 - (void)loginStatus:(NSDictionary *)responseDict error:(NSError *)error;
 
 - (void)signUpStatus:(NSDictionary *)responseDict error:(NSError *)error;
-
-- (void)basicinfoStatus:(NSDictionary *)responseDict error:(NSError *)error;
 
 - (void)resetPasswordStatus:(NSDictionary *)responseDict error:(NSError *)error;
 
@@ -32,6 +34,9 @@
 
 -(void)getTheUserProfileDataFromServer:(NSDictionary *) responceDict error:(NSError *) error;
 
+- (void)didFinishFetchingNotification:(NSArray *)responseList error:(NSError *)error;
+
+- (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict;
 
 @end
 
@@ -85,6 +90,11 @@
 
 #pragma mark - Post composition
 - (void)postComposition:(NSDictionary *)argDict;
+
+#pragma mark - Get Notifications
+- (void)getNotificationListForUser:(NSNumber *)userId
+                         withSubId:(NSNumber *)subId
+                     andPageNumber:(NSNumber *)pageNo;
 
 #pragma mark getTheGenaralFeedService
 //http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/PageValue=0/

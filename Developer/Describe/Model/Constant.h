@@ -9,7 +9,7 @@
 #ifndef WebServicesTesting_Constant_h
 #define WebServicesTesting_Constant_h
 
-#define BaseURLString @"http://mirusstudent.com/service/describe-service/"
+#define BaseURLString @"http://mirusstudent.com/service/describe-service"
 
 #define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
 
@@ -58,6 +58,26 @@
 #define USER_MODAL_KEY_USERNAME                         @"Username"
 
 #define FACEBOOKACCESSTOKENKEY @"facebookTokenKey"
-#define FACEBOOKEXPIRATIONDATE @ "facebookexpirationDate"
+#define FACEBOOKEXPIRATIONDATE @"facebookexpirationDate"
+
+// Notification Model class key
+#define NOTIFICATION_MODEL_KEY_NOTIFICATIONID           @"NotificationId"
+#define NOTIFICATION_MODEL_KEY_POSTUID                  @"PostUID"
+#define NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE         @"NotificationType"
+#define NOTIFICATION_MODEL_KEY_TOTALCOUNT               @"TotalCount"
+#define NOTIFICATION_MODEL_KEY_AUTHUSERUID              @"AuthUserUID"
+#define NOTIFICATION_MODEL_KEY_ELAPSEDTIME              @"ElapsedTime"
+#define NOTIFICATION_MODEL_KEY_PROFILEUSERUID           @"ProfileUserUID"
+#define NOTIFICATION_MODEL_KEY_USERNAME                 @"Username"
+#define NOTIFICATION_MODEL_KEY_IMAGEURL                 @"UserProfilePic"
+#define NOTIFICATION_MODEL_KEY_POSTIMAGE                @"PostImage"
+#define NOTIFICATION_MODEL_KEY_COMMENTDESC              @"CommentDesc"
+#define NOTIFICATION_MODEL_KEY_READSTATUS               @"ReadStatus"
+
+
+// Webservices Response Dict Keys
+#define WS_RESPONSEDICT_KEY_RESPONSEDATA                @"ResponseData"
+#define WS_RESPONSEDICT_KEY_ERROR                       @"ErrorInfo"
+#define WS_RESPONSEDICT_KEY_SERVICETYPE                 @"WebservicesType"
 
 #endif

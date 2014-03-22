@@ -13,51 +13,73 @@
 - (id)initWithDictionary:(NSDictionary *)notificationDict
 {
     if (self = [super init]) {
-        if (notificationDict[@"notificationId"] && [NotificationModel isValidValue:notificationDict[@"notificationId"]]) {
-            self.notificationId = notificationDict[@"notificationId"];
-        }
-        
-        if (notificationDict[@"notificationType"] && [NotificationModel isValidValue:notificationDict[@"notificationType"]]) {
-            self.notificationType = [notificationDict[@"notificationType"] integerValue];
-        }
-        
-        if (notificationDict[@"imageUrlString"] && [NotificationModel isValidValue:notificationDict[@"imageUrlString"]]) {
-            self.imageUrlString = notificationDict[@"imageUrlString"];
-        }
-        
-        if (notificationDict[@"fromUserId"] && [NotificationModel isValidValue:notificationDict[@"fromUserId"]]) {
-            self.fromUserId = notificationDict[@"fromUserId"];
-        }
-        
-        if (notificationDict[@"postId"] && [NotificationModel isValidValue:notificationDict[@"postId"]]) {
-            self.postId = notificationDict[@"postId"];
-        }
-        
-        if (notificationDict[@"fromUserName"] && [NotificationModel isValidValue:notificationDict[@"fromUserName"]]) {
-            self.fromUserName = notificationDict[@"fromUserName"];
-        }
-        
-        if (notificationDict[@"socialName"] && [NotificationModel isValidValue:notificationDict[@"socialName"]]) {
-            self.socialName = notificationDict[@"socialName"];
-        }
-        
-        if (notificationDict[@"frndSocialName"] && [NotificationModel isValidValue:notificationDict[@"frndSocialName"]]) {
-            self.frndSocialName = notificationDict[@"frndSocialName"];
-        }
-        
-        if (notificationDict[@"similarCount"] && [NotificationModel isValidValue:notificationDict[@"similarCount"]]) {
-            self.similarCount = notificationDict[@"similarCount"];
-        }
-        
-        if (notificationDict[@"similarData"] && [NotificationModel isValidValue:notificationDict[@"similarData"]]) {
-            NSArray *jsonXmlArray = notificationDict[@"similarData"];
-            self.similarData = [[NSMutableArray alloc] initWithCapacity:jsonXmlArray.count];
-            for(int i = 0; i < jsonXmlArray.count; i++) {
-                NotificationModel *model = [[NotificationModel alloc] initWithDictionary:jsonXmlArray[i]];
-                [self.similarData addObject:model];
-                model = nil;
+        if (notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID]]) {
+            if([notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID] isKindOfClass:[NSNumber class]]) {
+                self.notificationId = notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID];
+            }
+            else {
+                self.notificationId = [NSNumber numberWithInteger:[notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID] integerValue]];
             }
         }
+        
+        if (notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE]]) {
+            self.notificationType = [notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] integerValue];
+        }
+        
+        if (notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL]]) {
+            self.imageUrlString = notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL];
+        }
+        
+        if (notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID]]) {
+            self.fromUserId = notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID];
+            if([notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID] isKindOfClass:[NSNumber class]]) {
+                self.fromUserId = notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID];
+            }
+            else {
+                self.fromUserId = [NSNumber numberWithInteger:[notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID] integerValue]];
+            }
+        }
+        
+        if (notificationDict[NOTIFICATION_MODEL_KEY_POSTUID] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_POSTUID]]) {
+            self.postId = notificationDict[NOTIFICATION_MODEL_KEY_POSTUID];
+            if([notificationDict[NOTIFICATION_MODEL_KEY_POSTUID] isKindOfClass:[NSNumber class]]) {
+                self.postId = notificationDict[NOTIFICATION_MODEL_KEY_POSTUID];
+            }
+            else {
+                self.postId = [NSNumber numberWithInteger:[notificationDict[NOTIFICATION_MODEL_KEY_POSTUID] integerValue]];
+            }
+        }
+        
+        if (notificationDict[NOTIFICATION_MODEL_KEY_USERNAME] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_USERNAME]]) {
+            self.fromUserName = notificationDict[NOTIFICATION_MODEL_KEY_USERNAME];
+        }
+        
+//        if (notificationDict[@"socialName"] && [NotificationModel isValidValue:notificationDict[@"socialName"]]) {
+//            self.socialName = notificationDict[@"socialName"];
+//        }
+//        
+//        if (notificationDict[@"frndSocialName"] && [NotificationModel isValidValue:notificationDict[@"frndSocialName"]]) {
+//            self.frndSocialName = notificationDict[@"frndSocialName"];
+//        }
+        
+        if (notificationDict[NOTIFICATION_MODEL_KEY_TOTALCOUNT] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_TOTALCOUNT]]) {
+            if([notificationDict[NOTIFICATION_MODEL_KEY_TOTALCOUNT] isKindOfClass:[NSNumber class]]) {
+                self.similarCount = notificationDict[NOTIFICATION_MODEL_KEY_TOTALCOUNT];
+            }
+            else {
+                self.similarCount = [NSNumber numberWithInteger:[notificationDict[NOTIFICATION_MODEL_KEY_TOTALCOUNT] integerValue]];
+            }
+        }
+        
+//        if (notificationDict[@"similarData"] && [NotificationModel isValidValue:notificationDict[@"similarData"]]) {
+//            NSArray *jsonXmlArray = notificationDict[@"similarData"];
+//            self.similarData = [[NSMutableArray alloc] initWithCapacity:jsonXmlArray.count];
+//            for(int i = 0; i < jsonXmlArray.count; i++) {
+//                NotificationModel *model = [[NotificationModel alloc] initWithDictionary:jsonXmlArray[i]];
+//                [self.similarData addObject:model];
+//                model = nil;
+//            }
+//        }
         
         if (notificationDict[@"timeStamp"] && [NotificationModel isValidValue:notificationDict[@"timeStamp"]]) {
             self.timeStamp = notificationDict[@"timeStamp"];
@@ -67,8 +89,8 @@
             self.serverTimeStamp = notificationDict[@"serverTimeStamp"];
         }
         
-        if (notificationDict[@"readStatus"] && [NotificationModel isValidValue:notificationDict[@"readStatus"]]) {
-            self.readStatus = [notificationDict[@"readStatus"] boolValue];
+        if (notificationDict[NOTIFICATION_MODEL_KEY_READSTATUS] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_READSTATUS]]) {
+            self.readStatus = [notificationDict[NOTIFICATION_MODEL_KEY_READSTATUS] boolValue];
         }
     }
     
