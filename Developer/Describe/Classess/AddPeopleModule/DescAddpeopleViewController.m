@@ -216,7 +216,7 @@
 {
     NSMutableArray  * peopleArray = [[NSMutableArray alloc]init];
     
-    for (NSMutableDictionary * dic in [responceDict valueForKey:@"DataTable"]) {
+    for (NSMutableDictionary * dic in [responceDict valueForKeyPath:@"ResponseData.DataTable"]) {
         SearchPeopleData * data =  [[SearchPeopleData alloc]init];
         data.followingStatus = [dic valueForKeyPath:@"DescribeSuggestedUsers.FollowingStatus"];
         data.profileUserEmail = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserEmail"];

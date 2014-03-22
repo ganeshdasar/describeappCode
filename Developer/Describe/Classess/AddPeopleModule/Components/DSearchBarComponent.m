@@ -93,6 +93,9 @@
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     searchImgView.hidden = NO;
+    if([self.searchDelegate respondsToSelector:@selector(searchBarSearchButtonClicked:)]){
+        [self.searchDelegate searchBarSearchButtonClicked:self];
+    }
 
     [textField resignFirstResponder];
     return YES;
@@ -119,9 +122,6 @@
 }
 
 - (void)textFieldTextDidChangeNotification:(NSNotification *)inNotification{
-    if([self.searchDelegate respondsToSelector:@selector(searchBarSearchButtonClicked:)]){
-        [self.searchDelegate searchBarSearchButtonClicked:self];
-    }
     
     
 }

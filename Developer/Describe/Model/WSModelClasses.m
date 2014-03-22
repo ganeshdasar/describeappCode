@@ -227,7 +227,7 @@ static WSModelClasses *_sharedInstance;
     [manager POST:[NSString stringWithFormat:@"%@/setUserBasicInfo",BaseURLString]
        parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSLog(@"%s Success: %@",  __func__, responseObject);
+             // NSLog(@"%s Success: %@",  __func__, responseObject);
               if(_delegate != nil && [_delegate respondsToSelector:@selector(didFinishWSConnectionWithResponse:)]) {
                   NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebservicesType_SaveBasicInfo]};
                   NSDictionary *basicInfodic = (NSDictionary *)responseObject;
@@ -493,7 +493,7 @@ static WSModelClasses *_sharedInstance;
 -(void)getWeRecommendedpeople:(NSString*)inUSerId
                      AndRange:(NSString*)inRange
 {
-    NSString *url = [NSString stringWithFormat:@"%@getWeRecommendedPeaple/format=json/UserUID=%@/range=%@", BaseURLString,inUSerId,inRange];
+    NSString *url = [NSString stringWithFormat:@"%@/getWeRecommendedPeaple/format=json/UserUID=%@/range=%@", BaseURLString,inUSerId,inRange];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
       parameters:nil
