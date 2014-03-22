@@ -201,8 +201,8 @@
 - (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
 {
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+    [HUD hide:YES];
     if ([[[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
-        [HUD hide:YES];
         DescSignupViewController * signUpView = [[DescSignupViewController alloc]initWithNibName:@"DescSignupViewController" bundle:Nil];
         if (delegate.isFacebook) {
             signUpView.userDataDic =  self.socialUserDataDic;

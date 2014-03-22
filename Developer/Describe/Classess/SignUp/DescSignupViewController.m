@@ -96,6 +96,7 @@
         self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
         self.nameTxt.text = [NSString stringWithFormat:@"%@ ",[self.userDataDic valueForKey:@"displayName"]];
     }
+    
 }
 
 

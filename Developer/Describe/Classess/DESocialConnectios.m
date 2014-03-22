@@ -77,8 +77,8 @@ static DESocialConnectios *_sharedInstance;
         [dataDic setObject:person.displayName forKey:@"displayName"];
         [dataDic setObject:person.url forKey:@"url"];
         [dataDic setObject:person.gender forKey:@"gender"];
-        [dataDic setObject:person.birthday forKey:@"dob"];
-        [dataDic setObject:person.currentLocation forKey:@"city"];
+        if (person.birthday) [dataDic setObject:person.birthday forKey:@"dob"];
+       if (person.currentLocation)  [dataDic setObject:person.currentLocation forKey:@"city"];
         
         [[NSUserDefaults standardUserDefaults]setObject:person.identifier forKey:Google_plus_ID];
         GTLServicePlus* plusService = [[GTLServicePlus alloc] init];
