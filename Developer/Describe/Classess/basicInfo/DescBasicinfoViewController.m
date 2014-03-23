@@ -508,14 +508,14 @@
     switch (serviceType) {
         case kWebservicesType_SaveBasicInfo:
         {
-            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-            [self.navigationController pushViewController:addPeople animated:NO];
+//            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+//            [self.navigationController pushViewController:addPeople animated:NO];
             
 //            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
 //            [self.navigationController pushViewController:notificationController animated:YES];
             
-//            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-//            [self.navigationController pushViewController:compositionViewController animated:YES];
+            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+            [self.navigationController pushViewController:compositionViewController animated:YES];
             break;
         }
             

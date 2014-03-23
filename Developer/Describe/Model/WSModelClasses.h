@@ -54,6 +54,10 @@ typedef enum {
 
 - (void)removeCompositionPath;
 
+- (void)showLoadView;
+
+- (void)removeLoadingView;
+
 + (instancetype)sharedHandler;
 
 #pragma mark signIn

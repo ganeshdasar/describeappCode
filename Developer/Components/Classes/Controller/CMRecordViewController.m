@@ -61,6 +61,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     if(self.parentController != nil) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
         [self.parentController refreshSelectedImageViewContainer];
     }
 }

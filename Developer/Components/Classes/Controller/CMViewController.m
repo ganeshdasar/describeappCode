@@ -472,7 +472,8 @@
 {
 //    NSLog(@"Navigate to the video composition screen for images");
     [self showSelectedPhoto:0];
-      
+    
+    [[WSModelClasses sharedHandler] showLoadView];
     [self performSelector:@selector(goToVideoRecordingScreen) withObject:nil afterDelay:0.3];
 }
 

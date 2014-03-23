@@ -13,8 +13,16 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netdb.h>
 #import "NotificationModel.h"
+#import "MBProgressHUD.h"
 
 static WSModelClasses *_sharedInstance;
+
+@interface WSModelClasses ()
+{
+    MBProgressHUD *loadingView;
+}
+
+@end
 
 @implementation WSModelClasses
 
@@ -558,7 +566,25 @@ static WSModelClasses *_sharedInstance;
     return YES;
 }
 
+- (void)showLoadView
+{
+    if(loadingView == nil) {
+        loadingView = [[MBProgressHUD alloc] initWithWindow:[[UIApplication sharedApplication] keyWindow]];
+        [[[UIApplication sharedApplication] keyWindow] addSubview:loadingView];
+    //    loadingView.delegate = self;
+        loadingView.labelText = @"Loading";
+        [loadingView show:YES];
+    }
+}
 
+- (void)removeLoadingView
+{
+    if(loadingView != nil) {
+        [loadingView hide:YES];
+        [loadingView removeFromSuperview];
+        loadingView = nil;
+    }
+}
 
 #pragma mark - Remove Composition path
 - (void)removeCompositionPath
