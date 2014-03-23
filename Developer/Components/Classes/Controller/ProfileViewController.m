@@ -57,7 +57,7 @@ typedef enum {
         [self fetchUserModelForUserId:_profileUserID];
     }
     else {
-        [self fetchUserModelForUserId:[NSNumber numberWithInteger:45]];
+        [self fetchUserModelForUserId:[[WSModelClasses sharedHandler] loggedInUserModel].userID];
     }
     
     // hide the navigation bar
@@ -128,6 +128,9 @@ typedef enum {
     _followersCountLabel.text = _profileUserModel.followerCount ? [_profileUserModel.followerCount stringValue] : @"";
     
     _profileStatusTxtView.text = _profileUserModel.statusMessage ? _profileUserModel.statusMessage : @"";
+    
+    [_profilePicImageViewController loadImageFromURLString:_profileUserModel.profileImageName];
+    [_canvasImageViewController loadImageFromURLString:_profileUserModel.canvasImageName];
 }
 
 #pragma mark - Edit mode Button methods
@@ -349,6 +352,14 @@ typedef enum {
 - (IBAction)editingDoneSelected:(id)sender
 {
     // here we need to send the edited details to server and disable editing mode (change editingDoneBtn to editBtn)
+    _profileUserModel.snippetPosition = [NSString stringWithFormat:@"%0.2f", CGRectGetMinY(_snippetRegionImgView.frame)];
+    
+    UIImage *snippetImg = [_canvasImageViewController getImageCroppedAtVisibleRect:_snippetRegionImgView.frame];
+    [[WSModelClasses sharedHandler] saveUserProfile:_profileUserModel
+                                         profilePic:_profilePicImageViewController.imageView.image
+                                          canvasPic:_canvasImageViewController.imageView.image
+                                         snippetPic:snippetImg];
+    
     [self profileModeChangedTo:kProfileModeNormal];
 }
 

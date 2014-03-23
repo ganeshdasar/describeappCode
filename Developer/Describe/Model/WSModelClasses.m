@@ -61,7 +61,7 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
--(void)updateTheuserModelObject:(UsersModel*)inUserData
+- (void)updateTheuserModelObject:(UsersModel*)inUserData
 {
     if (inUserData.dobDate) {
         _loggedInUserModel.dobDate = inUserData.dobDate;
@@ -399,14 +399,22 @@ static WSModelClasses *_sharedInstance;
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
              NSLog(@"%s %@", __func__, responseObject);
               if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didFinishFetchingNotification:error:)]) {
-                  NSArray *notificationListArray = (NSArray *)responseObject[@"DataTable"];
+                  NSArray *notificationListArray = nil;
+                  if([responseObject[@"DataTable"][@"NotificationsData"] isKindOfClass:[NSArray class]]) {
+                      notificationListArray = (NSArray *)responseObject[@"DataTable"][@"NotificationsData"];
+                  }
+                  else {
+                      notificationListArray = [NSArray array];
+                  }
+                  
                   NSMutableArray *notificationModelArray = [[NSMutableArray alloc] initWithCapacity:notificationListArray.count];
                   for(NSDictionary *notificationDict in notificationListArray) {
                       NotificationModel *notificationModel = [[NotificationModel alloc] initWithDictionary:notificationDict];
                       [notificationModelArray addObject:notificationModel];
                       notificationModel = nil;
                   }
-                                [self.delegate didFinishFetchingNotification:(NSArray *)notificationModelArray error:nil];
+                
+                  [self.delegate didFinishFetchingNotification:(NSArray *)notificationModelArray error:nil];
               }
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -475,7 +483,8 @@ static WSModelClasses *_sharedInstance;
 #pragma mark getTheUserProfiles
 - (void)getProfileDetailsForUserID:(NSString *)profileUserID
 {
-
+    if (![self checkTheInterConnection]) return;
+    
     NSString *ur = [NSString stringWithFormat:@"%@/getUserProfile/format=json/UserUID=%@/ProfileUserUID=%@", BaseURLString, [_loggedInUserModel.userID stringValue], profileUserID];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -515,6 +524,53 @@ static WSModelClasses *_sharedInstance;
          }
      ];
 }
+
+- (void)saveUserProfile:(UsersModel *)userDetail profilePic:(UIImage *)profileImg canvasPic:(UIImage *)canvasImg snippetPic:(UIImage *)snippetImg
+{
+    if (![self checkTheInterConnection]) return;
+    
+    NSData *profileImgData = UIImageJPEGRepresentation(profileImg, 0.8);
+    NSString *profilePicStr = @"";
+    if(profileImgData != nil) {
+        profilePicStr = [profileImgData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    }
+    
+    NSData *canvasImgData = UIImageJPEGRepresentation(canvasImg, 0.8);
+    NSString *canvasPicStr = @"";
+    if(canvasImgData != nil) {
+        canvasPicStr = [canvasImgData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    }
+    
+    NSData *snippetImgData = UIImageJPEGRepresentation(profileImg, 0.8);
+    NSString *snippetPicStr = @"";
+    if(snippetImgData != nil) {
+        snippetPicStr = [snippetImgData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    }
+    
+    NSMutableDictionary *argDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    [argDict setObject:[userDetail.userID stringValue] forKey:@"UserUID"];
+    [argDict setObject:(userDetail.biodata && userDetail.biodata.length) ? userDetail.biodata : @"" forKey:@"UserBiodata"];
+    [argDict setObject:(userDetail.city && userDetail.city.length) ? userDetail.city : @"" forKey:@"UserCity"];
+    [argDict setObject:(userDetail.statusMessage && userDetail.statusMessage.length) ? userDetail.statusMessage : @"" forKey:@"StsMsg"];
+    [argDict setObject:profilePicStr forKey:@"profilePic"];
+    [argDict setObject:canvasPicStr forKey:@"canvasPic"];
+    [argDict setObject:snippetPicStr forKey:@"snippetPic"];
+    [argDict setObject:userDetail.snippetPosition ? userDetail.snippetPosition : @"" forKey:@"yPos"];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:[NSString stringWithFormat:@"%@/setUserBasicInfo",BaseURLString]
+       parameters:argDict
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"%s Success: %@",  __func__, responseObject);
+              
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"%s Error: %@",  __func__, error.localizedDescription);
+              
+          }
+     ];
+}
+
 #pragma mark CheckThe Internet conncetion
 - (BOOL)networkReachable
 {

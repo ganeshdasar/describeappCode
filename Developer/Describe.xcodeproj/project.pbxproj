@@ -160,8 +160,6 @@
 		07E5E53618C1D977000E489B /* btn_gallery@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4E318C1D976000E489B /* btn_gallery@2x.png */; };
 		07E5E53718C1D977000E489B /* bg_nav_comp.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4E518C1D977000E489B /* bg_nav_comp.png */; };
 		07E5E53818C1D977000E489B /* bg_nav_comp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4E618C1D977000E489B /* bg_nav_comp@2x.png */; };
-		07E5E53918C1D977000E489B /* bg_nav_std.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4E718C1D977000E489B /* bg_nav_std.png */; };
-		07E5E53A18C1D977000E489B /* bg_nav_std@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4E818C1D977000E489B /* bg_nav_std@2x.png */; };
 		07E5E53B18C1D977000E489B /* bg_std-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4E918C1D977000E489B /* bg_std-568h@2x.png */; };
 		07E5E53C18C1D977000E489B /* bg_std.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4EA18C1D977000E489B /* bg_std.png */; };
 		07E5E53D18C1D977000E489B /* bg_std@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E4EB18C1D977000E489B /* bg_std@2x.png */; };
@@ -512,6 +510,7 @@
 		BEA293F818794D2A009C8963 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F218794D2A009C8963 /* MobileCoreServices.framework */; };
 		BEA293F918794D2A009C8963 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F318794D2A009C8963 /* QuartzCore.framework */; };
 		C3BAB1F918DE9375001CF903 /* btn_txt_black_done@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E50418C1D977000E489B /* btn_txt_black_done@2x.png */; };
+		C3BAB1FC18DEA119001CF903 /* NSString+DateConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */; };
 		C3E14BE618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E14BD618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m */; };
 		C3E14BE718C2EA2A008AC885 /* UIActivityIndicatorView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E14BD818C2EA2A008AC885 /* UIActivityIndicatorView+AFNetworking.m */; };
 		C3E14BE818C2EA2A008AC885 /* UIAlertView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E14BDA18C2EA2A008AC885 /* UIAlertView+AFNetworking.m */; };
@@ -1023,6 +1022,8 @@
 		BEA293F118794D2A009C8963 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		BEA293F218794D2A009C8963 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BEA293F318794D2A009C8963 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		C3BAB1FA18DEA119001CF903 /* NSString+DateConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DateConverter.h"; sourceTree = "<group>"; };
+		C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+DateConverter.m"; sourceTree = "<group>"; };
 		C3E14BD518C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkActivityIndicatorManager.h; sourceTree = "<group>"; };
 		C3E14BD618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkActivityIndicatorManager.m; sourceTree = "<group>"; };
 		C3E14BD718C2EA2A008AC885 /* UIActivityIndicatorView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActivityIndicatorView+AFNetworking.h"; sourceTree = "<group>"; };
@@ -2204,6 +2205,8 @@
 		BE98920D18858DC200D6ACF1 /* master */ = {
 			isa = PBXGroup;
 			children = (
+				C3BAB1FA18DEA119001CF903 /* NSString+DateConverter.h */,
+				C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */,
 				18B5A8A5188DB68C00CD26FF /* ConstantValues.h */,
 				18B5A8A6188DB68C00CD26FF /* ConstantValues.m */,
 				18B5A8A9188DB68C00CD26FF /* UIColor+DesColors.h */,
@@ -2370,7 +2373,6 @@
 				2FC5A99218A7D87E00399908 /* txtfld_std_2_2.png in Resources */,
 				07E5E55018C1D977000E489B /* btn_nav_std_refresh.png in Resources */,
 				07354E0418B9F5EC008B98F3 /* profileFollowers.png in Resources */,
-				07E5E53A18C1D977000E489B /* bg_nav_std@2x.png in Resources */,
 				2FC5A94618A7C85200399908 /* btn_invite_all@2x.png in Resources */,
 				07354E0D18B9F5EC008B98F3 /* thumb_user_std.png in Resources */,
 				2F1F9FD6188DC5A200BDE0B9 /* btn_txt_sign_in.png in Resources */,
@@ -2489,7 +2491,6 @@
 				2F1F9FB9188DC30D00BDE0B9 /* logo_std.png in Resources */,
 				07E5E53F18C1D977000E489B /* btn_nav_comp_back@2x.png in Resources */,
 				2F1F9FE0188DC5A200BDE0B9 /* btn_txt_twitter@2x.png in Resources */,
-				07E5E53918C1D977000E489B /* bg_nav_std.png in Resources */,
 				2FC5A93418A7C65C00399908 /* bg_std_4in@2x.png in Resources */,
 				2FF0FCA61871DB7200893917 /* InfoPlist.strings in Resources */,
 				2F1F9FBB188DC30D00BDE0B9 /* logo_std@2x.png in Resources */,
@@ -2763,6 +2764,7 @@
 				07354D7E18B9F5CD008B98F3 /* DPromterProfileView.m in Sources */,
 				2FB4BAEE18910B280033BDF4 /* AFURLResponseSerialization.m in Sources */,
 				2FF0FCA81871DB7200893917 /* main.m in Sources */,
+				C3BAB1FC18DEA119001CF903 /* NSString+DateConverter.m in Sources */,
 				18B5A8AB188DB68C00CD26FF /* ConstantValues.m in Sources */,
 				07E5E4CD18C1D090000E489B /* CMShareLocationCell.m in Sources */,
 				18B5A8C2188DB75200CD26FF /* DESAppDelegate.m in Sources */,

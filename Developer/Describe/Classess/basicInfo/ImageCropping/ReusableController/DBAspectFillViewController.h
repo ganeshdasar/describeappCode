@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @protocol DBAspectFillViewControllerDelegate <NSObject>
 
@@ -32,5 +33,6 @@
 - (void)enableTouches:(BOOL)enable;
 - (void)calculateCropRectForSelectImage;
 - (UIImage *)getImageCroppedAtVisibleRect:(CGRect)visibleCropRect;
+- (void)loadImageFromURLString:(NSString *)urlString;
 
 @end

@@ -123,4 +123,9 @@ typedef enum {
 - (void)getProfileDetailsForUserID:(NSString *)profileUserID;
 -(void)getWeRecommendedpeople:(NSString*)inUSerId
                      AndRange:(NSString*)inRange;
+
+- (void)saveUserProfile:(UsersModel *)userDetail
+             profilePic:(UIImage *)profileImg
+              canvasPic:(UIImage *)canvasImg
+             snippetPic:(UIImage *)snippetImg;
 @end

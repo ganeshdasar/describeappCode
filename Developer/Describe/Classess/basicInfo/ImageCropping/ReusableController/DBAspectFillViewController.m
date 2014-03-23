@@ -47,6 +47,16 @@
     [_imageContentScrollView setZoomScale:1.0f];
 }
 
+- (void)loadImageFromURLString:(NSString *)urlString
+{
+    [_imageView setImageWithURL:[NSURL URLWithString:urlString] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+//        [self placeSelectedImage:image withCropRect:CGRectNull];
+        if(error == nil) {
+            _imageView.image = image;
+        }
+    }];
+}
+
 - (void)placeSelectedImage:(UIImage *)image withCropRect:(CGRect)cropRect
 {
     [self resetImageContentToEmpty];

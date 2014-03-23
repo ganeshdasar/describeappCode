@@ -200,8 +200,19 @@
             [_notificationListArray addObject:modelObj];
         }
         
+        if(_notificationListArray.count == 0) {
+            _notificationTableview.hidden = YES;
+            _emptyMsgLabel.hidden = NO;
+        }
+        else {
+            _notificationTableview.hidden = NO;
+            _emptyMsgLabel.hidden = YES;
+        }
+        
         [_notificationTableview reloadData];
     }
 }
+
+
 
 @end

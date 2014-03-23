@@ -15,9 +15,10 @@
 #import "WSModelClasses.h"
 #import "DBAspectFillViewController.h"
 #import "Constant.h"
-#import "NotificationsViewController.h"
-//#import "NSString+DateConverter.h"
-#import "CMViewController.h"
+//#import "NotificationsViewController.h"
+#import "NSString+DateConverter.h"
+//#import "CMViewController.h"
+#import "ProfileViewController.h"
 
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
@@ -514,8 +515,11 @@
 //            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
 //            [self.navigationController pushViewController:notificationController animated:YES];
             
-            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-            [self.navigationController pushViewController:compositionViewController animated:YES];
+//            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+//            [self.navigationController pushViewController:compositionViewController animated:YES];
+            
+            ProfileViewController *profileVC = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
+            [self.navigationController pushViewController:profileVC animated:YES];
             break;
         }
             

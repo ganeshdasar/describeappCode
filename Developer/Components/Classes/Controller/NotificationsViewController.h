@@ -13,6 +13,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *notificationTableview;
 @property (weak, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UILabel *emptyMsgLabel;
 
 - (IBAction)refreshNotificationData:(id)sender;
 - (IBAction)showMenuOptions:(id)sender;
