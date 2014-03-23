@@ -9,10 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "DescBasicinfoViewController.h"
 #import "DESAppDelegate.h"
-
+typedef  enum{
+    FAcebook_connected = 0,
+    Googleplus_connected = 1
+    
+}socialConnections;
 @interface DescSigninViewController : UIViewController<UIAlertViewDelegate>
 {
     DESAppDelegate *appDelegate;
+    socialConnections connection;
+
 
 }
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImage;

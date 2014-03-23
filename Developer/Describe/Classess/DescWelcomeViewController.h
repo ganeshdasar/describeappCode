@@ -33,7 +33,6 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *signUpBtn;
 @property (weak, nonatomic) IBOutlet UIButton *signInBtn;
-@property (weak, nonatomic) IBOutlet UIButton *twitterBtn;
 @property (weak, nonatomic) IBOutlet UIButton *facebookBtn;
 @property (weak, nonatomic) IBOutlet UIButton *emailBtn;
 @property (weak, nonatomic) IBOutlet UIButton *googlePlusBtn;
@@ -42,17 +41,11 @@
 @property (nonatomic,strong) NSMutableArray * facebookFriendsListArray;
 @property (nonatomic,strong) NSMutableDictionary *socialUserDataDic;
 @property (nonatomic,strong) NSMutableArray * googlePlusFriendsListArry;
-- (IBAction)basicInfoAction:(id)sender;
 
 - (IBAction)SigninClicked:(id)sender;
 - (IBAction)signUpTheUser:(id)sender;
-- (IBAction)addPeople:(id)sender;
 - (IBAction)loginWithFacebookAction:(id)sender;
 - (IBAction)loginWithgooglePlusAction:(id)sender;
 - (IBAction)loginWithEmailAction:(id)sender;
-
-@property (weak, nonatomic) IBOutlet UIButton *goToSetting;
-- (IBAction)goToSetting:(id)sender;
-
 
 @end

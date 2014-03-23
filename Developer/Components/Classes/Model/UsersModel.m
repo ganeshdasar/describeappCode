@@ -22,8 +22,8 @@
             self.userID = [NSNumber numberWithInteger:[userDict[USER_MODAL_KEY_UID] integerValue]];
         }
         
-        if(userDict[@"userEmail"] && [NotificationModel isValidValue:userDict[@"userEmail"]] ) {
-            self.userEmail = userDict[@"userEmail"];
+        if(userDict[USER_MODAL_KEY_EMAIL] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_EMAIL]] ) {
+            self.userEmail = userDict[USER_MODAL_KEY_EMAIL];
         }
         
         if(userDict[USER_MODAL_KEY_USERNAME] && [NotificationModel isValidValue:userDict[USER_MODAL_KEY_USERNAME]] ) {

@@ -14,9 +14,9 @@
 #import "WSModelClasses.h"
 #import "MBProgressHUD.h"
 #import "Constant.h"
+#import "DESocialConnectios.h"
 
-
-@interface DescSigninViewController ()<WSModelClassDelegate>{
+@interface DescSigninViewController ()<WSModelClassDelegate,DESocialConnectiosDelegate,MBProgressHUDDelegate>{
 IBOutlet DHeaderView *_headerView;
     UIButton    *backButton,*nextButton;
     WSModelClasses * modelClass;
@@ -116,21 +116,78 @@ IBOutlet DHeaderView *_headerView;
     }
 }
 
-
-#pragma mark signResponce delegate method
-- (void)loginStatus:(NSDictionary *)responseDict error:(NSError *)error
+- (IBAction)signInWithFacebook:(id)sender
 {
-    NSString * message = [[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
-    [HUD hide:YES];
-    if ([message isEqualToString:@"TRUE"]) {
-        [[NSUserDefaults standardUserDefaults]setValue:[[responseDict valueForKeyPath:@"DataTable.UserData.UserUID"]objectAtIndex:0] forKey:@"USERID"];
-        DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
-        [self.navigationController pushViewController:basicInfo animated:YES];
-    }else{
-        [self showalertMessage:@"The username or password you have entered is incorrect."];
+    connection =FAcebook_connected;
+    [self showLoadView];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
+    [[DESocialConnectios sharedInstance] facebookSignIn];
+    [DESocialConnectios sharedInstance].delegate =self;
+}
+
+
+- (IBAction)signInWithGooglePlus:(id)sender
+{
+    connection =Googleplus_connected;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
+    [[DESocialConnectios sharedInstance] googlePlusSignIn];
+    [DESocialConnectios sharedInstance].delegate = self;
+    [self showLoadView];
+    
+}
+
+-  (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
+{
+    HUD.hidden = YES;
+    if (connection==FAcebook_connected) {
+        [WSModelClasses sharedHandler].delegate = self;
+        [[WSModelClasses sharedHandler]signInWithSocialNetwork:@"fb" andGateWauTokern:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOK_ID]];
+    }else if (connection==Googleplus_connected){
+        [WSModelClasses sharedHandler].delegate = self;
+        [[WSModelClasses sharedHandler]signInWithSocialNetwork:@"gplus" andGateWauTokern:[[NSUserDefaults standardUserDefaults]valueForKey:Google_plus_ID]];
+    }
+}
+- (void)showLoadView
+{
+    HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:HUD];
+    HUD.delegate = self;
+    HUD.labelText = @"Loading";
+    [HUD show:YES];
+}
+#pragma mark signResponce delegate method
+- (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
+{
+    WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
+    if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    switch (serviceType) {
+        case kWebserviesType_SignIn:
+        {
+            [HUD hide:YES];
+            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
+                [self gotoBasicinfoScreen];
+            }else{
+                [self showalertMessage:@"The username or password you have entered is incorrect."];
+            }
+            break;
+        }
+        default:
+            break;
     }
 }
 
+
+-(void)gotoBasicinfoScreen
+{
+    
+    DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+    [self.navigationController pushViewController:basicInfo animated:YES];
+    
+}
 
 - (void)showalertMessage:(NSString*)inMeassage
 {

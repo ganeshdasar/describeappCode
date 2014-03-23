@@ -11,7 +11,9 @@
 
 typedef enum {
     kWebservicesType_SaveBasicInfo = 0,
-    kWebservicesType_PostComposition
+    kWebservicesType_PostComposition,
+    kWebserviesType_SignIn,
+    kWebserviesType_addPeople
 }WebservicesType;
 
 @protocol WSModelClassDelegate <NSObject>
@@ -74,6 +76,8 @@ typedef enum {
                      userGender:(NSString*)inuserGender
                      profilePic:(UIImage*)inImage;
 
+-(void)signInWithSocialNetwork:(NSString*)inGateWay
+              andGateWauTokern:(NSString *)inGatewayToken;
 #pragma mark ResetPassword
 - (void)resetPassword:(NSString*)inUserEmailID;
 
@@ -113,5 +117,6 @@ typedef enum {
 //http://mirusstudent.com/service/describe-service/getUserProfile/format=json/UserUID=1/ProfileUserUID=4
 
 - (void)getProfileDetailsForUserID:(NSString *)profileUserID;
-
+-(void)getWeRecommendedpeople:(NSString*)inUSerId
+                     AndRange:(NSString*)inRange;
 @end

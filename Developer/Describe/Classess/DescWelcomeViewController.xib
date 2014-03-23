@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4510" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DescWelcomeViewController">
             <connections>
                 <outlet property="emailBtn" destination="bsN-Ft-WNd" id="obo-FI-vCS"/>
                 <outlet property="facebookBtn" destination="U31-jU-Q5g" id="rDs-Z3-gTX"/>
-                <outlet property="goToSetting" destination="Xyy-Du-TNN" id="yl3-un-SQK"/>
                 <outlet property="googlePlusBtn" destination="8kg-VU-aIt" id="X8q-fJ-27o"/>
                 <outlet property="signInBtn" destination="erG-HJ-iyw" id="SwJ-yV-304"/>
                 <outlet property="signUpBtn" destination="GSc-3a-20j" id="6DU-fV-ayF"/>
@@ -91,38 +90,6 @@
                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="5AD-2P-KgP">
-                            <rect key="frame" x="121" y="363" width="76" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="AddPeople">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="addPeople:" destination="-1" eventType="touchUpInside" id="Ry8-Xg-lcT"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="20H-sa-oti">
-                            <rect key="frame" x="80" y="217" width="124" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="BasicInfo">
-                                <color key="titleColor" red="0.80309311220000001" green="0.069526834630000006" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="basicInfoAction:" destination="-1" eventType="touchUpInside" id="or2-GH-7Oq"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Xyy-Du-TNN">
-                            <rect key="frame" x="25" y="227" width="49" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="Setting">
-                                <color key="titleColor" red="0.80309311220000001" green="0.069526834630000006" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="goToSetting:" destination="-1" eventType="touchUpInside" id="nM5-F0-sDu"/>
-                            </connections>
-                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </view>

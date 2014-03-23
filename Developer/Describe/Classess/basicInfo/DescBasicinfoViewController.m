@@ -35,6 +35,7 @@
     BOOL isEditingPic;
     
     UsersModel *profileUserDetail;
+    
 }
 
 @property (nonatomic, strong) UIImage *previousPicRef;
@@ -98,6 +99,7 @@
     self.bioTxt.textContainer.lineFragmentPadding = 0;
     self.bioTxt.contentInset=UIEdgeInsetsZero;
     self.bioTxt.scrollEnabled = NO;
+    
     self.bioTxt.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20];
 }
 
@@ -128,18 +130,30 @@
 #pragma mark Design HeadeView
 - (void)fillTheBasicInfoDataInFields
 {
-    DESAppDelegate * appDelegate = (DESAppDelegate*)[UIApplication sharedApplication].delegate;
-    if (appDelegate.isFacebook) {
-        [self downloadUserImageview:[self.userBasicInfoDic valueForKeyPath:@"picture.data.url"]];
-        self.cityTxt.text =[self.userBasicInfoDic valueForKeyPath:@"location.name"];
-        self.birthdayTxt.text   = [self.userBasicInfoDic valueForKeyPath:@"birthday"];
-        if ([[self.userBasicInfoDic valueForKey:@"gender"] isEqualToString:@"female"]) {
-            [self femaleClicked:Nil];
-        }else{
-            [self maleClicked:Nil];
-        }
-    }else if (appDelegate.isGooglePlus){
-        [self downloadUserImageview:[self.userBasicInfoDic valueForKeyPath:@"url"]];
+    profileUserDetail = [WSModelClasses sharedHandler].loggedInUserModel;
+    if (profileUserDetail.city) {
+        self.cityTxt.text = profileUserDetail.city;
+    }
+    
+    if (profileUserDetail.profileImageName){
+        [self downloadUserImageview:profileUserDetail.profileImageName];
+    }
+    
+    if ([profileUserDetail.gender isEqualToNumber:[NSNumber numberWithInt:1]]){
+        [self maleClicked:nil];
+    }
+    
+    if ([profileUserDetail.gender isEqualToNumber:[NSNumber numberWithInt:0]]){
+        [self femaleClicked:nil];
+    }
+    
+    if (profileUserDetail.dobDate){
+        
+       //self.birthdayTxt.text =(NSString*) profileUserDetail.dobDate;
+    }
+    
+    if (profileUserDetail.biodata) {
+        self.bioTxt.text = profileUserDetail.biodata;
     }
 }
 
@@ -157,7 +171,7 @@
         if (avatarData) {
             // Update UI from the main thread when available
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.userprofileImg.image = [UIImage imageWithData:avatarData];
+                profilePicAspectController.imageView.image =  [UIImage imageWithData:avatarData];
             });
         }
     });
@@ -182,16 +196,7 @@
 
 - (void)goToAddPeopleScreen:(id)sender
 {
-//    [self saveBasicInfoDetails];
-//    return;
-//    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-//    [self.navigationController pushViewController:addPeople animated:NO];
-    
-    CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-    [self.navigationController pushViewController:compositionViewController animated:YES];
-    
-//    NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
-//    [self.navigationController pushViewController:notificationController animated:YES];
+    [self saveBasicInfoDetails];
 }
 
 -  (IBAction)maleClicked:(id)sender
@@ -443,10 +448,14 @@
     if (inAnimation) {
         self.userprofileImg.hidden = YES;
         self.profileimgbtn.hidden = YES;
-        self.cityTxt.frame = CGRectMake(25, 89, 270, 42);
+        CGRect frame  =  self.cityTxt.frame;
+        frame.origin.y = 89;
+        self.cityTxt.frame =frame;
         self.cityTxtImageView.frame = CGRectMake(25, 89, 270, 42);
     }else{
-        self.cityTxt.frame = CGRectMake(25, 189, 270, 42);
+        CGRect frame  =  self.cityTxt.frame;
+        frame.origin.y = 189;
+        self.cityTxt.frame =frame;
         self.cityTxtImageView.frame = CGRectMake(25, 189, 270, 42);
         self.userprofileImg.hidden = NO;
         self.profileimgbtn.hidden = NO;
@@ -475,7 +484,6 @@
 {
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate = self;
-    
     NSString * gender = nil;
     if (isGenderMale) {
         gender = @"1";
@@ -483,10 +491,24 @@
     else{
         gender = @"0";
     }
+    [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [self convertTheDateToepochtime:self.birthdayTxt.text] userGender:gender profilePic:profilePicAspectController.imageView.image];
     
-    [modelClass postBasicInfoWithUserUID:[[NSUserDefaults standardUserDefaults]valueForKey:@"USERID" ] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob:@"1980-02-21" userGender:gender profilePic:profilePicAspectController.imageView.image];
+    
+    
 }
 
+
+-(NSString*)convertTheDateToepochtime:(NSString*)dateString
+{
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateStyle:NSDateFormatterLongStyle];
+    [dateFormat setTimeStyle:NSDateFormatterNoStyle];
+    NSDate *date = [dateFormat dateFromString:dateString];
+//    NSLog(@"date %@",date);
+    [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
+    //NSLog(@"date convert%@",    [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]]);
+    return  [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
+}
 #pragma mark WebService Delegate method
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
 {
@@ -500,7 +522,14 @@
     switch (serviceType) {
         case kWebservicesType_SaveBasicInfo:
         {
+            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+            [self.navigationController pushViewController:addPeople animated:NO];
             
+//            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+//            [self.navigationController pushViewController:notificationController animated:YES];
+            
+//            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+//            [self.navigationController pushViewController:compositionViewController animated:YES];
             break;
         }
             
@@ -596,5 +625,6 @@
     self.btnfemale.hidden = inBool;
     self.btnmale.hidden = inBool;
 }
+
 
 @end
