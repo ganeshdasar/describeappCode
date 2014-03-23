@@ -355,10 +355,18 @@ static WSModelClasses *_sharedInstance;
     [manager POST:postURLString
        parameters:argDict
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSLog(@"%s %s", __func__, [responseObject bytes]);
+              NSLog(@"%s %@", __func__, responseObject);
+              if(_delegate != nil && [_delegate respondsToSelector:@selector(didFinishWSConnectionWithResponse:)]) {
+                  NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebservicesType_PostComposition]};
+                  [_delegate didFinishWSConnectionWithResponse:responseDict];
+              }
           }
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"%s %@", __func__, error.localizedDescription);
+              if(_delegate != nil && [_delegate respondsToSelector:@selector(didFinishWSConnectionWithResponse:)]) {
+                  NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebservicesType_PostComposition]};
+                  [_delegate didFinishWSConnectionWithResponse:responseDict];
+              }
           }
      ];
 }
@@ -383,16 +391,8 @@ static WSModelClasses *_sharedInstance;
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
              NSLog(@"%s %@", __func__, responseObject);
               if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didFinishFetchingNotification:error:)]) {
-                  NSDictionary *responseDict = (NSDictionary *)responseObject[@"DataTable"][0];
-                  NSArray *notificationListArray = nil;
-                  if([responseDict[@"NotificationsData"] isKindOfClass:[NSDictionary class]]) {
-                      notificationListArray = @[responseDict[@"NotificationsData"]];
-                  }
-                  else {
-                      notificationListArray = responseDict[@"NotificationsData"];
-//                      [self.delegate didFinishFetchingNotification:responseDict[@"NotificationsData"] error:nil];
-                  }
-                                NSMutableArray *notificationModelArray = [[NSMutableArray alloc] initWithCapacity:notificationListArray.count];
+                  NSArray *notificationListArray = (NSArray *)responseObject[@"DataTable"];
+                  NSMutableArray *notificationModelArray = [[NSMutableArray alloc] initWithCapacity:notificationListArray.count];
                   for(NSDictionary *notificationDict in notificationListArray) {
                       NotificationModel *notificationModel = [[NotificationModel alloc] initWithDictionary:notificationDict];
                       [notificationModelArray addObject:notificationModel];
@@ -557,5 +557,21 @@ static WSModelClasses *_sharedInstance;
     }
     return YES;
 }
+
+
+
+#pragma mark - Remove Composition path
+- (void)removeCompositionPath
+{
+    NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
+    if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
+        NSError *err;
+        BOOL success = [[NSFileManager defaultManager] removeItemAtPath:compositionPath error:&err];
+        if(!success) {
+            NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
+        }
+    }
+}
+
 
 @end

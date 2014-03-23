@@ -66,7 +66,7 @@
 {
     _notificationModel = dataModel;
     
-    if(_notificationModel.notificationType == kNotificationTypeFollowing || _notificationModel.notificationType == kNotificationTypeFriendJoined) {
+    if(_notificationModel.notificationType == kNotificationTypeFollowing || _notificationModel.notificationType == kNotificationTypeFBFriendJoined || _notificationModel.notificationType == kNotificationTypeGPFriendsJoined) {
         // the imageView should be circle
         self.imageView.layer.cornerRadius = CGRectGetHeight(self.imageView.frame)/2.0f;
     }
@@ -78,11 +78,13 @@
     self.imageView.layer.borderColor = [UIColor colorWithRed:220.0f/255.0f green:220.0f/255.0f blue:220.0f/255.0f alpha:1.0].CGColor;
     self.imageView.layer.borderWidth = 0.5f;
     
-    [self.imageView setImageWithURL:[NSURL URLWithString:_notificationModel.imageUrlString]
-                          completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-                              self.imageView.image = image;
-                          }
-        usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    if(_notificationModel.imageUrlString && [_notificationModel.imageUrlString length] > 0) {
+        [self.imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimagessmall/%@",_notificationModel.imageUrlString]]
+                              completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+                                  self.imageView.image = image;
+                              }
+            usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    }
     
 //    self.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_notificationModel.imageUrlString]]];
 //    [self setThumbnailUrlString:_notificationModel.imageUrlString];
@@ -96,7 +98,7 @@
 - (void)setTitleFromDataModel
 {
     // check the type of notification and form the string and place it on titleLabel
-    if(_notificationModel.notificationType == kNotificationTypeFriendJoined) {
+    if(_notificationModel.notificationType == kNotificationTypeFBFriendJoined  || _notificationModel.notificationType == kNotificationTypeGPFriendsJoined) {
         _titleLabel.hidden = YES;
         _titleLabel.text = @"";
         return;
@@ -133,7 +135,7 @@
             break;
     }
     
-    if(_notificationModel.notificationType != kNotificationTypeFriendJoined) {
+    if(_notificationModel.notificationType != kNotificationTypeFBFriendJoined && _notificationModel.notificationType != kNotificationTypeGPFriendsJoined) {
         _titleLabel.attributedText = titleString;
     }
 }
@@ -176,7 +178,8 @@
             break;
         }
             
-        case kNotificationTypeFriendJoined:
+        case kNotificationTypeFBFriendJoined:
+        case kNotificationTypeGPFriendsJoined:
         {
             _subTitleLable.hidden = YES;
             _subTitleLable.text = @"";
@@ -200,7 +203,7 @@
         [subTitleString appendAttributedString:fromUser];
     }
     
-    if(_notificationModel.notificationType == kNotificationTypeFriendJoined) {
+    if(_notificationModel.notificationType == kNotificationTypeFBFriendJoined || _notificationModel.notificationType == kNotificationTypeGPFriendsJoined) {
         _friendsTypeLabel.hidden = NO;
         _friendsTypeLabel.attributedText = subTitleString;
     }

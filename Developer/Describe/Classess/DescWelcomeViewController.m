@@ -18,6 +18,7 @@
 #import "Constant.h"
 #import "DESocialConnectios.h"
 #import "UsersModel.h"
+#import "NSString+DateConverter.h"
 #define FRAME CGRectMake(0, 0, 320, 480);
 #define BUTTONFRAME CGRectMake(121, 363, 70, 26);
 
@@ -171,7 +172,7 @@
         [dic setValue:[NSNumber numberWithInteger:0] forKey:USER_MODAL_KEY_GENDER];
     }
     [dic setValue: [inDic valueForKey:@"location.name"] forKey:USER_MODAL_KEY_CITY];
-    [dic setValue: [inDic valueForKey:@"birthday"] forKey:USER_MODAL_KEY_DOB];
+    [dic setValue: [NSString convertThesocialNetworkDateToepochtime:[dic valueForKey:@"birthday"]] forKey:USER_MODAL_KEY_DOB];
     [dic setValue: [inDic valueForKeyPath:@"picture.data.url"] forKey:USER_MODAL_KEY_PROFILEPIC];
     UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
     [WSModelClasses sharedHandler].loggedInUserModel = data;

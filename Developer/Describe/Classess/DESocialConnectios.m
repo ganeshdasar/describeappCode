@@ -10,6 +10,7 @@
 #import "DUserData.h"
 #import "DESAppDelegate.h"
 #import "Constant.h"
+#import "NSString+DateConverter.h"
 @implementation DESocialConnectios
 @synthesize googlePlusFriendsListArry;
 @synthesize facebookFriendsListArray;
@@ -77,8 +78,10 @@ static DESocialConnectios *_sharedInstance;
         [dataDic setObject:person.displayName forKey:@"displayName"];
         [dataDic setObject:person.url forKey:@"url"];
         [dataDic setObject:person.gender forKey:@"gender"];
-        if (person.birthday) [dataDic setObject:person.birthday forKey:@"dob"];
+        if (person.birthday){
+            [dataDic setObject:[NSString convertThesocialNetworkDateToepochtime:person.birthday] forKey:@"dob"];
        if (person.currentLocation)  [dataDic setObject:person.currentLocation forKey:@"city"];
+        }
         
         [[NSUserDefaults standardUserDefaults]setObject:person.identifier forKey:Google_plus_ID];
         GTLServicePlus* plusService = [[GTLServicePlus alloc] init];
@@ -97,14 +100,10 @@ static DESocialConnectios *_sharedInstance;
                     } else {
                         peoplesList = peopleFeed.items;
                     }
-                    for (GTLPlusPerson *person  in peoplesList) {
-                        
-                        ModelData * data = [[ModelData alloc]init];
-                        data.userId = person.identifier;
-                        [self.googlePlusFriendsListArry addObject:data];
-                    }
+//                    for (GTLPlusPerson *person  in peoplesList) {
+//                    }
                     if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
-                        [self.delegate googlePlusResponce:dataDic andFriendsList:self.googlePlusFriendsListArry];
+                        [self.delegate googlePlusResponce:dataDic andFriendsList:nil];
                     }
                 }];
     }
@@ -163,13 +162,9 @@ static DESocialConnectios *_sharedInstance;
                                                                     self.facebookFriendsListArray = [[NSMutableArray alloc]init];
                                                                 }
                                                                 for (NSDictionary* datadic in [result1 valueForKey:@"data"]) {
-                                                                    ModelData * data = [[ModelData alloc]init];
-                                                                    data.userId =[datadic valueForKey:@"id"];
-
-                                                                   [self.facebookFriendsListArray addObject:data ];
                                                                 }
                                                                 if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
-                                                                    [self.delegate googlePlusResponce:result andFriendsList:self.facebookFriendsListArray];
+                                                                    [self.delegate googlePlusResponce:result andFriendsList:nil];
                                                                 }
                                                             } else {
                                                                 // An error occurred, we need to handle the error

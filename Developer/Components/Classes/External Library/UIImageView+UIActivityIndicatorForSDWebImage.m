@@ -37,11 +37,12 @@ static char TAG_ACTIVITY_INDICATOR;
         self.activityIndicator.autoresizingMask = UIViewAutoresizingNone;
         
         //calculate the correct position
-        float width = self.activityIndicator.frame.size.width;
-        float height = self.activityIndicator.frame.size.height;
-        float x = (self.frame.size.width / 2.0) - width/2;
-        float y = (self.frame.size.height / 2.0) - height/2;
-        self.activityIndicator.frame = CGRectMake(x, y, width, height);
+//        float width = self.activityIndicator.frame.size.width;
+//        float height = self.activityIndicator.frame.size.height;
+        float x = (self.frame.size.width / 2.0) ;//- width/2;
+        float y = (self.frame.size.height / 2.0) ;//- height/2;
+//        self.activityIndicator.frame = CGRectMake(x, y, width, height);
+        self.activityIndicator.center = CGPointMake(x, y);
         
         self.activityIndicator.hidesWhenStopped = YES;
         [self addSubview:self.activityIndicator];

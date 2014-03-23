@@ -18,6 +18,8 @@
     CGFloat progressVal;
     NSTimer *progressTimer;
     CGFloat currentVideoTime;
+    
+    BOOL isRecordingCompleted;
 }
 
 @property (assign) NSInteger selectedImageIndex;
@@ -34,9 +36,19 @@
     if([self identifyNotRecordedImageAndDisplay] == NO) {
         self.selectedImageIndex = 0;
         self.selectedImageView.image = [(CMPhotoModel *)self.capturedPhotoList[0] editedImage];
+        
+        isRecordingCompleted = YES;
     }
-    
-    [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
+    else {
+        if(self.selectedImageIndex == 0) {
+            progressVal = 0;
+            currentVideoTime = 0.0;
+            isRecordingCompleted = NO;
+        }
+    }
+
+    [self showCameraView];
+//    [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
@@ -46,11 +58,20 @@
     [super viewWillDisappear:animated];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    if(self.parentController != nil) {
+        [self.parentController refreshSelectedImageViewContainer];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     self.navigationController.navigationBarHidden = YES;
+    
+    isRecordingCompleted = NO;
     
     UINib *nib = [UINib nibWithNibName:@"CMPhotoCell" bundle:nil];
     [self.photoCollectionView registerNib:nib forCellWithReuseIdentifier:@"PhotoCellIdentifier"];
@@ -58,9 +79,6 @@
     self.selectedImageIndex = -1;
     progressVal = 0;
     currentVideoTime = 0.0;
-    
-//    CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[0];
-//    self.selectedImageView.image = modelObj.editedImage;
     
     UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.photoCollectionView.collectionViewLayout;
     if([UIScreen mainScreen].bounds.size.height > 480) {
@@ -111,6 +129,24 @@
     return YES;
 }
 
+- (BOOL)isLastPhotoRecording
+{
+    CMPhotoModel *modelObj = self.capturedPhotoList[self.selectedImageIndex];
+    if(modelObj.originalImage && modelObj.isRecorded == NO) {
+        int nextIndex = self.selectedImageIndex+1;
+        if(nextIndex == self.capturedPhotoList.count) {
+            return YES;
+        }
+        
+        CMPhotoModel *nextObj = self.capturedPhotoList[nextIndex];
+        if(nextObj.originalImage == NO) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -122,11 +158,11 @@
 #if !(TARGET_IPHONE_SIMULATOR)
 
     [[CMAVCameraHandler sharedHandler] changeCapturesSessionPreset:AVCaptureSessionPresetLow];
-    [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:kCameraDeviceFront];
+    [[CMAVCameraHandler sharedHandler] setDelegate:self];
     [[CMAVCameraHandler sharedHandler] removeVideoAudioOutput];
+    [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:kCameraDeviceFront];
     [[CMAVCameraHandler sharedHandler] addvideoAudioOutputForUsingAssetLibrary];
     [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_videoPreviewView];
-    [[CMAVCameraHandler sharedHandler] setDelegate:self];
     
 #endif
 }
@@ -134,9 +170,9 @@
 - (void)removeCameraView
 {
 #if !(TARGET_IPHONE_SIMULATOR)
-
-    [[CMAVCameraHandler sharedHandler] removePreviewLayer];
+    
     [[CMAVCameraHandler sharedHandler] setDelegate:nil];
+    [[CMAVCameraHandler sharedHandler] removePreviewLayer];
     
 #endif
 }
@@ -196,12 +232,24 @@
 
 - (IBAction)nextOptionClicked:(id)sender
 {
+    if([self isAllPhotosRecorded] == NO && [self isLastPhotoRecording] == NO) {
+        
 #if !(TARGET_IPHONE_SIMULATOR)
+        if([[CMAVCameraHandler sharedHandler] isVideoRecordingStarted] && ![[CMAVCameraHandler sharedHandler] isRecordingPaused]) {
+            [self startOrPauseVideoRecording:nil];
+        }
+#endif
+        
+        // show alert to record video for all photos
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Record video for all photos to continue.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
     
+#if !(TARGET_IPHONE_SIMULATOR)
     if([[CMAVCameraHandler sharedHandler] isVideoRecordingStarted]) {
         [[CMAVCameraHandler sharedHandler] startOrStopRecordingVideo];
     }
-    
 #endif
     
     CMShareViewController *shareController = [[CMShareViewController alloc] initWithNibName:@"CMShareViewController" bundle:nil];
@@ -212,7 +260,15 @@
 
 - (IBAction)dissmissOptionClicked:(id)sender
 {
-    
+#if !(TARGET_IPHONE_SIMULATOR)
+    if([[CMAVCameraHandler sharedHandler] isVideoRecordingStarted] && ![[CMAVCameraHandler sharedHandler] isRecordingPaused]) {
+        [self startOrPauseVideoRecording:nil];
+    }
+#endif
+
+    // show an alert whether user wants to really dismiss the current video composition.
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"You will lose your current composition, if you navigate back. Do you still want to continue.", @"") delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    [alert show];
 }
 
 - (IBAction)prevButtonSelected:(id)sender
@@ -231,6 +287,10 @@
 
 - (IBAction)startOrPauseVideoRecording:(id)sender
 {
+    if(isRecordingCompleted) {
+        return;
+    }
+    
 #if !(TARGET_IPHONE_SIMULATOR)
 
     if([[CMAVCameraHandler sharedHandler] isVideoRecordingStarted] == NO) {
@@ -267,6 +327,32 @@
     }
 
 #endif
+}
+
+#pragma mark - UIAlertViewDelegate Method
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    //    NSLog(@"buttonIndex = %d", buttonIndex);
+    if(buttonIndex == 1) {
+        [self popToFeedScreen];
+    }
+    
+}
+
+- (void)popToFeedScreen
+{
+    // remove the composition from document
+    [[WSModelClasses sharedHandler] removeCompositionPath];
+    
+    // from here we should pop back to feed controller, which will be in stack at thirdLast index so we will get that controller from controllerStack and pop to that controller
+    NSInteger count = self.navigationController.viewControllers.count;
+    
+    // since we need to go back twice, we will decrement count by 3 to get index
+    NSInteger index = count - 3;
+    if(index >= 0) {
+        id viewController = self.navigationController.viewControllers[index];
+        [self.navigationController popToViewController:(UIViewController *)viewController animated:YES];
+    }
 }
 
 #pragma mark - Updating progressbar
@@ -336,11 +422,13 @@
         }
         else {
             isRecordingDone = YES;
+            isRecordingCompleted = YES;
         }
     }
     else {
         // here we come if all images are recorded
         isRecordingDone = YES;
+        isRecordingCompleted = YES;
     }
     
 #if !(TARGET_IPHONE_SIMULATOR)

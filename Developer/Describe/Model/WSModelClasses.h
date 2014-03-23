@@ -11,9 +11,9 @@
 
 typedef enum {
     kWebservicesType_SaveBasicInfo = 0,
+    kWebservicesType_PostComposition,
     kWebserviesType_SignIn,
     kWebserviesType_addPeople
-    
 }WebservicesType;
 
 @protocol WSModelClassDelegate <NSObject>
@@ -51,6 +51,8 @@ typedef enum {
 - (BOOL)networkReachable;
 
 - (BOOL)checkTheInterConnection;
+
+- (void)removeCompositionPath;
 
 + (instancetype)sharedHandler;
 

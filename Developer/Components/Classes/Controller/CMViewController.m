@@ -11,6 +11,7 @@
 #import "CMRecordViewController.h"
 #import "CMAVCameraHandler.h"
 #import "DBAspectFillViewController.h"
+#import "WSModelClasses.h"
 
 #define MAX_IMAGE_SELECT_COUNT              10
 #define DEFAULT_IMAGE_RECT                  CGRectMake(0, 0, 320.0, 320.0)
@@ -103,7 +104,8 @@
     }
     else {
         self.selectedImageIndex = -1;
-        [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
+        [self showCameraView];
+//        [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
     }
     
 }
@@ -123,17 +125,17 @@
     [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:currentCameraMode];
     [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_cameraContainerView];
     [_cameraContainerView bringSubviewToFront:_cameraOverlayView];
-    
+
 #endif
 }
 
 - (void)removeCameraView
 {
 #if !(TARGET_IPHONE_SIMULATOR)
-
-    [[CMAVCameraHandler sharedHandler] removePreviewLayer];
-    [[CMAVCameraHandler sharedHandler] setDelegate:nil];
     
+    [[CMAVCameraHandler sharedHandler] setDelegate:nil];
+    [[CMAVCameraHandler sharedHandler] removePreviewLayer];
+
 #endif
 }
 
@@ -229,10 +231,6 @@
     
     self.selectedImageIndex = -1;
     [_aspectFillImageController resetImageContentToEmpty];
-//    self.selectedImageView.image = nil;
-//    [self.imageScrollView setZoomScale:1.0 animated:NO];
-//    self.imageScrollView.contentSize = CGSizeMake(640, 640);
-//    [self.imageScrollView setContentOffset:CGPointZero animated:NO];
 }
 
 #pragma mark - UICollectionView Datasource methods
@@ -473,18 +471,27 @@
 - (IBAction)nextOptionClicked:(id)sender
 {
 //    NSLog(@"Navigate to the video composition screen for images");
+    [self showSelectedPhoto:0];
+      
+    [self performSelector:@selector(goToVideoRecordingScreen) withObject:nil afterDelay:0.3];
+}
+
+- (void)goToVideoRecordingScreen
+{
     CMRecordViewController *recordController = [[CMRecordViewController alloc] initWithNibName:@"CMRecordViewController" bundle:nil];
     recordController.capturedPhotoList = self.capturedPhotoList;
+    recordController.parentController = self;
     [self.navigationController pushViewController:recordController animated:YES];
     recordController = nil;
-    
-    [self refreshSelectedImageViewContainer];
 }
 
 - (IBAction)backOptionClicked:(id)sender
 {
 //    NSLog(@"Dismiss the current view and navigate to previous screen.");
     [self removeCameraView];
+    // remove the composition from document
+    [[WSModelClasses sharedHandler] removeCompositionPath];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

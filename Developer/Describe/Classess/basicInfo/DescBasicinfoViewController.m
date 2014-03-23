@@ -16,7 +16,8 @@
 #import "DBAspectFillViewController.h"
 #import "Constant.h"
 #import "NotificationsViewController.h"
-
+//#import "NSString+DateConverter.h"
+#import "CMViewController.h"
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
 #define FEMALEBTNFRAME
@@ -147,8 +148,7 @@
     }
     
     if (profileUserDetail.dobDate){
-        
-       //self.birthdayTxt.text =(NSString*) profileUserDetail.dobDate;
+//       self.birthdayTxt.text =[NSString convertTheepochTimeToDate:[profileUserDetail.dobDate doubleValue]];
     }
     
     if (profileUserDetail.biodata) {
@@ -324,8 +324,8 @@
 {
     isEditingPic = YES;
     [picker dismissViewControllerAnimated:YES completion:nil];
-    _profileEditCancelBtn.hidden = NO;
-    _profileEditDoneBtn.hidden = NO;
+    _profileEditCancelBtn.hidden = YES;
+    _profileEditDoneBtn.hidden = YES;
     _profilePicOverlayView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
     [profilePicAspectController enableTouches:YES];
     [_profilePicOverlayView setDontPassTouch:YES];
@@ -490,24 +490,10 @@
     else{
         gender = @"0";
     }
-    [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [self convertTheDateToepochtime:self.birthdayTxt.text] userGender:gender profilePic:profilePicAspectController.imageView.image];
-    
-    
-    
+    [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [NSString convertTheDateToepochtime:(NSString*)self.birthdayTxt.text ]  userGender:gender profilePic:profilePicAspectController.imageView.image];
+
 }
 
-
--(NSString*)convertTheDateToepochtime:(NSString*)dateString
-{
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateStyle:NSDateFormatterLongStyle];
-    [dateFormat setTimeStyle:NSDateFormatterNoStyle];
-    NSDate *date = [dateFormat dateFromString:dateString];
-//    NSLog(@"date %@",date);
-    [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
-    //NSLog(@"date convert%@",    [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]]);
-    return  [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
-}
 #pragma mark WebService Delegate method
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
 {
@@ -522,7 +508,13 @@
         case kWebservicesType_SaveBasicInfo:
         {
             DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-             [self.navigationController pushViewController:addPeople animated:NO];
+            [self.navigationController pushViewController:addPeople animated:NO];
+            
+//            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+//            [self.navigationController pushViewController:notificationController animated:YES];
+            
+//            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+//            [self.navigationController pushViewController:compositionViewController animated:YES];
             break;
         }
             

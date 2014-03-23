@@ -23,7 +23,7 @@
         }
         
         if (notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE]]) {
-            self.notificationType = [notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] integerValue];
+            self.notificationType = (NotificationType)[notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] integerValue];
         }
         
         if (notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL]]) {
