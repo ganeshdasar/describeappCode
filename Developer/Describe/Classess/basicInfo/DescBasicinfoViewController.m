@@ -18,6 +18,7 @@
 #import "NotificationsViewController.h"
 //#import "NSString+DateConverter.h"
 #import "CMViewController.h"
+
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
 #define FEMALEBTNFRAME
