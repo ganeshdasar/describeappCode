@@ -120,19 +120,19 @@
     [self saveModelToCompositionArray];
 }
 
-- (void)setStartAppearanceTime:(float)startAppearanceTime
+- (void)setStartAppearanceTime:(CGFloat)startAppearanceTime
 {
     _startAppearanceTime = startAppearanceTime;
     [self saveModelToCompositionArray];
 }
 
-- (void)setEndAppearanceTime:(float)endAppearanceTime
+- (void)setEndAppearanceTime:(CGFloat)endAppearanceTime
 {
     _endAppearanceTime = endAppearanceTime;
     [self saveModelToCompositionArray];
 }
 
-- (void)setPauseTime:(float)pauseTime
+- (void)setPauseTime:(CGFloat)pauseTime
 {
     _pauseTime = pauseTime;
     [self saveModelToCompositionArray];
@@ -140,7 +140,7 @@
 
 - (NSString *)generateUniqueFilename
 {
-    NSString *prefixString = [NSString stringWithFormat:@"ImageIndex%d", _indexNumber];
+    NSString *prefixString = [NSString stringWithFormat:@"ImageIndex%lu", (unsigned long)_indexNumber];
     
     NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString] ;
     NSString *uniqueFileName = [NSString stringWithFormat:@"%@_%@", prefixString, guid];

@@ -32,5 +32,6 @@
 - (IBAction)listOptionClicked:(id)sender;
 - (IBAction)nextOptionClicked:(id)sender;
 - (IBAction)backOptionClicked:(id)sender;
+- (void)refreshSelectedImageViewContainer;
 
 @end

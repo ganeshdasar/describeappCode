@@ -16,6 +16,7 @@
 #import "DBAspectFillViewController.h"
 #import "Constant.h"
 #import "NotificationsViewController.h"
+#import "CMViewController.h"
 
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
@@ -181,13 +182,16 @@
 
 - (void)goToAddPeopleScreen:(id)sender
 {
-    [self saveBasicInfoDetails];
-    return;
+//    [self saveBasicInfoDetails];
+//    return;
 //    DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
 //    [self.navigationController pushViewController:addPeople animated:NO];
     
-    NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
-    [self.navigationController pushViewController:notificationController animated:YES];
+    CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+    [self.navigationController pushViewController:compositionViewController animated:YES];
+    
+//    NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+//    [self.navigationController pushViewController:notificationController animated:YES];
 }
 
 -  (IBAction)maleClicked:(id)sender

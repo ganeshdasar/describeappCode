@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    kNotificationTypeLike = 0,
-    kNotificationTypeComment,
+    kNotificationTypeComment = 0,
+    kNotificationTypeLike,
     kNotificationTypeFollowing,
+    kNotificationTypeFBFriendJoined,
     kNotificationTypeMentionedInCommment,
-    kNotificationTypeFriendJoined
+    kNotificationTypeGPFriendsJoined,
 } NotificationType;
 
 @interface NotificationModel : NSObject

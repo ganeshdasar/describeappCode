@@ -30,6 +30,8 @@ typedef enum {
 }ShareSection;
 
 #define NO_CATEGORY_SELECTED_COLOR          [UIColor colorWithR:212.0f G:212.0f B:212.0f A:255.0f]
+#define ALERT_TAG_DISMISS                   10
+#define ALERT_TAG_MOVEBACK                  15
 
 @interface CMShareViewController ()
 {
@@ -115,6 +117,7 @@ typedef enum {
 
 - (void)videoRecordingDone:(NSNotification *)notification
 {
+#if !(TARGET_IPHONE_SIMULATOR)
     if([[CMAVCameraHandler sharedHandler] isRecordingDone]) {
         DPostVideo *video = [[DPostVideo alloc] init];
         NSArray *imgArray = _imagePost.images;
@@ -126,9 +129,10 @@ typedef enum {
             _totalVideoDuration = [NSString stringWithFormat:@"%0.2f", totalDuration];
         }
         
-        [video setUrl:[[CMAVCameraHandler sharedHandler] videoFilenamePath]];   //[[NSBundle mainBundle] pathForResource:@"444" ofType:@"mp4"]
+        [video setUrl:[[CMAVCameraHandler sharedHandler] videoFilenamePath]];
         [_imagePost setVideo:video];
     }
+#endif
 }
 
 - (void)didReceiveMemoryWarning
@@ -146,12 +150,15 @@ typedef enum {
 
 - (IBAction)dismissOptionCLicked:(id)sender
 {
-    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"You will lose your current composition, if you navigate back. Do you still want to continue.", @"") delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    alert.tag = ALERT_TAG_DISMISS;
+    [alert show];
 }
 
 - (IBAction)prevOptionClicked:(id)sender
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"You will lose your recorded video, if you navigate back. Do you still want to navigate back.", @"") delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Cancel", nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"You will lose your recorded video, if you navigate back. Do you still want to navigate back.", @"") delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    alert.tag = ALERT_TAG_MOVEBACK;
     [alert show];
 }
 
@@ -159,24 +166,45 @@ typedef enum {
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
 //    NSLog(@"buttonIndex = %d", buttonIndex);
-    if(buttonIndex == 0) {
-        NSString *path = [[CMAVCameraHandler sharedHandler] videoFilenamePath];
-        if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-            NSError *err;
-            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&err];
-            if(!success) {
-                NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
+    if(buttonIndex == 1) {
+        if(alertView.tag == ALERT_TAG_MOVEBACK) {
+            NSString *path = [[CMAVCameraHandler sharedHandler] videoFilenamePath];
+            if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+                NSError *err;
+                BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&err];
+                if(!success) {
+                    NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
+                }
             }
-        }
-        
-        [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:nil];
-        for(CMPhotoModel *modelObj in self.capturedPhotoList) {
-            if(modelObj.originalImagePath) {
-                [modelObj resetRecordingValues];
+            
+            [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:nil];
+            for(CMPhotoModel *modelObj in self.capturedPhotoList) {
+                if(modelObj.originalImagePath) {
+                    [modelObj resetRecordingValues];
+                }
             }
+            
+            [self.navigationController popViewControllerAnimated:YES];
         }
-        
-        [self.navigationController popViewControllerAnimated:YES];
+        else {
+            [self popToFeedScreen];
+        }
+    }
+}
+
+- (void)popToFeedScreen
+{
+    // remove the composition from document
+    [[WSModelClasses sharedHandler] removeCompositionPath];
+
+    // from here we should pop back to feed controller, which will be in stack at fourthLast index so we will get that controller from controllerStack and pop to that controller
+    NSInteger count = self.navigationController.viewControllers.count;
+    
+    // since we need to go back twice, we will decrement count by 4 to get index
+    NSInteger index = count - 4;
+    if(index >= 0) {
+        id viewController = self.navigationController.viewControllers[index];
+        [self.navigationController popToViewController:(UIViewController *)viewController animated:YES];
     }
 }
 
@@ -184,61 +212,13 @@ typedef enum {
 
 - (IBAction)socailButtonClicked:(id)sender
 {
-    NSLog(@"%s, tag = %d", __func__, [sender tag]);
+    NSLog(@"%s, tag = %ld", __func__, (long)[sender tag]);
 }
 
 - (IBAction)shareButtonClicked:(id)sender
 {
     NSLog(@"%s", __func__);
-    NSMutableDictionary *argDict = [[NSMutableDictionary alloc] init];
-    
-    NSInteger imgCount = 1;
-    NSMutableArray *imgTimeArray = [NSMutableArray array];
-    for(CMPhotoModel *modelObj in _imagePost.images) {
-        NSData *imageData = UIImagePNGRepresentation(modelObj.editedImage);
-        NSString *encodedImgString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-        [argDict setObject:encodedImgString forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
-        
-        [imgTimeArray addObject:[NSString stringWithFormat:@"%0.2f", modelObj.duration]];
-        
-        imgCount++;
-    }
-    
-    if(imgCount < 10) {
-        for (; imgCount <= 10; imgCount++) {
-            [argDict setObject:@"" forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
-        }
-    }
-    
-    NSData *videoData = [NSData dataWithContentsOfFile:_imagePost.video.url];
-    NSString *videoEncodedString = [videoData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-    
-    [argDict setObject:@"45" forKey:@"UserUID"];
-    [argDict setObject:[imgTimeArray componentsJoinedByString:@","] forKey:@"imageTimesArr"];
-    [argDict setObject:@"No Category" forKey:@"txtCategory"];
-    [argDict setObject:@"Hyderabad" forKey:@"txtLocation"];
-    [argDict setObject:@"17.366, 78.476" forKey:@"txtLatLongitude"];
-    [argDict setObject:@"NO" forKey:@"shareFB"];
-    [argDict setObject:@"NO" forKey:@"shareGoogle"];
-    [argDict setObject:@"NO" forKey:@"shareTwitter"];
-    [argDict setObject:@"SampleComposition" forKey:@"txtTag1"];
-    [argDict setObject:@"MakeComposition" forKey:@"txtTag2"];
-    [argDict setObject:videoEncodedString forKey:@"movFile"];
-    [argDict setObject:_totalVideoDuration forKey:@"clip_duration"];
-    //    [argDict setObject:@"" forKey:@"imgCount"];
-    //    [argDict setObject:@"" forKey:@"imgFile1"];
-    //    [argDict setObject:@"" forKey:@"imgFile2"];
-    //    [argDict setObject:@"" forKey:@"imgFile3"];
-    //    [argDict setObject:@"" forKey:@"imgFile4"];
-    //    [argDict setObject:@"" forKey:@"imgFile5"];
-    //    [argDict setObject:@"" forKey:@"imgFile6"];
-    //    [argDict setObject:@"" forKey:@"imgFile7"];
-    //    [argDict setObject:@"" forKey:@"imgFile8"];
-    //    [argDict setObject:@"" forKey:@"imgFile9"];
-    //    [argDict setObject:@"" forKey:@"imgFile10"];
-    
-    NSLog(@"%s sending to url", __func__);
-    [[WSModelClasses sharedHandler] postComposition:(NSDictionary *)argDict];
+    [self postComposition];
 }
 
 #pragma mark - UITableDatasource methods
@@ -300,8 +280,6 @@ typedef enum {
             CMPhotoModel *model = (CMPhotoModel *)self.capturedPhotoList[0];
             compositeCell.compositionImageView.image = model.editedImage;
             [compositeCell setPostImage:_imagePost];
-            
-            
             
             break;
         }
@@ -534,7 +512,75 @@ typedef enum {
     else {
         [self.shareTableView reloadSections:[NSIndexSet indexSetWithIndex:ShareSectionComposition] withRowAnimation:UITableViewRowAnimationFade];
     }
+}
+
+#pragma mark - Webservices Method
+- (void)postComposition
+{
+    NSMutableDictionary *argDict = [[NSMutableDictionary alloc] init];
     
+    NSInteger imgCount = 1;
+    NSMutableArray *imgTimeArray = [NSMutableArray array];
+    for(CMPhotoModel *modelObj in _imagePost.images) {
+        NSData *imageData = UIImagePNGRepresentation(modelObj.editedImage);
+        NSString *encodedImgString = [imageData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+        [argDict setObject:encodedImgString forKey:[NSString stringWithFormat:@"imgFile%ld",(long)imgCount]];
+        
+        [imgTimeArray addObject:[NSString stringWithFormat:@"%0.2f", modelObj.duration]];
+        
+        imgCount++;
+    }
+    
+    if(imgCount < 10) {
+        for (; imgCount <= 10; imgCount++) {
+            [argDict setObject:@"" forKey:[NSString stringWithFormat:@"imgFile%ld",(long)imgCount]];
+        }
+    }
+    
+    NSData *videoData = [NSData dataWithContentsOfFile:_imagePost.video.url];
+    NSString *videoEncodedString = [videoData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    if(videoEncodedString == nil) {
+        videoEncodedString = @"";
+    }
+    
+    [argDict setObject:[[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue] forKey:@"UserUID"];
+    [argDict setObject:[imgTimeArray componentsJoinedByString:@","] forKey:@"imageTimesArr"];
+    [argDict setObject:@"No Category" forKey:@"txtCategory"];
+    [argDict setObject:@"Hyderabad" forKey:@"txtLocation"];
+    [argDict setObject:@"17.366, 78.476" forKey:@"txtLatLongitude"];
+    [argDict setObject:@"NO" forKey:@"shareFB"];
+    [argDict setObject:@"NO" forKey:@"shareGoogle"];
+    [argDict setObject:@"NO" forKey:@"shareTwitter"];
+    [argDict setObject:@"SampleComposition" forKey:@"txtTag1"];
+    [argDict setObject:@"MakeComposition" forKey:@"txtTag2"];
+    [argDict setObject:videoEncodedString forKey:@"movFile"];
+    [argDict setObject:_totalVideoDuration forKey:@"clip_duration"];
+    
+    NSLog(@"%s sending to url", __func__);
+    [[WSModelClasses sharedHandler] setDelegate:self];
+    [[WSModelClasses sharedHandler] postComposition:(NSDictionary *)argDict];
+}
+
+#pragma mark - Webservice Delegate Method
+- (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
+{
+    WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
+    if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
+    switch (serviceType) {
+        case kWebservicesType_PostComposition:
+        {
+            [self popToFeedScreen];
+            break;
+        }
+            
+        default:
+            break;
+    }
 }
 
 @end

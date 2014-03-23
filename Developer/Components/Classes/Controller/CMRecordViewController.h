@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "LXReorderableCollectionViewFlowLayout.h"
 #import "CMAVCameraHandler.h"
+#import "CMViewController.h"
 
 @interface CMRecordViewController : UIViewController <CMAVCameraHandlerDelegate>
 
@@ -21,6 +22,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *prevButton;
 @property (weak, nonatomic) IBOutlet UIProgressView *videoProgressIndicator;
 @property (weak, nonatomic) IBOutlet UIView *videoPreviewView;
+
+@property (nonatomic, assign) CMViewController *parentController;
 
 @property (nonatomic, strong) NSMutableArray *capturedPhotoList;
 

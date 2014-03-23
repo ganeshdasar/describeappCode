@@ -160,7 +160,7 @@
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate = self;
     
-    [modelClass getNotificationListForUser:[NSNumber numberWithInteger:4] withSubId:notificationId andPageNumber:[NSNumber numberWithInteger:0]];
+    [modelClass getNotificationListForUser:[[WSModelClasses sharedHandler] loggedInUserModel].userID withSubId:notificationId andPageNumber:[NSNumber numberWithInteger:0]];
 }
 
 - (void)didFinishFetchingNotification:(NSArray *)responseList error:(NSError *)error
