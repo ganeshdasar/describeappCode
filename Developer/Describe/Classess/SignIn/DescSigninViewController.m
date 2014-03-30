@@ -15,6 +15,8 @@
 #import "MBProgressHUD.h"
 #import "Constant.h"
 #import "DESocialConnectios.h"
+#import "DPostsViewController.h"
+
 
 @interface DescSigninViewController ()<WSModelClassDelegate,DESocialConnectiosDelegate,MBProgressHUDDelegate>{
 IBOutlet DHeaderView *_headerView;
@@ -168,9 +170,14 @@ IBOutlet DHeaderView *_headerView;
         case kWebserviesType_SignIn:
         {
             [HUD hide:YES];
-            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
-                [self gotoBasicinfoScreen];
-            }else{
+            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"])
+            {
+                //Have to store these details in the shared holder to call/access them globally...
+                [self saveUserDetails:responseDict];
+                [self showNextScreen];
+                
+            }
+            else{
                 [self showalertMessage:@"The username or password you have entered is incorrect."];
             }
             break;
@@ -180,6 +187,42 @@ IBOutlet DHeaderView *_headerView;
     }
 }
 
+//Instead of saving them in the user defaults lets save them in global object wich can access from the any globally...
+-(void)saveUserDetails:(NSDictionary *)dictionary
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    NSArray *username = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.Username"];
+    NSArray *userid = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserUID"];
+    NSArray *userprofilepic = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"];
+    
+    
+    [userDefaults setValue:(username.count)?username[0]:nil forKey:@"UserName"];
+    [userDefaults setValue:(userid.count)?userid[0]:nil forKey:@"UserUID"];
+    [userDefaults setValue:(userprofilepic.count)?userprofilepic[0]:nil forKey:@"UserProfilePicture"];
+}
+
+-(void)showNextScreen
+{
+    if(0)//Check for the condition where the basic info line is empty or not.
+    {
+        DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+        [self.navigationController pushViewController:basicInfo animated:YES];
+    }
+    else
+    {
+        if(1)//is he is following any one or not?
+        {
+            DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+            [self.navigationController pushViewController:postViewController animated:YES];
+        }
+        else
+        {
+            DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+            [self.navigationController pushViewController:basicInfo animated:YES];
+        }
+    }
+}
 
 -(void)gotoBasicinfoScreen
 {
@@ -316,8 +359,28 @@ IBOutlet DHeaderView *_headerView;
 	}
 	else
 	{
-        DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
-        [self.navigationController pushViewController:basicInfo animated:YES];
+        
+        
+        if(0)//Check for the condition where the basic info line is empty or not.
+        {
+            DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+            [self.navigationController pushViewController:basicInfo animated:YES];
+        }
+        else
+        {
+            if(1)//is he is following any one or not?
+            {
+                DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+                [self.navigationController pushViewController:postViewController animated:YES];
+            }
+            else
+            {
+                DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+                [self.navigationController pushViewController:basicInfo animated:YES];
+            }
+        }
+        
+        
     }
 }
 @end

@@ -12,7 +12,7 @@
 
 @implementation CMPhotoModel
 
-
+@synthesize imageUrl = _imageUrl;
 
 - (id)initWithDictionary:(NSDictionary *)photoDict
 {

@@ -138,6 +138,7 @@
     }
     
     if (profileUserDetail.profileImageName){
+        
         [self downloadUserImageview:profileUserDetail.profileImageName];
     }
     

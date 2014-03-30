@@ -14,6 +14,8 @@
 @interface DLikesView : UIView
 
 @property(nonatomic, assign)id<DLikesViewDelegate> delegate;
+-(void)selectStars:(int)toStar;
+
 @end
 
 @protocol DLikesViewDelegate <NSObject>

@@ -140,7 +140,7 @@
         }
         
         CMPhotoModel *nextObj = self.capturedPhotoList[nextIndex];
-        if(nextObj.originalImage == NO) {
+        if(nextObj.originalImage == nil) {
             return YES;
         }
     }

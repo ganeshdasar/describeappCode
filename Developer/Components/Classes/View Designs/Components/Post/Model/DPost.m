@@ -15,6 +15,8 @@
 @synthesize user;
 @synthesize imagePost;
 @synthesize attachements;
+@synthesize elapsedTime = _elapsedTime;
+
 @end
 
 
@@ -51,6 +53,7 @@
 @synthesize likeRating;
 @synthesize numberOfLikes;
 @synthesize numberOfComments;
+
 
 -(id)init
 {

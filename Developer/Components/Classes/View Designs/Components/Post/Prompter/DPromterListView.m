@@ -44,6 +44,8 @@
     [self addSubview:_scrollView];
     
     
+    [_scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+
     [_scrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [self designContentOfProfile];
 }

@@ -17,12 +17,11 @@
 @property(nonatomic, assign)id<DPostViewDelegate> delegate;
 
 
-
 - (id)initWithFrame:(CGRect)frame andPost:(DPost *)post;
+
+-(void)reloadPost:(DPost *)post;
 -(void)designPostView;
-
 -(void)startAnimation;
-
 -(void)playVideo;
 -(void)pauseVideo;
 

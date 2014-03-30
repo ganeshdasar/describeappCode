@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @protocol DPostListViewDelegate;
+
+
+@class DPost;
 @interface DPostListView : UIView
 
 
@@ -16,6 +19,8 @@
 - (id)initWithFrame:(CGRect)frame andPostsList:(NSArray *)list;
 - (id)initWithFrame:(CGRect)frame andPostsList:(NSArray *)list withHeaderView:(UIView *)headerView;
 
+
+-(void)deletePost:(DPost *)post;
 
 @end
 

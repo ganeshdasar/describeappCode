@@ -32,6 +32,7 @@ typedef enum post_type
 @property(nonatomic, strong)DPostImage *imagePost;
 @property(nonatomic, strong)DPostAttachments *attachements;
 @property(nonatomic, strong)NSArray *prompters;
+@property(nonatomic, strong)NSString *elapsedTime;
 @end
 
 

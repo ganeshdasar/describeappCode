@@ -12,6 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 
+
 #define CONTENT_FRAME CGRectMake(0,0,320,82)
 
 @interface DPostFooterView ()<DLikesViewDelegate>
@@ -37,14 +38,14 @@
 
 @synthesize postAttachments = _postAttachments;
 
-- (id)initWithFrame:(CGRect)frame 
+- (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
         self.backgroundColor = [UIColor clearColor];
         
-        [self geometryCalculations];        
+        [self geometryCalculations];
         [self createConenteView];
     }
     return self;
@@ -66,13 +67,13 @@
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 #pragma mark View Creations -
 
@@ -85,7 +86,6 @@
     
     //Design star view...
     [self designContentView];
-
 }
 
 -(void)createTagsList
@@ -128,8 +128,10 @@
 -(void)createStarView
 {
     _likesView = [[DLikesView alloc] initWithFrame:likesFrame];
-    _likesView.delegate = self;
+    //_likesView.delegate = self;
+    [_likesView selectStars:_postAttachments.likeRating];
     [_contentView addSubview:_likesView];
+    
 }
 
 -(void)createMoreButton
@@ -159,10 +161,10 @@
 {
     _likesAndCommentButton = [[UIButton alloc] initWithFrame:likeAndCommentFrame];
     [_likesAndCommentButton setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.1]];
-    [_likesAndCommentButton setTitle:@"16 likes, 25 comments" forState:UIControlStateNormal];
+    [_likesAndCommentButton setTitle:[NSString stringWithFormat:@"%d likes, %d comments",_postAttachments.numberOfLikes, _postAttachments.numberOfComments] forState:UIControlStateNormal];
     [_likesAndCommentButton setTitleColor:[[UIColor grayColor] colorWithAlphaComponent:0.3] forState:UIControlStateNormal];
     [_likesAndCommentButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12.0]];
-
+    
     [_likesAndCommentButton addTarget:self action:@selector(likesAndComments:) forControlEvents:UIControlEventTouchUpInside];
     [_contentView addSubview:_likesAndCommentButton];
     
@@ -185,7 +187,7 @@
 -(void)designContentView
 {
     [self createTagsList];
-
+    
     [self createStarView];
     [self createMoreButton];
     [self createLikesAndCommentButton];
@@ -211,7 +213,7 @@
     
     if(count == 0)
         tagsFrame = CGRectZero;
-        
+    
     for (int i=0; i<count; i++)
     {
         tagsFrame = CGRectMake(x, y, w, h);
@@ -221,7 +223,7 @@
     likesFrame = CGRectMake(110, bounds.size.height-64, 80, 20);
     moreFrame = CGRectMake(20, bounds.size.height-32, 19, 5);
     likeAndCommentFrame = CGRectMake(80, bounds.size.height-38, 140, 20);
-    commentFrame = CGRectMake(320-80, bounds.size.height-38, 70, 20);   
+    commentFrame = CGRectMake(320-80, bounds.size.height-38, 70, 20);
     
 }
 
@@ -229,28 +231,40 @@
 -(void)likesView:(DLikesView *)likeView didSelectedStars:(NSNumber *)stars
 {
     //will get the number of likes here...
+    //http://www.mirusstudent.com/service/describe-service/makeLike/format=json/UserUID=5/AuthUserUID=4/PostUID=2/likeStatus=2  
     
     
-   
+}
+-(void)setContentDelegate:(id)sender
+{
+    if(sender != nil)
+    {
+        _likesView.delegate = sender;
+        [_moreButton addTarget:sender action:@selector(moreButton:) forControlEvents:UIControlEventTouchUpInside];
+        [_commentButton addTarget:sender action:@selector(commentButton:) forControlEvents:UIControlEventTouchUpInside];
+        [_likesAndCommentButton addTarget:sender action:@selector(likesAndComments:) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 
 -(void)moreButton:(id)sender
 {
-  [self postNotification:POST_MORE_BUTTON_NOTIFICATION_KEY];
+    //[self postNotification:POST_MORE_BUTTON_NOTIFICATION_KEY];
+    
+    NSLog(@"");
 }
 
 
 -(void)likesAndComments:(id)sender
 {
-    [self postNotification:POST_LIKES_BUTTON_NOTIFICATION_KEY];
+  // [self postNotification:POST_LIKES_BUTTON_NOTIFICATION_KEY];
 }
 
 
 
 -(void)commentButton:(id)sender
 {
-    [self postNotification:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
+    //[self postNotification:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
 }
 
 -(void)postNotification:(NSString *)key

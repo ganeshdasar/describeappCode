@@ -20,6 +20,8 @@
 @property (nonatomic, assign) CGFloat pauseTime;
 @property (nonatomic, assign) CGFloat duration;
 
+@property (nonatomic, strong) NSString *imageUrl;
+
 @property (nonatomic, strong) NSString *originalImagePath;
 
 - (id)initWithDictionary:(NSDictionary *)photoDict;

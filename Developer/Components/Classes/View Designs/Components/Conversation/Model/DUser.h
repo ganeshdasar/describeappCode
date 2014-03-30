@@ -13,5 +13,7 @@
 @property(nonatomic, strong)NSString *userId;
 @property(nonatomic, strong)NSString *name;
 @property(nonatomic, strong)NSString *address;
-
+@property(nonatomic, strong)NSString *userCanvasImage;
+@property(nonatomic, strong)NSString *userCanvasSnippet;
+@property(nonatomic, strong)NSString *userProfilePicture;
 @end

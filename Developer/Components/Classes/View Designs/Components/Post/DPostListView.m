@@ -26,7 +26,7 @@
 
 @synthesize delegate = _delegate;
 
-- (id)initWithFrame:(CGRect)frame 
+- (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -42,7 +42,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        _postList = [[NSMutableArray alloc] initWithArray:list];
+        _postList = [[NSMutableArray alloc] init];
+        [_postList addObjectsFromArray:list];
         [self createPostListView:headerView];
         
     }
@@ -55,6 +56,7 @@
     if (self) {
         // Initialization code
         _postList = [[NSMutableArray alloc] initWithArray:list];
+        [_postList addObjectsFromArray:list];
         [self createPostListView];
         
     }
@@ -76,8 +78,11 @@
     [headerView setBackgroundColor:[UIColor clearColor]];
     _postListView.tableHeaderView = headerView;
     
+    
+    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    
     [_postListView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
-
+    
 }
 
 
@@ -110,7 +115,8 @@
         cell.backgroundColor = [UIColor clearColor];
     }
     
-    if([cell.contentView viewWithTag:111] == nil)
+    DPostView *postView = (DPostView *)[cell.contentView viewWithTag:111];
+    if(postView == nil)
     {
         DPost *post = _postList[indexPath.row];
         if([post type] == DpostTypePost)
@@ -130,6 +136,9 @@
             [cell.contentView addSubview:prompterListView];
             [prompterListView setTag:111];
         }
+    }
+    else
+    {
         
     }
     
@@ -140,7 +149,7 @@
 {
     float height = 456;
     DPost *post = _postList[indexPath.row];
- 
+    
     
     if([post type] == DpostTypePrompter)
     {
@@ -160,7 +169,7 @@
         }
     }
     
-   
+    
     return height;
 }
 
@@ -171,6 +180,8 @@
 
 -(void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    return;
+    
     DPost *post = _postList[indexPath.row];
     if([post type] == DpostTypePost)
     {
@@ -194,7 +205,7 @@
     CGFloat diff = newOffset - oldOffset;
     if (diff < 0 ) { //scrolling down...
         // do something
-       // NSLog(@"Scrolling Down");
+        // NSLog(@"Scrolling Down");
         [self scrollViewScrollingDirection:@"DOWN"];
         
     }
@@ -208,6 +219,8 @@
 
 -(void)scrollViewScrollingDirection:(NSString *)direction
 {
+    return;
+    
     if(_delegate != nil && [_delegate respondsToSelector:@selector(scrollView:scrollingDirection:)])
     {
         [_delegate performSelector:@selector(scrollView:scrollingDirection:) withObject:_postListView withObject:direction];
@@ -217,6 +230,7 @@
 
 -(void)scrollViewDidEndDeceleratingOfPostList:(UIScrollView *)scrollView
 {
+    return;
     if(_delegate != nil && [_delegate respondsToSelector:@selector(scrollViewDidEndDecelerating:)])
     {
         [_delegate performSelector:@selector(scrollViewDidEndDecelerating:) withObject:_postListView ];
@@ -227,6 +241,8 @@
 
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    return;
+    
     [self scrollViewDidEndDeceleratingOfPostList:scrollView];
     
     //NSLog(@"will end decelerating");
@@ -266,7 +282,7 @@
                 
             }
             
-           
+            
             
             //break;
         }
@@ -279,6 +295,8 @@
 
 -(void)scrollviewDidHoldingFinger:(NSString *)holding
 {
+    return;
+    
     if(_delegate != nil && [_delegate respondsToSelector:@selector(scrollView:didHoldingFinger:)])
     {
         [_delegate scrollView:_postListView didHoldingFinger:holding];
@@ -287,14 +305,17 @@
 
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-   // NSLog(@"scroll view did begin dragging");
+    return;
+    // NSLog(@"scroll view did begin dragging");
     [self scrollviewDidHoldingFinger:@"HOLDING"];
 }
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
+    return;
+    
     [self scrollviewDidHoldingFinger:@"UNHOLDING"];
-   // NSLog(@"will end dragging");
+    // NSLog(@"will end dragging");
     
     NSArray *indexPaths = [_postListView indexPathsForVisibleRows];
     int count = indexPaths.count;
@@ -303,7 +324,7 @@
         NSIndexPath *indexPath = indexPaths[i];
         BOOL visible = [self isCellCompletelyVisible:indexPath];
         if(visible)
-        {            
+        {
             if(_currentPlayingPost != nil)
             {
                 [_currentPlayingPost pauseVideo];
@@ -312,19 +333,19 @@
             DPost *post = _postList[indexPath.row];
             if(post.type == DpostTypePost)
             {
-            
-            //Then play/pause song here....
-            UITableViewCell *cell = [_postListView cellForRowAtIndexPath:indexPath];
-            DPostView *postView = (DPostView *)[cell.contentView viewWithTag:111];
-            if(postView != nil)
-            {
                 
-                 //NSLog(@"dragging visible cell:%d current:%@ Post:%@",indexPath.row, _currentPlayingPost, postView);
-                //[_currentPlayingPost pauseVideo];
-                [postView playVideo];
-                 _currentPlayingPost = postView;
-            }
-            
+                //Then play/pause song here....
+                UITableViewCell *cell = [_postListView cellForRowAtIndexPath:indexPath];
+                DPostView *postView = (DPostView *)[cell.contentView viewWithTag:111];
+                if(postView != nil)
+                {
+                    
+                    //NSLog(@"dragging visible cell:%d current:%@ Post:%@",indexPath.row, _currentPlayingPost, postView);
+                    //[_currentPlayingPost pauseVideo];
+                    [postView playVideo];
+                    _currentPlayingPost = postView;
+                }
+                
             }
             //break;
         }
@@ -333,7 +354,7 @@
             
         }
     }
-
+    
 }
 
 
@@ -361,25 +382,42 @@
     {
         float height = [self tableView:_postListView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
         y = y+height;
-                        
+        
     }
     
     return  y;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+
+-(void)deletePost:(DPost *)post
 {
-    // Drawing code
+    //Delete the post....
+    NSInteger index = [_postList indexOfObject:post];
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    if(indexPath != nil)
+    {
+        [_postList removeObjectAtIndex:index];
+
+        [_postListView beginUpdates];
+        [_postListView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationMiddle];//Fade
+        [_postListView endUpdates];
+    }
 }
-*/
+
+/*
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 -(void)dealloc
 {
     [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-
+    
 }
 
 @end

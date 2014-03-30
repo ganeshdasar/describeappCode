@@ -44,16 +44,16 @@
         
         
         //Swipe gesture recognizer...
-//        UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc]
-//                                             initWithTarget:self action:@selector(handleSwipeFrom:)];
-//        [swipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
-//        [self addGestureRecognizer:swipeGesture];
+        //        UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc]
+        //                                             initWithTarget:self action:@selector(handleSwipeFrom:)];
+        //        [swipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+        //        [self addGestureRecognizer:swipeGesture];
         
-//        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
-//        [panGesture setMinimumNumberOfTouches:1];
-//        [self addGestureRecognizer:panGesture];
-       
-
+        //        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
+        //        [panGesture setMinimumNumberOfTouches:1];
+        //        [self addGestureRecognizer:panGesture];
+        
+        
     }
     return self;
 }
@@ -75,24 +75,23 @@
     if(_video.url == nil)
         return;
     
-    avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL fileURLWithPath:_video.url]];
+    avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:_video.url]];//[NSURL fileURLWithPath:_video.url]
     avPlayer = [AVPlayer playerWithPlayerItem:avPlayerItem] ;
     AVPlayerLayer *avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer] ;
     
     avPlayerLayer.frame = self.bounds;
     [self.layer addSublayer:avPlayerLayer];
     
-
+    
     
     avPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     _isPlaying = NO;
+    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(playerItemDidReachEnd:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification
                                                object:[avPlayer currentItem]];
-
-  
     
 }
 
@@ -148,10 +147,10 @@
     if(_isPlaying)
     {
         [avPlayer pause];
-        _isPlaying = NO;        
+        _isPlaying = NO;
         if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didPausePlayingVideo)])
         {
-            [self.delegate performSelector:@selector(didPausePlayingVideo)];            
+            [self.delegate performSelector:@selector(didPausePlayingVideo)];
         }
     }
     else
@@ -164,7 +163,7 @@
             //Float64 durationInSeconds = CMTimeGetSeconds(_videoDuration);
             
             
-            [self.delegate performSelector:@selector(didStartPlayingVideo)];                
+            [self.delegate performSelector:@selector(didStartPlayingVideo)];
         }
     }
 }
@@ -184,7 +183,7 @@
     CGPoint point = [gesture locationInView:self];
     //NSLog(@"pan gesture:%@", NSStringFromCGPoint(point));
     
-
+    
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
             _startPoint = point;
@@ -235,7 +234,7 @@
 
 -(Float64)videoCurrentTime
 {
-     Float64 seconds = CMTimeGetSeconds(avPlayerItem.currentTime);
+    Float64 seconds = CMTimeGetSeconds(avPlayerItem.currentTime);
     return seconds;
 }
 
@@ -258,27 +257,29 @@
         Float64 seconds = [self videoCurrentTime];//  CMTimeGetSeconds(_videoDuration);
         NSInteger currentSeekingSeconds = (seconds*percentage)/100;
         [avPlayer seekToTime:CMTimeMake(currentSeekingSeconds, 1)];
-
+        
     }
     
-  
+    
     
 }
 
 -(void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:AVPlayerItemDidPlayToEndTimeNotification];
+
     [self stopPlayingVideo];
     avPlayer = nil;
     avPlayerItem = nil;
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 @end

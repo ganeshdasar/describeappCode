@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "DConversation.h"
 #import "DLikesList.h"
+#import "UIImageView+AFNetworking.h"
 
 #define SUBTITLE_FONT   [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0]
 #define TITLE_FONT      [UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]
@@ -199,7 +200,8 @@
 {
     _icon = [[UIImageView alloc] initWithFrame:CGRectMake(20,12,40,40)];
     [_icon setBackgroundColor:[UIColor clearColor]];
-    [_icon setImage:[UIImage imageNamed:_conversation.profilePic]];
+    //[_icon setImage:[UIImage imageNamed:_conversation.profilePic]];
+    [_icon setImageWithURL:[NSURL URLWithString:_conversation.profilePic]];
     [_contentView addSubview:_icon];
     [_icon.layer setCornerRadius:20];
     [_icon.layer setMasksToBounds:YES];
@@ -229,6 +231,11 @@
     _elapsedTimeLbl = [self createLabelOnView:_contentView withText:elapsedTime atRect:CGRectMake(70,_elapsedYPostion,200,20)];
     [_elapsedTimeLbl setTextColor:[UIColor lightGrayColor]];
     [_elapsedTimeLbl setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:10.0]];
+    
+    
+//    NSDate * originalDate = [NSDate date];
+//    NSTimeInterval interval = [elapsedTime doubleValue];
+//    NSDate * futureDate = [originalDate dateByAddingTimeInterval:interval];
     
 }
 

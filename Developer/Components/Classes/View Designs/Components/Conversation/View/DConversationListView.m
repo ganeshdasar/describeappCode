@@ -147,9 +147,13 @@
 {
     if(_userCommentView == nil)
     {
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        
+        
+        
         DConversation *conversation = [[DConversation alloc] init];
-        [conversation setUsername:@"ryan_gastion"];
-        [conversation setProfilePic:@"user4.png"];
+        [conversation setUsername:[userDefaults valueForKey:@"UserName"]];
+        [conversation setProfilePic:[userDefaults valueForKey:@"UserProfilePicture"]];
         [conversation setType:DConversationTypeCurrentUser];
         
         _userCommentView = [[DConversationView alloc] initWithFrame:CGRectMake(0, 0, 320, 60) withConversation:conversation];

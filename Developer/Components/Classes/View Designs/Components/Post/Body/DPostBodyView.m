@@ -13,6 +13,9 @@
 #import "DPostVideoPlayerView.h"
 #import "DPost.h"
 #import "CMPhotoModel.h"
+//#import "UIImageView+AFNetworking.h"
+#import <SDWebImage/SDWebImagePrefetcher.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #define VIDEO_FRAME CGRectMake(230, 10, 80, 80)
 
@@ -41,6 +44,10 @@
     CGPoint _startPointLocationOnScreen;
     BOOL _isNeedToRewind;
     NSInteger _currentPlayedTime;
+    NSInteger _count;
+    
+    
+    SDWebImagePrefetcher *_prefetcher;
 }
 
 @end
@@ -61,7 +68,7 @@
         self.backgroundColor = [UIColor clearColor];
         
         _images = nil;// [[NSArray alloc] initWithObjects:@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg", nil];
-
+        
         _isNeedToPlayImages = NO;
         [self createBackgroundView];
         [self createContentView];
@@ -71,8 +78,8 @@
         _index = 0;
         
         //Temporarly placing the place holder images will remove later on
-//        [_backImageView setImage:[UIImage imageNamed:_images[1]]];
-//        [_frontImageView setImage:[UIImage imageNamed:_images[0]]];
+        //        [_backImageView setImage:[UIImage imageNamed:_images[1]]];
+        //        [_frontImageView setImage:[UIImage imageNamed:_images[0]]];
         
         [self createVideoPlayer];
     }
@@ -100,12 +107,25 @@
         _index = 0;
         
         //Temporarly placing the place holder images will remove later on
-        CMPhotoModel *firstImage = _images[0];
-        CMPhotoModel *secondImage = _images[1];
+        _count = _images.count;
         
+        CMPhotoModel *firstImage = nil;
+        CMPhotoModel *secondImage = nil;
+        if(_count)
+            firstImage = _images[0];
+        if(_count > 1)
+            secondImage = _images[1];
         
-        [_backImageView setImage:firstImage.editedImage];
-        [_frontImageView setImage:secondImage.editedImage];
+        //NSLog(@"First:%@, Second:%@",firstImage.imageUrl, secondImage.imageUrl);
+        
+        //[_backgroundView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",firstImage.imageUrl]]];
+        // [_frontImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",secondImage.imageUrl]]];
+        
+        NSLog(@"front image:%@\n back:%@",firstImage.imageUrl, secondImage.imageUrl);
+        
+        //[_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
+        //[_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
+        
         
         [self createVideoPlayer];
         [self addSingleTapGesture];
@@ -127,12 +147,23 @@
 -(void)setPostImage:(DPostImage *)postImage
 {
     _postImage = postImage;
+    _images = _postImage.images;
     
-    CMPhotoModel *firstImage = _images[0];
-    CMPhotoModel *secondImage = _images[1];
+    CMPhotoModel *firstImage = nil;
+    CMPhotoModel *secondImage = nil;
+    if(_count)
+        firstImage = _images[0];
+    if(_count > 1)
+        secondImage = _images[1];
     
     [_backImageView setImage:secondImage.editedImage];
     [_frontImageView setImage:firstImage.editedImage];
+    
+    [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
+    [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
+    //[_frontImageView setBackgroundColor:[[UIColor orangeColor] colorWithAlphaComponent:0.4]];
+    
+    
     [_videoPlayer setVideo:_postImage.video];
     
 }
@@ -203,7 +234,7 @@
     [_videoPlayer.layer setCornerRadius:8.0];
     [_videoPlayer.layer setBorderColor:[UIColor whiteColor].CGColor];
     [_videoPlayer.layer setBorderWidth:1.0];
-
+    
     [_videoPlayer setVideo:_postImage.video];
     [_videoPlayer videoPlayer];
     
@@ -220,7 +251,7 @@
     //NSLog(@"pan gesture:%@", NSStringFromCGPoint(point));
     
     //NSLog(@"Point:%@ %d",NSStringFromCGPoint(point), _isNeedToRewind);
-
+    
     
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
@@ -231,7 +262,7 @@
             {
                 _isNeedToRewind = YES;
                 //NSLog(@"Rewind Frame:%@ Point:%@ %d",NSStringFromCGRect(VIDEO_FRAME), NSStringFromCGPoint(point), _isNeedToPlayImages);
-
+                
             }
             else
             {
@@ -251,10 +282,10 @@
                     int percentage = [self currentPercentage:point];
                     Float64 timeValue = [_videoPlayer videoCurrentTime];
                     NSLog(@"Current Time:%f currect Percentage:%d index:%d",timeValue,percentage, _index);
-
+                    
                     //percentage = timeValue*percentage/100;
                     //NSLog(@"222percentage its moving:%d",percentage);
-
+                    
                     [_videoPlayer seekVideoFileToPercentage:percentage];
                     [self seekContentToPercentage:[NSNumber numberWithInteger:percentage]];
                     
@@ -270,36 +301,36 @@
                     }
                 }
             }
-          
+            
             break;
         case UIGestureRecognizerStateEnded:
             if(_isNeedToRewind)
             {
                 [UIView animateWithDuration:0.25 animations:^{ [_videoPlayer setFrame:VIDEO_FRAME];} completion:^(BOOL finished)
-                {
-                    [UIView animateWithDuration:0.25 animations:^{
-                        CGRect videoFrame = _videoPlayer.frame;
-                        videoFrame.origin.x = videoFrame.origin.x - 10;;
-                        [_videoPlayer setFrame:videoFrame];
-                    
-                    } completion:^(BOOL finished)
-                     {
-                         [UIView animateWithDuration:0.25 animations:^{
-                             [_videoPlayer setFrame:VIDEO_FRAME];
-                             
-                         } completion:^(BOOL finished)
-                          {
-                              if(finished)
-                              {
-                                
-                              }
-                              
-                          }];
-
+                 {
+                     [UIView animateWithDuration:0.25 animations:^{
+                         CGRect videoFrame = _videoPlayer.frame;
+                         videoFrame.origin.x = videoFrame.origin.x - 10;;
+                         [_videoPlayer setFrame:videoFrame];
                          
-                     }];
-                    
-                }];
+                     } completion:^(BOOL finished)
+                      {
+                          [UIView animateWithDuration:0.25 animations:^{
+                              [_videoPlayer setFrame:VIDEO_FRAME];
+                              
+                          } completion:^(BOOL finished)
+                           {
+                               if(finished)
+                               {
+                                   
+                               }
+                               
+                           }];
+                          
+                          
+                      }];
+                     
+                 }];
                 _isNeedToRewind = NO;
             }
             break;
@@ -351,11 +382,13 @@
     //_index++;
     if(_index+1 >= _postImage.images.count)
     {
-        _index = 0;
+        //_index = 0;
+        return;
     }
+    
     CMPhotoModel *photoModel = _postImage.images[_index];
-    [_backImageView setImage:photoModel.editedImage];
-
+    [_backgroundView setImageWithURL:[NSURL URLWithString:photoModel.imageUrl]];
+    NSLog(@"Count:%d current index:%d url:%@",_postImage.images.count, _index, photoModel.imageUrl);
 }
 
 #pragma mark Model Operations -
@@ -381,14 +414,17 @@
 
 -(void)transitionNewImage
 {
-    [self presentView:(UIView *)_frontImageView onView:(UIView *)_backImageView];
     
     if(_isNeedToPlayImages)
     {
         if(_index+1 >= _postImage.images.count)
         {
             _index = 0;
+            return;
         }
+        
+        [self presentView:(UIView *)_frontImageView onView:(UIView *)_backImageView];
+        
         CMPhotoModel *photoModel = [_postImage images][_index];
         float duration = photoModel.duration;// [_postImage.durationList[_index] floatValue];
         
@@ -417,18 +453,30 @@
         [self performSelector:@selector(transitionNewImage) withObject:nil afterDelay:0.0];
     }
     
-//   if(!_enablePlayVideoTapnOnImage)
-//   {
-//       if(_delegate != nil && [_delegate respondsToSelector:@selector(postBodyViewDidTapOnImage:)])
-//       {
-//           [_delegate postBodyViewDidTapOnImage:self];
-//       }
-//   }
+    _prefetcher = [SDWebImagePrefetcher sharedImagePrefetcher];
+    
+    NSMutableArray *imageUrls = [[NSMutableArray alloc] init];
+    for (int i=0; i<_postImage.images.count; i++)
+    {
+        CMPhotoModel *model = _postImage.images[i];
+        [imageUrls addObject:model.imageUrl];
+    }
+    
+    NSLog(@"image urls:%@",imageUrls);
+    [_prefetcher prefetchURLs:imageUrls];
+    
+    //   if(!_enablePlayVideoTapnOnImage)
+    //   {
+    //       if(_delegate != nil && [_delegate respondsToSelector:@selector(postBodyViewDidTapOnImage:)])
+    //       {
+    //           [_delegate postBodyViewDidTapOnImage:self];
+    //       }
+    //   }
 }
 
 -(void)didPausePlayingVideo
 {
-    //pause image animations....    
+    //pause image animations....
     _isNeedToPlayImages = NO;
     if(_transitionImageTimer != nil)
     {
@@ -436,13 +484,13 @@
         _transitionImageTimer = nil;
     }
     
-//    if(!_enablePlayVideoTapnOnImage)
-//    {
-//        if(_delegate != nil && [_delegate respondsToSelector:@selector(postBodyViewDidTapOnImage:)])
-//        {
-//            [_delegate postBodyViewDidTapOnImage:self];
-//        }
-//    }
+    //    if(!_enablePlayVideoTapnOnImage)
+    //    {
+    //        if(_delegate != nil && [_delegate respondsToSelector:@selector(postBodyViewDidTapOnImage:)])
+    //        {
+    //            [_delegate postBodyViewDidTapOnImage:self];
+    //        }
+    //    }
 }
 
 -(void)didEndPlayingVideo
@@ -526,9 +574,9 @@
     }
     
     _currentVisibleImageIndex = index;
-   
     
-
+    
+    
 }
 
 -(NSInteger)totalImageDuartions
@@ -613,7 +661,7 @@
         currentIndex = count - (i+1);
         CMPhotoModel *photoModel = [_postImage images][currentIndex];
         NSInteger duration = photoModel.duration;// [[_postImage durationList][currentIndex] integerValue];
-         value = duration - value   ;
+        value = duration - value   ;
         //NSLog(@"index:%d value:%d",currentIndex,value);
         if(value > 0)
         {
@@ -627,7 +675,7 @@
     }
     
     
-   // NSLog(@"Returing Index:%d",currentIndex);
+    // NSLog(@"Returing Index:%d",currentIndex);
     return currentIndex;
 }
 

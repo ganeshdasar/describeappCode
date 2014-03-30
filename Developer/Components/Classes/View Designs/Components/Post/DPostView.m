@@ -11,13 +11,15 @@
 #import "DPostBodyView.h"
 #import "DPostFooterView.h"
 #import "DPost.h"
-
+#import "DLikesView.h"
+#import "WSModelClasses.h"
+#import "DPostsViewController.h"
 
 #define HEADER_FRAME CGRectMake(0,0,320,50)
 #define CONTENT_FRAME CGRectMake(0,50.5,320,320)
 #define FOOTER_FRAME CGRectMake(0,370,320,126)
 
-@interface DPostView ()<DPostHeaderViewDelegate>
+@interface DPostView ()<DPostHeaderViewDelegate, DPostHeaderViewDelegate, DLikesViewDelegate, WSModelClassDelegate>
 {
     DPostHeaderView *_headerView;
     DPostBodyView *_contentView;
@@ -41,7 +43,8 @@
         [self createPostHeaderView];
         [self createPostBodyView];
         [self createPostFooterView];
-    
+
+        [self addRightSwipeGesture];        
     }
     return self;
 }
@@ -59,19 +62,45 @@
         [self createPostBodyView];
         [self createPostFooterView];
         
+        [self addRightSwipeGesture];
     }
     return self;
 }
 
+-(void)addRightSwipeGesture
+{
+    UISwipeGestureRecognizer *rightSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(rightSwipeGesture:)];
+    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+    [self addGestureRecognizer:rightSwipeGesture];
+}
+
+
+-(void)rightSwipeGesture:(id)sender
+{
+    if([[DPostsViewController sharedFeedController] respondsToSelector:@selector(rightSwipeGesture:withPost:)])
+    {
+        [[DPostsViewController sharedFeedController] rightSwipeGesture:sender withPost:_post];
+    }
+}
+
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
+
+-(void)reloadPost:(DPost *)post
 {
-    // Drawing code
+    _post = post;
+    [self createPostHeaderView];
+    [self createPostBodyView];
+    [self createPostFooterView];
 }
-*/
+
 
 -(void)setDelegate:(id<DPostViewDelegate>)delegate
 {
@@ -86,20 +115,26 @@
 
 -(void)createPostHeaderView
 {
-    _headerView = [[DPostHeaderView alloc] initWithFrame:HEADER_FRAME];
-    [_headerView setDelegate:_delegate];
-    [_headerView setUser:nil];
-    [self addSubview:_headerView];
-    [_headerView setDuration:_post.imagePost.video.duration];
+    if(_headerView == nil)
+    {
+        _headerView = [[DPostHeaderView alloc] initWithFrame:HEADER_FRAME];
+        [self addSubview:_headerView];
+    }
+    
+    [_headerView setDelegate:self];
+    [_headerView setDuration:_post.elapsedTime];
     [_headerView setUser:_post.user];
 }
 
 -(void)createPostBodyView
 {
-    _contentView = [[DPostBodyView alloc] initWithFrame:CONTENT_FRAME withPostImage:_post.imagePost];
+    if(_contentView == nil)
+    {
+        _contentView = [[DPostBodyView alloc] initWithFrame:CONTENT_FRAME withPostImage:_post.imagePost];
+        [self addSubview:_contentView];
+    }
     [_contentView setBackgroundColor:[UIColor clearColor]];
     [_contentView setEnablePlayVideoTapnOnImage:YES];
-    [self addSubview:_contentView];
     [_contentView setPostImage:_post.imagePost];
 }
 
@@ -114,9 +149,14 @@
         height = height + count*20;
     }
     CGRect footerFrame = CGRectMake(0,370,320,height);
-
-    _footerView = [[DPostFooterView alloc] initWithFrame:footerFrame withPostAttachements:_post.attachements];
-    [self addSubview:_footerView];
+    
+    if(_footerView == nil)
+    {
+        _footerView = [[DPostFooterView alloc] initWithFrame:footerFrame withPostAttachements:_post.attachements];
+        [self addSubview:_footerView];
+    }
+    [_footerView setPostAttachments:_post.attachements];
+    [_footerView setContentDelegate:self];
 }
 
 
@@ -152,12 +192,60 @@
     [_contentView pauseVideo];
 }
 
-#pragma mark Header View Delegate Methods -
+
+#pragma mark Delegates -
+#pragma mark Header View Delegate Methods
+
 -(void)profileDetailsDidSelected
 {
     if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDetailsDidSelected)])
     {
         [_delegate profileDidSelected];
+    }
+}
+
+#pragma mark Likes View Delegate
+
+-(void)likesView:(DLikesView *)likeView didSelectedStars:(NSNumber *)stars
+{
+    //http://www.mirusstudent.com/service/describe-service/makeLike/format=json/UserUID=5/AuthUserUID=4/PostUID=2/likeStatus=2
+    
+    WSModelClasses *sharedModel = [WSModelClasses sharedHandler];
+    [sharedModel setDelegate:self];
+    [sharedModel likePost:[_post postId] userId:@"45" authUserId:[[_post user] userId] status:[stars integerValue]];
+}
+
+
+-(void)likeStatus:(id)status withError:(NSError *)error
+{
+    NSLog(@"like status:%@ error:%@", status, error);
+}
+
+-(void)moreButton:(id)sender
+{
+    //More button action...
+    NSLog(@"More Button");
+    if([[DPostsViewController sharedFeedController] respondsToSelector:@selector(showMoreDetailsOfPost:)])
+    {
+        [[DPostsViewController sharedFeedController] showMoreDetailsOfPost:_post];
+    }
+    
+}
+
+-(void)likesAndComments:(id)sender
+{
+    //Likes and Comments action...
+   
+}
+
+-(void)commentButton:(id)sender
+{
+    //Comments action...
+        NSLog(@"Comment ");
+    NSLog(@"Likese and Comments");
+    if([[DPostsViewController sharedFeedController] respondsToSelector:@selector(showConversationForThisPost:)])
+    {
+        [[DPostsViewController sharedFeedController] showConversationForThisPost:_post];
     }
 }
 

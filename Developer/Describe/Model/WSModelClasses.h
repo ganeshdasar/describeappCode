@@ -41,6 +41,12 @@ typedef enum {
 
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict;
 
+
+- (void)basicinfoStatus:(NSDictionary *)responseDict error:(NSError *)error;
+-(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error;
+
+-(void)likeStatus:(id)status withError:(NSError *)error;
+
 @end
 
 @interface WSModelClasses : NSObject
@@ -128,4 +134,8 @@ typedef enum {
              profilePic:(UIImage *)profileImg
               canvasPic:(UIImage *)canvasImg
              snippetPic:(UIImage *)snippetImg;
+
+- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId;
+
+- (void)likePost:(NSString *)postId userId:(NSString *)userId authUserId:(NSString *)authUID status:(NSInteger)count;
 @end

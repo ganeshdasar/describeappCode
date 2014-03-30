@@ -32,9 +32,11 @@
 }
 -(void)createUserComponent{
 
-       UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
+    UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     roundImg.image = [UIImage imageNamed:@"thumb_user_std.png"];
     [self addSubview:roundImg];
+      
+    
 //     self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
 //    [self addSubview:self.thumbnailImg];
 //    if (data.profileUserProfilePicture) {

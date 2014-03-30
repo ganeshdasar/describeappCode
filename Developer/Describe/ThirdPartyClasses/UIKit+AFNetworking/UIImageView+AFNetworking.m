@@ -46,7 +46,7 @@
         _af_sharedImageRequestOperationQueue = [[NSOperationQueue alloc] init];
         _af_sharedImageRequestOperationQueue.maxConcurrentOperationCount = NSOperationQueueDefaultMaxConcurrentOperationCount;
     });
-
+    
     return _af_sharedImageRequestOperationQueue;
 }
 
@@ -70,12 +70,12 @@
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
         _af_defaultImageCache = [[AFImageCache alloc] init];
-
+        
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * __unused notification) {
             [_af_defaultImageCache removeAllObjects];
         }];
     });
-
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu"
     return objc_getAssociatedObject(self, @selector(sharedImageCache)) ?: _af_defaultImageCache;
@@ -92,7 +92,7 @@
     dispatch_once(&onceToken, ^{
         _af_defaultImageResponseSerializer = [AFImageResponseSerializer serializer];
     });
-
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu"
     return objc_getAssociatedObject(self, @selector(imageResponseSerializer)) ?: _af_defaultImageResponseSerializer;
@@ -114,7 +114,7 @@
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
-
+    
     [self setImageWithURLRequest:request placeholderImage:placeholderImage success:nil failure:nil];
 }
 
@@ -124,7 +124,7 @@
                        failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure
 {
     [self cancelImageRequestOperation];
-
+    
     UIImage *cachedImage = [[[self class] sharedImageCache] cachedImageForRequest:urlRequest];
     if (cachedImage) {
         if (success) {
@@ -132,7 +132,7 @@
         } else {
             self.image = cachedImage;
         }
-
+        
         self.af_imageRequestOperation = nil;
     } else {
         if (placeholderImage) {
@@ -151,19 +151,95 @@
                     strongSelf.image = responseObject;
                 }
             }
-
+            
             [[[strongSelf class] sharedImageCache] cacheImage:responseObject forRequest:urlRequest];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             __strong __typeof(weakSelf)strongSelf = weakSelf;
             if ([[urlRequest URL] isEqual:[operation.request URL]]) {
                 if (failure) {
                     failure(urlRequest, operation.response, error);
+                    strongSelf.image = nil;
                 }
             }
         }];
-
+        
         [[[self class] af_sharedImageRequestOperationQueue] addOperation:self.af_imageRequestOperation];
     }
 }
+
+
+- (void)downloadImage:(NSURL *)url withFileName:(NSString *)imageName
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
+    [self downloadImageWithURLRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image)
+     {
+         //...
+         NSData *data = UIImageJPEGRepresentation(image, 1.0);
+         BOOL isWriten = [data writeToFile:[NSString stringWithFormat:@"%@/Documents/%@", NSHomeDirectory(), imageName] atomically:YES];
+         NSLog(@"Image id:%@ isWritten:%d",imageName, isWriten);
+     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+         //...
+         NSLog(@"Error:%@ ImageId: %@",error, imageName);
+     }];
+}
+
+
+- (void)downloadImageWithURLRequest:(NSURLRequest *)urlRequest
+                            success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image))success
+                            failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure
+{
+    [self cancelImageRequestOperation];
+    
+    UIImage *cachedImage = [[[self class] sharedImageCache] cachedImageForRequest:urlRequest];
+    if (cachedImage)
+    {
+        if (success)
+        {
+            success(nil, nil, cachedImage);
+        }
+        else
+        {
+            self.image = cachedImage;
+        }
+        self.af_imageRequestOperation = nil;
+    }
+    else
+    {
+        __weak __typeof(self)weakSelf = self;
+        self.af_imageRequestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+        self.af_imageRequestOperation.responseSerializer = self.imageResponseSerializer;
+        [self.af_imageRequestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
+         {
+             __strong __typeof(weakSelf)strongSelf = weakSelf;
+             if ([[urlRequest URL] isEqual:[operation.request URL]])
+             {
+                 if (success)
+                 {
+                     success(urlRequest, operation.response, responseObject);
+                 }
+                 else if (responseObject)
+                 {
+                     strongSelf.image = responseObject;
+                 }
+             }
+             [[[strongSelf class] sharedImageCache] cacheImage:responseObject forRequest:urlRequest];
+         }failure:^(AFHTTPRequestOperation *operation, NSError *error)
+         {
+             if ([[urlRequest URL] isEqual:[operation.request URL]])
+             {
+                 if (failure)
+                 {
+                     failure(urlRequest, operation.response, error);
+                 }
+             }
+         }];
+        
+        [[[self class] af_sharedImageRequestOperationQueue] addOperation:self.af_imageRequestOperation];
+    }
+}
+
+
 
 - (void)cancelImageRequestOperation {
     [self.af_imageRequestOperation cancel];
@@ -188,7 +264,7 @@ static inline NSString * AFImageCacheKeyFromURLRequest(NSURLRequest *request) {
         default:
             break;
     }
-
+    
 	return [self objectForKey:AFImageCacheKeyFromURLRequest(request)];
 }
 

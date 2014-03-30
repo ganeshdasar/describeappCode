@@ -218,7 +218,55 @@ typedef enum {
 - (IBAction)shareButtonClicked:(id)sender
 {
     NSLog(@"%s", __func__);
-    [self postComposition];
+    NSMutableDictionary *argDict = [[NSMutableDictionary alloc] init];
+    
+    NSInteger imgCount = 1;
+    NSMutableArray *imgTimeArray = [NSMutableArray array];
+    for(CMPhotoModel *modelObj in _imagePost.images) {
+        NSData *imageData = UIImagePNGRepresentation(modelObj.editedImage);
+        NSString *encodedImgString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        [argDict setObject:encodedImgString forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
+        
+        [imgTimeArray addObject:[NSString stringWithFormat:@"%0.2f", modelObj.duration]];
+        
+        imgCount++;
+    }
+    
+    if(imgCount < 10) {
+        for (; imgCount <= 10; imgCount++) {
+            [argDict setObject:@"" forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
+        }
+    }
+    
+    NSData *videoData = [NSData dataWithContentsOfFile:_imagePost.video.url];
+    NSString *videoEncodedString = [videoData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    [argDict setObject:@"45" forKey:@"UserUID"];
+    [argDict setObject:[imgTimeArray componentsJoinedByString:@","] forKey:@"imageTimesArr"];
+    [argDict setObject:@"No Category" forKey:@"txtCategory"];
+    [argDict setObject:@"Hyderabad" forKey:@"txtLocation"];
+    [argDict setObject:@"17.366, 78.476" forKey:@"txtLatLongitude"];
+    [argDict setObject:@"NO" forKey:@"shareFB"];
+    [argDict setObject:@"NO" forKey:@"shareGoogle"];
+    [argDict setObject:@"NO" forKey:@"shareTwitter"];
+    [argDict setObject:@"SampleComposition" forKey:@"txtTag1"];
+    [argDict setObject:@"MakeComposition" forKey:@"txtTag2"];
+    [argDict setObject:videoEncodedString forKey:@"movFile"];
+    [argDict setObject:_totalVideoDuration forKey:@"clip_duration"];
+    //    [argDict setObject:@"" forKey:@"imgCount"];
+    //    [argDict setObject:@"" forKey:@"imgFile1"];
+    //    [argDict setObject:@"" forKey:@"imgFile2"];
+    //    [argDict setObject:@"" forKey:@"imgFile3"];
+    //    [argDict setObject:@"" forKey:@"imgFile4"];
+    //    [argDict setObject:@"" forKey:@"imgFile5"];
+    //    [argDict setObject:@"" forKey:@"imgFile6"];
+    //    [argDict setObject:@"" forKey:@"imgFile7"];
+    //    [argDict setObject:@"" forKey:@"imgFile8"];
+    //    [argDict setObject:@"" forKey:@"imgFile9"];
+    //    [argDict setObject:@"" forKey:@"imgFile10"];
+    
+    NSLog(@"%s sending to url", __func__);
+    [[WSModelClasses sharedHandler] postComposition:(NSDictionary *)argDict];
 }
 
 #pragma mark - UITableDatasource methods

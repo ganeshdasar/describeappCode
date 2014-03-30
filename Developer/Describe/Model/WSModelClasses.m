@@ -457,9 +457,6 @@ static WSModelClasses *_sharedInstance;
 - (void)getThePostConversationDetails:(NSString *)inUserId
                             andPostId:(NSString *)inPostId
 {
-    //http://mirusstudent.com/service/describe-service/getPostConversationDetails/format=json/UserUID=1/PostUID=11
-    inUserId = @"1";
-    inPostId = @"11";
     NSString *ur = [NSString stringWithFormat:@"%@/getPostConversationDetails/format=json/UserUID=%@/PostUID=%@", BaseURLString,inUserId,inPostId];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
@@ -468,7 +465,7 @@ static WSModelClasses *_sharedInstance;
              [self getTheCoverSationDetails:responseObject andError:nil];
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
-             [self getTheCoverSationDetails:responseObject andError:nil];
+             [self getTheCoverSationDetails:nil andError:responseObject];
          }
      ];
 }
@@ -652,6 +649,64 @@ static WSModelClasses *_sharedInstance;
         if(!success) {
             NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
         }
+    }
+}
+
+#pragma mark Feed Details -
+//http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=1/OtherUserUID=11
+- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId
+{
+    //    userId = @"1";
+    //    anotherUserId = @"4";
+    //http://mirusstudent.com/service/describe-servicegetUserFeeds/format=json/UserUID=45/OtherUserUID=45
+    //http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=45/OtherUserUID=45
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/OtherUserUID=%@", BaseURLString, userId, anotherUserId];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSLog(@"Feed Details: %@",responseObject);
+             [self getPostDetailsResponse:responseObject withError:nil];
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             NSLog(@"Feed Details Failed: %@", responseObject);
+             [self getPostDetailsResponse:responseObject withError:nil];
+         }
+     ];
+}
+
+-(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
+{
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(getPostDetailsResponse:withError:)])
+    {
+        [_delegate getPostDetailsResponse:response withError:error];
+    }
+}
+
+
+#pragma mark Like Post
+- (void)likePost:(NSString *)postId userId:(NSString *)userId authUserId:(NSString *)authUID status:(NSInteger)count
+{
+    NSString *ur = [NSString stringWithFormat:@"%@/makeLike/format=json/UserUID=%@/AuthUserUID=%@/PostUID=%@/likeStatus=%d", BaseURLString, userId, authUID, postId, count];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSLog(@"Like Status: %@",responseObject);
+             [self likeStatus:responseObject withError:nil];
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             NSLog(@"Like Status Failed: %@", responseObject);
+             [self likeStatus:nil withError:responseObject];
+         }
+     ];
+}
+
+-(void)likeStatus:(id)status withError:(NSError *)error
+{
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(likeStatus:withError:)])
+    {
+        [_delegate likeStatus:status withError:error];
     }
 }
 

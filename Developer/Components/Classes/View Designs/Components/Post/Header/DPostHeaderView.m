@@ -9,6 +9,7 @@
 #import "DPostHeaderView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "DPost.h"
+#import "UIImageView+AFNetworking.h"
 
 #define USER_ICON_FRAME                 CGRectMake(5, 5, 40, 40)
 
@@ -58,9 +59,7 @@
         
         [self createBackgroundView];
         [self createContentView];
-        
         [self designBodyView];
-        
         [self addSingleTapGesture];
         
     }
@@ -80,13 +79,12 @@
 
 -(void)singleTap:(UITapGestureRecognizer *)singleTapGesture
 {
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFY_PROFILE_DETAILS object:self];
     
-//    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDetailsDidSelected:)])
-//    {
-//        [_delegate profileDetailsDidSelected:self];
-//    }
+    //    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDetailsDidSelected:)])
+    //    {
+    //        [_delegate profileDetailsDidSelected:self];
+    //    }
 }
 
 
@@ -98,6 +96,9 @@
     _backgroundView = [[UIImageView alloc] initWithFrame:self.bounds];
     [_backgroundView setBackgroundColor:[UIColor clearColor]];
     [_backgroundView setImage:[UIImage imageNamed:@"12.png"]];
+    [_backgroundView setImageWithURL:[NSURL URLWithString:_user.userCanvasSnippet]];//http://mirusstudent.com/service/postimages/1394270433_45_27.jpeg
+    //[_backgroundView setImageWithURL:[NSURL URLWithString:@"http://mirusstudent.com/service/postimages/1394270433_45_27.jpeg"]];
+    
     [self addSubview:_backgroundView];
 }
 
@@ -114,11 +115,15 @@
 {
     _userIcon = [[UIImageView alloc] initWithFrame:USER_ICON_FRAME];
     [_userIcon setBackgroundColor:[UIColor clearColor]];
-    [_userIcon setImage:[UIImage imageNamed:@"apple.jpg"]];//Place the user image based on user model...
+    [_userIcon setImage:[UIImage imageNamed:@"apple.jpg"]];
+    [_userIcon setImageWithURL:[NSURL URLWithString:_user.userProfilePicture]];
+    
+    //Place the user image based on user model...
     [_contentView addSubview:_userIcon];
     
     [_userIcon.layer setMasksToBounds:YES];
     [_userIcon.layer setCornerRadius:20.0];
+    //[_userIcon setOpaque:YES];
 }
 
 
@@ -178,32 +183,34 @@
     
     //Update the ui here...
     if(user != nil && ( user.address != nil && user.address.length))//Title and Subtitle Available...
-    {        
-        [_title setFrame:TITLE_FRAME];               
-        [_durationLbl setFrame:DURATION_FRAME];       
+    {
+        [_title setFrame:TITLE_FRAME];
+        [_durationLbl setFrame:DURATION_FRAME];
         
     }
     else//Only Title Available...
-    {        
-        [_title setFrame:TITLE_CENTER_FRAME];              
+    {
+        [_title setFrame:TITLE_CENTER_FRAME];
         [_durationLbl setFrame:DURATION_CENTER_FRAME];
     }
     
     [_title setText:user.name];//Have to use update the title based on user details...
     [_subTitle setText:user.address];//Have to use update the title based on user details...
-    [_durationLbl setText:[NSString stringWithFormat:@"%@ s",_duration]];//Have to update the duration based on user details...
-
+    [_durationLbl setText:[NSString stringWithFormat:@"%@",_duration]];//Have to update the duration based on user details...
+    [_userIcon setImageWithURL:[NSURL URLWithString:_user.userProfilePicture]];
+    [_backgroundView setImageWithURL:[NSURL URLWithString:_user.userCanvasSnippet]];
+    
 }
 
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 -(void)dealloc
 {

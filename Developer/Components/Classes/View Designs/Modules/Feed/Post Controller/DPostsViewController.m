@@ -18,27 +18,47 @@
 #import "CMAVCameraHandler.h"
 #import "WSModelClasses.h"
 #import "DConversation.h"
+#import "WSModelClasses.h"
 
-@interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate>
+@interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate, UIActionSheetDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     IBOutlet DPostListView *_listView;
     IBOutlet DPostView *_postView;
     
     CMViewController *_compositionViewController;
+    
+    UIActionSheet *_moreActionSheet;
+    DPost           *_currentPost;
+    BOOL            _isSelfPost;
 }
 @end
 
 @implementation DPostsViewController
+
+
+static DPostsViewController *sharedFeedController;
+
++(id)sharedFeedController
+{
+    
+    if(sharedFeedController == nil)
+    {
+        sharedFeedController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+    }
+    
+    return sharedFeedController;
+    
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moreButtonClicked:) name:POST_MORE_BUTTON_NOTIFICATION_KEY object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentButtonClicked:) name:POST_COMMENT_BUTTON_NOTIFICATION_KEY object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(likesAndCommentButtonClicked:) name:POST_LIKES_BUTTON_NOTIFICATION_KEY object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moreButtonClicked:) name:POST_MORE_BUTTON_NOTIFICATION_KEY object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentButtonClicked:) name:POST_COMMENT_BUTTON_NOTIFICATION_KEY object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(likesAndCommentButtonClicked:) name:POST_LIKES_BUTTON_NOTIFICATION_KEY object:nil];
     }
     return self;
 }
@@ -47,12 +67,12 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.view.backgroundColor = [UIColor greenColor];
-    UISwipeGestureRecognizer *rightSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(rightSwipeGesture:)];
-    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
-    [self.view addGestureRecognizer:rightSwipeGesture];
+//    self.view.backgroundColor = [UIColor greenColor];
+//    UISwipeGestureRecognizer *rightSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(rightSwipeGesture:)];
+//    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+//    [self.view addGestureRecognizer:rightSwipeGesture];
     
-    
+  
     
     UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
     [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
@@ -61,6 +81,12 @@
     //[self designPostView];
     [self designHeaderView];
     [self designPostListView];
+    
+    
+    WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
+    [sharedInstance setDelegate:self];
+    [sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
+    
 }
 
 
@@ -76,9 +102,18 @@
 
 -(void)viewDidUnload
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_MORE_BUTTON_NOTIFICATION_KEY];
-    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
-    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_LIKES_BUTTON_NOTIFICATION_KEY];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_MORE_BUTTON_NOTIFICATION_KEY];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_LIKES_BUTTON_NOTIFICATION_KEY];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:kNOTIFY_PROFILE_DETAILS];
+}
+
+-(void)dealloc
+{
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_MORE_BUTTON_NOTIFICATION_KEY];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_LIKES_BUTTON_NOTIFICATION_KEY];
+//    
 }
 
 
@@ -125,233 +160,7 @@
 }
 
 -(void)designPostListView
-{
-    DPost *post, *post2, *post3, *post4, *post5;
-    {
-        DPostVideo *video = [[DPostVideo alloc] init];
-        [video setDuration:@"25"];
-        [video setUrl:[[NSBundle mainBundle] pathForResource:@"222" ofType:@"mp4"]];
-        
-        DPostImage *imagePost = [[DPostImage alloc] init];
-//        [imagePost setImages:[[NSArray alloc] initWithObjects:@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg",@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg",@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg",@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg", nil]];
-//        [imagePost setDurationList:[[NSArray alloc] initWithObjects:@"10",@"2",@"1",@"4",@"3",@"10",@"2",@"1",@"4",@"3",@"10",@"2",@"1",@"4",@"3",@"10",@"2",@"1",@"4",@"3", nil]];
-        NSMutableArray *images = [[NSMutableArray alloc] init];
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"1.jpg"]];
-            [photoModel setDuration:8];
-            [images addObject:photoModel];
-        }
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"2.jpg"]];
-            [photoModel setDuration:10];
-            [images addObject:photoModel];
-        }
-        [imagePost setImages:images];
-        [imagePost setVideo:video];
-        
-        DUser *user = [[DUser alloc] init];
-        [user setUserId:@"111"];
-        [user setName:@"Irfan "];
-        [user setAddress:nil];
-        
-        post = [[DPost alloc] init];
-        [post setUser:user];
-        [post setImagePost:imagePost];
-        
-        DPostTag *postTag = [[DPostTag alloc] init];
-        [postTag setTagId:@""];
-        [postTag setTagName:@"#TheBestofCompositePhotography"];
-        
-        DPostTag *postTag2 = [[DPostTag alloc] init];
-        [postTag2 setTagId:@""];
-        [postTag2 setTagName:@"#AstoryAboutNothingness"];
-        
-        NSArray *tags = @[postTag, postTag2];
-        
-        
-        
-        DPostAttachments *attachements = [[DPostAttachments alloc] init];
-        [attachements setLikeRating:2];
-        [attachements setNumberOfComments:10];
-        [attachements setNumberOfLikes:2];
-        [attachements setTagsList:tags];
-        
-        [post setAttachements:attachements];
-        
-    }
-    
-    {
-        DPostVideo *video = [[DPostVideo alloc] init];
-        [video setDuration:@"30"];
-        [video setUrl:[[NSBundle mainBundle] pathForResource:@"111" ofType:@"mp4"]];
-        
-        DPostImage *imagePost = [[DPostImage alloc] init];
-//        [imagePost setImages:[[NSArray alloc] initWithObjects:@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg", nil]];
-//        //[[NSArray alloc] initWithObjects:@"22_1.png",@"22_2.png",@"22_3.png",@"22_4.png",@"22_5.png",@"22_6.png",@"22_7.png",@"22_8.png",@"22_9.png", nil]
-//        [imagePost setDurationList:[[NSArray alloc] initWithObjects:@"3",@"2",@"1",@"4",@"3",@"2",@"1",@"4", nil]];
-        NSMutableArray *images = [[NSMutableArray alloc] init];
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"1.jpg"]];
-            [photoModel setDuration:8];
-            [images addObject:photoModel];
-        }
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"2.jpg"]];
-            [photoModel setDuration:10];
-            [images addObject:photoModel];
-        }
-        [imagePost setImages:images];
-        [imagePost setVideo:video];
-        
-        DUser *user = [[DUser alloc] init];
-        [user setUserId:@"222"];
-        [user setName:@"Gopal "];
-        [user setAddress:@"Hyderabad"];
-        
-        post2 = [[DPost alloc] init];
-        [post2 setUser:user];
-        [post2 setImagePost:imagePost];
-    }
-    
-    {
-        DPostVideo *video = [[DPostVideo alloc] init];
-        [video setDuration:@"25"];
-        [video setUrl:[[NSBundle mainBundle] pathForResource:@"333" ofType:@"mp4"]];
-        
-        DPostImage *imagePost = [[DPostImage alloc] init];
-        //[imagePost setImages:[[NSArray alloc] initWithObjects:@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg", nil]];
-        //[imagePost setDurationList:[[NSArray alloc] initWithObjects:@"10",@"2",@"1",@"4",@"3", nil]];
-        
-        NSMutableArray *images = [[NSMutableArray alloc] init];
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"1.jpg"]];
-            [photoModel setDuration:8];
-            [images addObject:photoModel];
-        }
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"2.jpg"]];
-            [photoModel setDuration:10];
-            [images addObject:photoModel];
-        }
-        [imagePost setImages:images];
-        
-        [imagePost setVideo:video];
-        
-        DUser *user = [[DUser alloc] init];
-        [user setUserId:@"333"];
-        [user setName:@"Irfan "];
-        [user setAddress:nil];
-        
-        post3 = [[DPost alloc] init];
-        [post3 setUser:user];
-        [post3 setImagePost:imagePost];
-        
-        DPostTag *postTag = [[DPostTag alloc] init];
-        [postTag setTagId:@""];
-        [postTag setTagName:@"#TheBestofCompositePhotography"];
-        
-        
-        NSArray *tags = @[postTag];
-        
-        
-        
-        DPostAttachments *attachements = [[DPostAttachments alloc] init];
-        [attachements setLikeRating:2];
-        [attachements setNumberOfComments:10];
-        [attachements setNumberOfLikes:2];
-        [attachements setTagsList:tags];
-        
-        [post3 setAttachements:attachements];
-        
-    }
-    
-    {
-        DPostVideo *video = [[DPostVideo alloc] init];
-        [video setDuration:@"25"];
-        [video setUrl:[[NSBundle mainBundle] pathForResource:@"444" ofType:@"mp4"]];
-        
-        DPostImage *imagePost = [[DPostImage alloc] init];
-        NSMutableArray *images = [[NSMutableArray alloc] init];
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"1.jpg"]];
-            [photoModel setDuration:8];
-            [images addObject:photoModel];
-        }
-        {
-            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-            [photoModel setEditedImage:[UIImage imageNamed:@"2.jpg"]];
-            [photoModel setDuration:10];
-            [images addObject:photoModel];
-        }
-        
-        [imagePost setImages:images];
-        // [imagePost setDurationList:[[NSArray alloc] initWithObjects:@"10",@"2",@"1",@"4",@"3", nil]];
-        [imagePost setVideo:video];
-        
-        DUser *user = [[DUser alloc] init];
-        [user setUserId:@"444"];
-        [user setName:@"Irfan "];
-        [user setAddress:nil];
-        
-        post4 = [[DPost alloc] init];
-        [post4 setUser:user];
-        [post4 setImagePost:imagePost];
-        
-        DPostTag *postTag = [[DPostTag alloc] init];
-        [postTag setTagId:@""];
-        [postTag setTagName:@"#TheBestofCompositePhotography"];
-        
-        
-        NSArray *tags = @[postTag];
-        
-        
-        
-        DPostAttachments *attachements = [[DPostAttachments alloc] init];
-        [attachements setLikeRating:2];
-        [attachements setNumberOfComments:10];
-        [attachements setNumberOfLikes:2];
-        [attachements setTagsList:tags];
-        
-        [post4 setAttachements:attachements];
-        
-    }
-    
-    {
-        post5 = [[DPost alloc] init];
-        [post5 setType:DpostTypePrompter];
-        
-        DPrompterProfile *profile0 = [[DPrompterProfile alloc] init];
-        [profile0 setProfilePromterImageName:@"profile_example2.png"];
-        
-        DPrompterProfile *profile1 = [[DPrompterProfile alloc] init];
-        [profile1 setProfilePromterImageName:@"profile_example1.png"];
-        
-        DPrompterProfile *profile2 = [[DPrompterProfile alloc] init];
-        [profile2 setProfilePromterImageName:@"profile_example2.png"];
-        
-        DPrompterProfile *profile3 = [[DPrompterProfile alloc] init];
-        [profile3 setProfilePromterImageName:@"prompter_profile.png"];
-        
-        DPrompterProfile *profile4 = [[DPrompterProfile alloc] init];
-        [profile4 setProfilePromterImageName:@"profile_example1.png"];
-        
-        [post5 setPrompters:@[profile0,profile1, profile2, profile4]];
-    }
-    
-    
-    
-    _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:[NSArray arrayWithObjects:post, post2,post5, post3, post4, nil]];
-    [self.view addSubview:_listView];
-    [self addNewObserverForDelegateProfileDetails];
-    
-}
+{}
 -(void)addNewObserverForDelegateProfileDetails
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyDelegate:) name:kNOTIFY_PROFILE_DETAILS object:nil];
@@ -398,10 +207,12 @@
     
 }
 
-- (void)rightSwipeGesture:(UISwipeGestureRecognizer *)rightSwipeGesture
+- (void)rightSwipeGesture:(UISwipeGestureRecognizer *)rightSwipeGesture withPost:(DPost *)post
 {
+    [self getConversationDetailsOfPost:post];
+    
     //mar 2
-    [self getTheConverSationData];
+    //[self getTheConverSationData];
     return;
     //NSLog(@"Right Swipe Gesture Activated");
     DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
@@ -452,30 +263,47 @@
     [dataClass getThePostConversationDetails:@"" andPostId:@""];
 }
 
+-(void)getConversationDetailsOfPost:(DPost *)post
+{
+    NSString *currencUserId = @"45";
+    NSString *postId = post.postId;
+    
+    
+    WSModelClasses * dataClass = [WSModelClasses sharedHandler];
+    dataClass.delegate =self;
+    [dataClass getThePostConversationDetails:currencUserId andPostId:postId];
+}
+
+
 -(void)getThePostConversationDetailsFromServer:(NSDictionary *) responceDict error:(NSError*)error
 {
-//    NSLog(@"converstion data from server %@",responceDict);
-    NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
-    for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
-        
-        DConversation * data = [[DConversation alloc]init];
-    //    data.authUserUID = [dic valueForKey:@"AuthUserUID"];
-        data.comment = [dic valueForKey:@"Comment"];
-        data.numberOfLikes = [[dic valueForKey:@"LikeCount"]integerValue];
-        data.postId = [dic valueForKey:@"PostUID"];
-        //data.conversationID = [dic valueForKey:@"conversationID"];
-        data.elapsedTime = [dic valueForKey:@"conversationMadeTime"];
-        data.type = [[dic valueForKey:@"conversationType"]integerValue];
-       // data.conversationUserID = [dic valueForKey:@"conversationUserID"];
-        data.profilePic = [dic valueForKey:@"conversationUserProfilePicture"];
-        data.username = [dic valueForKey:@"conversationUsername"];
-        [conversatonDataArray addObject:data];
-        
+    //    NSLog(@"converstion data from server %@",responceDict);
+    if(responceDict != nil)
+    {
+        NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
+        for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
+            
+            DConversation * data = [[DConversation alloc]init];
+            //    data.authUserUID = [dic valueForKey:@"AuthUserUID"];
+            data.comment = [dic valueForKey:@"Comment"];
+            data.numberOfLikes = [[dic valueForKey:@"LikeCount"]integerValue];
+            data.postId = [dic valueForKey:@"PostUID"];
+            //data.conversationID = [dic valueForKey:@"conversationID"];
+            data.elapsedTime = [dic valueForKey:@"conversationMadeTime"];
+            data.type = [[dic valueForKey:@"conversationType"]integerValue];
+            // data.conversationUserID = [dic valueForKey:@"conversationUserID"];
+            data.profilePic = [dic valueForKey:@"conversationUserProfilePicture"];
+            data.username = [dic valueForKey:@"conversationUsername"];
+            [conversatonDataArray addObject:data];
+            
+        }
+        DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+        conversationController.conversationListArray = conversatonDataArray;
+        [self.navigationController pushViewController:conversationController animated:YES];
     }
-    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
-    conversationController.conversationListArray = conversatonDataArray;
-    [self.navigationController pushViewController:conversationController animated:YES];
 }
+
+
 
 #pragma mark - UIAlertViewDelegate Method
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -534,4 +362,185 @@
     [self pushToCompositionScreen];
 }
 
+-(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
+{
+    NSArray *postList = response[@"DataTable"];
+    NSLog(@"Post Details Reponse: %@",response);
+    
+    NSMutableArray *postModelList = [[NSMutableArray alloc] init];
+    int count = [postList count] ;
+    for (int  i=0; i<count; i ++ )
+    {
+        //Post lists...
+        NSDictionary  *post = postList[i];
+        NSDictionary *postData = post[@"PostData"];
+        {
+            NSDictionary *authUserDetails = postData[@"AuthUserDetails"];
+            NSDictionary *postDetails = postData[@"PostDetails"];
+            
+            //Will bind the details with post view...
+            DPost *postModel = [[DPost alloc] init];
+            postModel.postId = postDetails[@"PostUID"];
+            {
+                DPostImage *imagePost = [[DPostImage alloc] init];
+                {
+                    //Binding photo models...
+                    NSMutableArray *images = [[NSMutableArray alloc] init];
+                    NSString *durations = postDetails[@"ImagesDuration"];
+                    NSArray *durationList = nil;
+                    if(durations != nil)
+                    {
+                        durationList = [durations componentsSeparatedByString:@","];
+                    }
+                    
+                    //Will create and add each photo as model and adding them to the list.
+                    int postImagesCount = [postDetails[@"PostImageCount"] integerValue];
+                    postImagesCount = postImagesCount + 1;
+                    //postImagesCount = 10;
+                                        
+                    
+                    for (int j=1; j<postImagesCount; j++)
+                    {
+                        NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
+                        if(imageUrl== nil || !imageUrl.length)
+                            break;
+                        
+                        
+                        CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
+                        [photoModel setImageUrl:imageUrl];
+                        [photoModel setImageUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
+
+                        [photoModel setDuration:[durationList[j-1]integerValue]];
+                        [images addObject:photoModel];
+                    }
+                    [imagePost setImages:images];
+                    
+                    
+                    //Binding video to the post...
+                    DPostVideo *video = [[DPostVideo alloc] init];
+                    [video setDuration:@"10"];
+                    [video setUrl:postDetails[@"VideoFile"]];
+                    [video setUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[@"VideoFile"]]];
+                    
+                    [imagePost setVideo:video];
+                    
+                    [postModel setElapsedTime:postDetails[@"ElapsedTime"]];
+                }
+                
+                //Binding the user details...
+                DUser *user = [[DUser alloc] init];
+                {
+                    [user setUserId:authUserDetails[@"AuthUserUID"]];
+                    [user setName:authUserDetails[@"Username"]];
+                    [user setAddress:postDetails[@"PostLocation"]];
+                    [user setUserCanvasImage:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasImage"]]];
+                    [user setUserCanvasSnippet:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasSnippet"]]];
+                    [user setUserProfilePicture:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserProfilePicture"]]];
+                }
+                
+                //The post model here...
+                [postModel setImagePost:imagePost];
+                [postModel setUser:user];
+            }
+            
+            
+            //The footer content added here....
+            {
+                NSMutableArray *tags = [[NSMutableArray alloc] init];
+                if(postDetails[@"Tag1"] != nil && [(NSString *)postDetails[@"Tag1"] length])
+                {
+                    DPostTag *postTag = [[DPostTag alloc] init];
+                    [postTag setTagId:@""];
+                    [postTag setTagName:postDetails[@"Tag1"]];
+                    [tags addObject:postTag];
+                }
+                
+                if(postDetails[@"Tag2"] != nil && [(NSString *)postDetails[@"Tag2"] length])
+                {
+                    DPostTag *postTag = [[DPostTag alloc] init];
+                    [postTag setTagId:@""];
+                    [postTag setTagName:postDetails[@"Tag2"]];
+                    [tags addObject:postTag];
+                }
+                
+                DPostAttachments *attachements = [[DPostAttachments alloc] init];
+                [attachements setLikeRating:[postDetails[@"PostRating"] integerValue]];
+                [attachements setNumberOfComments:[postDetails[@"PostImageCount"] integerValue]];
+                [attachements setNumberOfLikes:[postDetails[@"PostLikeCount"] integerValue]];
+                [attachements setTagsList:tags];
+                [postModel setAttachements:attachements];
+            }
+            
+            
+            [postModelList addObject:postModel];
+        }
+    }
+    
+    NSMutableArray *temp = [[NSMutableArray alloc] init];
+    [temp addObjectsFromArray:postModelList];
+    
+    
+    _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
+    [self.view addSubview:_listView];
+    [self addNewObserverForDelegateProfileDetails];
+    
+}
+
+
+-(void)showMoreDetailsOfPost:(DPost *)post
+{
+    _currentPost = post;
+    
+    NSString *currentUserId = @"45";
+    NSString *postAuthId = [[post user] userId];
+    
+    
+    _isSelfPost = [currentUserId isEqualToString:postAuthId];
+    if(_isSelfPost)
+    {
+        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Delete",nil];
+        _moreActionSheet.tag = 111;
+    }
+    else
+    {
+        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Report",nil];
+        _moreActionSheet.tag = 222;
+    }
+    
+    [_moreActionSheet setFrame:CGRectMake(0, 0, 320, 400)];
+    [_moreActionSheet showInView:self.view];
+}
+
+-(void)showConversationForThisPost:(DPost *)post
+{
+    [self getConversationDetailsOfPost:post];
+}
+
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    if(actionSheet.tag == 111)
+    {
+        if(buttonIndex == 0)
+        {
+            //Delete the post...
+            [_listView deletePost:_currentPost];
+        }
+    }
+    else if(actionSheet.tag == 222)
+    {
+        if(buttonIndex == 0)
+        {
+            //Report the post...
+        }
+    }
+ }
+
+
+
 @end
+
+
+
+

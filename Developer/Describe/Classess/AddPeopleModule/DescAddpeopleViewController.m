@@ -136,7 +136,7 @@
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
     
     
-    DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+    DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];
     
     
