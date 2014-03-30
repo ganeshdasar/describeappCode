@@ -777,5 +777,50 @@ static WSModelClasses *_sharedInstance;
 }
 
 
+-(void)deletePost:(NSString *)postid response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/deleteThePost/format=json/PostUID=%@", BaseURLString,postid];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          response(NO, error);
+                      }
+     ];
+}
+
+-(void)reportPost:(NSString *)postid userId:(NSString *)userId response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/reportThePost/format=json/UserUID=%@/PostUID=%@", BaseURLString, userId, postid];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+                      }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           response(NO, error);
+         }
+     ];
+}
+
+//Comment the post....
+-(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/UserUID=%@/AuthUserUID=%@/PostUID=%@/comment=%@", BaseURLString, userId, authId, postid, comment];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+}
 
 @end

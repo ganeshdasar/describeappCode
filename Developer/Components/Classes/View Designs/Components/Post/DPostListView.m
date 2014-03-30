@@ -403,6 +403,8 @@
         [_postListView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationMiddle];//Fade
         [_postListView endUpdates];
     }
+    
+    
 }
 
 /*

@@ -149,8 +149,6 @@
     {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         
-        
-        
         DConversation *conversation = [[DConversation alloc] init];
         [conversation setUsername:[userDefaults valueForKey:@"UserName"]];
         [conversation setProfilePic:[userDefaults valueForKey:@"UserProfilePicture"]];

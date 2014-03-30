@@ -21,6 +21,7 @@
     CGPoint _startPoint;
     CGPoint _startPointLocationOnScreen;
     CMTime  _videoDuration;
+    BOOL _isPlayerAvailable;
 }
 @end
 

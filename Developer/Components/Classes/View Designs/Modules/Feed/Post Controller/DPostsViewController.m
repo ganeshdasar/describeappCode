@@ -524,8 +524,25 @@ static DPostsViewController *sharedFeedController;
     {
         if(buttonIndex == 0)
         {
+            
+            
             //Delete the post...
             [_listView deletePost:_currentPost];
+            
+            
+            [[WSModelClasses sharedHandler] deletePost:_currentPost.postId response:^(BOOL success, id response) {
+                if(success)
+                {
+                    //Successfully deleted the post...
+                    NSLog(@"Response:%@",response);
+                }
+                else
+                {
+                    //Failed to delete the post...
+                    NSLog(@"Error:%@",response);
+                }
+            }];
+            
         }
     }
     else if(actionSheet.tag == 222)
@@ -533,9 +550,22 @@ static DPostsViewController *sharedFeedController;
         if(buttonIndex == 0)
         {
             //Report the post...
+            [[WSModelClasses sharedHandler] reportPost:_currentPost.postId userId:@"45" response:^(BOOL success, id response) {
+                if(success)
+                {
+                    //Successfully deleted the post...
+                    NSLog(@"Response:%@",response);
+                }
+                else
+                {
+                    //Failed to delete the post...
+                    NSLog(@"Error:%@",response);
+                }
+            }];
         }
     }
  }
+
 
 
 

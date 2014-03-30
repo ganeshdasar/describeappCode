@@ -16,7 +16,7 @@
 #import "Constant.h"
 #import "DESocialConnectios.h"
 #import "DPostsViewController.h"
-
+#import "DAlertView.h"
 
 @interface DescSigninViewController ()<WSModelClassDelegate,DESocialConnectiosDelegate,MBProgressHUDDelegate>{
 IBOutlet DHeaderView *_headerView;
@@ -174,7 +174,7 @@ IBOutlet DHeaderView *_headerView;
             {
                 //Have to store these details in the shared holder to call/access them globally...
                 [self saveUserDetails:responseDict];
-                [self showNextScreen];
+                [self showNextScreen:responseDict];
                 
             }
             else{
@@ -191,7 +191,6 @@ IBOutlet DHeaderView *_headerView;
 -(void)saveUserDetails:(NSDictionary *)dictionary
 {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
     NSArray *username = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.Username"];
     NSArray *userid = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserUID"];
     NSArray *userprofilepic = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"];
@@ -202,26 +201,49 @@ IBOutlet DHeaderView *_headerView;
     [userDefaults setValue:(userprofilepic.count)?userprofilepic[0]:nil forKey:@"UserProfilePicture"];
 }
 
--(void)showNextScreen
+-(void)showNextScreen:(NSDictionary*)userData
 {
-    if(0)//Check for the condition where the basic info line is empty or not.
+    
+    if(![self checkTheuserBasicInfoDataEmptyOrNot:userData])//Check for the condition where the basic info line is empty or not.
     {
         DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
         [self.navigationController pushViewController:basicInfo animated:YES];
     }
     else
     {
-        if(1)//is he is following any one or not?
+        if([self checkTheUserFollowingCount:userData])//is he is following any one or not?
         {
             DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
             [self.navigationController pushViewController:postViewController animated:YES];
         }
         else
         {
-            DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
-            [self.navigationController pushViewController:basicInfo animated:YES];
+            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+            [self.navigationController pushViewController:addPeople animated:YES];
+            
         }
     }
+}
+
+
+-(BOOL)checkTheuserBasicInfoDataEmptyOrNot:(NSDictionary*)userData
+{
+    NSString * city = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserCity"]objectAtIndex:0];
+    NSString * imagedata = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"]objectAtIndex:0];
+    NSString * userBio = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserBiodata"]objectAtIndex:0];
+    NSString * birthday = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserDOB"]objectAtIndex:0];
+    if ([city isEqualToString:@""] || [imagedata isEqualToString:@""] ||[userBio isEqualToString:@""] ||[birthday isEqualToString:@""] )
+        return NO;
+    return YES;
+    
+}
+
+-(BOOL)checkTheUserFollowingCount:(NSDictionary*)userData
+{
+    NSString * followingCount = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserFollowingCount"]objectAtIndex:0];
+    if ([followingCount isEqualToString:@"0"])
+        return NO;
+    return YES;
 }
 
 -(void)gotoBasicinfoScreen
@@ -235,6 +257,7 @@ IBOutlet DHeaderView *_headerView;
 - (void)showalertMessage:(NSString*)inMeassage
 {
     UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"Validation" message:inMeassage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    
     [alert show];
 }
 

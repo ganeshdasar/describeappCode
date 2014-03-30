@@ -156,4 +156,11 @@ typedef enum {
 
 // http://mirusstudent.com/service/describe-service/getUnFollower/UserUID=8/OtherUserId=7
 
+-(void)deletePost:(NSString *)postid response:(void (^)(BOOL success, id response))response;
+-(void)reportPost:(NSString *)postid userId:(NSString *)userId response:(void (^)(BOOL success, id response))response;
+
+
+
+-(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response;
+
 @end
