@@ -1,4 +1,4 @@
- //
+//
 //  DescAddpeopleViewController.m
 //  Describe
 //
@@ -17,16 +17,17 @@
 #import "DPostsViewController.h"
 #import "Constant.h"
 #import "ProfileViewController.h"
+#import "MBProgressHUD.h"
 
-
-@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate>
+@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     UIButton    *backButton,*nextButton;
     UIButton    *weRecommendBtn,*invitationsBtn;
     UIButton     *facebookBtn,*googlePlusBtn;
     WSModelClasses * serviceClass;
-
+    MBProgressHUD*_loadingView;
+    
     IBOutlet DPeopleListComponent *_peoplelistView;
     IBOutlet DSegmentComponent * _segmentComponent;
     IBOutlet DSearchBarComponent * _searchBarComponent;
@@ -51,7 +52,7 @@
 }
 - (void)viewDidLoad
 {
-        [super viewDidLoad];
+    [super viewDidLoad];
     if (isiPhone5)
     {
         self.backGroundImg.image = [UIImage imageNamed:@"bg_std_4in.png"];
@@ -59,7 +60,7 @@
     else
     {
         self.backGroundImg.image = [UIImage imageNamed:@"bg_std_3.5in.png"];
-      
+        
         //Iphone  3.5 inch
     }
     self.selectedType.selected = NO;
@@ -81,7 +82,7 @@
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
     [nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
-
+    
     [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
     
 }
@@ -128,38 +129,30 @@
 
 - (void)goToFeedScreen:(UIButton*)inButton
 {
-//    ProfileViewController *profileController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
-//    profileController.profileUserID = [NSNumber numberWithInteger:45];
-//    [self.navigationController pushViewController:profileController animated:YES];
-//    
-//    return;
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
-    
-    
-    DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+    DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];
-    
-    
 }
 
 #pragma mark SegmentView Actions
 -(void)getTheWeRecommendDataFromServer:(UIButton*)inSender{
     inSender.selected =YES;
+    [self showLoadView];
     invitationsBtn.selected =NO;
-    
-  //  NSLog(@"werecommeded selected ");
+    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
 }
+
+
 -(void)getTheInvitationsDataFromServer:(UIButton*)inSender{
     inSender.selected =YES;
+    [self showLoadView];
     weRecommendBtn.selected = NO;
-  //  NSLog(@"invitations selected ");
-
-    
-    
-    
+    [WSModelClasses sharedHandler].delegate = self;
+    [[WSModelClasses sharedHandler]getInvitationListpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
 }
-#pragma mark Socialnetwork actions
 
+
+#pragma mark Socialnetwork actions
 -(void)requestToFaceboookForFriendsList:(UIButton*)inSender{
     inSender.selected = YES;
     
@@ -184,14 +177,16 @@
 }
 #pragma mark Design PeopleListView
 -(void)designPeopleListView{
-    
-    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID AndRange:@"0"];
+    [self showLoadView];
     [WSModelClasses sharedHandler].delegate = self;
+    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
 }
 
 
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
 {
+    _loadingView.hidden=YES;
+    [_loadingView removeFromSuperview];
     WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
     if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -199,7 +194,12 @@
         return;
     }
     switch (serviceType) {
-        case kWebserviesType_addPeople:
+        case kWebserviesType_addPeople_wRecommended:
+        {
+            [self parsingTheData:responseDict];
+            break;
+        }
+        case kWebserviesType_addPeople_wInvitations:
         {
             [self parsingTheData:responseDict];
             break;
@@ -208,7 +208,7 @@
         default:
             break;
     }
-
+    
     
 }
 
@@ -226,12 +226,14 @@
         data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
         [peopleArray addObject:data];
     }
-    
+    if (_peoplelistView!=nil) {
+        [_peoplelistView removeFromSuperview];
+        _peoplelistView=nil;
+    }
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    
-    _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-108) andPeopleList:(NSArray*)peopleArray];
+    _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-200) andPeopleList:(NSArray*)peopleArray];
     [self.view addSubview:_peoplelistView];
-
+    
     
 }
 
@@ -244,7 +246,7 @@
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar;{
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate = self;
-
+    
     if (isSearching) {
         isSearching = NO;
         [_headerView removeSubviewFromHedderView];
@@ -253,11 +255,7 @@
         [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
         [backButton addTarget:self action:@selector(removeTheSearchViewFromSuperview:) forControlEvents:UIControlEventTouchUpInside];
         [_headerView designHeaderViewWithTitle:@"Search" andWithButtons:@[backButton]];
-        
-        
-        
         CGRect screenRect = [[UIScreen mainScreen] bounds];
-
         _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 110, 320, screenRect.size.height-108) andPeopleList:nil];
         [self.view addSubview:_peoplelistView];
     }else{
@@ -266,8 +264,8 @@
             
         }
     }
-   
-  
+    
+    
 }
 
 #pragma mark serachResult
@@ -299,6 +297,13 @@
     [_searchBarComponent.searchTxt resignFirstResponder];
     [self designHeaderView];
 }
-
+- (void)showLoadView
+{
+    _loadingView = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:_loadingView];
+    _loadingView.delegate = self;
+    _loadingView.labelText = @"Loading";
+    [_loadingView show:YES];
+}
 
 @end

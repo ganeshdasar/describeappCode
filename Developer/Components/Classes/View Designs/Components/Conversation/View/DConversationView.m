@@ -264,8 +264,6 @@
         case DConversationTypeNone:
             break;
         case DConversationTypeLike:
-                
-            
             _commentTextHeight = 16;
             _subTitleYPosition = 26;
             _elapsedYPostion = 36;

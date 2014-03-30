@@ -69,14 +69,14 @@
 
 - (void)viewDidLoad
 {
-        [super viewDidLoad];
-        [self designHeaderView];
-        [self setBackGroundimageView];
-        [self.datePicker  setDate:[NSDate date] animated:NO];
-        self.datePicker.maximumDate=[NSDate date];
-        isEditingPic = NO;  // by default profile pic editing is NO
-        [self designTheView];
-        [self createProfilePicAspectView];
+    [super viewDidLoad];
+    [self designHeaderView];
+    [self setBackGroundimageView];
+    [self.datePicker  setDate:[NSDate date] animated:NO];
+    self.datePicker.maximumDate=[NSDate date];
+    isEditingPic = NO;  // by default profile pic editing is NO
+    [self designTheView];
+    [self createProfilePicAspectView];
 }
 
 -  (void)didReceiveMemoryWarning
@@ -138,7 +138,6 @@
     }
     
     if (profileUserDetail.profileImageName){
-        
         [self downloadUserImageview:profileUserDetail.profileImageName];
     }
     
@@ -151,7 +150,7 @@
     }
     
     if (profileUserDetail.dobDate){
-//       self.birthdayTxt.text =[NSString convertTheepochTimeToDate:[profileUserDetail.dobDate doubleValue]];
+        self.birthdayTxt.text =[NSString convertTheepochTimeToDate:[profileUserDetail.dobDate doubleValue]];
     }
     
     if (profileUserDetail.biodata) {
@@ -325,13 +324,9 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    isEditingPic = YES;
     [picker dismissViewControllerAnimated:YES completion:nil];
-    _profileEditCancelBtn.hidden = YES;
-    _profileEditDoneBtn.hidden = YES;
-    _profilePicOverlayView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
-    [profilePicAspectController enableTouches:YES];
-    [_profilePicOverlayView setDontPassTouch:YES];
+    [profilePicAspectController enableTouches:NO];
+    [_profilePicOverlayView setDontPassTouch:NO];
     [self hideAndShowView:NO];
 }
 
@@ -494,7 +489,7 @@
         gender = @"0";
     }
     [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [NSString convertTheDateToepochtime:(NSString*)self.birthdayTxt.text ]  userGender:gender profilePic:profilePicAspectController.imageView.image];
-
+    
 }
 
 #pragma mark WebService Delegate method
@@ -510,15 +505,15 @@
     switch (serviceType) {
         case kWebservicesType_SaveBasicInfo:
         {
-//            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-//            [self.navigationController pushViewController:addPeople animated:NO];
+            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+            [self.navigationController pushViewController:addPeople animated:NO];
             
-//            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
-//            [self.navigationController pushViewController:notificationController animated:YES];
+            //            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+            //            [self.navigationController pushViewController:notificationController animated:YES];
             
-//            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-//            [self.navigationController pushViewController:compositionViewController animated:YES];
-            
+            //            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+            //            [self.navigationController pushViewController:compositionViewController animated:YES];
+            return;
             ProfileViewController *profileVC = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
             [self.navigationController pushViewController:profileVC animated:YES];
             break;
@@ -611,6 +606,7 @@
     self.txtBioImgView.hidden = inBool;
     self.cityTxtImgView.hidden = inBool;
     self.dateofBirthImgView.hidden = inBool;
+    self.bioTxt.hidden  = inBool;
     self.cityTxt.hidden = inBool;
     self.birthdayTxt.hidden = inBool;
     self.btnfemale.hidden = inBool;
