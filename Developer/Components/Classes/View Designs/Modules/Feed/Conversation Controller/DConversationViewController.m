@@ -40,7 +40,12 @@
     
     [self designHeaderView];
     [self designConversationView];
+  
 }
+
+
+
+
 
 -(void)leftSwipeGesture:(UISwipeGestureRecognizer *)rightSwipeGesture
 {

@@ -80,9 +80,7 @@
     
     
     [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-    
     [_postListView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
-    
 }
 
 
@@ -100,7 +98,7 @@
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+{   
     return [_postList count];
 }
 
@@ -124,7 +122,7 @@
             float height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
             
             DPostView *postView = [[DPostView alloc] initWithFrame:CGRectMake(0, 0, 320, height-10) andPost:post];
-            [postView designPostView];
+            //[postView designPostView];
             [cell.contentView addSubview:postView];
             [postView setTag:111];
         }
@@ -203,11 +201,10 @@
     CGFloat newOffset = [[change objectForKey:@"new"] CGPointValue].y;
     CGFloat oldOffset = [[change objectForKey:@"old"] CGPointValue].y;
     CGFloat diff = newOffset - oldOffset;
-    if (diff < 0 ) { //scrolling down...
-        // do something
+    if (diff < 0 )//scrolling down...
+    {
         // NSLog(@"Scrolling Down");
         [self scrollViewScrollingDirection:@"DOWN"];
-        
     }
     else//Scrolling Up...
     {
@@ -418,8 +415,9 @@
 
 -(void)dealloc
 {
-    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-    
+//    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    [_postListView removeObserver:self forKeyPath:@"contentOffset"];
+
 }
 
 @end

@@ -55,7 +55,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.backgroundColor = [UIColor blueColor];
+        self.backgroundColor = [UIColor clearColor];
         
         _post = post;
         [self createPostHeaderView];
@@ -133,6 +133,10 @@
         _contentView = [[DPostBodyView alloc] initWithFrame:CONTENT_FRAME withPostImage:_post.imagePost];
         [self addSubview:_contentView];
     }
+    
+    return;
+    
+    
     [_contentView setBackgroundColor:[UIColor clearColor]];
     [_contentView setEnablePlayVideoTapnOnImage:YES];
     [_contentView setPostImage:_post.imagePost];

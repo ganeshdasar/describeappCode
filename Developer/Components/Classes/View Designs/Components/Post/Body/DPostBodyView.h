@@ -25,7 +25,7 @@
 
 -(void)playVideo;
 -(void)pauseVideo;
-
+-(void)seekContentToPercentage:(NSNumber *)percentage;
 @end
 
 

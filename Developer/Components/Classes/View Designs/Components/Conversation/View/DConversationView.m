@@ -432,6 +432,11 @@
 {
 }
 
+-(void)resignKeyboard
+{
+    [_commentTextView resignFirstResponder];
+}
+
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     return YES;

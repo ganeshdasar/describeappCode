@@ -21,6 +21,7 @@
     
     float _userCommentViewHeight;
     DConversationView *_userCommentView;
+    UIView *_keyboardToolBar;
 }
 @end
 
@@ -40,7 +41,7 @@
 {
     _userCommentViewHeight = 60;
     [self createConversationListView];
-    
+    [self registerKeyboardNotifications];
     
 }
 
@@ -345,6 +346,57 @@
     [_listView beginUpdates];
     [_listView reloadData];
     [_listView endUpdates];
+}
+
+
+-(void)registerKeyboardNotifications
+{
+    {
+        //Keyboard toll bar...
+        _keyboardToolBar = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height, 320, 44)];
+        [_keyboardToolBar setBackgroundColor:[[UIColor blueColor] colorWithAlphaComponent:0.3]];
+        [self addSubview:_keyboardToolBar];
+        
+        //Done button on tool bar...
+        UIButton *doneButton = [[UIButton alloc] initWithFrame:CGRectMake(260, 2, 50, 40)];
+        [doneButton setTitle:@"Done" forState:UIControlStateNormal];
+        [doneButton addTarget:self action:@selector(resignKeyboard) forControlEvents:UIControlEventTouchUpInside];
+        [_keyboardToolBar addSubview:doneButton];
+    }
+    
+    // Add two notifications for the keyboard. One when the keyboard is shown and one when it's about to hide.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShown:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+-(void)resignKeyboard
+{
+    [_userCommentView resignKeyboard];
+}
+
+-(void)keyboardWillShown:(id)notification
+{
+    CGRect rect = _keyboardToolBar.frame;
+    rect.origin.y = self.frame.size.height - (218+20);
+    
+    [UIView animateWithDuration:.26 animations:^{
+        [_keyboardToolBar setFrame:rect];
+    } completion:^(BOOL finished) {
+        //Animation finished...
+    }];
+}
+
+-(void)keyboardWillHide:(id)notification
+{
+    CGRect rect = _keyboardToolBar.frame;
+    rect.origin.y = self.frame.size.height+20;
+    
+    [UIView animateWithDuration:.3 animations:^{
+        [_keyboardToolBar setFrame:rect];
+    } completion:^(BOOL finished) {
+        //Animation finished...
+    }];
 }
 
 

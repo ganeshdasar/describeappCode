@@ -92,6 +92,11 @@ static DPostsViewController *sharedFeedController;
 
 -(void)viewDidAppear:(BOOL)animated
 {
+    
+    return;
+    
+    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+    [self.navigationController pushViewController:conversationController animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -215,8 +220,11 @@ static DPostsViewController *sharedFeedController;
     //[self getTheConverSationData];
     return;
     //NSLog(@"Right Swipe Gesture Activated");
-    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
-    [self.navigationController pushViewController:conversationController animated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+        [self.navigationController pushViewController:conversationController animated:YES];
+    });
+
 }
 
 -(void)leftSwipeGesture:(UISwipeGestureRecognizer *)leftSwipeGesture
@@ -278,7 +286,7 @@ static DPostsViewController *sharedFeedController;
 -(void)getThePostConversationDetailsFromServer:(NSDictionary *) responceDict error:(NSError*)error
 {
     //    NSLog(@"converstion data from server %@",responceDict);
-    if(responceDict != nil)
+    if(responceDict != nil || ![responceDict isKindOfClass:[NSNull class]])
     {
         NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
         for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
@@ -480,8 +488,10 @@ static DPostsViewController *sharedFeedController;
     [temp addObjectsFromArray:postModelList];
     
     
+    
     _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
     [self.view addSubview:_listView];
+    
     [self addNewObserverForDelegateProfileDetails];
     
 }

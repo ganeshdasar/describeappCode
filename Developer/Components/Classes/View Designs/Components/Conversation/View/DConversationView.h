@@ -22,6 +22,7 @@
 - (id)initWithFrame:(CGRect)frame withConversation:(DConversation *)conversation;
 
 -(void)increaseContentSize;
+-(void)resignKeyboard;
 -(DConversation *)conversation;
 @end
 

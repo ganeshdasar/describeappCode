@@ -91,6 +91,10 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        
+        
+        //return self;
+        
         self.backgroundColor = [UIColor clearColor];
         
         _postImage = imagePost;
@@ -104,6 +108,7 @@
         [self createBackImageView];
         [self createFrontImageView];
         
+        
         _index = 0;
         
         //Temporarly placing the place holder images will remove later on
@@ -116,18 +121,18 @@
         if(_count > 1)
             secondImage = _images[1];
         
-        //NSLog(@"First:%@, Second:%@",firstImage.imageUrl, secondImage.imageUrl);
-        
-        //[_backgroundView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",firstImage.imageUrl]]];
-        // [_frontImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",secondImage.imageUrl]]];
         
         NSLog(@"front image:%@\n back:%@",firstImage.imageUrl, secondImage.imageUrl);
         
-        //[_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
-        //[_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
+        [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
+        [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
+        
         
         
         [self createVideoPlayer];
+        
+        
+        
         [self addSingleTapGesture];
         [self addDoubleTapGesture];
     }
@@ -223,6 +228,7 @@
     [_contentView addSubview:_backImageView];
 }
 
+
 -(void)createVideoPlayer
 {
     _videoPlayer = [[DPostVideoPlayerView alloc] initWithFrame:VIDEO_FRAME];
@@ -239,15 +245,15 @@
     [_videoPlayer videoPlayer];
     
     
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
-    [panGesture setMinimumNumberOfTouches:1];
-    [self addGestureRecognizer:panGesture];
+    //    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
+    //    [panGesture setMinimumNumberOfTouches:1];
+    //    [self addGestureRecognizer:panGesture];
 }
 
 
--(void)panGestureRecognizer:(UIPanGestureRecognizer *)gesture
+-(void)panGestureRecognizer:(UIPanGestureRecognizer *)gesture point:(CGPoint)point andView:(UIView *)view
 {
-    CGPoint point = [gesture locationInView:self];
+    //CGPoint point = [gesture locationInView:self];
     //NSLog(@"pan gesture:%@", NSStringFromCGPoint(point));
     
     //NSLog(@"Point:%@ %d",NSStringFromCGPoint(point), _isNeedToRewind);
@@ -478,11 +484,15 @@
 {
     //pause image animations....
     _isNeedToPlayImages = NO;
+    _currentPlayedTime = [_videoPlayer videoCurrentTime];
+    
     if(_transitionImageTimer != nil)
     {
         [_transitionImageTimer invalidate];
         _transitionImageTimer = nil;
     }
+    
+    
     
     //    if(!_enablePlayVideoTapnOnImage)
     //    {
@@ -536,24 +546,10 @@
 
 -(void)seekContentToPercentage:(NSNumber *)percentage
 {
-    
-    
     NSInteger currentTime = (_currentPlayedTime*[percentage integerValue])/100;
-    //NSInteger actualTime = _durationOfImages - currentTime;
-    
     NSLog(@"Current Time:%d",currentTime);
     
-    
-    
-    
-    
-    //return;
-    
     NSInteger index = [self indexForTime:currentTime];
-    
-    
-    
-    
     NSLog(@"Current Index:%d index:%d", _index, index);
     
     // NSLog(@"Percentage:%d Duration:%d CurrentTime:%d actual:%d Index:%d dur:%d",[percentage integerValue],_durationOfImages, currentTime, actualTime, index, [_postImage.durationList[index] integerValue]);
@@ -574,9 +570,6 @@
     }
     
     _currentVisibleImageIndex = index;
-    
-    
-    
 }
 
 -(NSInteger)totalImageDuartions

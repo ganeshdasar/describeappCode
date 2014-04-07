@@ -698,6 +698,13 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
     
+    if(accessToken == nil)
+    {
+        [_delegate didFinishWSConnectionWithResponse:nil];
+        return;
+    }
+    
+    
     NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":inRange};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:[NSString stringWithFormat:@"%@/getWeRecommendedList", BaseURLString]
