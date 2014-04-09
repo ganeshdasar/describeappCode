@@ -60,7 +60,7 @@
     _title = title;
     _buttons = buttons;
     self.backgroundColor = [UIColor colorWithRed:58.0/255.0 green:169.0/255.0 blue:155.0/255.0 alpha:1.0];
-    //self.backgroundColor = [UIColor clearColor];
+    //self.backgroundColor = [UIColor redColor];
     
     //    self.alpha = 0.3;
     

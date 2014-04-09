@@ -12,6 +12,7 @@
 #import "DLikesList.h"
 #import "UIImageView+AFNetworking.h"
 
+
 #define SUBTITLE_FONT   [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0]
 #define TITLE_FONT      [UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]
 
@@ -249,7 +250,7 @@
     [_commentTextView setText:@"Add your comment here."];
     [_contentView addSubview:_commentTextView];
     [_commentTextView setDelegate:self];
-    
+    [_commentTextView setReturnKeyType:UIReturnKeyDone];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewDidChangedText:) name:UITextViewTextDidChangeNotification object:nil];
 }
@@ -430,6 +431,8 @@
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
+    if(textView.text.length)
+        [self postComment:textView.text forConversation:_conversation];
 }
 
 -(void)resignKeyboard
@@ -439,6 +442,12 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+    if([text isEqualToString:@"\n"])
+    {
+        [textView resignFirstResponder];
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -472,6 +481,15 @@
     _textViewCurrentHeight = height;
     
     
+}
+
+
+-(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(postComment:forConversation:)])
+    {
+        [self.delegate performSelector:@selector(postComment:forConversation:) withObject:comment withObject:conversation];
+    }
 }
 
 

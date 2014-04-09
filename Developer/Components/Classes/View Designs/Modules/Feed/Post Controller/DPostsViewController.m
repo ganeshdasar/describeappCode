@@ -523,6 +523,12 @@ static DPostsViewController *sharedFeedController;
 
 -(void)showConversationForThisPost:(DPost *)post
 {
+//    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+//    conversationController.conversationListArray = nil;
+//    [self.navigationController pushViewController:conversationController animated:NO];
+//    
+    
+    //return;
     [self getConversationDetailsOfPost:post];
 }
 

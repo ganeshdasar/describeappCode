@@ -14,4 +14,5 @@
 +(UIColor*)textPlaceholderColor;
 +(UIColor*)textFieldTextColor;
 +(UIColor*)segmentButtonSelectedColor;
++(UIColor *)colorWithValue:(CGFloat )value;
 @end

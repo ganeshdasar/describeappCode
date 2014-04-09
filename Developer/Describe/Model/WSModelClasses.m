@@ -182,7 +182,13 @@ static WSModelClasses *_sharedInstance;
 
 - (void)postSignUpResult:(id)inResult error:(NSError*)inError
 {
-    if(_delegate && [_delegate respondsToSelector:@selector(signUpStatus:error:)]) {
+    
+    //_loggedInUserModel = inResult;
+    _loggedInUserModel = [[UsersModel alloc] init];
+    [_loggedInUserModel setValue:[inResult valueForKey:@"DataTable.UserData.UserUID"] forKey:@"userID"];
+    
+    if(_delegate && [_delegate respondsToSelector:@selector(signUpStatus:error:)])
+    {
         [_delegate signUpStatus:inResult error:nil];
     }
 }
@@ -818,6 +824,10 @@ static WSModelClasses *_sharedInstance;
 -(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response
 {
     NSString *url = [NSString stringWithFormat:@"%@/UserUID=%@/AuthUserUID=%@/PostUID=%@/comment=%@", BaseURLString, userId, authId, postid, comment];
+    
+    
+    NSLog(@"Comment url:%@",url);
+    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
       parameters:nil

@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "DConversation.h"
 #import "DConversationView.h"
+#import "WSModelClasses.h"
 
 @interface DConversationListView ()<UITableViewDataSource, UITableViewDelegate, DConversationDelegate>
 {
@@ -153,6 +154,8 @@
         DConversation *conversation = [[DConversation alloc] init];
         [conversation setUsername:[userDefaults valueForKey:@"UserName"]];
         [conversation setProfilePic:[userDefaults valueForKey:@"UserProfilePicture"]];
+        [conversation setPostId:@"2"];
+        [conversation setUserId:@"45"];
         [conversation setType:DConversationTypeCurrentUser];
         
         _userCommentView = [[DConversationView alloc] initWithFrame:CGRectMake(0, 0, 320, 60) withConversation:conversation];
@@ -346,6 +349,21 @@
     [_listView beginUpdates];
     [_listView reloadData];
     [_listView endUpdates];
+}
+
+-(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation
+{
+    
+//    [[WSModelClasses sharedHandler] commentUserId:@"45" authUId:conversation.userId post:conversation.postId comment:[comment UTF8String] response:^(BOOL success, id response) {
+//        //Handle response...
+//        if(success)
+//        {
+//        }
+//        else
+//        {
+//        }
+//    }];
+    
 }
 
 

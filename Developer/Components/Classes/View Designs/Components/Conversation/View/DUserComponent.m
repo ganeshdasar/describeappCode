@@ -7,11 +7,33 @@
 //
 
 #import "DUserComponent.h"
+#import "UIImageView+AFNetworking.h"
+
+
+@interface DUserComponent ()
+{
+    UILabel *_title;
+    UILabel *_subTitle;
+    UIImageView *_thumIcon;
+    UIButton *_statusButton;
+}
+@end
+
+
+
+
+
 @implementation DUserComponent
 @synthesize _userData;
 @synthesize data;
 @synthesize thumbnailImg;
 @synthesize _followUnfollowBtn;
+
+
+
+
+
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -31,10 +53,10 @@
     return self;
 }
 -(void)createUserComponent{
-       UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
+    UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     roundImg.image = [UIImage imageNamed:@"thumb_user_std.png"];
     [self addSubview:roundImg];
-     self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
+    self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     [self addSubview:self.thumbnailImg];
     if (data.profileUserProfilePicture) {
         [self downloadUserImageview:data.profileUserProfilePicture];
@@ -62,7 +84,36 @@
     }
     [button addTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:button];
+    
+    
+    
+    _title = firsLineLbl;
+    _subTitle = secondLineLbl;
+    _thumIcon = roundImg;
+    _statusButton = button;
 }
+
+-(void)updateContent:(SearchPeopleData *)userData
+{
+    data = userData;
+    
+    
+    [_thumIcon setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std.png"]];
+    _title.text = data.profileUserName;
+    _subTitle.text =data.profileUserFullName;
+    
+    
+    //Updating the details on the content...
+    if ([data.followingStatus isEqualToString:@"1"])
+    {
+        [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
+    }else{
+        [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
+    }
+}
+
+
+
 -(void)followAndUnfollowButtonAction:(id)inAction
 {
     if ([data.followingStatus isEqualToString:@"0"]) {

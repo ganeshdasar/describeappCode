@@ -18,8 +18,9 @@
 #import "Constant.h"
 #import "ProfileViewController.h"
 #import "MBProgressHUD.h"
+#import "DSocialMediaListView.h"
 
-@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate>
+@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     UIButton    *backButton,*nextButton;
@@ -27,6 +28,9 @@
     UIButton     *facebookBtn,*googlePlusBtn;
     WSModelClasses * serviceClass;
     MBProgressHUD*_loadingView;
+    
+    IBOutlet DSocialMediaListView *_mediaListView;
+    
     
     IBOutlet DPeopleListComponent *_peoplelistView;
     IBOutlet DSegmentComponent * _segmentComponent;
@@ -79,6 +83,13 @@
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(goToBack:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if([[self.navigationController viewControllers] count] == 2)
+        [backButton setHidden:YES];
+    else
+        [backButton setHidden:NO];
+    
+    
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
     [nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
@@ -107,9 +118,29 @@
     [invitationsBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
     invitationsBtn.selected = NO;
     [_segmentComponent designSegmentControllerWithButtons:@[weRecommendBtn,invitationsBtn]];
+    
+    if([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] == nil && [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN] == nil)
+    {
+        [weRecommendBtn setEnabled:NO];
+        [invitationsBtn setEnabled:NO];
+    }
+    
 }
 //Social Component
--(void)designSocialComponent{
+-(void)designSocialComponent
+{
+    NSDictionary *mediaItem0 = @{@"ImageNormal": @"btn_3rd_fb_nc.png", @"ImageSelected": @"btn_3rd_fb_on.png"};
+    NSDictionary *mediaItem1 = @{@"ImageNormal": @"btn_3rd_goog_nc.png", @"ImageSelected": @"btn_3rd_goog_on.png"};  
+    
+    [_mediaListView setDelegate:self];
+    [_mediaListView setMedaiList:@[mediaItem0, mediaItem1]];
+    
+    
+    return;
+    
+    
+    
+    
     facebookBtn = [[UIButton alloc]init];
     [facebookBtn setBackgroundImage:[UIImage imageNamed:@"btn_3rd_fb_nc.png"] forState:UIControlStateNormal];
     [facebookBtn setBackgroundImage:[UIImage imageNamed:@"btn_3rd_fb_on.png"] forState:UIControlStateSelected];
@@ -127,10 +158,29 @@
     
 }
 
+
+-(void)socailMediaDidSelectedItemAtIndex:(NSInteger)index
+{
+    [_peoplelistView setBackgroundColor:[UIColor clearColor]];
+    switch (index)
+    {
+        case 1:
+            [self requestToFaceboookForFriendsList:nil];
+            break;
+        case 2:
+            [self requestToGooglePlusForFriendsList:nil];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
 - (void)goToFeedScreen:(UIButton*)inButton
 {
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
-    DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+    DPostsViewController *postViewController = [DPostsViewController sharedFeedController];////[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];
 }
 
@@ -179,7 +229,7 @@
 -(void)designPeopleListView{
     [self showLoadView];
     [WSModelClasses sharedHandler].delegate = self;
-    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
+    [[WSModelClasses sharedHandler]getWeRecommendedpeople:[[NSUserDefaults standardUserDefaults] valueForKey:@"USERID"] GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
 }
 
 
@@ -241,6 +291,7 @@
     isSearching = YES;
     [_searchBarComponent designSerachBar];
     _searchBarComponent.searchDelegate =self;
+    [_searchBarComponent setBackgroundColor:[UIColor whiteColor]];
 }
 #pragma serchThe People
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar;{
@@ -285,6 +336,7 @@
         searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
         [self.searchListArray addObject:searchData];
     }
+    [_peoplelistView setBackgroundColor:[UIColor whiteColor]];
     [_peoplelistView reloadTableView:self.searchListArray];
     
 }

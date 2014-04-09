@@ -89,17 +89,15 @@
         return;
     
     
-    //return;
     
     
     avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:_video.url]];//[NSURL fileURLWithPath:_video.url]
     avPlayer = [AVPlayer playerWithPlayerItem:avPlayerItem] ;
-    AVPlayerLayer *avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer] ;
-    
+    AVPlayerLayer *avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer] ;    
     avPlayerLayer.frame = _conentView.bounds;
     [_conentView.layer addSublayer:avPlayerLayer];
     
-    
+
     
     avPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     _isPlaying = NO;

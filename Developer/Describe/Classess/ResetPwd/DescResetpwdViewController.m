@@ -50,6 +50,8 @@
     [self designHeaderView];
     [self intilizTextFieldColors];
     // Do any additional setup after loading the view from its nib.
+    
+    self.txtemail.returnKeyType = UIReturnKeyDone;
 }
 
 

@@ -16,4 +16,6 @@
 @property (nonatomic,strong) UIImageView * thumbnailImg;
 -(id)initWithFrame:(CGRect)frame AndUserData:(SearchPeopleData*)inUserData;
 -(void)createUserComponent;
+-(void)updateContent:(SearchPeopleData *)userData;
+
 @end

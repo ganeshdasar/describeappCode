@@ -96,6 +96,7 @@
 		07354E0F18B9F5EC008B98F3 /* user2.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCD18B9F5EC008B98F3 /* user2.png */; };
 		07354E1018B9F5EC008B98F3 /* user3.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCE18B9F5EC008B98F3 /* user3.png */; };
 		07354E1118B9F5EC008B98F3 /* user4.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCF18B9F5EC008B98F3 /* user4.png */; };
+		079919C518F5552A00AB5139 /* DSocialMediaListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 079919C418F5552A00AB5139 /* DSocialMediaListView.m */; };
 		079CEBD618E82EA200CF4532 /* DAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 079CEBD518E82EA200CF4532 /* DAlertView.m */; };
 		07CB621818E7F4F5000F8EB3 /* NSDate+DDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CB621718E7F4F5000F8EB3 /* NSDate+DDate.m */; };
 		07CB621B18E7F64C000F8EB3 /* DDataHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CB621A18E7F64C000F8EB3 /* DDataHolder.m */; };
@@ -645,6 +646,8 @@
 		07354DCD18B9F5EC008B98F3 /* user2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user2.png; sourceTree = "<group>"; };
 		07354DCE18B9F5EC008B98F3 /* user3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user3.png; sourceTree = "<group>"; };
 		07354DCF18B9F5EC008B98F3 /* user4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user4.png; sourceTree = "<group>"; };
+		079919C318F5552A00AB5139 /* DSocialMediaListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSocialMediaListView.h; sourceTree = "<group>"; };
+		079919C418F5552A00AB5139 /* DSocialMediaListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSocialMediaListView.m; sourceTree = "<group>"; };
 		079CEBD418E82EA200CF4532 /* DAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAlertView.h; sourceTree = SOURCE_ROOT; };
 		079CEBD518E82EA200CF4532 /* DAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DAlertView.m; sourceTree = SOURCE_ROOT; };
 		07CB621618E7F4F5000F8EB3 /* NSDate+DDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+DDate.h"; path = "Classes/NSDate+DDate.h"; sourceTree = SOURCE_ROOT; };
@@ -1816,6 +1819,8 @@
 				2F4551F718951A050033487C /* DescAddpeopleViewController.h */,
 				2F4551F818951A050033487C /* DescAddpeopleViewController.m */,
 				2F4551F918951A050033487C /* DescAddpeopleViewController.xib */,
+				079919C318F5552A00AB5139 /* DSocialMediaListView.h */,
+				079919C418F5552A00AB5139 /* DSocialMediaListView.m */,
 				2F4551FE18951A240033487C /* Components */,
 				2FC9B7DF18A6A2A3008F2BE0 /* DesSearchPeopleViewContrlooerViewController.h */,
 				2FC9B7E018A6A2A3008F2BE0 /* DesSearchPeopleViewContrlooerViewController.m */,
@@ -2790,6 +2795,7 @@
 				2FB4BAE618910B280033BDF4 /* AFNetworkReachabilityManager.m in Sources */,
 				07E5E4B218C1D090000E489B /* NotificationsViewController.m in Sources */,
 				2FC4D6F318AA3C6B00FCABB6 /* DescSigninViewController.m in Sources */,
+				079919C518F5552A00AB5139 /* DSocialMediaListView.m in Sources */,
 				07E5E4BE18C1D090000E489B /* SPGooglePlacesAutocompleteViewController.m in Sources */,
 				2FC4D6FB18AA3CDD00FCABB6 /* DescSignupViewController.m in Sources */,
 				2FC9B7E218A6A2A3008F2BE0 /* DesSearchPeopleViewContrlooerViewController.m in Sources */,

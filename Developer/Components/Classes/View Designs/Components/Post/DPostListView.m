@@ -416,7 +416,7 @@
 -(void)dealloc
 {
 //    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-    [_postListView removeObserver:self forKeyPath:@"contentOffset"];
+    //[_postListView removeObserver:self forKeyPath:@"contentOffset"];
 
 }
 
