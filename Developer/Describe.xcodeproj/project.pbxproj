@@ -527,6 +527,7 @@
 		BEA293F718794D2A009C8963 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F118794D2A009C8963 /* MediaPlayer.framework */; };
 		BEA293F818794D2A009C8963 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F218794D2A009C8963 /* MobileCoreServices.framework */; };
 		BEA293F918794D2A009C8963 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F318794D2A009C8963 /* QuartzCore.framework */; };
+		C351959A18FD236B007CA72D /* DESLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C351959918FD236B007CA72D /* DESLocationManager.m */; };
 		C3AD9E7818E8012B0015D65C /* UIImage+FixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */; };
 		C3BAB1F918DE9375001CF903 /* btn_txt_black_done@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E50418C1D977000E489B /* btn_txt_black_done@2x.png */; };
 		C3BAB1FC18DEA119001CF903 /* NSString+DateConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */; };
@@ -1063,6 +1064,8 @@
 		BEA293F118794D2A009C8963 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		BEA293F218794D2A009C8963 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BEA293F318794D2A009C8963 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		C351959818FD236B007CA72D /* DESLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DESLocationManager.h; path = Classes/DESLocationManager.h; sourceTree = SOURCE_ROOT; };
+		C351959918FD236B007CA72D /* DESLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DESLocationManager.m; path = Classes/DESLocationManager.m; sourceTree = SOURCE_ROOT; };
 		C3AD9E7618E8012B0015D65C /* UIImage+FixOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FixOrientation.h"; sourceTree = "<group>"; };
 		C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FixOrientation.m"; sourceTree = "<group>"; };
 		C3BAB1FA18DEA119001CF903 /* NSString+DateConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DateConverter.h"; sourceTree = "<group>"; };
@@ -1093,6 +1096,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEA293F518794D2A009C8963 /* CoreLocation.framework in Frameworks */,
 				2FB4BAA8188F9B4D0033BDF4 /* libsqlite3.0.dylib in Frameworks */,
 				07E5E44A18C1CF63000E489B /* CoreMedia.framework in Frameworks */,
 				BEA293F618794D2A009C8963 /* ImageIO.framework in Frameworks */,
@@ -1108,7 +1112,6 @@
 				2F58219618920BED00E46BB3 /* Social.framework in Frameworks */,
 				2FAB9C28188DA0FD00AE7B33 /* GoogleOpenSource.framework in Frameworks */,
 				BEA293F418794D2A009C8963 /* AVFoundation.framework in Frameworks */,
-				BEA293F518794D2A009C8963 /* CoreLocation.framework in Frameworks */,
 				BEA293F718794D2A009C8963 /* MediaPlayer.framework in Frameworks */,
 				BEA293F818794D2A009C8963 /* MobileCoreServices.framework in Frameworks */,
 				2FAB9C2A188DA0FD00AE7B33 /* GooglePlus.framework in Frameworks */,
@@ -1164,6 +1167,8 @@
 				07CB621A18E7F64C000F8EB3 /* DDataHolder.m */,
 				079CEBD418E82EA200CF4532 /* DAlertView.h */,
 				079CEBD518E82EA200CF4532 /* DAlertView.m */,
+				C351959818FD236B007CA72D /* DESLocationManager.h */,
+				C351959918FD236B007CA72D /* DESLocationManager.m */,
 			);
 			path = "Data Holder";
 			sourceTree = "<group>";
@@ -1597,16 +1602,8 @@
 				07E5E46818C1D090000E489B /* ProfileViewController.h */,
 				07E5E46918C1D090000E489B /* ProfileViewController.m */,
 				07E5E46A18C1D090000E489B /* ProfileViewController.xib */,
-				07E5E46B18C1D090000E489B /* ReusableController */,
 			);
 			path = Controller;
-			sourceTree = "<group>";
-		};
-		07E5E46B18C1D090000E489B /* ReusableController */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ReusableController;
 			sourceTree = "<group>";
 		};
 		07E5E46F18C1D090000E489B /* DatabaseHandler */ = {
@@ -2913,6 +2910,7 @@
 				07354D7818B9F5CD008B98F3 /* DPostHeaderView.m in Sources */,
 				07E5E4C718C1D090000E489B /* CMPhotoCell.m in Sources */,
 				079CEBD618E82EA200CF4532 /* DAlertView.m in Sources */,
+				C351959A18FD236B007CA72D /* DESLocationManager.m in Sources */,
 				2FCCC6CA18B8E7E70023FEBC /* DBAspectFillViewController.m in Sources */,
 				C3E14BEC18C2EA2A008AC885 /* UIRefreshControl+AFNetworking.m in Sources */,
 				07E5E4C018C1D090000E489B /* SPGooglePlacesPlaceDetailQuery.m in Sources */,

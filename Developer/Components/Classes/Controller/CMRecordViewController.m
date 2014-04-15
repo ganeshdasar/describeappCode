@@ -72,6 +72,11 @@
 	// Do any additional setup after loading the view.
     self.navigationController.navigationBarHidden = YES;
     
+    _videoPreviewView.layer.cornerRadius = 10.0f;
+    _videoPreviewView.layer.masksToBounds = YES;
+    _videoPreviewView.layer.borderWidth = 1.0f;
+    _videoPreviewView.layer.borderColor = [UIColor whiteColor].CGColor;
+    
     isRecordingCompleted = NO;
     
     UINib *nib = [UINib nibWithNibName:@"CMPhotoCell" bundle:nil];
@@ -257,6 +262,16 @@
     shareController.capturedPhotoList = self.capturedPhotoList;
     [self.navigationController pushViewController:shareController animated:YES];
     shareController = nil;
+    
+//    [UIView animateWithDuration:0.3 animations:^{
+        CGRect frame = self.prevButton.frame;
+        self.listButton.frame = frame;
+        
+        frame = self.nextButton.frame;
+        self.prevButton.frame = frame;
+        
+        self.nextButton.hidden = YES;
+//    }];
 }
 
 - (IBAction)dissmissOptionClicked:(id)sender
@@ -430,6 +445,18 @@
         // here we come if all images are recorded
         isRecordingDone = YES;
         isRecordingCompleted = YES;
+    }
+    
+    if([self isLastPhotoRecording]) {
+        [UIView animateWithDuration:0.3 animations:^{
+            CGRect frame = self.listButton.frame;
+            self.prevButton.frame = frame;
+            
+            frame.origin.x = 139.0;
+            self.listButton.frame = frame;
+            
+            self.nextButton.hidden = NO;
+        }];
     }
     
 #if !(TARGET_IPHONE_SIMULATOR)

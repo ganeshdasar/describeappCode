@@ -302,7 +302,7 @@ static CMAVCameraHandler *_sharedInstance = nil;
     
     _captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
     _captureVideoPreviewLayer.frame = layerRect;
-    [_captureVideoPreviewLayer setVideoGravity:AVLayerVideoGravityResize];
+    [_captureVideoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     
     [viewLayer setMasksToBounds:YES];
     [viewLayer addSublayer:_captureVideoPreviewLayer];
