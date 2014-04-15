@@ -88,11 +88,8 @@
                 [WSModelClasses sharedHandler].loggedInUserModel.userEmail = self.userEmailId;
                 [self.navigationController popViewControllerAnimated:YES];
             }
-            
         }else{
-            
-            
-        }
+            }
     }];
 }
 
