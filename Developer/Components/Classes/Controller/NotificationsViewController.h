@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "NotifcationsCell.h"
-
+@class DHeaderView;
 @interface NotificationsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, NotificationsCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *notificationTableview;
-@property (weak, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet DHeaderView *headerView;
 @property (weak, nonatomic) IBOutlet UILabel *emptyMsgLabel;
 
 - (IBAction)refreshNotificationData:(id)sender;

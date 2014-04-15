@@ -13,9 +13,11 @@ typedef enum types
     DSettingTypeAccount = 0,
     DSettingSocialServices =1,
     DSettingNetwork=2,
-    DSettingNotification = 3
+    DSettingNotification = 3,
+    wifi_setting = 0,
+    cellular_netWork=1
     
-}settingType;
+} settingType;
 @interface DESSettingsViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
 @property (weak, nonatomic) IBOutlet UITableView *settingTableView;

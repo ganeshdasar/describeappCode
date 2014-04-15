@@ -102,7 +102,7 @@
         [button addTarget:self action:@selector(mediaItemSelected:) forControlEvents:UIControlEventTouchUpInside];
         [button setImage:[UIImage imageNamed:item[@"ImageNormal"]] forState:UIControlStateNormal];
         [button setImage:[UIImage imageNamed:item[@"ImageSelected"]] forState:UIControlStateSelected];
-        
+        [button setSelected:[item[@"Selected"] integerValue]];
         x = x  + _mediaItemSize.width + _freeSpace;
     }
 }

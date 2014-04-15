@@ -9,7 +9,7 @@
 #import "DESecurityViewCnt.h"
 #import "UIColor+DesColors.h"
 #import "Constant.h"
-
+#import "WSModelClasses.h"
 @interface DESecurityViewCnt ()<UITextFieldDelegate>{
  IBOutlet   DHeaderView * _headerView;
     UIButton    *backButton;
@@ -19,6 +19,10 @@
 @end
 
 @implementation DESecurityViewCnt
+@synthesize userEmailId = _userEmailId;
+@synthesize userPassword = _userPassword;
+@synthesize isTextFieldEditing;
+
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
@@ -47,6 +51,7 @@
         
         //Iphone  3.5 inch
     }
+    self.isTextFieldEditing = NO;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
@@ -62,11 +67,34 @@
 
 -(void)back:(UIButton*)inButton
 {
-    [self.navigationController popViewControllerAnimated:YES];
-    
-    
+    if (self.isTextFieldEditing) {
+        [self updateTheUserEmailAndPassword];
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+
+    }
 }
 
+
+-(void)updateTheUserEmailAndPassword
+{
+    [[WSModelClasses sharedHandler]updateTheUserEmaiIdAndPassword:self.userEmailId AndPassword:self.userPassword responce:^(BOOL success, id response){
+        if (success) {
+            NSString *status = [[(NSDictionary*)response valueForKeyPath:@"DataTable.UserData.Status"]objectAtIndex:0];
+            if ([status isEqualToString:@"FALSE"]) {
+                [self showAlert:@"Alert" message:[[(NSDictionary*)response valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0]];
+            }else{
+                self.isTextFieldEditing = NO;
+                [WSModelClasses sharedHandler].loggedInUserModel.userEmail = self.userEmailId;
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            
+        }else{
+            
+            
+        }
+    }];
+}
 
 -(void)intilizeArray
 {
@@ -104,12 +132,24 @@
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         cell.selectedBackgroundView = nil;
         }
-    UITextField * name = [self createDetailTextField:cell];
-    name.tag = indexPath.row;
-    name.textColor = [UIColor textFieldTextColor];
-    name.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-    name.text =@"";
-    [cell.contentView addSubview:name];
+    if (indexPath.row ==Email_TAG) {
+        UITextField * name = [self createDetailTextField:cell];
+        name.tag = indexPath.row;
+        name.textColor = [UIColor textFieldTextColor];
+        name.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+        name.text =self.userEmailId;
+        [cell.contentView addSubview:name];
+        
+    }else if (indexPath.row == PASSWORD_TAG){
+        UITextField * name = [self createDetailTextField:cell];
+        name.tag = indexPath.row;
+        name.textColor = [UIColor textFieldTextColor];
+        name.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+        name.text =self.userPassword;
+        [cell.contentView addSubview:name];
+    }
+    
+    
     cell.textLabel.text =  securityNamesArray[indexPath.row];
     cell.textLabel.textColor = [UIColor textPlaceholderColor];
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -190,6 +230,18 @@
 {
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:inTitle message:inMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
     [alert show];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    self.isTextFieldEditing = YES;
+    if (textField.tag == Email_TAG ) {
+        self.userEmailId = textField.text;
+    }else if (textField.tag == PASSWORD_TAG){
+        self.userPassword = textField.text;
+    }
+  
+    
 }
 
 @end

@@ -19,8 +19,14 @@
 #import "WSModelClasses.h"
 #import "DConversation.h"
 #import "WSModelClasses.h"
+#import "ProfileViewController.h"
+#import "NotificationsViewController.h"
+#import "DesSearchPeopleViewContrlooerViewController.h"
+#import "DESSettingsViewController.h"
+#import "DescAddpeopleViewController.h"
+#import "DProfileDetailsViewController.h"
 
-@interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate, UIActionSheetDelegate>
+@interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate, UIActionSheetDelegate, DHeaderViewDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     IBOutlet DPostListView *_listView;
@@ -134,28 +140,55 @@ static DPostsViewController *sharedFeedController;
 
 -(void)designHeaderView
 {
-    
     UIButton *addButton, *reloadButton, *moreButton;
     
     addButton = [[UIButton alloc] init];
-    [addButton setBackgroundImage:[UIImage imageNamed:@"add.png"] forState:UIControlStateNormal];
-    [addButton addTarget:self action:@selector(addPost:) forControlEvents:UIControlEventTouchUpInside];
+    [addButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_compose.png"] forState:UIControlStateNormal];
+    [addButton setTag:HeaderButtonTypeAdd];
     
     reloadButton = [[UIButton alloc] init];
-    [reloadButton setBackgroundImage:[UIImage imageNamed:@"reload.png"] forState:UIControlStateNormal];
-    [reloadButton addTarget:self action:@selector(reloadPostList:) forControlEvents:UIControlEventTouchUpInside];
+    [reloadButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_refresh.png"] forState:UIControlStateNormal];
+    [reloadButton setTag:HeaderButtonTypeReload];
     
     moreButton = [[UIButton alloc] init];
-    [moreButton setBackgroundImage:[UIImage imageNamed:@"more1.png"] forState:UIControlStateNormal];
-    [moreButton addTarget:self action:@selector(morePost:) forControlEvents:UIControlEventTouchUpInside];
+    [moreButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_menu.png"] forState:UIControlStateNormal];
+    [moreButton setTag:HeaderButtonTypeMenu];
+
+    
+    [_headerView setDelegate:self];
+    [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[moreButton, reloadButton, addButton] andMenuButtons:[self menuButtonsList]];
+}
+
+-(NSArray *)menuButtonsList
+{
+    UIButton *profileButton, *notificationButton, *searchButton, *addPeople, *settingsButton, *closeButton;
+    
+    profileButton = [[UIButton alloc] init];
+    [profileButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_profile.png"] forState:UIControlStateNormal];
+    [profileButton setTag:HeaderButtonTypeProfile];
+    
+    notificationButton = [[UIButton alloc] init];
+    [notificationButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_notifications.png"] forState:UIControlStateNormal];
+    [notificationButton setTag:HeaderButtonTypeNotification];
+    
+    searchButton = [[UIButton alloc] init];
+    [searchButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_search.png"] forState:UIControlStateNormal];
+    [searchButton setTag:HeaderButtonTypeSearch];
+    
+    addPeople = [[UIButton alloc] init];
+    [addPeople setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_add_people.png"] forState:UIControlStateNormal];
+    [addPeople setTag:HeaderButtonTypeAddPeople];
+    
+    settingsButton = [[UIButton alloc] init];
+    [settingsButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_settings.png"] forState:UIControlStateNormal];
+    [settingsButton setTag:HeaderButtonTypeSettings];
+    
+    closeButton = [[UIButton alloc] init];
+    [closeButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_cancel.png"] forState:UIControlStateNormal];
+    [closeButton setTag:HeaderButtonTypeClose];
     
     
-    UIButton *moreButton1 = [[UIButton alloc] init];
-    [moreButton1 setBackgroundImage:[UIImage imageNamed:@"more1.png"] forState:UIControlStateNormal];
-    [moreButton1 addTarget:self action:@selector(morePost:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[addButton, moreButton, reloadButton]];
+    return @[profileButton, notificationButton, searchButton, addPeople, settingsButton, closeButton];
 }
 
 
@@ -165,7 +198,9 @@ static DPostsViewController *sharedFeedController;
 }
 
 -(void)designPostListView
-{}
+{
+}
+
 -(void)addNewObserverForDelegateProfileDetails
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyDelegate:) name:kNOTIFY_PROFILE_DETAILS object:nil];
@@ -583,7 +618,53 @@ static DPostsViewController *sharedFeedController;
  }
 
 
-
+#pragma mark Header View Delegate Methods -
+-(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+{
+    HeaderButtonType buttonType = [headerButton tag];
+    switch (buttonType)
+    {
+        case HeaderButtonTypeAdd:
+            [self addPost:headerButton];
+            break;
+        case HeaderButtonTypeReload:
+            [self reloadPostList:headerButton];
+            break;
+        case HeaderButtonTypeHome:
+            break;
+        case HeaderButtonTypeProfile:
+        {
+            DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+            [self.navigationController pushViewController:profileController animated:YES];
+        }
+            break;
+        case HeaderButtonTypeNotification:
+        {
+            NotificationsViewController *notificationViewController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+            [self.navigationController pushViewController:notificationViewController animated:YES];
+        }
+            break;
+        case HeaderButtonTypeSearch:
+        {
+            DesSearchPeopleViewContrlooerViewController *searchViewController = [[DesSearchPeopleViewContrlooerViewController alloc] initWithNibName:@"DesSearchPeopleViewContrlooerViewController" bundle:nil];
+            [self.navigationController pushViewController:searchViewController animated:YES];
+        }
+            break;
+        case HeaderButtonTypeAddPeople:
+        {
+            DescAddpeopleViewController *addPeopleViewController = [[DescAddpeopleViewController alloc] initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+            [self.navigationController pushViewController:addPeopleViewController animated:YES];
+        }
+        case HeaderButtonTypeSettings:
+        {
+            DESSettingsViewController *settingViewController = [[DESSettingsViewController alloc] initWithNibName:@"DESSettingsViewController" bundle:nil];
+            [self.navigationController pushViewController:settingViewController animated:YES];
+        }
+            break;
+        default:
+            break;
+    }
+}
 
 @end
 

@@ -16,7 +16,9 @@ typedef enum {
     kWebserviesType_addPeople_wRecommended,
     kWebserviesType_addPeople_wInvitations,
     KWebserviesType_followand,
-    KWebserviesType_unfollowand
+    KWebserviesType_unfollowand,
+    KWebserviesType_invitations
+
 }WebservicesType;
 
 @protocol WSModelClassDelegate <NSObject>
@@ -162,5 +164,22 @@ typedef enum {
 
 
 -(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response;
+-(void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName;
+
+#pragma mark Settings Services
+-(void)checkingTheUserPassword:(NSString*)password UserUID:(NSString*)userID response:(void (^)(BOOL success, id response))response;
+
+-(void)updateTheUserEmaiIdAndPassword:(NSString*)emilId AndPassword:(NSString*)password responce:(void(^)(BOOL success, id response))response;
+
+-(void)getTheUserPushNotificationresponce:(void(^)(BOOL success, id response))response;
+
+-(void)updatTheUserPushNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc responce:(void(^)(BOOL success, id response))response;
+
+-(void)getTHeUserEmailNotificationsresponce:(void(^)(BOOL success, id response))response;
+
+-(void)updatTheUserEmailNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc activityUpdates:(NSNumber*)activitystc importentUpdates:(NSNumber*)importentStc responce:(void(^)(BOOL success, id response))response;
+//http://mirusstudent.com/service/describe-service/updateUserInfoSettings/UserUID=1/UserFullName=shekahr/UserCity=hyderabad/UserDob=yyyy-mm-dd/UserGender=1/UserBiodata=biodataoftheuser
+
+-(void)updateTheUserInformationDataUSerID:(NSString*)userId userName:(NSString*)userName userCity:(NSString*)city userDob:(NSString*)dob userGender:(NSString*)gender userBioData:(NSString*)bioData responce:(void(^)(BOOL success, id response))response;
 
 @end

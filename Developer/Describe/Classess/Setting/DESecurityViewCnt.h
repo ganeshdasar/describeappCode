@@ -17,7 +17,12 @@ typedef   enum  {
 
 
 @interface DESecurityViewCnt : UIViewController
+
+@property (nonatomic,strong) NSString * userPassword;
+@property (nonatomic,strong) NSString * userEmailId;
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
 @property (weak, nonatomic) IBOutlet UITableView *securityTableView;
+
+@property (nonatomic,assign) BOOL isTextFieldEditing;
 
 @end

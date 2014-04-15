@@ -12,11 +12,15 @@
 #import "DPost.h"
 #import "DHeaderView.h"
 
+#import "ProfileViewController.h"
+
 @interface DProfileDetailsViewController ()
 {
     IBOutlet DHeaderView *_headerView;
     IBOutlet DPostListView *_listView;
     IBOutlet DPostView *_postView;
+    
+    ProfileViewController *profileController;
 }
 @end
 
@@ -26,7 +30,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        // Custom initialization....
     }
     return self;
 }
@@ -35,6 +39,10 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    
+    profileController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
+    [self.view addSubview:profileController.view]; 
 }
 
 - (void)didReceiveMemoryWarning

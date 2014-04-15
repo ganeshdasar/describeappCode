@@ -19,6 +19,8 @@
     UILabel *_titleLabel;
     UIImageView* imageView;
     
+    NSArray *_menuButtons;
+    
 }
 @end
 
@@ -45,7 +47,7 @@
         }
         _titleFrame = CGRectMake(5, 30, self.bounds.size.width-_totalButtonsWidth, 30);
         
-
+        
         [self createTitleLabel];
         [self designButtons];
         
@@ -55,7 +57,16 @@
 
 -(void)designHeaderViewWithTitle:(NSString *)title andWithButtons:(NSArray *)buttons
 {
+    [self designHeaderViewWithTitle:title andWithButtons:buttons andMenuButtons:nil];
+}
+
+
+-(void)designHeaderViewWithTitle:(NSString *)title andWithButtons:(NSArray *)buttons andMenuButtons:(NSArray *)menuButtons
+{
     // Initialization code...
+    [self setTheBackgroundImage];
+    _menuButtons = menuButtons;
+    
     _totalButtonsWidth = 0.0;
     _title = title;
     _buttons = buttons;
@@ -70,7 +81,7 @@
     }
     _titleFrame = CGRectMake(4, 25, self.bounds.size.width-_totalButtonsWidth, 30);
     
-  //  [self setTheBackgroundImage];
+    //  [self setTheBackgroundImage];
     [self createTitleLabel];
     [self designButtons];
     
@@ -82,7 +93,7 @@
 }
 
 -(void)setTheBackgroundImage{
-    imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 65)];
+    imageView = [[UIImageView alloc]initWithFrame:self.bounds];
     imageView.image = [UIImage imageNamed:@"bg_nav_std.png"];
     [self addSubview:imageView];
 }
@@ -114,14 +125,160 @@
     float y = 24;
     x = self.bounds.size.width - _totalButtonsWidth;
     
+    //default Buttons....
     for (int i=0; i<count; i++)
     {
         UIButton *button = (UIButton *)_buttons[i];
-       [button setBackgroundColor:[UIColor clearColor]];
+        [button setBackgroundColor:[UIColor clearColor]];
         [button setFrame:CGRectMake(x, y, WIDTH, WIDTH)];
         [self addSubview:button];
         x = x + WIDTH + FREESPACE;
+        
+        [button addTarget:self action:@selector(buttonSelected:) forControlEvents:UIControlEventTouchUpInside];
     }
+    
+    //menu options...
+    if(_menuButtons == nil || !_menuButtons.count)
+        return;
+    
+    _totalButtonsWidth = (WIDTH + FREESPACE)*_menuButtons.count;
+    count = _menuButtons.count;
+    x= 20;
+    y = 24;
+    x = self.bounds.size.width - _totalButtonsWidth;
+    for (int i=0; i<count; i++)
+    {
+        UIButton *button = (UIButton *)_menuButtons[i];
+        [button setBackgroundColor:[UIColor clearColor]];
+        [button setFrame:CGRectMake(x, y, WIDTH, WIDTH)];
+        [self addSubview:button];
+        x = x + WIDTH + FREESPACE;
+        
+        [button setAlpha:0.0];
+        [button addTarget:self action:@selector(buttonSelected:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+}
+
+
+
+-(void)buttonSelected:(id)sender
+{
+    HeaderButtonType buttonType = (HeaderButtonType)[sender tag];
+    if(buttonType == HeaderButtonTypeMenu)
+    {
+        //show the menu here...
+        [self showMenuButtons];
+    }
+    else if(buttonType == HeaderButtonTypeClose)
+    {
+        //Show the default buttons here...
+        [self showDefaultButtons];
+    }
+    else
+    {
+        //Send the neccessary actions to the delegate...
+        if(self.delegate != nil && [self.delegate respondsToSelector:@selector(headerView:didSelectedHeaderViewButton:)])
+        {
+            [self.delegate headerView:self didSelectedHeaderViewButton:sender];
+        }
+    }
+    
+    
+}
+
+-(void)startAnimate
+{
+    [self animateOnViews:_buttons atIndex:_buttons.count-1];
+}
+
+-(void)dissmissAllFromTheView:(NSArray *)buttons
+{
+    for (int i =0; i<buttons.count; i++)
+    {
+        UIButton *button = buttons[i];
+        button.alpha = 0.0;
+    }
+
+    
+}
+
+-(void)showDefaultButtons
+{
+    [_titleLabel setAlpha:1.0];
+    [self dissmissAllFromTheView:_menuButtons];
+    [self performSelector:@selector(showButtons:) withObject:_buttons afterDelay:0.1];
+}
+
+-(void)showMenuButtons
+{
+    [_titleLabel setAlpha:0.0];
+    [self dissmissAllFromTheView:_buttons];
+    [self performSelector:@selector(showButtons:) withObject:_menuButtons afterDelay:0.1];
+}
+
+
+-(void)showButtons:(NSArray *)buttons
+{
+    for (int i =0; i<buttons.count; i++)
+    {
+        UIButton *button = buttons[i];
+        button.alpha = 1.0;
+    }
+}
+
+
+
+-(void)animateOnViews:(NSArray *)views atIndex:(NSUInteger )index
+{
+    UIView *animatedView = views[index];
+    animatedView.alpha = 0;
+    
+    [UIView animateWithDuration:0.3
+                          delay:0 options:UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         animatedView.transform = CGAffineTransformMakeScale(.6, 0.6);
+                         animatedView.alpha = 1.0;
+                     } completion:^(BOOL finished){
+                         [UIView animateWithDuration:0.2
+                                          animations:^{
+                                              animatedView.transform = CGAffineTransformMakeScale(1.10, 1.10);
+                                              //Start animate another view if any
+                                              int prevElementIndex = index - 1;
+                                              if(prevElementIndex >= 0)
+                                              {
+                                                  [self animateOnViews:views atIndex:prevElementIndex];
+                                              }
+                                          }
+                                          completion:^(BOOL finished3){
+                                              [UIView animateWithDuration:0.15
+                                                               animations:^{
+                                                                   animatedView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                                                                   
+                                                                   
+                                                               }
+                                                               completion:^(BOOL finished4){
+                                                                   [UIView animateWithDuration:0.1
+                                                                                    animations:^{
+                                                                                        animatedView.transform = CGAffineTransformMakeScale(1.05, 1.05);
+                                                                                        
+                                                                                        
+                                                                                    }
+                                                                                    completion:^(BOOL finished6){
+                                                                                        
+                                                                                        [UIView animateWithDuration:0.05
+                                                                                                         animations:^{
+                                                                                                             animatedView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                                                                                                         }
+                                                                                                         completion:^(BOOL finished7){
+                                                                                                         }];
+                                                                                    }];
+                                                               }];
+                                          }];
+                         
+                     }];
+    
+    
 }
 
 

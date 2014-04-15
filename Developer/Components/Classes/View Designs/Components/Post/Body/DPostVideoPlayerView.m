@@ -80,7 +80,7 @@
     [_conentView.layer setMasksToBounds:YES];
     [_conentView.layer setCornerRadius:10];
     [_conentView.layer setBorderColor:[UIColor whiteColor].CGColor];
-    [_conentView.layer setBorderWidth:2.0];
+    [_conentView.layer setBorderWidth:1.0];
     
     
     
@@ -166,6 +166,8 @@
 
 -(void)singleTap:(id)sender
 {
+    _videoDuration = [avPlayerItem duration];
+
     if(_isPlaying)
     {
         [avPlayer pause];
@@ -367,9 +369,13 @@
     {
         [self.delegate performSelector:@selector(seekContentToPercentage:) withObject:[NSNumber numberWithInteger:percentage]];
         
-        Float64 seconds = [self videoCurrentTime];//  CMTimeGetSeconds(_videoDuration);
-        NSInteger currentSeekingSeconds = (seconds*percentage)/100;
-        [avPlayer seekToTime:CMTimeMake(currentSeekingSeconds, 1)];
+        Float64 currentPlayingseconds = [self videoCurrentTime];//  CMTimeGetSeconds(_videoDuration);
+        Float64 videoDuration = CMTimeGetSeconds(_videoDuration);;
+        NSInteger percentageSeconds = (videoDuration*(100 - percentage))/100;
+        NSInteger seekingSeconds = currentPlayingseconds - percentageSeconds;
+        seekingSeconds = (seekingSeconds>=0)?seekingSeconds:0;
+        
+        [avPlayer seekToTime:CMTimeMake(seekingSeconds, 1)];
         
     }
     

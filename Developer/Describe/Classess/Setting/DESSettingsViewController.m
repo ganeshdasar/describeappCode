@@ -159,16 +159,25 @@
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.textColor = ELEMENT_FONT_COLOR;
             cell.textLabel.text = autoPlaySectionArray[indexPath.row];
-            UISwitch *stch = [[UISwitch alloc] initWithFrame: CGRectZero];
-            [stch addTarget: self action: @selector(changeTheNetwork:) forControlEvents:UIControlEventValueChanged];
-            cell.accessoryView = stch;
-            stch.tag =indexPath.row;
+            switch (indexPath.row) {
+                case wifi_setting:
+                    cell.accessoryView = [self createSwitch:wifi_setting];
+                    break;
+                    case cellular_netWork:
+                    cell.accessoryView = [self createSwitch:cellular_netWork];
+                    break;
+                default:
+                    break;
+            }
             break;
         }
         case DSettingNotification:
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.textColor = ELEMENT_FONT_COLOR;
             cell.textLabel.text = notificationsArray[indexPath.row];
+            CGRect accessoryViewFrame =cell.accessoryView.frame;
+            accessoryViewFrame.origin.x = cell.contentView.frame.size.width - 100;
+            cell.accessoryView.frame = accessoryViewFrame;
             cell.accessoryView = [self createBackGroundImageView:[UIImage imageNamed:@"chevron.png"]];
             break;
         default:
@@ -178,6 +187,18 @@
 }
 
 
+-(UISwitch*)createSwitch:(settingType)tag
+{
+    UISwitch *swtch = [[UISwitch alloc] initWithFrame: CGRectZero];
+    [swtch addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
+    swtch.tag = tag;
+    return swtch;
+}
+
+- (void)changeSwitch:(UISwitch*)sender{
+    
+    
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {

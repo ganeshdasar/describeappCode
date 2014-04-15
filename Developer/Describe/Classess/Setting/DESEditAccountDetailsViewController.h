@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DESecurityViewCnt.h"
 
 typedef enum accountType
 {
@@ -23,10 +22,7 @@ typedef enum accountType
     DdateTag = 101,
     DGenderLblTag = 200,
     DdateLblTag = 300
-    
 
-    
-    
 }editAccountTyopes;
 @interface DESEditAccountDetailsViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITableView *acountDetailsTableView;

@@ -9,17 +9,22 @@
 #import "DESPushNotificationControl.h"
 #import "UIColor+DesColors.h"
 #import "Constant.h"
-
+#import "WSModelClasses.h"
 
 @interface DESPushNotificationControl ()<UITableViewDelegate,UITableViewDataSource>{
     NSArray * pushNotificationList;
     UIButton    *backButton;
-
+  
 }
 
 @end
 
 @implementation DESPushNotificationControl
+@synthesize isLikesOnMyPost;
+@synthesize isCommentsOnMypost;
+@synthesize ismymentionInComment;
+@synthesize isNotfollower;
+@synthesize isChangeTheSwitch;
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
 }
@@ -41,6 +46,8 @@
     [self initilizeTheArray];
     [self createHeadderView];
     [self setBackGroundImage];
+    [self getTheUserPushNotification];
+    isChangeTheSwitch = NO;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
@@ -80,7 +87,14 @@
 
 - (void)back:(UIButton*)inSender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (isChangeTheSwitch) {
+        [self updateThePushNotifications];
+        isChangeTheSwitch = NO;
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+
+    }
+    
 }
 
 
@@ -108,9 +122,70 @@
     }
     cell.textLabel.text = pushNotificationList[indexPath.row];
     cell.textLabel.textColor = [UIColor textPlaceholderColor];
-    UISwitch *stch = [[UISwitch alloc] initWithFrame: CGRectZero];
-    cell.accessoryView = stch;
+    switch (indexPath.row) {
+        case likes_onMyPost:
+            cell.accessoryView = [self createSwitch:likes_onMyPost];
+            break;
+        case comments_onMypost:
+            cell.accessoryView = [self createSwitch:comments_onMypost];
+            break;
+        case mymentions_incomment:
+            cell.accessoryView = [self createSwitch:mymentions_incomment];
+            break;
+        case not_follower:
+            cell.accessoryView = [self createSwitch:not_follower];
+            break;
+        default:
+            break;
+    }
     return cell;
+}
+
+
+-(UISwitch*)createSwitch:(notificationsType)tag
+{
+    UISwitch *swtch = [[UISwitch alloc] initWithFrame: CGRectZero];
+    [swtch addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
+    swtch.tag = tag;
+    switch (tag) {
+        case likes_onMyPost:
+            swtch.on = isLikesOnMyPost;
+            break;
+        case comments_onMypost:
+            swtch.on = isCommentsOnMypost;
+            break;
+        case mymentions_incomment:
+            swtch.on = ismymentionInComment;
+            break;
+        case not_follower:
+            swtch.on = isNotfollower;
+            break;
+            
+        default:
+            break;
+    }
+    return swtch;
+}
+
+
+- (void)changeSwitch:(UISwitch*)sender{
+    isChangeTheSwitch = YES;
+    switch (sender.tag) {
+        case likes_onMyPost:
+            isLikesOnMyPost = [sender isOn] ? YES:NO;
+            break;
+        case comments_onMypost:
+            isCommentsOnMypost = [sender isOn] ? YES:NO;
+            break;
+        case mymentions_incomment:
+            ismymentionInComment = [sender isOn] ? YES:NO;
+            break;
+        case not_follower:
+            isNotfollower = [sender isOn] ? YES:NO;
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -118,5 +193,37 @@
 {
     UIImageView * image = [[UIImageView alloc]initWithImage:inImage];
     return image;
+}
+
+
+-(void)getTheUserPushNotification
+{
+    [[WSModelClasses sharedHandler]getTheUserPushNotificationresponce:^(BOOL success, id responce){
+        if (success) {
+        [self updateTheStatus:[[(NSDictionary*)responce valueForKeyPath:@"DataTable.UserData"]objectAtIndex:0]];
+        }else{
+        }
+    }];
+}
+
+
+-(void)updateTheStatus:(NSDictionary*)responceDic
+{
+    isLikesOnMyPost=  [[responceDic valueForKey:@"UserPushNotifyLikesStatus"] isEqualToString:@"1"]? YES:NO;
+    isCommentsOnMypost=  [[responceDic valueForKey:@"UserPushNotifyCommentsStatus"] isEqualToString:@"1"]? YES:NO;
+    ismymentionInComment=  [[responceDic valueForKey:@"UserPushNotifyMentsionsStatus"] isEqualToString:@"1"]? YES:NO;
+    isNotfollower=  [[responceDic valueForKey:@"UserPushNotifyFollowersStatus"] isEqualToString:@"1"]? YES:NO;
+    [self.pustNotificationTbl reloadData];
+}
+
+-(void)updateThePushNotifications{
+    
+    [[WSModelClasses sharedHandler]updatTheUserPushNotifications:[NSNumber numberWithBool:isLikesOnMyPost] CommentsStatus:[NSNumber numberWithBool:isCommentsOnMypost] mymentionsStatus:[NSNumber numberWithBool:ismymentionInComment] followsStatus:[NSNumber numberWithBool:isNotfollower] responce:^(BOOL success, id responce){
+        if (success) {
+             [self.navigationController popViewControllerAnimated:YES];
+        }else{
+        }
+        
+    }];
 }
 @end

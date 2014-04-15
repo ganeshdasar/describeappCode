@@ -10,6 +10,11 @@
 #import "DHeaderView.h"
 #import "UIColor+DesColors.h"
 #import "Constant.h"
+#import "WSModelClasses.h"
+#import "NSString+DateConverter.h"
+
+#import "DESecurityViewCnt.h"
+
 
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
@@ -22,6 +27,11 @@
     NSArray * _userInfoArray;
     NSArray * _userinfoDetailsArray;
     NSString * selectedTxt;
+    NSString *userNameString;
+    NSString *userMaleString;
+    NSString *userbirtdayString;
+    int gender;
+    BOOL isChangedUserData;
 
 }
 
@@ -59,6 +69,8 @@
                                                    , 320,  screenRect.size.height-65);
     self.acountDetailsTableView.backgroundColor = [UIColor clearColor];
     self.acountDetailsTableView.showsVerticalScrollIndicator = NO;
+    userbirtdayString =  [NSString convertTheepochTimeToDate:[[WSModelClasses sharedHandler].loggedInUserModel.dobDate doubleValue]];
+    isChangedUserData = NO;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
@@ -76,10 +88,11 @@
 - (void)intializeArray
 {
     _userInfoArray = [NSArray arrayWithObjects:@"Name",@"Gender",@"Birthday", nil];
-    _userinfoDetailsArray = [NSArray arrayWithObjects:@"mahesh ",@"Male",@"jun-25-1990", nil];
-     self.optionsArr = [[NSMutableArray alloc] initWithObjects:@"Not specified",@"Male",@"Female", nil];
-    self.dateString = @"March 22 2013";
-    self.genderSting = @"Male";
+   // _userinfoDetailsArray = [NSArray arrayWithObjects:@"mahesh ",@"Male",@"jun-25-1990", nil];
+     self.optionsArr = [[NSMutableArray alloc] initWithObjects:@"Male",@"Female", nil];
+   // self.dateString = @"March 22 2013";
+    //self.genderSting = @"Male";
+    //@"Not specified",
 }
 
 
@@ -98,7 +111,10 @@
 
 - (void)back:(UIButton*)inSender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (isChangedUserData ==YES) {
+        [self updateTheUserInformation];
+    }else{    [self.navigationController popViewControllerAnimated:YES];}
+    
 }
 
 
@@ -163,23 +179,31 @@
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             
             if (indexPath.row==DUerNameTxt) {
-                UITextField * name = [self createDetailTextField:cell];
+                UITextField * name = [self createDetailTextField:cell AndTag:DUerNameTxt];
                 name.textColor = [UIColor textFieldTextColor];
                 name.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-                name.text =@"textview";
+                name.text =[WSModelClasses sharedHandler].loggedInUserModel.userName;
+                userNameString = [WSModelClasses sharedHandler].loggedInUserModel.userName;
                 [cell.contentView addSubview:name];
             }else if (indexPath.row == DUserGenderTxt){
                 genderLbl  = (UILabel*) [cell viewWithTag:DGenderLblTag];
                 genderLbl.textColor = [UIColor textFieldTextColor];
                 genderLbl.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-                genderLbl.text = self.genderSting;
-                selectedTxt =[NSString stringWithFormat:@"%@",@"Female"];
+                if ([[WSModelClasses sharedHandler].loggedInUserModel.gender isEqualToNumber:[NSNumber numberWithInt:1]]) {
+                   genderLbl.text = @"Male";
+                    selectedTxt =[NSString stringWithFormat:@"%@",@"Male"];
+                }else if ([[WSModelClasses sharedHandler].loggedInUserModel.gender   isEqualToNumber:[NSNumber numberWithInt:0]]){
+                   genderLbl.text = @"Female";
+                    selectedTxt =[NSString stringWithFormat:@"%@",@"Female"];
+                }else{
+                    genderLbl.text = @"Not specified";
+                    selectedTxt =[NSString stringWithFormat:@"%@",@"Not specified"];
+                }
             }else if (indexPath.row ==DUserBirhDayTxt ){
                 datelabl  = (UILabel*) [cell viewWithTag:DdateLblTag];
                 datelabl.textColor = [UIColor textFieldTextColor];
                 datelabl.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-                datelabl.text =self.dateString;
-                //  gender.inputAccessoryView =
+                datelabl.text =userbirtdayString;
             }
             break;
         }
@@ -187,11 +211,10 @@
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.text =@"City";
             cell.textLabel.textColor = [UIColor textFieldTextColor];
-            UITextField * city = [self createDetailTextField:cell];
+            UITextField * city = [self createDetailTextField:cell AndTag:DUserCity];
             city.textColor = [UIColor textFieldTextColor];
             city.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-            city.text =@"Hyderabad";
-            //  gender.inputAccessoryView =
+            city.text =[WSModelClasses sharedHandler].loggedInUserModel.city;
             [cell.contentView addSubview:city];
             break;
             
@@ -206,8 +229,10 @@
             textview.textContainer.lineFragmentPadding = 10;
             textview.contentInset=UIEdgeInsetsZero;
             textview.scrollEnabled = NO;
-            textview.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20];
+            textview.text = [WSModelClasses sharedHandler].loggedInUserModel.biodata;
+            textview.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             [cell.contentView addSubview:textview];
+        
             
             break;
             
@@ -248,6 +273,9 @@
                 [self inputAccessaryViewandTag:DdateTag];
             }
         }
+            case DUserSignOut:
+            
+            break;
         default:
             break;
     }
@@ -357,10 +385,11 @@
     return image;
 }
 
-- (UITextField*)createDetailTextField:(UITableViewCell*)inTableViewCell
+- (UITextField*)createDetailTextField:(UITableViewCell*)inTableViewCell AndTag:(editAccountTyopes)tag
 {
     UITextField * textField = [[UITextField alloc]initWithFrame:CGRectMake(100, 0, 220, 36)];
     textField.delegate = self;
+    textField.tag = tag;
     return textField;
 }
 
@@ -471,9 +500,8 @@
     NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateStyle:NSDateFormatterLongStyle];
     [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-    
-   self.dateString=[dateFormatter stringFromDate:[self.datePicker date]];
-    NSLog(@"date sting %@",self.dateString);
+   userbirtdayString=[dateFormatter stringFromDate:[self.datePicker date]];
+    isChangedUserData = YES;
     [self.acountDetailsTableView reloadData];
 }
 
@@ -490,23 +518,40 @@
 }
 
 -(void)alertView:(UIAlertView *)inalertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    //UITextField *textField = [inalertView textFieldAtIndex:0];
+    if (inalertView.tag==10) return;
+    UITextField *textField = [inalertView textFieldAtIndex:0];
     switch (buttonIndex) {
         case 0:
             break;
-        case 1:
-            [self gotoUserSecurityView];
+        case 1:{
+            [[WSModelClasses sharedHandler]checkingTheUserPassword:textField.text UserUID:[NSString stringWithFormat:@"%@",[WSModelClasses sharedHandler].loggedInUserModel.userID]  response:^(BOOL success, id response){
+                if (success) {
+                    NSLog(@"responce %@",response);
+                    NSString * message = [[(NSDictionary*)response valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
+                    if ([message isEqualToString:@"FALSE"]) {
+                        UIAlertView* dialog = [[UIAlertView alloc]initWithTitle:@"Describe" message:@"Password wrong" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                        dialog.tag = 10;
+                        [dialog show];
+                    }else{
+                        [self gotoUserSecurityView:textField.text];
+                    }
+                }else{
+                }
+            }];
             break;
+    }
         default:
             break;
     }
 }
 
 
-- (void)gotoUserSecurityView
+- (void)gotoUserSecurityView:(NSString*)password;
 {
     DESecurityViewCnt * security = [[DESecurityViewCnt alloc]initWithNibName:@"DESecurityViewCnt" bundle:Nil];
     [self.navigationController pushViewController:security animated:YES];
+    security.userPassword = password;
+    security.userEmailId = [WSModelClasses sharedHandler].loggedInUserModel.userEmail;
 }
 
 
@@ -533,6 +578,7 @@
 - (void)doneClicked
 {
     [self.pickerActionSheet dismissWithClickedButtonIndex:1 animated:YES];
+    
     [self.acountDetailsTableView reloadData];
 }
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView;
@@ -550,6 +596,14 @@
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component;
 {
     self.genderSting = [self.optionsArr objectAtIndex:row];
+    if ([[self.optionsArr objectAtIndex:row] isEqualToString:@"Male"]) {
+        gender = 1;
+        [WSModelClasses sharedHandler].loggedInUserModel.gender =[NSNumber numberWithInt:1];
+    }else if ([[self.optionsArr objectAtIndex:row] isEqualToString:@"Female"]){
+        [WSModelClasses sharedHandler].loggedInUserModel.gender =[NSNumber numberWithInt:0];
+        gender = 0;
+    }
+    isChangedUserData = NO;
     return [self.optionsArr objectAtIndex:row];
 }
 
@@ -564,5 +618,39 @@
     }
     return YES;
 }
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    
+    if (textField.tag == DUerNameTxt) {
+        isChangedUserData = YES;
+        [WSModelClasses sharedHandler].loggedInUserModel.userName = textField.text;
+    }else if (textField.tag  == DUserGenderTxt ){
+        }
+}
 
+
+-(void)updateTheUserInformation
+{
+   [[WSModelClasses sharedHandler]updateTheUserInformationDataUSerID:[NSString stringWithFormat:@"%@",[WSModelClasses sharedHandler].loggedInUserModel.userID] userName:[WSModelClasses sharedHandler].loggedInUserModel.userName userCity:[WSModelClasses sharedHandler].loggedInUserModel.city userDob:[NSString convertTheDateToepochtime:userbirtdayString ] userGender:[NSString stringWithFormat:@"%d",gender] userBioData:[WSModelClasses sharedHandler].loggedInUserModel.biodata responce:^(BOOL success, id responce){
+       if (success) {
+           isChangedUserData = YES;
+           [self.navigationController popViewControllerAnimated:YES];
+       }
+    }];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView;
+{
+    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
+}
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView {
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
+    if ([text isEqualToString:@"\n"]) {
+        return NO; // or true, whetever you's like
+    }
+    return YES;
+}
 @end

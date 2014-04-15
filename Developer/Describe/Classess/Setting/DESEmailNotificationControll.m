@@ -9,7 +9,7 @@
 #import "DESEmailNotificationControll.h"
 #import "UIColor+DesColors.h"
 #import "Constant.h"
-
+#import "WSModelClasses.h"
 
 @interface DESEmailNotificationControll ()<UITableViewDataSource,UITableViewDelegate>{
     NSArray * emailNotificationList;
@@ -20,6 +20,13 @@
 @end
 
 @implementation DESEmailNotificationControll
+@synthesize isLikesOnMyPost;
+@synthesize isCommentsOnMypost;
+@synthesize ismymentionInComment;
+@synthesize isNotfollower;
+@synthesize isChangeTheSwitch;
+@synthesize isActivityUpdates;
+@synthesize isImportentAnnouncements;
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
 }
@@ -42,6 +49,7 @@
     [super viewDidLoad];
     [self initializeTheArray];
     [self createHeadderView];
+    [self getTheUserEmailNotification];
     // Do any additional setup after loading the view from its nib.
 }
 
@@ -81,8 +89,13 @@
 
 -(void)back:(UIButton*)inSender
 {
-    [self.navigationController popViewControllerAnimated:YES];
-}
+    if (isChangeTheSwitch) {
+        [self updateTheEmailNotifications];
+        isChangeTheSwitch = NO;
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    }}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -120,16 +133,34 @@
         case 0:{
             cell.textLabel.text = emailNotificationList[indexPath.row];
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
+            switch (indexPath.row) {
+                case Likes_onMyPost:
+                    cell.accessoryView = [self createSwitch:Likes_onMyPost];
+                    break;
+                case comments_onMyPost:
+                    cell.accessoryView = [self createSwitch:comments_onMyPost];
+                    break;
+                case mymentions_inComment:
+                    cell.accessoryView = [self createSwitch:mymentions_inComment];
+                    break;
+                case Not_follower:
+                    cell.accessoryView = [self createSwitch:Not_follower];
+                    break;
+                default:
+                    break;
+            }
             break;
         }
         case 1:{
             cell.textLabel.text = @"Activity updates";
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
+            cell.accessoryView = [self createSwitch:activity_updates];
             break;
         }
         case 2:{
             cell.textLabel.text = @"Important announcements";
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
+            cell.accessoryView = [self createSwitch:importent_announcements];
             break;
         }
         default:
@@ -145,6 +176,62 @@
     return image;
 }
 
+-(UISwitch*)createSwitch:(emialNotificationtype)tag
+{
+    UISwitch *swtch = [[UISwitch alloc] initWithFrame: CGRectZero];
+    [swtch addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
+    swtch.tag = tag;
+    switch (tag) {
+        case Likes_onMyPost:
+            swtch.on = isLikesOnMyPost;
+            break;
+        case comments_onMyPost:
+            swtch.on = isCommentsOnMypost;
+            break;
+        case mymentions_inComment:
+            swtch.on = ismymentionInComment;
+            break;
+        case Not_follower:
+            swtch.on = isNotfollower;
+            break;
+        case activity_updates:
+            swtch.on = isActivityUpdates;
+            break;
+        case importent_announcements:
+            swtch.on = isImportentAnnouncements;
+            break;
+            
+        default:
+            break;
+    }
+    return swtch;
+}
+
+- (void)changeSwitch:(UISwitch*)sender{
+    isChangeTheSwitch = YES;
+    switch (sender.tag) {
+        case Likes_onMyPost:
+            isLikesOnMyPost = [sender isOn] ? YES:NO;
+            break;
+        case comments_onMyPost:
+            isCommentsOnMypost = [sender isOn] ? YES:NO;
+            break;
+        case mymentions_inComment:
+            ismymentionInComment = [sender isOn] ? YES:NO;
+            break;
+        case Not_follower:
+            isNotfollower = [sender isOn] ? YES:NO;
+            break;
+        case activity_updates:
+            isActivityUpdates = [sender isOn] ? YES:NO;
+            break;
+        case importent_announcements:
+            isImportentAnnouncements = [sender isOn] ? YES:NO;
+            break;
+        default:
+            break;
+    }
+}
 
 #pragma mark FooterSection
 -  (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -205,4 +292,38 @@
     return tempLabel;
 }
 
+-(void)getTheUserEmailNotification
+{
+    [[WSModelClasses sharedHandler]getTHeUserEmailNotificationsresponce:^(BOOL success, id responce){
+        if (success) {
+            [self updateTheStatus:[[(NSDictionary*)responce valueForKeyPath:@"DataTable.UserData"]objectAtIndex:0]];
+
+        }else{
+            
+        }
+    }];
+
+}
+-(void)updateTheStatus:(NSDictionary*)responceDic
+{
+    isLikesOnMyPost=  [[responceDic valueForKey:@"UserEmailNotifyLikesStatus"] isEqualToString:@"1"]? YES:NO;
+    isCommentsOnMypost=  [[responceDic valueForKey:@"UserEmailNotifyCommentsStatus"] isEqualToString:@"1"]? YES:NO;
+    ismymentionInComment=  [[responceDic valueForKey:@"UserEmailNotifyMentsionsStatus"] isEqualToString:@"1"]? YES:NO;
+    isNotfollower=  [[responceDic valueForKey:@"UserEmailNotifyFollowersStatus"] isEqualToString:@"1"]? YES:NO;
+    isActivityUpdates=  [[responceDic valueForKey:@"UserEmailNotifyActivitiesStatus"] isEqualToString:@"1"]? YES:NO;
+    isImportentAnnouncements=  [[responceDic valueForKey:@"UserEmailNotifyAnnouncesStatus"] isEqualToString:@"1"]? YES:NO;
+    [self.emailNotificationTbl reloadData];
+    
+}
+
+
+-(void)updateTheEmailNotifications
+{
+    [[WSModelClasses sharedHandler]updatTheUserEmailNotifications:[NSNumber numberWithBool:isLikesOnMyPost] CommentsStatus:[NSNumber numberWithBool:isCommentsOnMypost] mymentionsStatus:[NSNumber numberWithBool:ismymentionInComment] followsStatus:[NSNumber numberWithBool:isNotfollower] activityUpdates:[NSNumber numberWithBool:isActivityUpdates] importentUpdates:[NSNumber numberWithBool:isImportentAnnouncements] responce:^(BOOL success, id responce){
+        if (success) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }else{
+        }
+    }];
+}
 @end

@@ -10,7 +10,7 @@
 #import "DHeaderView.h"
 #import "DConversationListView.h"
 
-@interface DConversationViewController ()
+@interface DConversationViewController ()<DHeaderViewDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     IBOutlet DConversationListView *_conversationListView;
@@ -63,31 +63,36 @@
 
 -(void)designHeaderView
 {
+    UIButton *backButton;
     
-    UIButton *addButton, *reloadButton, *moreButton;
+    backButton = [[UIButton alloc] init];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
+    [backButton setTag:HeaderButtonTypePrev];
+    [_headerView setDelegate:self];
     
-    addButton = [[UIButton alloc] init];
-    [addButton setBackgroundImage:[UIImage imageNamed:@"add.png"] forState:UIControlStateNormal];
-    //[addButton addTarget:self action:@selector(addPost:) forControlEvents:UIControlEventTouchUpInside];
-    
-    reloadButton = [[UIButton alloc] init];
-    [reloadButton setBackgroundImage:[UIImage imageNamed:@"reload.png"] forState:UIControlStateNormal];
-    //[reloadButton addTarget:self action:@selector(reloadPostList:) forControlEvents:UIControlEventTouchUpInside];
-    
-    moreButton = [[UIButton alloc] init];
-    [moreButton setBackgroundImage:[UIImage imageNamed:@"more1.png"] forState:UIControlStateNormal];
-    //[moreButton addTarget:self action:@selector(morePost:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [_headerView designHeaderViewWithTitle:@"Conversation" andWithButtons:@[moreButton,  addButton]];
+    [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[backButton] andMenuButtons:nil];
 }
+
 
 -(void)designConversationView
 {
     _conversationListView._conversationList =  self.conversationListArray;
     [_conversationListView designConversationListView];
-    
 }
 
+
+-(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+{
+    HeaderButtonType buttonType = headerButton.tag;
+    switch (buttonType) {
+        case HeaderButtonTypePrev:
+            [self.navigationController popViewControllerAnimated:YES];
+            break;
+            
+        default:
+            break;
+    }
+}
 
 
 @end

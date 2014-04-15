@@ -19,6 +19,9 @@
 #import "DESocialConnectios.h"
 #import "UsersModel.h"
 #import "NSString+DateConverter.h"
+
+#import "ProfileViewController.h"
+
 #define FRAME CGRectMake(0, 0, 320, 480);
 #define BUTTONFRAME CGRectMake(121, 363, 70, 26);
 
@@ -86,6 +89,12 @@
 {
     [super viewDidAppear:animated];
     [HUD hide:YES];
+    
+    
+    return;
+    
+    ProfileViewController *profile = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
+    [self.navigationController pushViewController:profile animated:YES];
 }
 
 
@@ -96,6 +105,7 @@
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_topbar.png"] forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationController.navigationBar.translucent = NO;
 }
+
 
 
 #pragma mark Event Actions -

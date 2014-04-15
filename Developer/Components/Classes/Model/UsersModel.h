@@ -32,6 +32,7 @@
 @property (nonatomic, assign) BOOL followingStatus;
 @property (nonatomic, assign) BOOL blockedStatus;
 @property (nonatomic, assign) BOOL isLoggedInUser;
+@property (nonatomic,assign)  BOOL isInvitation;
 
 - (id)initWithDictionary:(NSDictionary *)userDict;
 

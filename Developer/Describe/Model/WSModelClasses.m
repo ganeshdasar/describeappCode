@@ -152,6 +152,9 @@ static WSModelClasses *_sharedInstance;
     if (inUserData.userName) {
         _loggedInUserModel.userName = inUserData.userName;
     }
+    if (inUserData.biodata) {
+        _loggedInUserModel.biodata = inUserData.biodata;
+    }
     
 }
 
@@ -292,7 +295,7 @@ static WSModelClasses *_sharedInstance;
 {
     if (![self checkTheInterConnection]) return;
     //http://mirusstudent.com/service/describe-service/getSearchPeople/format=json/UserUID=1/SearchWord=a
-    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,inUserID,inSearchString];
+    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,[WSModelClasses sharedHandler].loggedInUserModel.userID,inSearchString];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil
@@ -710,7 +713,6 @@ static WSModelClasses *_sharedInstance;
         return;
     }
     
-    
     NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":inRange};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:[NSString stringWithFormat:@"%@/getWeRecommendedList", BaseURLString]
@@ -840,4 +842,139 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
+-(void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName
+{
+    NSString *url = [NSString stringWithFormat:@"%@/sendGateWayInvitation/UserUID=%@/GateWay=%@/GateWayToken=%@/GateWayUsername=%@", BaseURLString,userid,gateWayType,gateWayToken,userName];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:KWebserviesType_invitations]};
+             [_delegate didFinishWSConnectionWithResponse:responseDict];
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:KWebserviesType_invitations]};
+             [_delegate didFinishWSConnectionWithResponse:responseDict];
+         }
+     ];
+}
+
+
+#pragma mark Settings Services
+-(void)checkingTheUserPassword:(NSString*)password UserUID:(NSString*)userID response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/checkSettingsAuthPwd/UserUID=%@/UserPwd=%@", BaseURLString, userID, password];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+    
+}
+
+
+-(void)updateTheUserEmaiIdAndPassword:(NSString*)emilId AndPassword:(NSString*)password responce:(void(^)(BOOL success, id response))response
+{
+ //   http://mirusstudent.com/service/describe-service/updateUserCredentials/UserUID=3/UserEmail=shekaranumalla@gmail.com/UserPwd=123456
+    NSString *url = [NSString stringWithFormat:@"%@/updateUserCredentials/UserUID=%@/UserEmail=%@/UserPwd=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID, emilId,password];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+}
+
+
+-(void)getTheUserPushNotificationresponce:(void(^)(BOOL success, id response))response;
+{
+    NSString *url = [NSString stringWithFormat:@"%@/getUserPushNotifications/UserUID=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+    
+}
+
+-(void)updatTheUserPushNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc responce:(void(^)(BOOL success, id response))response
+{
+    
+    NSString *url = [NSString stringWithFormat:@"%@/updateUserPushNotifications/UserUID=%@/LikesSts=%@/CommentsSts=%@/MentionsSts=%@/FollowsSts=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID,likeStatus,commentSts,metionsStc,followStc];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+    
+}
+
+-(void)getTHeUserEmailNotificationsresponce:(void(^)(BOOL success, id response))response
+{
+//    http://mirusstudent.com/service/describe-service/getUserEmailNotifications/UserUID=3
+    NSString *url = [NSString stringWithFormat:@"%@//getUserEmailNotifications/UserUID=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+}
+
+-(void)updatTheUserEmailNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc activityUpdates:(NSNumber*)activitystc importentUpdates:(NSNumber*)importentStc responce:(void(^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/updateUserEmailNotifications/UserUID=%@/LikesSts=%@/CommentsSts=%@/MentionsSts=%@/FollowsSts=%@/ActivitiesSts=%@/ImpNotifySts=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID,likeStatus,commentSts,metionsStc,followStc,activitystc,importentStc];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+    
+}
+
+//http://mirusstudent.com/service/describe-service/updateUserInfoSettings/UserUID=1/UserFullName=shekahr/UserCity=hyderabad/UserDob=yyyy-mm-dd/UserGender=1/UserBiodata=biodataoftheuser
+
+-(void)updateTheUserInformationDataUSerID:(NSString*)userId userName:(NSString*)userName userCity:(NSString*)city userDob:(NSString*)dob userGender:(NSString*)gender userBioData:(NSString*)bioData responce:(void(^)(BOOL success, id response))response
+{
+    NSDictionary* parameters = @{@"UserUID": userId,@"UserFullName":userName ,@"UserCity":city, @"UserDob":dob,@"UserGender":gender,@"UserBiodata":bioData};
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:[NSString stringWithFormat:@"%@/updateUserInfoSettings", BaseURLString]
+       parameters:parameters
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              response(YES, responseObject);
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              response(NO, error);
+          }
+     ];
+    
+}
 @end

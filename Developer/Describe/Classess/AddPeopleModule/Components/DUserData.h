@@ -20,6 +20,8 @@
 }
 @property (nonatomic,retain) NSString * followingStatus;
 @property (nonatomic,retain) NSString * profileUserCity;
+@property (nonatomic ,retain) NSString *gateWayToken;
+@property (nonatomic ,retain) NSString *gateWayType;
 @property (nonatomic,retain) NSString * profileUserEmail;
 @property (nonatomic,retain) NSString * profileUserFullName;
 @property (nonatomic,retain) NSString * profileUserProfilePicture;
@@ -27,6 +29,7 @@
 @property (nonatomic,retain) NSString * profileUserName;
 @property (nonatomic,retain) NSString * userActCout;
 @property (nonatomic,retain) NSString * proximity;
+
 
 @end
 
@@ -47,4 +50,4 @@
  ProfileUsername = shekar5;
  UserActCount = 1019;
  proximity = 1;
-*/
+ */

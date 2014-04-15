@@ -19,8 +19,10 @@
 #import "ProfileViewController.h"
 #import "MBProgressHUD.h"
 #import "DSocialMediaListView.h"
-
-@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate>
+#import "DESocialConnectios.h"
+#import "DesSearchPeopleViewContrlooerViewController.h"
+#import "DESSettingsViewController.h"
+@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate,DESocialConnectiosDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     UIButton    *backButton,*nextButton;
@@ -36,6 +38,7 @@
     IBOutlet DSegmentComponent * _segmentComponent;
     IBOutlet DSearchBarComponent * _searchBarComponent;
     IBOutlet DSocialComponent * socialComponent;
+    DesSearchPeopleViewContrlooerViewController *searchViewCntrl;
 }
 @end
 
@@ -74,9 +77,21 @@
     [self addSearchBarView];
     [self designSocialComponent];
     [self setNeedsStatusBarAppearanceUpdate];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshTheView)
+                                                 name:@"refreshTheView"
+                                               object:nil];
     // Do any additional setup after loading the view from its nib.
 }
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+}
 //HeadderView
+-(void)refreshTheView
+{
+    [self designPeopleListView];
+}
+
 -(void)designHeaderView
 {
     //back button
@@ -117,44 +132,31 @@
     [invitationsBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [invitationsBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
     invitationsBtn.selected = NO;
-    [_segmentComponent designSegmentControllerWithButtons:@[weRecommendBtn,invitationsBtn]];
-    
-    if([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] == nil && [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN] == nil)
-    {
-        [weRecommendBtn setEnabled:NO];
-        [invitationsBtn setEnabled:NO];
+    BOOL iskeyAvilable;
+    if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
+        iskeyAvilable = YES;
+    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+        iskeyAvilable = YES;
+    }else {
+        iskeyAvilable = NO;
     }
-    
+    if (!iskeyAvilable) {
+        invitationsBtn.userInteractionEnabled = NO;
+    }
+    [_segmentComponent designSegmentControllerWithButtons:@[weRecommendBtn,invitationsBtn]];
 }
 //Social Component
 -(void)designSocialComponent
 {
-    NSDictionary *mediaItem0 = @{@"ImageNormal": @"btn_3rd_fb_nc.png", @"ImageSelected": @"btn_3rd_fb_on.png"};
-    NSDictionary *mediaItem1 = @{@"ImageNormal": @"btn_3rd_goog_nc.png", @"ImageSelected": @"btn_3rd_goog_on.png"};  
+    
+    NSString *gpSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN])?@"1":@"0";
+        NSString *fbSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY])?@"1":@"0";
+    
+    NSDictionary *mediaItem0 = @{@"ImageNormal": @"btn_3rd_fb_nc.png", @"ImageSelected": @"btn_3rd_fb_on.png", @"Selected":fbSelected};
+    NSDictionary *mediaItem1 = @{@"ImageNormal": @"btn_3rd_goog_nc.png", @"ImageSelected": @"btn_3rd_goog_on.png", @"Selected":gpSelected};
     
     [_mediaListView setDelegate:self];
     [_mediaListView setMedaiList:@[mediaItem0, mediaItem1]];
-    
-    
-    return;
-    
-    
-    
-    
-    facebookBtn = [[UIButton alloc]init];
-    [facebookBtn setBackgroundImage:[UIImage imageNamed:@"btn_3rd_fb_nc.png"] forState:UIControlStateNormal];
-    [facebookBtn setBackgroundImage:[UIImage imageNamed:@"btn_3rd_fb_on.png"] forState:UIControlStateSelected];
-    facebookBtn.selected = NO;
-    [facebookBtn addTarget:self action:@selector(requestToFaceboookForFriendsList:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    
-    googlePlusBtn = [[UIButton alloc]init];
-    [googlePlusBtn setBackgroundImage:[UIImage imageNamed:@"btn_3rd_goog_nc.png"] forState:UIControlStateNormal];
-    [googlePlusBtn addTarget:self action:@selector(requestToGooglePlusForFriendsList:) forControlEvents:UIControlEventTouchUpInside];
-    [googlePlusBtn setBackgroundImage:[UIImage imageNamed:@"btn_3rd_goog_on.png"] forState:UIControlStateSelected];
-    googlePlusBtn.selected =NO;
-    [socialComponent  designSocialNetworkConnectionsWithButtons:@[facebookBtn,googlePlusBtn]];
     
 }
 
@@ -166,6 +168,7 @@
     {
         case 1:
             [self requestToFaceboookForFriendsList:nil];
+            
             break;
         case 2:
             [self requestToGooglePlusForFriendsList:nil];
@@ -179,6 +182,9 @@
 
 - (void)goToFeedScreen:(UIButton*)inButton
 {
+    DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
+    [self.navigationController pushViewController:setting animated:NO];
+    return;
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
     DPostsViewController *postViewController = [DPostsViewController sharedFeedController];////[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];
@@ -189,27 +195,61 @@
     inSender.selected =YES;
     [self showLoadView];
     invitationsBtn.selected =NO;
-    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
+    NSString * gateWay;
+    NSString * accessToken;
+    [WSModelClasses sharedHandler].delegate = self;
+    if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
+        gateWay = @"fb";
+        accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
+    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+        gateWay = @"gplus";
+        accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
+    }else {
+        gateWay =@"";
+        accessToken = @"";
+    }
+    [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
+    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:gateWay Accesstoken:accessToken AndRange:@"0"];
 }
 
 
 -(void)getTheInvitationsDataFromServer:(UIButton*)inSender{
     inSender.selected =YES;
     [self showLoadView];
+    NSString * gateWay;
+    NSString * accessToken;
+    [WSModelClasses sharedHandler].delegate = self;
+    if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
+        gateWay = @"fb";
+        accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
+    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+        gateWay = @"gplus";
+        accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
+    }else {
+        gateWay =@"";
+        accessToken = @"";
+    }
+    [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = YES;
     weRecommendBtn.selected = NO;
     [WSModelClasses sharedHandler].delegate = self;
-    [[WSModelClasses sharedHandler]getInvitationListpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
+    [[WSModelClasses sharedHandler]getInvitationListpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:gateWay Accesstoken:accessToken AndRange:@"0"];
 }
 
 
 #pragma mark Socialnetwork actions
 -(void)requestToFaceboookForFriendsList:(UIButton*)inSender{
     inSender.selected = YES;
-    
+    inSender.selected = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
+    [[DESocialConnectios sharedInstance] facebookSignIn];
+    [DESocialConnectios sharedInstance].delegate =self;
     
 }
 -(void)requestToGooglePlusForFriendsList:(UIButton*)inSender{
-    
+    inSender.selected = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
+    [[DESocialConnectios sharedInstance] googlePlusSignIn];
+    [DESocialConnectios sharedInstance].delegate = self;
     inSender.selected = YES;
 }
 
@@ -228,8 +268,20 @@
 #pragma mark Design PeopleListView
 -(void)designPeopleListView{
     [self showLoadView];
+    NSString * gateWay;
+    NSString * accessToken;
     [WSModelClasses sharedHandler].delegate = self;
-    [[WSModelClasses sharedHandler]getWeRecommendedpeople:[[NSUserDefaults standardUserDefaults] valueForKey:@"USERID"] GateWay:@"fb" Accesstoken:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY ] AndRange:@"0"];
+    if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
+        gateWay = @"fb";
+        accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
+    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+        gateWay = @"gplus";
+        accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
+    }else {
+        gateWay =@"";
+        accessToken = @"";
+    }
+    [[WSModelClasses sharedHandler]getWeRecommendedpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:gateWay Accesstoken:accessToken AndRange:@"0"];
 }
 
 
@@ -254,7 +306,6 @@
             [self parsingTheData:responseDict];
             break;
         }
-            
         default:
             break;
     }
@@ -269,6 +320,8 @@
     for (NSMutableDictionary * dic in [responceDict valueForKeyPath:@"ResponseData.DataTable"]) {
         SearchPeopleData * data =  [[SearchPeopleData alloc]init];
         data.followingStatus = [dic valueForKeyPath:@"DescribeSuggestedUsers.FollowingStatus"];
+        data.gateWayToken = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayToken"];
+        data.gateWayType = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayType"];
         data.profileUserEmail = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserEmail"];
         data.profileUserFullName = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserFullName"];
         data.profileUserProfilePicture = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserProfilePicture"];
@@ -282,8 +335,8 @@
     }
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-200) andPeopleList:(NSArray*)peopleArray];
+    _peoplelistView.tag = 1;
     [self.view addSubview:_peoplelistView];
-    
     
 }
 
@@ -295,60 +348,27 @@
 }
 #pragma serchThe People
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar;{
-    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
-    modelClass.delegate = self;
-    
-    if (isSearching) {
-        isSearching = NO;
-        [_headerView removeSubviewFromHedderView];
-        //back button
-        backButton = [[UIButton alloc] init];
-        [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
-        [backButton addTarget:self action:@selector(removeTheSearchViewFromSuperview:) forControlEvents:UIControlEventTouchUpInside];
-        [_headerView designHeaderViewWithTitle:@"Search" andWithButtons:@[backButton]];
-        CGRect screenRect = [[UIScreen mainScreen] bounds];
-        _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 110, 320, screenRect.size.height-108) andPeopleList:nil];
-        [self.view addSubview:_peoplelistView];
-    }else{
-        if ([searchBar.searchTxt.text length]!=0) {
-            [modelClass getSearchDetailsUserID:@"1" searchType:nil  searchWord:searchBar.searchTxt.text];
-            
+    for (UIView*view in self.view.subviews) {
+        if (view.tag==1) [view removeFromSuperview];
         }
-    }
-    
+    DesSearchPeopleViewContrlooerViewController*search = [[DesSearchPeopleViewContrlooerViewController alloc]initWithNibName:@"DesSearchPeopleViewContrlooerViewController" bundle:nil];
+    searchViewCntrl = search;
+    [self.navigationController pushViewController:search animated:YES];
     
 }
 
-#pragma mark serachResult
-- (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error{
-    NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
-    self.searchListArray = [[NSMutableArray alloc]init];
-    for (NSMutableDictionary* dataDic in peopleArray) {
-        SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
-        searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
-        searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
-        searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
-        searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
-        searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
-        searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
-        searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
-        searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
-        searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
-        [self.searchListArray addObject:searchData];
-    }
-    [_peoplelistView setBackgroundColor:[UIColor whiteColor]];
-    [_peoplelistView reloadTableView:self.searchListArray];
-    
-}
 
 -(void)removeTheSearchViewFromSuperview:(id)inSender{
     [_headerView removeSubviewFromHedderView];
     [_peoplelistView removeFromSuperview];
     _searchBarComponent.searchTxt.text =@"";
     [_peoplelistView._peopleList removeAllObjects];
+    isSearching = YES;
     [_searchBarComponent.searchTxt resignFirstResponder];
     [self designHeaderView];
 }
+
+
 - (void)showLoadView
 {
     _loadingView = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
