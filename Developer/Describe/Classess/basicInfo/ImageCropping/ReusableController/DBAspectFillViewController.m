@@ -61,9 +61,13 @@
 {
     [self resetImageContentToEmpty];
     
-    UIImage *correctOrientationImage = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationUp];
+    if(image == nil) {
+        return;
+    }
+       
+//    UIImage *correctOrientationImage = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationUp];
     
-    CGSize imageSize = correctOrientationImage.size;
+    CGSize imageSize = image.size;
     
     // check if image width & height both are of atleast screenSize, if not
     // then find ratio of image width to height, so increase either of them or both to satisfy screenSize and fulfill
@@ -78,17 +82,18 @@
         // identify out of width & height which is less
         if(imageSize.width < imageSize.height) {
             // width is less
-            newImgSize.width = _screenSize.width;
-            newImgSize.height = _screenSize.width * yFactor;
+            newImgSize.width = _screenSize.width;// * 2.0f;
+            newImgSize.height = _screenSize.width * yFactor;// * 2.0f;
         }
         else {
             // height is less
-            newImgSize.height = _screenSize.height;
-            newImgSize.width = _screenSize.height * xFactor;
+            newImgSize.height = _screenSize.height;// * 2.0f;
+            newImgSize.width = _screenSize.height * xFactor;// * 2.0f;
         }
         
-        imageSize = newImgSize;
-        image = [self imageWithImage:image scaledToSize:imageSize];
+        imageSize.width = newImgSize.width;///2.0f;
+        imageSize.height = newImgSize.height;///2.0f;
+        image = [self imageWithImage:image scaledToSize:newImgSize];
 //    }
     
     CGRect imageViewRect = _imageView.frame;
