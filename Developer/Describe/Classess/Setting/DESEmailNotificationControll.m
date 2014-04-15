@@ -133,6 +133,7 @@
         case 0:{
             cell.textLabel.text = emailNotificationList[indexPath.row];
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             switch (indexPath.row) {
                 case Likes_onMyPost:
                     cell.accessoryView = [self createSwitch:Likes_onMyPost];
@@ -153,12 +154,14 @@
         }
         case 1:{
             cell.textLabel.text = @"Activity updates";
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
             cell.accessoryView = [self createSwitch:activity_updates];
             break;
         }
         case 2:{
             cell.textLabel.text = @"Important announcements";
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
             cell.accessoryView = [self createSwitch:importent_announcements];
             break;

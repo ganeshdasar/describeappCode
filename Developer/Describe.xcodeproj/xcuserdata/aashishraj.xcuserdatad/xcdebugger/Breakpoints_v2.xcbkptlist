@@ -351,7 +351,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "416"
             endingLineNumber = "416"
-            landmarkName = "-alertView:clickedButtonAtIndex:"
+            landmarkName = "-getPostDetailsResponse:withError:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -733,7 +733,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "309"
             endingLineNumber = "309"
-            landmarkName = "-profileDetailsDidSelected:"
+            landmarkName = "-getTheConverSationData"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -749,7 +749,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "328"
             endingLineNumber = "328"
-            landmarkName = "-getConversationDetailsOfPost:"
+            landmarkName = "-getThePostConversationDetailsFromServer:error:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -813,7 +813,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "316"
             endingLineNumber = "316"
-            landmarkName = "-getTheConverSationData"
+            landmarkName = "-getConversationDetailsOfPost:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -829,8 +829,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "583"
             endingLineNumber = "583"
-            landmarkName = "@implementation DPostsViewController"
-            landmarkType = "3">
+            landmarkName = "-actionSheet:clickedButtonAtIndex:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1671,8 +1671,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "284"
             endingLineNumber = "284"
-            landmarkName = "-moreButtonClicked:"
-            landmarkType = "5">
+            landmarkName = "@implementation DPostsViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1687,7 +1687,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "293"
             endingLineNumber = "293"
-            landmarkName = "-commentButtonClicked:"
+            landmarkName = "-likesAndCommentButtonClicked:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1703,7 +1703,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "569"
             endingLineNumber = "569"
-            landmarkName = "-showMoreDetailsOfPost:"
+            landmarkName = "-showConversationForThisPost:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

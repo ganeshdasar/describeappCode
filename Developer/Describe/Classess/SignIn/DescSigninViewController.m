@@ -195,11 +195,22 @@ IBOutlet DHeaderView *_headerView;
     NSArray *userid = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserUID"];
     NSArray *userprofilepic = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"];
     
-    
     [userDefaults setValue:(username.count)?username[0]:nil forKey:@"UserName"];
     [userDefaults setValue:(userid.count)?userid[0]:nil forKey:@"UserUID"];
     [userDefaults setValue:(userprofilepic.count)?userprofilepic[0]:nil forKey:@"UserProfilePicture"];
+    [self saveUserDataInUserDefaults:dictionary];
+    
 }
+
+
+-(void)saveUserDataInUserDefaults:(NSDictionary*)dictionary
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:dictionary forKeyPath:USERSAVING_DATA_KEY];
+    [[NSUserDefaults standardUserDefaults]synchronize ];
+
+}
+
 
 -(void)showNextScreen:(NSDictionary*)userData
 {

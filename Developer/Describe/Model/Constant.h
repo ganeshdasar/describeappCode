@@ -78,10 +78,14 @@
 #define NOTIFICATION_MODEL_KEY_COMMENTDESC              @"CommentDesc"
 #define NOTIFICATION_MODEL_KEY_READSTATUS               @"ReadStatus"
 
+//UserData saving key for checking sessionid
+#define USERSAVING_DATA_KEY                                           @"userSavingData"
 
 // Webservices Response Dict Keys
 #define WS_RESPONSEDICT_KEY_RESPONSEDATA                @"ResponseData"
 #define WS_RESPONSEDICT_KEY_ERROR                       @"ErrorInfo"
 #define WS_RESPONSEDICT_KEY_SERVICETYPE                 @"WebservicesType"
 
+#define WIFI_STATU          @"WIFI_STATUS"
+#define CELLULAR_STATUS @"CELLULAR_STATUS"
 #endif

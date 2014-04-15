@@ -121,11 +121,13 @@
     _profileimgbtn.layer.masksToBounds = YES;
     _profileimgbtn.layer.borderColor = [UIColor whiteColor].CGColor;
     _profileimgbtn.layer.borderWidth = 0.5f;
+    [_profileimgbtn setSelected:NO];
     
     _profilePicContainerView.layer.cornerRadius = CGRectGetHeight(_profilePicContainerView.frame)/2.0f;
     _profilePicContainerView.layer.masksToBounds = YES;
     _profilePicContainerView.layer.borderColor = [UIColor whiteColor].CGColor;
     _profilePicContainerView.layer.borderWidth = 0.5f;
+    
     profilePicAspectController = [[DBAspectFillViewController alloc] initWithNibName:@"DBAspectFillViewController" bundle:nil];
     [profilePicAspectController.view setFrame:_profilePicContainerView.bounds];
     [profilePicAspectController setScreenSize:_profilePicContainerView.frame.size];
@@ -294,6 +296,7 @@
     _profilePicOverlayView.backgroundColor = [UIColor clearColor];
     [profilePicAspectController enableTouches:NO];
     [_profilePicOverlayView setDontPassTouch:NO];
+    [_profilePicOverlayView setHidden:YES];
     [self hideAndShowView:NO];
     [profilePicAspectController placeSelectedImage:_previousPicRef withCropRect:CGRectNull];
 }
@@ -311,6 +314,7 @@
     _profilePicOverlayView.backgroundColor = [UIColor clearColor];
     [profilePicAspectController enableTouches:NO];
     [_profilePicOverlayView setDontPassTouch:NO];
+    [_profilePicOverlayView setHidden:YES];
     [self hideAndShowView:NO];
 }
 
@@ -360,6 +364,7 @@
             if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 UIImagePickerController *openLibrary = [[UIImagePickerController alloc] init];
                 openLibrary.sourceType = UIImagePickerControllerSourceTypeCamera;
+                openLibrary.videoQuality = UIImagePickerControllerQualityTypeMedium;
                 openLibrary.delegate = self;
                 [self presentViewController:openLibrary animated:YES completion:nil];
             }
@@ -382,7 +387,6 @@
 -  (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     _profilePicOverlayView.hidden = NO;
-    
     [profilePicAspectController placeSelectedImage:info[UIImagePickerControllerOriginalImage] withCropRect:CGRectNull];
     isEditingPic = YES;
     [picker dismissViewControllerAnimated:YES completion:nil];
@@ -391,6 +395,11 @@
     _profilePicOverlayView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
     [profilePicAspectController enableTouches:YES];
     [_profilePicOverlayView setDontPassTouch:YES];
+}
+
+- (void)imageSaved
+{
+    NSLog(@"imageSaved");
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

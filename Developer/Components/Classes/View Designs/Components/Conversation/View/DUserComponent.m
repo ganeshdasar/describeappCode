@@ -77,14 +77,24 @@
     
     UIButton * button = [[UIButton alloc]initWithFrame:CGRectMake(275, 9, 30, 30)];
     _followUnfollowBtn =button;
-    if ([data.followingStatus isEqualToString:@"1"]) {
-        [button setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
+    if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+        button.frame = CGRectMake(250, 9, 60, 26);
+        if ([data.followingStatus isEqualToString:@"1"]) {
+            [button setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
+        }else{
+            [button setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
+        }
+        [button addTarget:self action:@selector(inviteThePerson:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:button];
     }else{
-        [button setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
+        if ([data.followingStatus isEqualToString:@"1"]) {
+            [button setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
+        }else{
+            [button setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
+        }
+        [button addTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:button];
     }
-    [button addTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:button];
-    
     
     
     _title = firsLineLbl;
@@ -101,7 +111,14 @@
     [_thumIcon setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std.png"]];
     _title.text = data.profileUserName;
     _subTitle.text =data.profileUserFullName;
-    
+     if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+         if ([data.followingStatus isEqualToString:@"1"])
+         {
+             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
+         }else{
+             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
+         }
+     }else{
     
     //Updating the details on the content...
     if ([data.followingStatus isEqualToString:@"1"])
@@ -110,6 +127,7 @@
     }else{
         [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
     }
+     }
 }
 
 
@@ -138,6 +156,13 @@
     
 }
 
+
+-(void)inviteThePerson:(id)inAction
+{
+    [WSModelClasses sharedHandler].delegate =self;
+    [[WSModelClasses sharedHandler]sendGateWayInvitationUserId:@"" gateWayType:data.gateWayType gateWayToken:data.gateWayToken userName:@""];
+    
+}
 
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
 {
@@ -172,6 +197,21 @@
             }
             break;
         }
+        case KWebserviesType_invitations:
+        {
+            
+            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Msg"]objectAtIndex:0] isEqualToString:@"You are successfully invited your friend."]) {
+                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
+                data.followingStatus = @"1";
+            }else{
+                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
+                data.followingStatus = @"0";
+                
+            }
+            break;
+            
+        }
+
         default:
             break;
     }

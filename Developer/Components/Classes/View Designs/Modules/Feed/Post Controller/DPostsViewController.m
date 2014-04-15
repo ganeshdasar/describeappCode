@@ -226,16 +226,12 @@ static DPostsViewController *sharedFeedController;
 #pragma mark Event Actions -
 - (void)pushToCompositionScreen
 {
-//    _compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-//    [self.navigationController pushViewController:_compositionViewController animated:YES];
-    
-
+    _compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+    [self.navigationController pushViewController:_compositionViewController animated:YES];
 }
 
 - (void)addPost:(id)sender
 {
-    [self pushToCompositionScreen];
-    return;
     NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
     if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Would you like to continue previous composition?", @"") delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];
