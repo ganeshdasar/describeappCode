@@ -6,27 +6,28 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DescBasicinfoViewController">
             <connections>
+                <outlet property="_contentView" destination="V4l-eO-MHD" id="y5I-CN-XCH"/>
                 <outlet property="_headerView" destination="aVy-H0-EeS" id="g9B-qm-5VV"/>
+                <outlet property="_subContentView" destination="ZPk-R1-Pe7" id="WU9-lf-oZe"/>
                 <outlet property="backGroundImageView" destination="K3l-eZ-bwq" id="IgA-5e-dLo"/>
-                <outlet property="basicInfoScrollView" destination="J4f-zE-Msx" id="H5I-ro-JkM"/>
-                <outlet property="bioTxt" destination="aY7-4I-cwI" id="Blk-cC-weK"/>
-                <outlet property="birthdayTxt" destination="9ly-ng-Y7N" id="bzJ-sI-U2T"/>
-                <outlet property="btnfemale" destination="mDC-I1-97r" id="JXZ-O0-Ana"/>
-                <outlet property="btnmale" destination="ssN-WH-y5D" id="wZU-0Y-HfN"/>
-                <outlet property="cityTxt" destination="Pnf-j9-VKJ" id="Hva-2E-Nrw"/>
-                <outlet property="cityTxtImageView" destination="TNa-Wo-MEe" id="i0F-rl-nox"/>
-                <outlet property="cityTxtImgView" destination="TNa-Wo-MEe" id="yoW-mt-3cb"/>
+                <outlet property="bioTxt" destination="ckV-H9-q1o" id="98u-Ak-YOJ"/>
+                <outlet property="birthdayTxt" destination="4GW-nf-ceg" id="8i5-d5-vfQ"/>
+                <outlet property="btnfemale" destination="bFx-9s-hSl" id="vYo-OM-PQc"/>
+                <outlet property="btnmale" destination="doW-xu-t18" id="Tsb-xc-dXU"/>
+                <outlet property="cityTxt" destination="OuW-8N-sRv" id="aah-37-NID"/>
+                <outlet property="cityTxtImageView" destination="WhT-uH-DjS" id="Qgf-Tm-oS2"/>
+                <outlet property="cityTxtImgView" destination="WhT-uH-DjS" id="rpN-rO-xo6"/>
                 <outlet property="datePicker" destination="fMF-uV-vvy" id="z7T-c1-cFf"/>
                 <outlet property="datePickerView" destination="KAm-05-5Hf" id="JBD-Wi-mUM"/>
-                <outlet property="dateofBirthImgView" destination="B4g-ec-slp" id="dGH-6u-Leb"/>
+                <outlet property="dateofBirthImgView" destination="qi7-OG-EPB" id="689-ec-hlH"/>
                 <outlet property="profileEditCancelBtn" destination="fsx-R0-Yee" id="aoZ-5a-uZo"/>
                 <outlet property="profileEditDoneBtn" destination="iwc-2S-Id6" id="FVg-x1-w2i"/>
                 <outlet property="profilePicContainerView" destination="jQq-o9-tpc" id="NcN-Xa-T9Y"/>
                 <outlet property="profilePicOverlayView" destination="A0z-zs-svH" id="Wg5-qu-dN4"/>
                 <outlet property="profileTapGestureRef" destination="RPs-u1-ST9" id="hh6-FN-9yA"/>
-                <outlet property="profileimgbtn" destination="Yqs-ya-z2X" id="vnZ-iQ-fR1"/>
-                <outlet property="txtBioImgView" destination="fhC-GI-EPE" id="WFX-Ub-76A"/>
-                <outlet property="userprofileImg" destination="4z9-Ro-cy7" id="SEG-fV-Aub"/>
+                <outlet property="profileimgbtn" destination="haj-5R-IQi" id="hjR-ec-ezS"/>
+                <outlet property="txtBioImgView" destination="oJa-A3-IW0" id="srs-a6-1fg"/>
+                <outlet property="userprofileImg" destination="AyZ-4k-WeF" id="Sfd-sN-yBh"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
         </placeholder>
@@ -35,151 +36,167 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" id="J4f-zE-Msx">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="K3l-eZ-bwq">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                </imageView>
+                <view contentMode="scaleToFill" id="sL9-iC-cnp">
+                    <rect key="frame" x="0.0" y="65" width="320" height="503"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="K3l-eZ-bwq">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        </imageView>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_thumb_stroke_profile.png" id="4z9-Ro-cy7">
-                            <rect key="frame" x="123" y="89" width="75" height="75"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="txt_field_1.png" id="TNa-Wo-MEe">
-                            <rect key="frame" x="25" y="189" width="270" height="42"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <textField opaque="NO" clipsSubviews="YES" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="city" minimumFontSize="17" id="Pnf-j9-VKJ">
-                            <rect key="frame" x="30" y="189" width="260" height="42"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
-                            <textInputTraits key="textInputTraits"/>
-                            <connections>
-                                <outlet property="delegate" destination="-1" id="p1g-1K-uEP"/>
-                            </connections>
-                        </textField>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ssN-WH-y5D">
-                            <rect key="frame" x="25" y="241" width="47" height="42"/>
+                        <view contentMode="scaleToFill" id="V4l-eO-MHD">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="503"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" image="male_active.png">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <state key="selected" image="male_inactive.png"/>
-                            <connections>
-                                <action selector="maleClicked:" destination="-1" eventType="touchUpInside" id="1ag-bG-ZC6"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mDC-I1-97r">
-                            <rect key="frame" x="61" y="241" width="47" height="42"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="Button" image="female_inactive.png">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <state key="selected" image="female_active.png"/>
-                            <connections>
-                                <action selector="femaleClicked:" destination="-1" eventType="touchUpInside" id="Ej3-cH-y86"/>
-                            </connections>
-                        </button>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="txt_field_birthday.png" id="B4g-ec-slp">
-                            <rect key="frame" x="118" y="241" width="177" height="42"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="birthday" minimumFontSize="17" id="9ly-ng-Y7N">
-                            <rect key="frame" x="122" y="245" width="167" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
-                            <textInputTraits key="textInputTraits"/>
-                            <connections>
-                                <outlet property="delegate" destination="-1" id="07N-Zf-X9U"/>
-                            </connections>
-                        </textField>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="txt_field_bio.png" id="fhC-GI-EPE">
-                            <rect key="frame" x="25" y="293" width="270" height="125"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="aY7-4I-cwI">
-                            <rect key="frame" x="25" y="293" width="270" height="165"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <rect key="contentStretch" x="0.0" y="1" width="1" height="1"/>
-                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            <connections>
-                                <outlet property="delegate" destination="-1" id="1a4-6O-QbY"/>
-                            </connections>
-                        </textView>
-                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Yqs-ya-z2X">
-                            <rect key="frame" x="123" y="89" width="75" height="75"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <state key="normal">
-                                <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="selectprofileimg:" destination="-1" eventType="touchUpInside" id="W4i-Q4-9td"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="4Fa-5A-rdo">
-                            <rect key="frame" x="118" y="241" width="177" height="42"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
-                            <state key="normal">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="selectTheDate:" destination="-1" eventType="touchUpInside" id="P7V-vX-UNI"/>
-                            </connections>
-                        </button>
-                        <view contentMode="scaleToFill" id="A0z-zs-svH" customClass="CMPassTouchesView">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb_user_profile.png" id="AyZ-4k-WeF">
-                                    <rect key="frame" x="82" y="49" width="155" height="155"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_thumb_stroke_profile.png" id="jah-UG-qwo">
+                                    <rect key="frame" x="122" y="24" width="75" height="75"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
-                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="fsx-R0-Yee">
-                                    <rect key="frame" x="81" y="234" width="70" height="26"/>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="haj-5R-IQi">
+                                    <rect key="frame" x="122" y="24" width="75" height="75"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" backgroundImage="btn_txt_black_change.png">
+                                    <state key="normal">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
-                                        <action selector="cancelProfilePicChanges:" destination="-1" eventType="touchUpInside" id="jrE-HW-AG8"/>
+                                        <action selector="selectprofileimg:" destination="-1" eventType="touchUpInside" id="ouB-zN-iUR"/>
                                     </connections>
                                 </button>
-                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="iwc-2S-Id6">
-                                    <rect key="frame" x="168" y="234" width="70" height="26"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" backgroundImage="btn_txt_black_done.png">
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="txt_field_1.png" id="WhT-uH-DjS">
+                                    <rect key="frame" x="25" y="124" width="270" height="42"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                </imageView>
+                                <textField opaque="NO" clipsSubviews="YES" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="city" minimumFontSize="17" id="OuW-8N-sRv">
+                                    <rect key="frame" x="35" y="124" width="260" height="42"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                                    <textInputTraits key="textInputTraits"/>
                                     <connections>
-                                        <action selector="doneProfilePicChange:" destination="-1" eventType="touchUpInside" id="ko7-5B-WeD"/>
+                                        <outlet property="delegate" destination="-1" id="InI-2y-9em"/>
                                     </connections>
-                                </button>
-                                <view contentMode="scaleToFill" id="jQq-o9-tpc">
-                                    <rect key="frame" x="123" y="89" width="75" height="75"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                </textField>
+                                <view contentMode="scaleToFill" id="ZPk-R1-Pe7">
+                                    <rect key="frame" x="0.0" y="174" width="320" height="329"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bFx-9s-hSl">
+                                            <rect key="frame" x="60" y="2" width="47" height="42"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="Button" image="female_inactive.png">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <state key="selected" image="female_active.png"/>
+                                            <connections>
+                                                <action selector="femaleClicked:" destination="-1" eventType="touchUpInside" id="Vsi-bb-Yq6"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="doW-xu-t18">
+                                            <rect key="frame" x="24" y="2" width="47" height="42"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" image="male_active.png">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <state key="selected" image="male_inactive.png"/>
+                                            <connections>
+                                                <action selector="maleClicked:" destination="-1" eventType="touchUpInside" id="hlC-k6-VHV"/>
+                                            </connections>
+                                        </button>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="txt_field_birthday.png" id="qi7-OG-EPB">
+                                            <rect key="frame" x="120" y="2" width="177" height="42"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="birthday" minimumFontSize="17" id="4GW-nf-ceg">
+                                            <rect key="frame" x="126" y="2" width="167" height="34"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="-1" id="QPz-aT-3CJ"/>
+                                            </connections>
+                                        </textField>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mtv-jZ-XyG">
+                                            <rect key="frame" x="120" y="2" width="177" height="42"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                                            <state key="normal">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="selectTheDate:" destination="-1" eventType="touchUpInside" id="JH9-E6-yVK"/>
+                                            </connections>
+                                        </button>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="txt_field_bio.png" id="oJa-A3-IW0">
+                                            <rect key="frame" x="24" y="52" width="270" height="125"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="ckV-H9-q1o">
+                                            <rect key="frame" x="25" y="52" width="270" height="165"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <rect key="contentStretch" x="0.0" y="1" width="1" height="1"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
+                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="-1" id="lQ2-o8-eHm"/>
+                                            </connections>
+                                        </textView>
+                                    </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <connections>
-                                <outletCollection property="gestureRecognizers" destination="DyK-zK-9I2" appends="YES" id="0RL-nO-zgI"/>
-                                <outletCollection property="gestureRecognizers" destination="y5i-1Q-TbG" appends="YES" id="f50-7J-vLz"/>
-                            </connections>
                         </view>
                     </subviews>
-                </scrollView>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </view>
                 <view contentMode="scaleToFill" id="aVy-H0-EeS" customClass="DHeaderView">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                </view>
+                <view hidden="YES" contentMode="scaleToFill" id="A0z-zs-svH" customClass="CMPassTouchesView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb_user_profile.png" id="AyZ-4k-WeF">
+                            <rect key="frame" x="82" y="49" width="155" height="155"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <accessibility key="accessibilityConfiguration">
+                                <accessibilityTraits key="traits" none="YES" image="YES" notEnabled="YES"/>
+                            </accessibility>
+                        </imageView>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="fsx-R0-Yee">
+                            <rect key="frame" x="81" y="234" width="70" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" backgroundImage="btn_txt_black_change.png">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="cancelProfilePicChanges:" destination="-1" eventType="touchUpInside" id="jrE-HW-AG8"/>
+                            </connections>
+                        </button>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="iwc-2S-Id6">
+                            <rect key="frame" x="168" y="234" width="70" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" backgroundImage="btn_txt_black_done.png">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="doneProfilePicChange:" destination="-1" eventType="touchUpInside" id="ko7-5B-WeD"/>
+                            </connections>
+                        </button>
+                        <view contentMode="scaleToFill" id="jQq-o9-tpc">
+                            <rect key="frame" x="122" y="89" width="75" height="75"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="y5i-1Q-TbG" appends="YES" id="f50-7J-vLz"/>
+                        <outletCollection property="gestureRecognizers" destination="DyK-zK-9I2" appends="YES" id="0RL-nO-zgI"/>
+                    </connections>
                 </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>

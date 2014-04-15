@@ -39,7 +39,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *cityTxtImgView;
 @property (weak, nonatomic) IBOutlet UIImageView *dateofBirthImgView;
 @property (weak, nonatomic) IBOutlet UIImageView *txtBioImgView;
-@property (weak, nonatomic) IBOutlet UIScrollView *basicInfoScrollView;
 
 
 - (IBAction)profilePicTapped:(id)sender;
