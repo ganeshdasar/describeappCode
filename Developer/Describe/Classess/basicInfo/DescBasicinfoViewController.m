@@ -445,6 +445,16 @@
 
 - (void)textFieldAnimation:(BOOL)inAnimation
 {
+    if(inAnimation) {
+        [self.basicInfoScrollView setContentOffset:CGPointMake(0, 105) animated:YES];
+    }
+    else {
+        [self.basicInfoScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+        [self.cityTxt resignFirstResponder];
+    }
+    self.cityTableView.hidden = YES;
+    
+    return;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration: 0.5];
     if (inAnimation) {

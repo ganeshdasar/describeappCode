@@ -55,7 +55,7 @@ typedef enum {
 
 - (void)changeCapturesSessionPreset:(NSString *)presetString;
 
-- (void)showCameraPreviewInView:(UIView *)previewView;
+- (void)showCameraPreviewInView:(UIView *)previewView withRect:(CGRect)layerRect;
 
 - (void)removePreviewLayer;
 

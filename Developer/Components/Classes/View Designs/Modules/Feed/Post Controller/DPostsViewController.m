@@ -19,6 +19,7 @@
 #import "WSModelClasses.h"
 #import "DConversation.h"
 #import "WSModelClasses.h"
+#import "DescBasicinfoViewController.h"
 
 @interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate, UIActionSheetDelegate>
 {
@@ -181,12 +182,17 @@ static DPostsViewController *sharedFeedController;
 #pragma mark Event Actions -
 - (void)pushToCompositionScreen
 {
-    _compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-    [self.navigationController pushViewController:_compositionViewController animated:YES];
+//    _compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
+//    [self.navigationController pushViewController:_compositionViewController animated:YES];
+    
+    DescBasicinfoViewController *basicInfoController = [[DescBasicinfoViewController alloc] initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+    [self.navigationController pushViewController:basicInfoController animated:YES];
 }
 
 - (void)addPost:(id)sender
 {
+    [self pushToCompositionScreen];
+    return;
     NSString *compositionPath = [NSString stringWithFormat:@"%@/%@", COMPOSITION_TEMP_FOLDER_PATH, COMPOSITION_DICT];
     if([[NSFileManager defaultManager] fileExistsAtPath:compositionPath]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Would you like to continue previous composition?", @"") delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];

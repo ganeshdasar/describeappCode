@@ -24,7 +24,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-//    _screenSize = [[UIScreen mainScreen] bounds].size;
+    _screenSize = [[UIScreen mainScreen] bounds].size;
 }
 
 - (void)didReceiveMemoryWarning

@@ -216,14 +216,16 @@
         NSMutableDictionary *compositionDict = [[NSMutableDictionary alloc] initWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:data] copyItems:YES];
         compositionArray = [[NSMutableArray alloc] initWithArray:compositionDict[COMPOSITION_IMAGE_ARRAY_KEY] copyItems:YES];
         
-        NSDictionary *modelDict = compositionArray[_indexNumber-1];
-        if(modelDict) {
-            [compositionArray removeObject:modelDict];
-            
-            [compositionDict setObject:compositionArray forKey:COMPOSITION_IMAGE_ARRAY_KEY];
-            BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionDict toFile:compositionPath];
-            if(!arraySuccess) {
-//                NSLog(@"arraySuccess = %d", arraySuccess);
+        if(compositionArray && compositionArray.count > _indexNumber-1) {
+            NSDictionary *modelDict = compositionArray[_indexNumber-1];
+            if(modelDict) {
+                [compositionArray removeObject:modelDict];
+                
+                [compositionDict setObject:compositionArray forKey:COMPOSITION_IMAGE_ARRAY_KEY];
+                BOOL arraySuccess = [NSKeyedArchiver archiveRootObject:compositionDict toFile:compositionPath];
+                if(!arraySuccess) {
+    //                NSLog(@"arraySuccess = %d", arraySuccess);
+                }
             }
         }
     }

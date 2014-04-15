@@ -163,7 +163,7 @@
     [[CMAVCameraHandler sharedHandler] removeVideoAudioOutput];
     [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:kCameraDeviceFront];
     [[CMAVCameraHandler sharedHandler] addvideoAudioOutputForUsingAssetLibrary];
-    [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_videoPreviewView];
+    [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_videoPreviewView withRect:_videoPreviewView.bounds];
     
 #endif
 }
