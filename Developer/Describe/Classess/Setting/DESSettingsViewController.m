@@ -152,7 +152,26 @@
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.textColor = ELEMENT_FONT_COLOR;
             cell.textLabel.text = socialAccountSectionsArray[indexPath.row];
-            cell.detailTextLabel.text = socialAccessayviewArray[indexPath.row];
+            switch (indexPath.row) {
+                case facebook_tag:{
+                    if ( [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
+                        cell.accessoryView = [self createLable:@"connected"];
+                    }else{
+                        cell.accessoryView = [self createLable:@"connect"];
+                    }
+                    break;
+                }
+                case google_plus_Tag:{
+                    if ( [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]) {
+                        cell.accessoryView = [self createLable:@"connected"];
+                    }else{
+                        cell.accessoryView = [self createLable:@"connect"];
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
             break;
         case DSettingNetwork:
         {
@@ -196,8 +215,28 @@
 }
 
 - (void)changeSwitch:(UISwitch*)sender{
+    switch (sender.tag) {
+        case wifi_setting:{
+        NSString* status =  [sender isOn] ? @"1":@"0";
+            [[NSUserDefaults standardUserDefaults]setObject:status forKey:WIFI_STATU];
+            break;
+        }
+        case cellular_netWork:{
+            NSString* status =  [sender isOn] ? @"1":@"0";
+            [[NSUserDefaults standardUserDefaults]setObject:status forKey:CELLULAR_STATUS];
+
+            break;
+        }
+        default:
+            break;
+    }
     
-    
+}
+
+-(UILabel*)createLable:(NSString*)title{
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 44)];
+    lable.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.f];
+    return lable;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

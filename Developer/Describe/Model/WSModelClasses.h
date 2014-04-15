@@ -71,6 +71,8 @@ typedef enum {
 
 + (instancetype)sharedHandler;
 
+- (void)updateTheuserModelObject:(UsersModel*)inUserData;
+
 #pragma mark signIn
 - (void)getSignInWithUsername:(NSString *)username
                      password:(NSString *)password;

@@ -39,9 +39,6 @@
 
 - (void)viewDidLoad
 {
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    self.pustNotificationTbl.frame = CGRectMake(0, self.pustNotificationTbl.frame.origin.x
-                                             , 320,  screenRect.size.height-65);
     self.pustNotificationTbl.backgroundColor = [UIColor clearColor];
     [self initilizeTheArray];
     [self createHeadderView];
@@ -122,6 +119,7 @@
     }
     cell.textLabel.text = pushNotificationList[indexPath.row];
     cell.textLabel.textColor = [UIColor textPlaceholderColor];
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
     switch (indexPath.row) {
         case likes_onMyPost:
             cell.accessoryView = [self createSwitch:likes_onMyPost];
@@ -226,4 +224,10 @@
         
     }];
 }
+
+-  (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 0;
+}
+
 @end

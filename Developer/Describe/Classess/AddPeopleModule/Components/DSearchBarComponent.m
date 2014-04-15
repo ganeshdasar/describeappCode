@@ -52,6 +52,7 @@
     cancelBtnImage    = [[UIButton alloc]init];
     cancelBtnImage.frame = CGRectMake(280, 15, 15, 15);
     [cancelBtnImage setImage:[UIImage imageNamed:@"btn_cancel.png"] forState:UIControlStateNormal];
+    cancelBtnImage.hidden = YES;
     [cancelBtnImage addTarget:self action:@selector(cancelButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:cancelBtnImage];
     
@@ -69,6 +70,7 @@
     
     //NSLog(@"search bar button clicked");
     self.searchTxt.text = @"";
+    cancelBtnImage.hidden = YES;
     [self.searchTxt resignFirstResponder];
    
 
@@ -110,7 +112,6 @@
         if([textField.text length] >=2 || [string length]){
           //  searchImgView.hidden = YES;
             cancelBtnImage.hidden = NO;
-
         }
         else{
             cancelBtnImage.hidden = YES;

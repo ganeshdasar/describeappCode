@@ -62,9 +62,10 @@
     [_peopleListView setDataSource:self];
     [_peopleListView setDelegate:self];
     [_peopleListView setBackgroundColor: [UIColor clearColor]];
+    _peopleListView.backgroundView =[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"bg_std_4in.png"]];
     
     [self addSubview:_peopleListView];
-    
+
     [_peopleListView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
 }
 

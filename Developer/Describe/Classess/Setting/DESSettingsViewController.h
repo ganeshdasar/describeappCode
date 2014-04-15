@@ -15,7 +15,9 @@ typedef enum types
     DSettingNetwork=2,
     DSettingNotification = 3,
     wifi_setting = 0,
-    cellular_netWork=1
+    cellular_netWork=1,
+    facebook_tag =0,
+    google_plus_Tag =1
     
 } settingType;
 @interface DESSettingsViewController : UIViewController

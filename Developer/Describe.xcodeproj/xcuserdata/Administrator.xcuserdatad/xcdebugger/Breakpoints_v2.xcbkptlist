@@ -20,28 +20,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Describe/Classess/basicInfo/ImageCropping/ReusableController/DBAspectFillViewController.m"
-            timestampString = "419264907.53698"
+            timestampString = "419265937.889636"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "-getImageCroppedAtVisibleRect:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Describe/Classess/basicInfo/ImageCropping/ReusableController/DBAspectFillViewController.m"
-            timestampString = "419264907.53698"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "75"
-            endingLineNumber = "75"
-            landmarkName = "-placeSelectedImage:withCropRect:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

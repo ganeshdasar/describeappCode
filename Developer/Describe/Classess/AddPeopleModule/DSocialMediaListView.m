@@ -110,7 +110,8 @@
 -(void)mediaItemSelected:(UIButton *)sender
 {
     sender.selected = YES;
-    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(mediaItemSelected:)])
+    [self.delegate socailMediaDidSelectedItemAtIndex:[sender tag]];return ;
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(socailMediaDidSelectedItemAtIndex:)])
     {
         [self.delegate socailMediaDidSelectedItemAtIndex:[sender tag]];
     }

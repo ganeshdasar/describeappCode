@@ -108,7 +108,6 @@
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
     [nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
-    
     [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
     
 }
@@ -143,6 +142,7 @@
     if (!iskeyAvilable) {
         invitationsBtn.userInteractionEnabled = NO;
     }
+    _searchBarComponent.tag = 2;
     [_segmentComponent designSegmentControllerWithButtons:@[weRecommendBtn,invitationsBtn]];
 }
 //Social Component
@@ -166,11 +166,11 @@
     [_peoplelistView setBackgroundColor:[UIColor clearColor]];
     switch (index)
     {
-        case 1:
+        case 0:
             [self requestToFaceboookForFriendsList:nil];
             
             break;
-        case 2:
+        case 1:
             [self requestToGooglePlusForFriendsList:nil];
             break;
             
@@ -348,15 +348,47 @@
 }
 #pragma serchThe People
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar;{
-    for (UIView*view in self.view.subviews) {
-        if (view.tag==1) [view removeFromSuperview];
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    modelClass.delegate = self;
+    if (isSearching) {
+        isSearching = NO;
+        [_headerView removeSubviewFromHedderView];
+        //back button
+        backButton = [[UIButton alloc] init];
+        [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
+        [backButton addTarget:self action:@selector(removeTheSearchViewFromSuperview:) forControlEvents:UIControlEventTouchUpInside];
+        [_headerView designHeaderViewWithTitle:@"Search" andWithButtons:@[backButton]];
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 105, 320, screenRect.size.height-108) andPeopleList:nil];
+        [self.view addSubview:_peoplelistView];
+    }else{
+        if ([searchBar.searchTxt.text length]!=0) {
+            [modelClass getSearchDetailsUserID:@"1" searchType:nil  searchWord:searchBar.searchTxt.text];
+            
         }
-    DesSearchPeopleViewContrlooerViewController*search = [[DesSearchPeopleViewContrlooerViewController alloc]initWithNibName:@"DesSearchPeopleViewContrlooerViewController" bundle:nil];
-    searchViewCntrl = search;
-    [self.navigationController pushViewController:search animated:YES];
-    
+    }
 }
 
+- (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error{
+    NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
+    self.searchListArray = [[NSMutableArray alloc]init];
+    for (NSMutableDictionary* dataDic in peopleArray) {
+        SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
+        searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
+        searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
+        searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
+        searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
+        searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
+        searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
+        searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
+        searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
+        searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
+        [self.searchListArray addObject:searchData];
+    }
+    backButton.userInteractionEnabled = YES;
+    [_peoplelistView reloadTableView:self.searchListArray];
+    
+}
 
 -(void)removeTheSearchViewFromSuperview:(id)inSender{
     [_headerView removeSubviewFromHedderView];

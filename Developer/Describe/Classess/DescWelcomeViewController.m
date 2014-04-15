@@ -19,6 +19,7 @@
 #import "DESocialConnectios.h"
 #import "UsersModel.h"
 #import "NSString+DateConverter.h"
+#import "DPostsViewController.h"
 
 #import "ProfileViewController.h"
 
@@ -28,6 +29,8 @@
 @interface DescWelcomeViewController ()<MBProgressHUDDelegate,WSModelClassDelegate,UIAlertViewDelegate,DESocialConnectiosDelegate> {
     GPPSignIn *signIn;
     MBProgressHUD * HUD;
+    
+    DPostsViewController *_postViewController;
 }
 @end
 
@@ -40,6 +43,18 @@
     return UIStatusBarStyleLightContent;
 }
 
+-(BOOL)checkTheSessionId
+{
+    NSMutableDictionary *dic = (NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USERSAVING_DATA_KEY];
+    NSDictionary*dataDic = [dic valueForKeyPath:@"ResponseData.DataTable.UserData"][0];
+    if (dataDic[USER_MODAL_KEY_UID]) {
+        UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:dataDic];
+        [WSModelClasses sharedHandler].loggedInUserModel = [[UsersModel alloc]init];
+        [[WSModelClasses sharedHandler]updateTheuserModelObject:userModelObj];
+        return YES;
+    }
+    return NO;
+}
 
 #pragma mark Life Cycles -
 -  (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -47,6 +62,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
     }
     return self;
 }
@@ -78,6 +94,7 @@
 }
 
 
+
 -  (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -89,8 +106,6 @@
 {
     [super viewDidAppear:animated];
     [HUD hide:YES];
-    
-    
     return;
     
     ProfileViewController *profile = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
@@ -104,6 +119,14 @@
     self.navigationController.navigationBar.barTintColor = [UIColor headerColor];
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_topbar.png"] forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationController.navigationBar.translucent = NO;
+
+    if([self checkTheSessionId])
+    {
+        _postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+        
+        [self.navigationController pushViewController:_postViewController animated:YES];
+    }
+
 }
 
 

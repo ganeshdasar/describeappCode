@@ -12,9 +12,9 @@
 #import "Constant.h"
 #import "WSModelClasses.h"
 #import "NSString+DateConverter.h"
-
+#import "DESAppDelegate.h"
 #import "DESecurityViewCnt.h"
-
+#import "DescWelcomeViewController.h"
 
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
@@ -273,15 +273,33 @@
                 [self inputAccessaryViewandTag:DdateTag];
             }
         }
-            case DUserSignOut:
-            
+        case DUserSignOut:{
+            [self removeTheKeysInUserDefaults];
+            [self addTheWelcomesViewControllerToWindow];
             break;
+        }
         default:
             break;
     }
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
+-(void)addTheWelcomesViewControllerToWindow
+{
+    
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    
+//    DESAppDelegate *_appDelegate = (DESAppDelegate*)[UIApplication sharedApplication].delegate;
+//    DescWelcomeViewController *welcomScreen = [[DescWelcomeViewController alloc]initWithNibName:@"DescWelcomeViewController.h" bundle:nil];
+//    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:welcomScreen];
+//    _appDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+//    for (UIView*view in _appDelegate.window.subviews ) {
+//        [view removeFromSuperview];
+//    }
+//    [_appDelegate.window setRootViewController:nav];
+//    _appDelegate.window.backgroundColor = [UIColor whiteColor];
+    
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -652,5 +670,14 @@
         return NO; // or true, whetever you's like
     }
     return YES;
+}
+
+-(void)removeTheKeysInUserDefaults
+{
+   [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKEXPIRATIONDATE];
+    [[NSUserDefaults standardUserDefaults]synchronize ];
+
 }
 @end
