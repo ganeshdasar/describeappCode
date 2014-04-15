@@ -14,7 +14,18 @@ typedef enum {
     kProfileTypeOwn
 } ProfileType;
 
+@class ProfileViewController;
+@protocol ProfileViewDelegate <NSObject>
+
+@optional
+-(void)showPreviousScreen:(ProfileViewController *)profileViewController;
+-(void)showNextScreen:(ProfileViewController *)profileViewController;
+@end
+
 @interface ProfileViewController : UIViewController <UITextViewDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate>
+
+
+@property(nonatomic, strong)id<ProfileViewDelegate> delegate;
 
 @property (nonatomic, assign) ProfileType currentProfileType;
 

@@ -34,4 +34,5 @@
 -(void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction;
 -(void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+-(void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger )index;
 @end

@@ -10,6 +10,8 @@
 #import "DUserData.h"
 #import "WSModelClasses.h"
 @interface DUserComponent : UIView<WSModelClassDelegate>
+
+
 @property (nonatomic,retain) DUserData *_userData;
 @property (nonatomic,retain) SearchPeopleData* data;
 @property (nonatomic,retain) UIButton * _followUnfollowBtn;

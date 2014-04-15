@@ -79,7 +79,7 @@
     _postListView.tableHeaderView = headerView;
     
     
-    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+//    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
     [_postListView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
 }
 
@@ -94,6 +94,19 @@
     [self addSubview:_postListView];
     
     _currentOffset = _postListView.contentOffset;
+}
+
+-(void)reloadData:(NSArray *)details
+{
+    _postList = [[NSMutableArray alloc] initWithArray:details];
+    [_postListView reloadData];
+}
+
+-(void)addHeaderViewForTable:(UIView *)headerView
+{
+    [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 50)];
+    [_postListView setTableHeaderView:headerView];
+    [_postListView reloadData];
 }
 
 
@@ -171,6 +184,8 @@
     return height;
 }
 
+
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -216,7 +231,7 @@
 
 -(void)scrollViewScrollingDirection:(NSString *)direction
 {
-    return;
+    //return;
     
     if(_delegate != nil && [_delegate respondsToSelector:@selector(scrollView:scrollingDirection:)])
     {
@@ -227,7 +242,7 @@
 
 -(void)scrollViewDidEndDeceleratingOfPostList:(UIScrollView *)scrollView
 {
-    return;
+    //return;
     if(_delegate != nil && [_delegate respondsToSelector:@selector(scrollViewDidEndDecelerating:)])
     {
         [_delegate performSelector:@selector(scrollViewDidEndDecelerating:) withObject:_postListView ];
@@ -238,7 +253,7 @@
 
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    return;
+    //return;
     
     [self scrollViewDidEndDeceleratingOfPostList:scrollView];
     
@@ -292,7 +307,7 @@
 
 -(void)scrollviewDidHoldingFinger:(NSString *)holding
 {
-    return;
+    //return;
     
     if(_delegate != nil && [_delegate respondsToSelector:@selector(scrollView:didHoldingFinger:)])
     {
@@ -302,14 +317,14 @@
 
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    return;
+   // return;
     // NSLog(@"scroll view did begin dragging");
     [self scrollviewDidHoldingFinger:@"HOLDING"];
 }
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
-    return;
+    //return;
     
     [self scrollviewDidHoldingFinger:@"UNHOLDING"];
     // NSLog(@"will end dragging");
@@ -404,6 +419,21 @@
     
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  // Only override drawRect: if you perform custom drawing.
  // An empty implementation adversely affects performance during animation.
@@ -416,7 +446,7 @@
 -(void)dealloc
 {
 //    [_postListView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-    //[_postListView removeObserver:self forKeyPath:@"contentOffset"];
+    [_postListView removeObserver:self forKeyPath:@"contentOffset"];
 
 }
 

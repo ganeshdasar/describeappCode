@@ -53,6 +53,9 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+
+    
     [self setNeedsStatusBarAppearanceUpdate];
     if (isiPhone5)
     {
@@ -67,10 +70,9 @@
     [self designSettingView];
     self.settingTableView.backgroundColor = [UIColor clearColor];
     self.settingTableView.showsVerticalScrollIndicator = NO;
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    [super viewDidLoad];
-    self.settingTableView.frame = CGRectMake(0, self.settingTableView.frame.origin.x
-                                             , 320,  screenRect.size.height-65);
+    
+//    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    //self.settingTableView.frame = CGRectMake(0, self.settingTableView.frame.origin.x                                             , 320,  screenRect.size.height-65);
 }
 
 

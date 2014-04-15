@@ -10,4 +10,6 @@
 
 @interface DProfileDetailsViewController : UIViewController
 
+
+@property(nonatomic, strong)NSString *profileId;//here profile id means user id...
 @end

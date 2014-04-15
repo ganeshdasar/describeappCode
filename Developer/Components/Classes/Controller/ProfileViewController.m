@@ -83,7 +83,42 @@ typedef enum {
     
     [_canvasImageViewController placeSelectedImage:[UIImage imageNamed:@"profileSampleImage.png"] withCropRect:CGRectNull];
     [self profileModeChangedTo:kProfileModeNormal];
+    
+    
+    
+    
+    
+    [self addSwipeViewController];
+
 }
+
+-(void)addSwipeViewController
+{
+    UISwipeGestureRecognizer *rightSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(rightSwipeGesture:)];
+    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+    [self.view addGestureRecognizer:rightSwipeGesture];
+    
+
+    UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
+    [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+    [self.view addGestureRecognizer:leftSwipeGesture];
+    
+}
+
+-(void)rightSwipeGesture:(UISwipeGestureRecognizer *)gesture
+{
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(showNextScreen:)])
+    {
+        [_delegate showNextScreen:self];
+    }
+}
+
+-(void)leftSwipeGesture:(UISwipeGestureRecognizer *)gesture
+{
+    [self menuOptionSelected:nil];
+}
+
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -329,7 +364,10 @@ typedef enum {
 
 - (IBAction)menuOptionSelected:(id)sender
 {
-    
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(showPreviousScreen:)])
+    {
+        [_delegate showPreviousScreen:self];
+    }
 }
 
 - (IBAction)editOptionSelected:(id)sender

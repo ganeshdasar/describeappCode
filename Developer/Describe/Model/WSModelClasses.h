@@ -182,4 +182,7 @@ typedef enum {
 
 -(void)updateTheUserInformationDataUSerID:(NSString*)userId userName:(NSString*)userName userCity:(NSString*)city userDob:(NSString*)dob userGender:(NSString*)gender userBioData:(NSString*)bioData responce:(void(^)(BOOL success, id response))response;
 
+
+- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response;
+
 @end

@@ -652,7 +652,7 @@ static WSModelClasses *_sharedInstance;
     //    anotherUserId = @"4";
     //http://mirusstudent.com/service/describe-servicegetUserFeeds/format=json/UserUID=45/OtherUserUID=45
     //http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=45/OtherUserUID=45
-    NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/OtherUserUID=%@", BaseURLString, userId, anotherUserId];
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/ProfileUserUID=%@/range=0", BaseURLString, userId, anotherUserId];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil
@@ -662,10 +662,34 @@ static WSModelClasses *_sharedInstance;
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
              NSLog(@"Feed Details Failed: %@", responseObject);
-             [self getPostDetailsResponse:responseObject withError:nil];
+             [self getPostDetailsResponse:nil withError:responseObject];
          }
      ];
 }
+
+- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response
+{
+    //    userId = @"1";
+    //    anotherUserId = @"4";
+    //http://mirusstudent.com/service/describe-servicegetUserFeeds/format=json/UserUID=45/OtherUserUID=45
+    //http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=45/OtherUserUID=45
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/ProfileUserUID=%@/range=0", BaseURLString, userId, anotherUserId];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSLog(@"Feed Details: %@",responseObject);
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             NSLog(@"Feed Details Failed: %@", responseObject);
+                          response(NO, responseObject);
+         }
+     ];
+}
+
+
+
 
 -(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
 {

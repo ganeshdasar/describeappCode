@@ -1,3 +1,4 @@
+    
 //
 //  DPostsViewController.m
 //  Describe
@@ -37,6 +38,8 @@
     UIActionSheet *_moreActionSheet;
     DPost           *_currentPost;
     BOOL            _isSelfPost;
+    
+    DProfileDetailsViewController *_profileDetailsController;
 }
 @end
 
@@ -98,11 +101,8 @@ static DPostsViewController *sharedFeedController;
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    
-    return;
-    
-    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
-    [self.navigationController pushViewController:conversationController animated:YES];
+//    DProfileDetailsViewController *cont = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+//    [self.navigationController pushViewController:cont animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -212,6 +212,11 @@ static DPostsViewController *sharedFeedController;
     DPostHeaderView *profileDetailsView = (DPostHeaderView *)object;
     DUser *user = [profileDetailsView user];
     NSLog(@"user profile id:%@", user.userId);
+
+    
+    _profileDetailsController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+    //_profileDetailsController.
+    [self.navigationController pushViewController:_profileDetailsController animated:YES];
 }
 
 #pragma mark View Operations -
@@ -243,7 +248,9 @@ static DPostsViewController *sharedFeedController;
 
 - (void)reloadPostList:(id)sender
 {
-    
+    WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
+    [sharedInstance setDelegate:self];
+    [sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
 }
 
 - (void)morePost:(id)sender
@@ -523,15 +530,17 @@ static DPostsViewController *sharedFeedController;
         }
     }
     
-    NSMutableArray *temp = [[NSMutableArray alloc] init];
-    [temp addObjectsFromArray:postModelList];
-    
-    
-    
-    _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
-    [self.view addSubview:_listView];
-    
-    [self addNewObserverForDelegateProfileDetails];
+    if(_listView == nil)
+    {
+        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
+        [self.view addSubview:_listView];
+        [self addNewObserverForDelegateProfileDetails];
+
+    }
+    else
+    {
+        [_listView reloadData:postModelList];
+    }
     
 }
 

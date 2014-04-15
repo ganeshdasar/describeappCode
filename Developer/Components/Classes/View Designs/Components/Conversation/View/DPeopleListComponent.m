@@ -99,7 +99,7 @@
     if (userDataView == nil)
     {
         SearchPeopleData * data = self._peopleList[indexPath.row];
-         userDataView = [[DUserComponent alloc]initWithFrame:CGRectMake(0, 0, 320, 56) AndUserData:data];
+         userDataView = [[DUserComponent alloc] initWithFrame:CGRectMake(0, 0, 320, 56) AndUserData:data];
         userDataView.tag =111;
         [cell.contentView addSubview:userDataView];
         [userDataView setBackgroundColor:[UIColor clearColor]];
@@ -117,6 +117,14 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    
+    
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(peopleListView:didSelectedItemIndex:)])
+    {
+        [_delegate peopleListView:self didSelectedItemIndex:indexPath.row];
+    }
+    
+    
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 56;
@@ -130,13 +138,13 @@
     CGFloat diff = newOffset - oldOffset;
     if (diff < 0 ) { //scrolling down...
         // do something
-        NSLog(@"Scrolling Down");
+        //NSLog(@"Scrolling Down");
         [self scrollViewScrollingDirection:@"DOWN"];
         
     }
     else//Scrolling Up...
     {
-        NSLog(@"Scrolling up");
+        //NSLog(@"Scrolling up");
         [self scrollViewScrollingDirection:@"UP"];
     }
 }

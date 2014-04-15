@@ -714,9 +714,9 @@
 		07E5E46518C1D090000E489B /* NotificationsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationsViewController.h; sourceTree = "<group>"; };
 		07E5E46618C1D090000E489B /* NotificationsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationsViewController.m; sourceTree = "<group>"; };
 		07E5E46718C1D090000E489B /* NotificationsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationsViewController.xib; sourceTree = "<group>"; };
-		07E5E46818C1D090000E489B /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
-		07E5E46918C1D090000E489B /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
-		07E5E46A18C1D090000E489B /* ProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileViewController.xib; sourceTree = "<group>"; };
+		07E5E46818C1D090000E489B /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileViewController.h; path = ../../../Controller/ProfileViewController.h; sourceTree = "<group>"; };
+		07E5E46918C1D090000E489B /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProfileViewController.m; path = ../../../Controller/ProfileViewController.m; sourceTree = "<group>"; };
+		07E5E46A18C1D090000E489B /* ProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProfileViewController.xib; path = ../../../Controller/ProfileViewController.xib; sourceTree = "<group>"; };
 		07E5E47018C1D090000E489B /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
 		07E5E47118C1D090000E489B /* Database.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Database.m; sourceTree = "<group>"; };
 		07E5E47218C1D090000E489B /* DatabaseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseModel.h; sourceTree = "<group>"; };
@@ -1457,6 +1457,9 @@
 		07354D6818B9F5CD008B98F3 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				07E5E46818C1D090000E489B /* ProfileViewController.h */,
+				07E5E46918C1D090000E489B /* ProfileViewController.m */,
+				07E5E46A18C1D090000E489B /* ProfileViewController.xib */,
 				07354D6918B9F5CD008B98F3 /* DProfileDetailsViewController.h */,
 				07354D6A18B9F5CD008B98F3 /* DProfileDetailsViewController.m */,
 				07354D6B18B9F5CD008B98F3 /* DProfileDetailsViewController.xib */,
@@ -1594,9 +1597,6 @@
 				07E5E46518C1D090000E489B /* NotificationsViewController.h */,
 				07E5E46618C1D090000E489B /* NotificationsViewController.m */,
 				07E5E46718C1D090000E489B /* NotificationsViewController.xib */,
-				07E5E46818C1D090000E489B /* ProfileViewController.h */,
-				07E5E46918C1D090000E489B /* ProfileViewController.m */,
-				07E5E46A18C1D090000E489B /* ProfileViewController.xib */,
 				07E5E46B18C1D090000E489B /* ReusableController */,
 			);
 			path = Controller;
