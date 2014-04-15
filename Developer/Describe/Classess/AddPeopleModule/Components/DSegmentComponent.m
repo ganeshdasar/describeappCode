@@ -7,7 +7,7 @@
 //
 
 #import "DSegmentComponent.h"
-#define WIDTH       150
+#define WIDTH       160
 #define HEIGHT      30
 #define FREESPACE   0
 

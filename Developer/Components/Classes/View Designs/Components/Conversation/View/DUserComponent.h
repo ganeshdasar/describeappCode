@@ -8,10 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "DUserData.h"
-@interface DUserComponent : UIView
+#import "WSModelClasses.h"
+@interface DUserComponent : UIView<WSModelClassDelegate>
 @property (nonatomic,retain) DUserData *_userData;
 @property (nonatomic,retain) SearchPeopleData* data;
+@property (nonatomic,retain) UIButton * _followUnfollowBtn;
 @property (nonatomic,strong) UIImageView * thumbnailImg;
 -(id)initWithFrame:(CGRect)frame AndUserData:(SearchPeopleData*)inUserData;
 -(void)createUserComponent;
+-(void)updateContent:(SearchPeopleData *)userData;
+
 @end

@@ -93,6 +93,11 @@ static DPostsViewController *sharedFeedController;
 
 -(void)viewDidAppear:(BOOL)animated
 {
+    
+    return;
+    
+    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+    [self.navigationController pushViewController:conversationController animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -221,8 +226,11 @@ static DPostsViewController *sharedFeedController;
     //[self getTheConverSationData];
     return;
     //NSLog(@"Right Swipe Gesture Activated");
-    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
-    [self.navigationController pushViewController:conversationController animated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+        [self.navigationController pushViewController:conversationController animated:YES];
+    });
+
 }
 
 -(void)leftSwipeGesture:(UISwipeGestureRecognizer *)leftSwipeGesture
@@ -284,7 +292,7 @@ static DPostsViewController *sharedFeedController;
 -(void)getThePostConversationDetailsFromServer:(NSDictionary *) responceDict error:(NSError*)error
 {
     //    NSLog(@"converstion data from server %@",responceDict);
-    if(responceDict != nil)
+    if(responceDict != nil || ![responceDict isKindOfClass:[NSNull class]])
     {
         NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
         for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
@@ -486,8 +494,10 @@ static DPostsViewController *sharedFeedController;
     [temp addObjectsFromArray:postModelList];
     
     
+    
     _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
     [self.view addSubview:_listView];
+    
     [self addNewObserverForDelegateProfileDetails];
     
 }
@@ -519,6 +529,12 @@ static DPostsViewController *sharedFeedController;
 
 -(void)showConversationForThisPost:(DPost *)post
 {
+//    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
+//    conversationController.conversationListArray = nil;
+//    [self.navigationController pushViewController:conversationController animated:NO];
+//    
+    
+    //return;
     [self getConversationDetailsOfPost:post];
 }
 
@@ -530,8 +546,25 @@ static DPostsViewController *sharedFeedController;
     {
         if(buttonIndex == 0)
         {
+            
+            
             //Delete the post...
             [_listView deletePost:_currentPost];
+            
+            
+            [[WSModelClasses sharedHandler] deletePost:_currentPost.postId response:^(BOOL success, id response) {
+                if(success)
+                {
+                    //Successfully deleted the post...
+                    NSLog(@"Response:%@",response);
+                }
+                else
+                {
+                    //Failed to delete the post...
+                    NSLog(@"Error:%@",response);
+                }
+            }];
+            
         }
     }
     else if(actionSheet.tag == 222)
@@ -539,9 +572,22 @@ static DPostsViewController *sharedFeedController;
         if(buttonIndex == 0)
         {
             //Report the post...
+            [[WSModelClasses sharedHandler] reportPost:_currentPost.postId userId:@"45" response:^(BOOL success, id response) {
+                if(success)
+                {
+                    //Successfully deleted the post...
+                    NSLog(@"Response:%@",response);
+                }
+                else
+                {
+                    //Failed to delete the post...
+                    NSLog(@"Error:%@",response);
+                }
+            }];
         }
     }
  }
+
 
 
 

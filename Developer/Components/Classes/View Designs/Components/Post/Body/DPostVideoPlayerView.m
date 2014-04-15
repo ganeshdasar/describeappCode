@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <AVFoundation/AVFoundation.h>
 #import "DPost.h"
+#import "DPostBodyView.h"
 
 @interface DPostVideoPlayerView ()
 {
@@ -21,6 +22,10 @@
     CGPoint _startPoint;
     CGPoint _startPointLocationOnScreen;
     CMTime  _videoDuration;
+    
+    UIView *_conentView;
+    float _initial_x;
+    float _diff;
 }
 @end
 
@@ -49,9 +54,15 @@
         //        [swipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
         //        [self addGestureRecognizer:swipeGesture];
         
-        //        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
-        //        [panGesture setMinimumNumberOfTouches:1];
-        //        [self addGestureRecognizer:panGesture];
+        
+        _conentView = [[UIView alloc] initWithFrame:self.bounds];
+        [self addSubview:_conentView];
+        //[_conentView setBackgroundColor:[[UIColor yellowColor] colorWithAlphaComponent:0.8]];
+        
+        
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
+        [panGesture setMinimumNumberOfTouches:1];
+        [self addGestureRecognizer:panGesture];
         
         
     }
@@ -65,24 +76,28 @@
 
 -(void)videoPlayer
 {
-    self.backgroundColor = [UIColor blackColor];
-    [self.layer setMasksToBounds:YES];
-    [self.layer setCornerRadius:10];
-    [self.layer setBorderColor:[UIColor whiteColor].CGColor];
-    [self.layer setBorderWidth:2.0];
+    _conentView.backgroundColor = [UIColor blackColor];
+    [_conentView.layer setMasksToBounds:YES];
+    [_conentView.layer setCornerRadius:10];
+    [_conentView.layer setBorderColor:[UIColor whiteColor].CGColor];
+    [_conentView.layer setBorderWidth:2.0];
     
-    //NSLog(@"File url:%@",_video.url);
+    
+    
+    NSLog(@"File url:%@",_video.url);
     if(_video.url == nil)
         return;
     
+    
+    
+    
     avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:_video.url]];//[NSURL fileURLWithPath:_video.url]
     avPlayer = [AVPlayer playerWithPlayerItem:avPlayerItem] ;
-    AVPlayerLayer *avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer] ;
+    AVPlayerLayer *avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer] ;    
+    avPlayerLayer.frame = _conentView.bounds;
+    [_conentView.layer addSublayer:avPlayerLayer];
     
-    avPlayerLayer.frame = self.bounds;
-    [self.layer addSublayer:avPlayerLayer];
-    
-    
+
     
     avPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     _isPlaying = NO;
@@ -92,6 +107,13 @@
                                              selector:@selector(playerItemDidReachEnd:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification
                                                object:[avPlayer currentItem]];
+    
+}
+
+-(void)layoutSubviews
+{
+    CGRect rect = _conentView.frame;
+    [_conentView setFrame:rect];
     
 }
 
@@ -178,35 +200,123 @@
     }
 }
 
+
 -(void)panGestureRecognizer:(UIPanGestureRecognizer *)gesture
 {
     CGPoint point = [gesture locationInView:self];
-    //NSLog(@"pan gesture:%@", NSStringFromCGPoint(point));
-    
+    CGPoint point1 = [self convertPoint:point toView:[self superview]];
     
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
             _startPoint = point;
+        {
+            //[_conentView setBackgroundColor:[UIColor redColor]];
+            CGRect frame = self.frame;
+            [_conentView setFrame:frame];
+            
+            [[self superview] addSubview:_conentView];
+            [[self superview] bringSubviewToFront:_conentView];
+            //[[self superview] setAlpha:0.2];
+        }
+            
             _startPointLocationOnScreen = [self currentLocationOnScreen:point];
             //Caliculate whole percentage...
+            _initial_x = point1.x;
+            _diff = _initial_x - self.frame.origin.x;
+            _startPointLocationOnScreen.x = _startPointLocationOnScreen.x - _diff;
             
             break;
         case UIGestureRecognizerStateChanged:
-            if([self isMovingToLeftDirection:point])
-            {
-                //Caliculate the remaing percentage...
-                int percentage = [self currentPercentage:point];
-                //NSLog(@"percentage its moving:%d",percentage);
-                [self seekVideoFileToPercentage:percentage];
-            }
+        {
+            CGRect frame = _conentView.frame;
+            frame.origin.x =  point1.x-_diff;
+            
+            if(frame.origin.x < 0)
+                return;
+            [_conentView setFrame:frame];
+            
+            //Caliculate the remaing percentage...
+            NSInteger percentage = [self currentPercentage:point];
+            Float64 timeValue = [self videoCurrentTime];
+            NSLog(@"Current Time:%f currect Percentage:%d index:%d",timeValue,percentage, 1);
+            
+            //percentage = timeValue*percentage/100;
+            //NSLog(@"222percentage its moving:%d",percentage);
+            
+            [self seekVideoFileToPercentage:percentage];
+            [(DPostBodyView *)[self superview] seekContentToPercentage:[NSNumber numberWithInteger:percentage]];
+        }
+            
             break;
         case UIGestureRecognizerStateEnded:
-            
+            _initial_x = 0;
+        {
+            [UIView animateWithDuration:0.25 animations:^{ [_conentView setFrame:self.frame];} completion:^(BOOL finished)
+             {
+                 [UIView animateWithDuration:0.25 animations:^{
+                     CGRect videoFrame = _conentView.frame;
+                     videoFrame.origin.x = videoFrame.origin.x - 10;;
+                     [_conentView setFrame:videoFrame];
+                     
+                 } completion:^(BOOL finished)
+                  {
+                      [UIView animateWithDuration:0.25 animations:^{
+                          [_conentView setFrame:self.frame];
+                          
+                      } completion:^(BOOL finished)
+                       {
+                           if(finished)
+                           {
+                               CGRect videoFrame = _conentView.frame;
+                               videoFrame.origin.x = 0;
+                               videoFrame.origin.y = 0;
+                               [_conentView setFrame:videoFrame];
+                               
+                               
+                               [self addSubview:_conentView];
+                           }
+                           
+                       }];
+                      
+                      
+                  }];
+                 
+             }];
+        }
             break;
         default:
             break;
     }
 }
+
+
+//-(void)seekContentToPercentage:(NSNumber *)percentage
+//{
+//    NSInteger currentTime = (_currentPlayedTime*[percentage integerValue])/100;
+//    NSLog(@"Current Time:%d",currentTime);
+//
+//    NSInteger index = [self indexForTime:currentTime];
+//    NSLog(@"Current Index:%d index:%d", _index, index);
+//
+//    // NSLog(@"Percentage:%d Duration:%d CurrentTime:%d actual:%d Index:%d dur:%d",[percentage integerValue],_durationOfImages, currentTime, actualTime, index, [_postImage.durationList[index] integerValue]);
+//    if(index)
+//    {
+//        if(_currentVisibleImageIndex != index)
+//        {
+//            CMPhotoModel *prevPhotoModel = _postImage.images[index-1];
+//            CMPhotoModel *nextPhotoModel = _postImage.images[index];
+//
+//            //Apply whenever the changes occur...
+//            [_frontImageView setImage:nextPhotoModel.editedImage];
+//            [_backImageView setImage:prevPhotoModel.editedImage];
+//
+//            //[self presentView:(UIView *)_frontImageView onView:(UIView *)_backImageView];
+//        }
+//
+//    }
+//
+//    _currentVisibleImageIndex = index;
+//}
 
 
 -(BOOL)isMovingToLeftDirection:(CGPoint )point
@@ -229,6 +339,9 @@
 -(NSInteger)currentPercentage:(CGPoint)point
 {
     CGPoint currentLocation = [self currentLocationOnScreen:point];
+    
+    //Will give the exact origin position of the x location...
+    currentLocation.x = currentLocation.x-_diff;
     return (currentLocation.x/_startPointLocationOnScreen.x)*100;
 }
 
@@ -267,7 +380,7 @@
 -(void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:AVPlayerItemDidPlayToEndTimeNotification];
-
+    
     [self stopPlayingVideo];
     avPlayer = nil;
     avPlayerItem = nil;

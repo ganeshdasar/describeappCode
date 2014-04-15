@@ -96,6 +96,10 @@
 		07354E0F18B9F5EC008B98F3 /* user2.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCD18B9F5EC008B98F3 /* user2.png */; };
 		07354E1018B9F5EC008B98F3 /* user3.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCE18B9F5EC008B98F3 /* user3.png */; };
 		07354E1118B9F5EC008B98F3 /* user4.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCF18B9F5EC008B98F3 /* user4.png */; };
+		079919C518F5552A00AB5139 /* DSocialMediaListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 079919C418F5552A00AB5139 /* DSocialMediaListView.m */; };
+		079CEBD618E82EA200CF4532 /* DAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 079CEBD518E82EA200CF4532 /* DAlertView.m */; };
+		07CB621818E7F4F5000F8EB3 /* NSDate+DDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CB621718E7F4F5000F8EB3 /* NSDate+DDate.m */; };
+		07CB621B18E7F64C000F8EB3 /* DDataHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CB621A18E7F64C000F8EB3 /* DDataHolder.m */; };
 		07E5E44A18C1CF63000E489B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07E5E44918C1CF63000E489B /* CoreMedia.framework */; };
 		07E5E4A618C1D090000E489B /* CMAVCameraHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E5E45218C1D090000E489B /* CMAVCameraHandler.m */; };
 		07E5E4A718C1D090000E489B /* VideoEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E5E45418C1D090000E489B /* VideoEncoder.m */; };
@@ -643,6 +647,14 @@
 		07354DCD18B9F5EC008B98F3 /* user2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user2.png; sourceTree = "<group>"; };
 		07354DCE18B9F5EC008B98F3 /* user3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user3.png; sourceTree = "<group>"; };
 		07354DCF18B9F5EC008B98F3 /* user4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user4.png; sourceTree = "<group>"; };
+		079919C318F5552A00AB5139 /* DSocialMediaListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSocialMediaListView.h; sourceTree = "<group>"; };
+		079919C418F5552A00AB5139 /* DSocialMediaListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSocialMediaListView.m; sourceTree = "<group>"; };
+		079CEBD418E82EA200CF4532 /* DAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAlertView.h; sourceTree = SOURCE_ROOT; };
+		079CEBD518E82EA200CF4532 /* DAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DAlertView.m; sourceTree = SOURCE_ROOT; };
+		07CB621618E7F4F5000F8EB3 /* NSDate+DDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+DDate.h"; path = "Classes/NSDate+DDate.h"; sourceTree = SOURCE_ROOT; };
+		07CB621718E7F4F5000F8EB3 /* NSDate+DDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+DDate.m"; path = "Classes/NSDate+DDate.m"; sourceTree = SOURCE_ROOT; };
+		07CB621918E7F64C000F8EB3 /* DDataHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDataHolder.h; path = Classes/DDataHolder.h; sourceTree = SOURCE_ROOT; };
+		07CB621A18E7F64C000F8EB3 /* DDataHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DDataHolder.m; path = Classes/DDataHolder.m; sourceTree = SOURCE_ROOT; };
 		07E5E44918C1CF63000E489B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		07E5E45118C1D090000E489B /* CMAVCameraHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMAVCameraHandler.h; sourceTree = "<group>"; };
 		07E5E45218C1D090000E489B /* CMAVCameraHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMAVCameraHandler.m; sourceTree = "<group>"; };
@@ -1110,6 +1122,12 @@
 		07354D1318B9F5CD008B98F3 /* Data Holder */ = {
 			isa = PBXGroup;
 			children = (
+				07CB621618E7F4F5000F8EB3 /* NSDate+DDate.h */,
+				07CB621718E7F4F5000F8EB3 /* NSDate+DDate.m */,
+				07CB621918E7F64C000F8EB3 /* DDataHolder.h */,
+				07CB621A18E7F64C000F8EB3 /* DDataHolder.m */,
+				079CEBD418E82EA200CF4532 /* DAlertView.h */,
+				079CEBD518E82EA200CF4532 /* DAlertView.m */,
 			);
 			path = "Data Holder";
 			sourceTree = "<group>";
@@ -1806,6 +1824,8 @@
 				2F4551F718951A050033487C /* DescAddpeopleViewController.h */,
 				2F4551F818951A050033487C /* DescAddpeopleViewController.m */,
 				2F4551F918951A050033487C /* DescAddpeopleViewController.xib */,
+				079919C318F5552A00AB5139 /* DSocialMediaListView.h */,
+				079919C418F5552A00AB5139 /* DSocialMediaListView.m */,
 				2F4551FE18951A240033487C /* Components */,
 				2FC9B7DF18A6A2A3008F2BE0 /* DesSearchPeopleViewContrlooerViewController.h */,
 				2FC9B7E018A6A2A3008F2BE0 /* DesSearchPeopleViewContrlooerViewController.m */,
@@ -2780,6 +2800,7 @@
 				2FB4BAE618910B280033BDF4 /* AFNetworkReachabilityManager.m in Sources */,
 				07E5E4B218C1D090000E489B /* NotificationsViewController.m in Sources */,
 				2FC4D6F318AA3C6B00FCABB6 /* DescSigninViewController.m in Sources */,
+				079919C518F5552A00AB5139 /* DSocialMediaListView.m in Sources */,
 				07E5E4BE18C1D090000E489B /* SPGooglePlacesAutocompleteViewController.m in Sources */,
 				2FC4D6FB18AA3CDD00FCABB6 /* DescSignupViewController.m in Sources */,
 				2FC9B7E218A6A2A3008F2BE0 /* DesSearchPeopleViewContrlooerViewController.m in Sources */,
@@ -2796,6 +2817,8 @@
 				07354D6C18B9F5CD008B98F3 /* DConversation.m in Sources */,
 				2FB4BAEC18910B280033BDF4 /* AFURLRequestSerialization.m in Sources */,
 				2FDA4DED18AA1CF000124993 /* DSocialComponent.m in Sources */,
+				07CB621B18E7F64C000F8EB3 /* DDataHolder.m in Sources */,
+				07CB621818E7F4F5000F8EB3 /* NSDate+DDate.m in Sources */,
 				07354D7118B9F5CD008B98F3 /* DUserComponent.m in Sources */,
 				07354D7518B9F5CD008B98F3 /* DPostListView.m in Sources */,
 				C3E14BED18C2EA2A008AC885 /* UIWebView+AFNetworking.m in Sources */,
@@ -2817,6 +2840,7 @@
 				07E5E4AC18C1D090000E489B /* CMRecordViewController.m in Sources */,
 				07354D7818B9F5CD008B98F3 /* DPostHeaderView.m in Sources */,
 				07E5E4C718C1D090000E489B /* CMPhotoCell.m in Sources */,
+				079CEBD618E82EA200CF4532 /* DAlertView.m in Sources */,
 				2FCCC6CA18B8E7E70023FEBC /* DBAspectFillViewController.m in Sources */,
 				C3E14BEC18C2EA2A008AC885 /* UIRefreshControl+AFNetworking.m in Sources */,
 				07E5E4C018C1D090000E489B /* SPGooglePlacesPlaceDetailQuery.m in Sources */,
@@ -2916,7 +2940,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Baig Y (6CF369LHW3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Baig Y (6CF369LHW3)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2955,7 +2980,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Baig Y (6CF369LHW3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Baig Y (6CF369LHW3)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2974,7 +3000,7 @@
 		2FF0FCC51871DB7200893917 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Baig Y (6CF369LHW3)";
@@ -2994,10 +3020,10 @@
 		2FF0FCC61871DB7200893917 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Baig Y (6CF369LHW3)";
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Describe/Describe-Prefix.pch";

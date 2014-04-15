@@ -13,7 +13,10 @@ typedef enum {
     kWebservicesType_SaveBasicInfo = 0,
     kWebservicesType_PostComposition,
     kWebserviesType_SignIn,
-    kWebserviesType_addPeople
+    kWebserviesType_addPeople_wRecommended,
+    kWebserviesType_addPeople_wInvitations,
+    KWebserviesType_followand,
+    KWebserviesType_unfollowand
 }WebservicesType;
 
 @protocol WSModelClassDelegate <NSObject>
@@ -138,4 +141,26 @@ typedef enum {
 - (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId;
 
 - (void)likePost:(NSString *)postId userId:(NSString *)userId authUserId:(NSString *)authUID status:(NSInteger)count;
+
+
+-(void)getWeRecommendedpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+-(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+
+//    //http://mirusstudent.com/service/describe-service/getBeAFollower/UserUID=8/OtherUserId=4
+
+-(void)followingTheUseruserId:(NSString*)userId
+                  otherUserId:(NSString*)friendUserId;
+
+-(void)unfollowingTheUseruserId:(NSString*)userId
+                    otherUserId:(NSString*)friendUserId;
+
+// http://mirusstudent.com/service/describe-service/getUnFollower/UserUID=8/OtherUserId=7
+
+-(void)deletePost:(NSString *)postid response:(void (^)(BOOL success, id response))response;
+-(void)reportPost:(NSString *)postid userId:(NSString *)userId response:(void (^)(BOOL success, id response))response;
+
+
+
+-(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response;
+
 @end

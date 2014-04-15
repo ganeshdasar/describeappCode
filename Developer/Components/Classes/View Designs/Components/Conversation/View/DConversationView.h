@@ -22,6 +22,7 @@
 - (id)initWithFrame:(CGRect)frame withConversation:(DConversation *)conversation;
 
 -(void)increaseContentSize;
+-(void)resignKeyboard;
 -(DConversation *)conversation;
 @end
 
@@ -29,6 +30,7 @@
 
 @protocol DConversationDelegate <NSObject>
 
+-(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation;
 -(void)conversationView:(DConversationView *)conversationView needToExpand:(NSNumber *)expand;
 -(void)conversationView:(DConversationView *)conversationView expandOthersLikeView:(NSNumber *)expand;
 -(void)conversationView:(DConversationView *)conversationView expandCommentView:(NSNumber *)height;

@@ -31,6 +31,11 @@
 
 }
 
++(UIColor *)colorWithValue:(CGFloat )value
+{
+    return [UIColor colorWithRed:value/255.0 green:value/255.0 blue:value/255.0 alpha:1.0];
+}
+
 
 
 

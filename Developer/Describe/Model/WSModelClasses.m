@@ -182,7 +182,13 @@ static WSModelClasses *_sharedInstance;
 
 - (void)postSignUpResult:(id)inResult error:(NSError*)inError
 {
-    if(_delegate && [_delegate respondsToSelector:@selector(signUpStatus:error:)]) {
+    
+    //_loggedInUserModel = inResult;
+    _loggedInUserModel = [[UsersModel alloc] init];
+    [_loggedInUserModel setValue:[inResult valueForKey:@"DataTable.UserData.UserUID"] forKey:@"userID"];
+    
+    if(_delegate && [_delegate respondsToSelector:@selector(signUpStatus:error:)])
+    {
         [_delegate signUpStatus:inResult error:nil];
     }
 }
@@ -504,23 +510,6 @@ static WSModelClasses *_sharedInstance;
     }
 }
 
--(void)getWeRecommendedpeople:(NSString*)inUSerId
-                     AndRange:(NSString*)inRange
-{
-    NSString *url = [NSString stringWithFormat:@"%@/getWeRecommendedPeaple/format=json/UserUID=%@/range=%@", BaseURLString,inUSerId,inRange];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:url
-      parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_addPeople]};
-             [_delegate didFinishWSConnectionWithResponse:signInResponseDict];
-         }
-         failure:^(AFHTTPRequestOperation *operation,  NSError *error) {
-             NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_addPeople]};
-             [_delegate didFinishWSConnectionWithResponse:responseDict];
-         }
-     ];
-}
 
 - (void)saveUserProfile:(UsersModel *)userDetail profilePic:(UIImage *)profileImg canvasPic:(UIImage *)canvasImg snippetPic:(UIImage *)snippetImg
 {
@@ -710,5 +699,145 @@ static WSModelClasses *_sharedInstance;
     }
 }
 
+
+-(void)getWeRecommendedpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+{
+    if (![self checkTheInterConnection]) return;
+    
+    if(accessToken == nil)
+    {
+        [_delegate didFinishWSConnectionWithResponse:nil];
+        return;
+    }
+    
+    
+    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":inRange};
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:[NSString stringWithFormat:@"%@/getWeRecommendedList", BaseURLString]
+       parameters:userDetails
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_addPeople_wRecommended]};
+              [_delegate didFinishWSConnectionWithResponse:responseDict];
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_addPeople_wRecommended]};
+              [_delegate didFinishWSConnectionWithResponse:responseDict];
+          }
+     ];
+}
+
+
+-(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+{
+    if (![self checkTheInterConnection]) return;
+    
+    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":inRange};
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:[NSString stringWithFormat:@"%@/getInvitationList", BaseURLString]
+       parameters:userDetails
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_addPeople_wInvitations]};
+              [_delegate didFinishWSConnectionWithResponse:responseDict];
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_addPeople_wInvitations]};
+              [_delegate didFinishWSConnectionWithResponse:responseDict];
+          }
+     ];
+}
+
+-(void)followingTheUseruserId:(NSString*)userId
+                  otherUserId:(NSString*)friendUserId
+{
+    //
+    // http://mirusstudent.com/service/describe-service/getBeAFollower/UserUID=8/OtherUserId=4
+    
+    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/UserUID=%@/OtherUserId=%@", BaseURLString,userId,friendUserId];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:KWebserviesType_followand]};
+             [_delegate didFinishWSConnectionWithResponse:signInResponseDict];
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:KWebserviesType_followand]};
+             [_delegate didFinishWSConnectionWithResponse:responseDict];
+         }
+     ];
+    
+}
+
+-(void)unfollowingTheUseruserId:(NSString*)userId
+                    otherUserId:(NSString*)friendUserId
+{
+    //  http://mirusstudent.com/service/describe-service/getUnFollower/UserUID=8/OtherUserId=7
+    NSString *url = [NSString stringWithFormat:@"%@/getUnFollower/UserUID=%@/OtherUserId=%@", BaseURLString,userId,friendUserId];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:KWebserviesType_unfollowand]};
+             [_delegate didFinishWSConnectionWithResponse:signInResponseDict];
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:KWebserviesType_unfollowand]};
+             [_delegate didFinishWSConnectionWithResponse:responseDict];
+         }
+     ];
+    
+}
+
+
+-(void)deletePost:(NSString *)postid response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/deleteThePost/format=json/PostUID=%@", BaseURLString,postid];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          response(NO, error);
+                      }
+     ];
+}
+
+-(void)reportPost:(NSString *)postid userId:(NSString *)userId response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/reportThePost/format=json/UserUID=%@/PostUID=%@", BaseURLString, userId, postid];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+                      }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           response(NO, error);
+         }
+     ];
+}
+
+//Comment the post....
+-(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/UserUID=%@/AuthUserUID=%@/PostUID=%@/comment=%@", BaseURLString, userId, authId, postid, comment];
+    
+    
+    NSLog(@"Comment url:%@",url);
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+}
 
 @end

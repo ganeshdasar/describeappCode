@@ -61,6 +61,7 @@
     [_peopleListView setShowsVerticalScrollIndicator:NO];
     [_peopleListView setDataSource:self];
     [_peopleListView setDelegate:self];
+    [_peopleListView setBackgroundColor: [UIColor clearColor]];
     
     [self addSubview:_peopleListView];
     
@@ -88,16 +89,27 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         cell.selectedBackgroundView = nil;
-        
+        [cell setBackgroundColor:[UIColor clearColor]];
+        [cell.contentView setBackgroundColor:[UIColor clearColor]];
         
     }
-    if (!cell.tag==1) {
+    
+    DUserComponent * userDataView = (DUserComponent *)[cell.contentView viewWithTag:111];
+    
+    if (userDataView == nil)
+    {
         SearchPeopleData * data = self._peopleList[indexPath.row];
-        DUserComponent * userDataView = [[DUserComponent alloc]initWithFrame:CGRectMake(0, 0, 320, 56) AndUserData:data];
-        cell.tag =1;
+         userDataView = [[DUserComponent alloc]initWithFrame:CGRectMake(0, 0, 320, 56) AndUserData:data];
+        userDataView.tag =111;
         [cell.contentView addSubview:userDataView];
+        [userDataView setBackgroundColor:[UIColor clearColor]];
+    }
+    else
+    {
+        
     }
 
+    [userDataView updateContent:self._peopleList[indexPath.row]];
     
     //40Px 16*2
     return cell;

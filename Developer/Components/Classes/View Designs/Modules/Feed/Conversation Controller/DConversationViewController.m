@@ -40,7 +40,12 @@
     
     [self designHeaderView];
     [self designConversationView];
+  
 }
+
+
+
+
 
 -(void)leftSwipeGesture:(UISwipeGestureRecognizer *)rightSwipeGesture
 {
@@ -73,7 +78,7 @@
     [moreButton setBackgroundImage:[UIImage imageNamed:@"more1.png"] forState:UIControlStateNormal];
     //[moreButton addTarget:self action:@selector(morePost:) forControlEvents:UIControlEventTouchUpInside];
     
-    [_headerView designHeaderViewWithTitle:@"Conversation" andWithButtons:@[moreButton,  addButton]];    
+    [_headerView designHeaderViewWithTitle:@"Conversation" andWithButtons:@[moreButton,  addButton]];
 }
 
 -(void)designConversationView
