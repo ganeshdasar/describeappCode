@@ -527,6 +527,7 @@
 		BEA293F718794D2A009C8963 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F118794D2A009C8963 /* MediaPlayer.framework */; };
 		BEA293F818794D2A009C8963 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F218794D2A009C8963 /* MobileCoreServices.framework */; };
 		BEA293F918794D2A009C8963 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA293F318794D2A009C8963 /* QuartzCore.framework */; };
+		C3AD9E7818E8012B0015D65C /* UIImage+FixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */; };
 		C3BAB1F918DE9375001CF903 /* btn_txt_black_done@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E50418C1D977000E489B /* btn_txt_black_done@2x.png */; };
 		C3BAB1FC18DEA119001CF903 /* NSString+DateConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */; };
 		C3E14BE618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E14BD618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m */; };
@@ -1062,6 +1063,8 @@
 		BEA293F118794D2A009C8963 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		BEA293F218794D2A009C8963 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BEA293F318794D2A009C8963 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		C3AD9E7618E8012B0015D65C /* UIImage+FixOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FixOrientation.h"; sourceTree = "<group>"; };
+		C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FixOrientation.m"; sourceTree = "<group>"; };
 		C3BAB1FA18DEA119001CF903 /* NSString+DateConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DateConverter.h"; sourceTree = "<group>"; };
 		C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+DateConverter.m"; sourceTree = "<group>"; };
 		C3E14BD518C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkActivityIndicatorManager.h; sourceTree = "<group>"; };
@@ -1566,6 +1569,8 @@
 				07E5E45218C1D090000E489B /* CMAVCameraHandler.m */,
 				07E5E45318C1D090000E489B /* VideoEncoder.h */,
 				07E5E45418C1D090000E489B /* VideoEncoder.m */,
+				C3AD9E7618E8012B0015D65C /* UIImage+FixOrientation.h */,
+				C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */,
 			);
 			path = AVCapturing;
 			sourceTree = "<group>";
@@ -2916,6 +2921,7 @@
 				07E5E4B918C1D090000E489B /* DatabaseModel.m in Sources */,
 				07E5E4BD18C1D090000E489B /* SPGooglePlacesAutocompleteUtilities.m in Sources */,
 				2FA3668018B0B4150065C01E /* DESPushNotificationControl.m in Sources */,
+				C3AD9E7818E8012B0015D65C /* UIImage+FixOrientation.m in Sources */,
 				18B5A8AD188DB68C00CD26FF /* UIColor+DesColors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

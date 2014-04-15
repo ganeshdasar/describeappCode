@@ -9,6 +9,7 @@
 #import "CMAVCameraHandler.h"
 #import "VideoEncoder.h"
 #import "AssetsLibrary/ALAssetsLibrary.h"
+#import "UIImage+FixOrientation.h"
 
 @interface CMAVCameraHandler () <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
@@ -293,12 +294,11 @@ static CMAVCameraHandler *_sharedInstance = nil;
 
 #pragma mark - Adding/removing preview layer to/from custom view for showing current capture session video on screen.
 
-- (void)showCameraPreviewInView:(UIView *)previewView
+- (void)showCameraPreviewInView:(UIView *)previewView withRect:(CGRect)layerRect
 {
     [self removePreviewLayer];
     
     CALayer *viewLayer = previewView.layer;
-    CGRect layerRect = [previewView bounds];
     
     _captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
     _captureVideoPreviewLayer.frame = layerRect;
@@ -328,7 +328,8 @@ static CMAVCameraHandler *_sharedInstance = nil;
     _stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
 //    NSLog(@"availableImageDataCodecTypes = %@", [_stillImageOutput availableImageDataCodecTypes]);
 //    NSLog(@"availableImageDataCVPixelFormatTypes = %@", [_stillImageOutput availableImageDataCVPixelFormatTypes]);
-    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG, AVVideoCodecKey, [NSNumber numberWithInt:320], AVVideoWidthKey, [NSNumber numberWithInt:320], AVVideoHeightKey, nil];
+    CGRect bounds = [[UIScreen mainScreen] bounds];
+    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG, AVVideoCodecKey, [NSNumber numberWithInt:(int)bounds.size.width], AVVideoWidthKey, [NSNumber numberWithInt:(int)bounds.size.height], AVVideoHeightKey, nil];
     [_stillImageOutput setOutputSettings:outputSettings];
     
     [_captureSession addOutput:_stillImageOutput];
@@ -351,23 +352,24 @@ static CMAVCameraHandler *_sharedInstance = nil;
     
 //	NSLog(@"about to request a capture from: %@", _stillImageOutput);
 	[_stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection
-                                                         completionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
-                                                             CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
-                                                             if (exifAttachments) {
-//                                                                 NSLog(@"attachements: %@", exifAttachments);
-                                                             } else {
-//                                                                 NSLog(@"no attachments");
-                                                             }
-                                                             NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-                                                             UIImage *image = [[UIImage alloc] initWithData:imageData];
-                                                             dispatch_async(dispatch_get_main_queue(), ^{
-                                                                 if(_delegate && [_delegate respondsToSelector:@selector(didFinishCapturingStillImage:error:withContextInfo:)]) {
-                                                                     [_delegate didFinishCapturingStillImage:[image copy] error:error withContextInfo:nil];
-                                                                 }
-                                                             });
+                                                   completionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
+                                                       CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
+                                                       if (exifAttachments) {
+    //                                                                 NSLog(@"attachements: %@", exifAttachments);
+                                                       } else {
+    //                                                                 NSLog(@"no attachments");
+                                                       }
+                                                       NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+                                                       UIImage *image = [[UIImage alloc] initWithData:imageData];
+                                                       
+                                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                                           if(_delegate && [_delegate respondsToSelector:@selector(didFinishCapturingStillImage:error:withContextInfo:)]) {
+                                                               [_delegate didFinishCapturingStillImage:image.fixOrientation error:error withContextInfo:nil];
+                                                           }
+                                                       });
 //                                                             UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 //                                                             [[NSNotificationCenter defaultCenter] postNotificationName:kImageCapturedSuccessfully object:nil];
-                                                         }];
+                                                       }];
 }
 
 // method to identify when saving stillImage to photo library was successfull
@@ -375,8 +377,95 @@ static CMAVCameraHandler *_sharedInstance = nil;
 {
     NSLog(@"%@", [error description]);
     if(_delegate && [_delegate respondsToSelector:@selector(didFinishCapturingStillImage:error:withContextInfo:)]) {
-        [_delegate didFinishCapturingStillImage:image error:error withContextInfo:contextInfo];
+        [_delegate didFinishCapturingStillImage:[self getCroppedImageFromImage:image ofRect:CGRectMake(0, 84.0, 320.0, 320.0)] error:error withContextInfo:contextInfo];
     }
+}
+
+- (UIImage *)getCroppedImageFromImage:(UIImage *)image ofRect:(CGRect)visibleCropRect
+{
+    UIImage *croppedImage = nil;
+    if(image) {
+        CGImageRef imgRef = CGImageCreateWithImageInRect(image.CGImage, visibleCropRect);
+        croppedImage = [UIImage imageWithCGImage:imgRef];
+    }
+
+    return croppedImage;
+}
+
+- (UIImage *)fixrotation:(UIImage *)image
+{
+    if (image.imageOrientation == UIImageOrientationUp) return image;
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    
+    switch (image.imageOrientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+            
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+            
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationUpMirrored:
+            break;
+    }
+    
+    switch (image.imageOrientation) {
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+            
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationDown:
+        case UIImageOrientationLeft:
+        case UIImageOrientationRight:
+            break;
+    }
+    
+    // Now we draw the underlying CGImage into a new context, applying the transform
+    // calculated above.
+    CGContextRef ctx = CGBitmapContextCreate(NULL, image.size.width, image.size.height,
+                                             CGImageGetBitsPerComponent(image.CGImage), 0,
+                                             CGImageGetColorSpace(image.CGImage),
+                                             CGImageGetBitmapInfo(image.CGImage));
+    CGContextConcatCTM(ctx, transform);
+    switch (image.imageOrientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.height,image.size.width), image.CGImage);
+            break;
+            
+        default:
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.width,image.size.height), image.CGImage);
+            break;
+    }
+    
+    // And now we just create a new UIImage from the drawing context
+    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
+    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    CGContextRelease(ctx);
+    CGImageRelease(cgimg);
+    return img;
 }
 
 #pragma mark - Record handling methods like Start/Stop/Pause/Resume

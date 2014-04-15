@@ -24,8 +24,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-//    _screenSize = [[UIScreen mainScreen] bounds].size;
-    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+    _screenSize = [[UIScreen mainScreen] bounds].size;
 }
 
 - (void)didReceiveMemoryWarning
@@ -60,10 +59,6 @@
 
 - (void)placeSelectedImage:(UIImage *)image withCropRect:(CGRect)cropRect
 {
-    
-    if(image == nil)
-        return;
-    
     [self resetImageContentToEmpty];
     
     UIImage *correctOrientationImage = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationUp];

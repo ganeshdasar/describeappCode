@@ -123,7 +123,7 @@
     [[CMAVCameraHandler sharedHandler] changeCapturesSessionPreset:AVCaptureSessionPresetPhoto];
     [[CMAVCameraHandler sharedHandler] setDelegate:self];
     [[CMAVCameraHandler sharedHandler] addVideoInputFromFrontCamera:currentCameraMode];
-    [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_cameraContainerView];
+    [[CMAVCameraHandler sharedHandler] showCameraPreviewInView:_cameraContainerView withRect:[[UIScreen mainScreen] bounds]];
     [_cameraContainerView bringSubviewToFront:_cameraOverlayView];
 
 #endif
@@ -542,9 +542,10 @@
     _selectedImageIndex = -1;
 
     //[self imageWithImage:image scaledToSize:CGSizeMake(CGRectGetWidth(DEFAULT_IMAGE_RECT), CGRectGetHeight(DEFAULT_IMAGE_RECT))];
-    image = [_aspectFillImageController imageWithImage:image scaledToSize:_cameraContainerView.frame.size];
+//    image = [_aspectFillImageController imageWithImage:image scaledToSize:_cameraContainerView.frame.size];
     [_aspectFillImageController resetImageContentToEmpty];
-    [_aspectFillImageController placeSelectedImage:image withCropRect:CGRectNull];
+    [_aspectFillImageController placeSelectedImage:image withCropRect:CGRectMake(0, 0, 320.0, 320.0)];
+    [_aspectFillImageController calculateCropRectForSelectImage];
     
     CMPhotoModel *modelObj = self.capturedPhotoList[_selectedImageCount];
     modelObj.originalImage = _aspectFillImageController.imageView.image;

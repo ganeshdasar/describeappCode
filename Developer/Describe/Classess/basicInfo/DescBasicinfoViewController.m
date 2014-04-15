@@ -20,6 +20,8 @@
 //#import "CMViewController.h"
 #import "ProfileViewController.h"
 
+#import "DESSettingsViewController.h"
+
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
 #define FEMALEBTNFRAME
@@ -704,8 +706,13 @@
         {
             DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
             [self.navigationController pushViewController:addPeople animated:NO];
+            return;
+            DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
+            [self.navigationController pushViewController:setting animated:NO];
+
+            return;
             
-            //            NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
+            //    NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
             //            [self.navigationController pushViewController:notificationController animated:YES];
             
             //            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
