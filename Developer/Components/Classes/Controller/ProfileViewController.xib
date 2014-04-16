@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -192,7 +192,7 @@
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="3s6-HR-1jR">
                                     <rect key="frame" x="85" y="82" width="70" height="26"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" backgroundImage="btn_txt_black_change.png">
+                                    <state key="normal" backgroundImage="btn_txt_black_cancel.png">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
@@ -230,7 +230,7 @@
                                 <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="yrI-0l-DFy">
                                     <rect key="frame" x="85" y="345" width="70" height="26"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" backgroundImage="btn_txt_black_change.png">
+                                    <state key="normal" backgroundImage="btn_txt_black_cancel.png">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
@@ -316,7 +316,7 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </view>
             </subviews>
@@ -330,7 +330,7 @@
         <image name="btn_nav_std_edit.png" width="35" height="35"/>
         <image name="btn_nav_std_follow.png" width="35" height="35"/>
         <image name="btn_nav_std_following.png" width="35" height="35"/>
-        <image name="btn_txt_black_change.png" width="70" height="26"/>
+        <image name="btn_txt_black_cancel.png" width="70" height="26"/>
         <image name="btn_txt_black_done.png" width="70" height="26"/>
         <image name="btn_txt_black_edit_canvas.png" width="125" height="26"/>
         <image name="screen_profile.png" width="320" height="249"/>

@@ -64,9 +64,9 @@
     [self createHeadderView];
     [self intializeArray];
     [self setBackGroundImage];
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    self.acountDetailsTableView.frame = CGRectMake(0, self.acountDetailsTableView.frame.origin.x
-                                                   , 320,  screenRect.size.height-65);
+//    CGRect screenRect = [[UIScreen mainScreen] bounds];
+//    self.acountDetailsTableView.frame = CGRectMake(0, self.acountDetailsTableView.frame.origin.x
+//                                                   , 320,  screenRect.size.height-65);
     self.acountDetailsTableView.backgroundColor = [UIColor clearColor];
     self.acountDetailsTableView.showsVerticalScrollIndicator = NO;
     userbirtdayString =  [NSString convertTheepochTimeToDate:[[WSModelClasses sharedHandler].loggedInUserModel.dobDate doubleValue]];

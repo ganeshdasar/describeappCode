@@ -32,6 +32,8 @@ typedef enum {
 @property (nonatomic, strong) DBAspectFillViewController *canvasImageViewController;
 @property (nonatomic, strong) DBAspectFillViewController *profilePicImageViewController;
 @property (nonatomic, strong) UsersModel *profileUserModel;
+@property (nonatomic, strong) UIImage *profilePicImg;
+@property (nonatomic, strong) UIImage *canvasImg;
 
 @end
 
@@ -83,10 +85,6 @@ typedef enum {
     
     [_canvasImageViewController placeSelectedImage:[UIImage imageNamed:@"profileSampleImage.png"] withCropRect:CGRectNull];
     [self profileModeChangedTo:kProfileModeNormal];
-    
-    
-    
-    
     
     [self addSwipeViewController];
 
@@ -172,7 +170,17 @@ typedef enum {
 
 - (IBAction)changeOptionSelected:(id)sender
 {
-    [self showAcionSheetForPhotoSelection];
+//    [self showAcionSheetForPhotoSelection];
+    if(_currentProfileMode == kProfileModeCanvasEditing) {
+        [_canvasImageViewController.imageView setImage:_canvasImg];
+//        [_canvasImageViewController placeSelectedImage:_canvasImg withCropRect:CGRectNull];
+    }
+    else if(_currentProfileMode == kProfileModeProfilePicEditing) {
+        [_profilePicImageViewController.imageView setImage:_profilePicImg];
+//        [_profilePicImageViewController placeSelectedImage:_profilePicImg withCropRect:CGRectNull];
+    }
+    
+    [self profileModeChangedTo:kProfileModeEditing];
 }
 
 - (IBAction)doneOptionSelected:(id)sender
@@ -373,6 +381,9 @@ typedef enum {
 - (IBAction)editOptionSelected:(id)sender
 {
     // here we need to enable editing for canvas, status msg and profile pic (change editBtn to editingDoneBtn)
+    self.profilePicImg = _profilePicImageViewController.imageView.image;
+    self.canvasImg = _canvasImageViewController.imageView.image;
+    
     [self profileModeChangedTo:kProfileModeEditing];
 }
 

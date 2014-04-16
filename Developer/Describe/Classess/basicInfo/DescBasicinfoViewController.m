@@ -28,7 +28,8 @@
 #define BIRTHDAYFRAME
 #define BIOTEXTFRAME
 
-@interface DescBasicinfoViewController ()<WSModelClassDelegate,UITextViewDelegate,NSLayoutManagerDelegate>{
+@interface DescBasicinfoViewController ()<WSModelClassDelegate,UITextViewDelegate,NSLayoutManagerDelegate>
+{
     IBOutlet DHeaderView *_headerView;
     UIButton    *backButton,*nextButton;
     NSString * _searchString;
@@ -42,6 +43,7 @@
     IBOutlet UIView *_contentView;
     IBOutlet UIView *_subContentView;
     
+    BOOL shouldHideStatusBar;
 }
 
 @property (nonatomic, strong) UIImage *previousPicRef;
@@ -71,6 +73,11 @@
     return self;
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    return shouldHideStatusBar;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -82,7 +89,7 @@
     [self designTheView];
     [self createProfilePicAspectView];
     
-    
+    shouldHideStatusBar = NO;
     
     self.cityTxt.returnKeyType = UIReturnKeyDone;
     self.bioTxt.returnKeyType = UIReturnKeyDone;
@@ -289,6 +296,9 @@
 
 - (IBAction)cancelProfilePicChanges:(id)sender
 {
+    shouldHideStatusBar = NO;
+    [self setNeedsStatusBarAppearanceUpdate];
+    
     isEditingPic = NO;
     _profileEditCancelBtn.hidden = YES;
     _profileEditDoneBtn.hidden = YES;
@@ -303,6 +313,9 @@
 
 - (IBAction)doneProfilePicChange:(id)sender
 {
+    shouldHideStatusBar = NO;
+    [self setNeedsStatusBarAppearanceUpdate];
+    
     isEditingPic = NO;
     UIImage *croppedImage = [profilePicAspectController getImageCroppedAtVisibleRect:profilePicAspectController.cropRect];
 
@@ -357,7 +370,7 @@
             //Remove the pic...
             profilePicAspectController.imageView.image = nil;
             _profilePicOverlayView.hidden = YES;
-            [_profileimgbtn setBackgroundImage:nil forState:UIControlStateNormal];
+            [_profileimgbtn setBackgroundImage:[UIImage imageNamed:@"thumb_user_basic_info.png"] forState:UIControlStateNormal];
 
         }
         else if(buttonIndex==1) {
@@ -386,20 +399,18 @@
 #pragma mark - UIImagePickerController Delegate Methods
 -  (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    shouldHideStatusBar = YES;
+    [self setNeedsStatusBarAppearanceUpdate];
+    
     _profilePicOverlayView.hidden = NO;
     [profilePicAspectController placeSelectedImage:info[UIImagePickerControllerOriginalImage] withCropRect:CGRectNull];
     isEditingPic = YES;
     [picker dismissViewControllerAnimated:YES completion:nil];
     _profileEditCancelBtn.hidden = NO;
     _profileEditDoneBtn.hidden = NO;
-    _profilePicOverlayView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
+    _profilePicOverlayView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
     [profilePicAspectController enableTouches:YES];
     [_profilePicOverlayView setDontPassTouch:YES];
-}
-
-- (void)imageSaved
-{
-    NSLog(@"imageSaved");
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

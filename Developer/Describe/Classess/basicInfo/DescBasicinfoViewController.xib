@@ -48,14 +48,14 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="503"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_thumb_stroke_profile.png" id="jah-UG-qwo">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb_user_basic_info_stroke.png" id="jah-UG-qwo">
                                     <rect key="frame" x="122" y="24" width="75" height="75"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="haj-5R-IQi">
                                     <rect key="frame" x="122" y="24" width="75" height="75"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal">
+                                    <state key="normal" backgroundImage="thumb_user_basic_info.png">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
@@ -169,7 +169,7 @@
                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="fsx-R0-Yee">
                             <rect key="frame" x="81" y="234" width="70" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" backgroundImage="btn_txt_black_change.png">
+                            <state key="normal" backgroundImage="btn_txt_black_cancel.png">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
@@ -274,16 +274,17 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         </tapGestureRecognizer>
     </objects>
     <resources>
-        <image name="btn_txt_black_change.png" width="70" height="26"/>
+        <image name="btn_txt_black_cancel.png" width="70" height="26"/>
         <image name="btn_txt_black_done.png" width="70" height="26"/>
         <image name="female_active.png" width="47" height="42"/>
         <image name="female_inactive.png" width="47" height="42"/>
         <image name="male_active.png" width="47" height="42"/>
         <image name="male_inactive.png" width="47" height="42"/>
+        <image name="thumb_user_basic_info.png" width="75" height="75"/>
+        <image name="thumb_user_basic_info_stroke.png" width="75" height="75"/>
         <image name="thumb_user_profile.png" width="155" height="155"/>
         <image name="txt_field_1.png" width="540" height="84"/>
         <image name="txt_field_bio.png" width="540" height="250"/>
         <image name="txt_field_birthday.png" width="354" height="84"/>
-        <image name="user_thumb_stroke_profile.png" width="150" height="150"/>
     </resources>
 </document>
