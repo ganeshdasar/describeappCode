@@ -39,6 +39,8 @@
     IBOutlet DSearchBarComponent * _searchBarComponent;
     IBOutlet DSocialComponent * socialComponent;
     DesSearchPeopleViewContrlooerViewController *searchViewCntrl;
+    __weak IBOutlet UIView *followAndInviteView;
+    __weak IBOutlet UIButton *followAndInviteImgView;
 }
 @end
 
@@ -81,6 +83,7 @@
                                              selector:@selector(refreshTheView)
                                                  name:@"refreshTheView"
                                                object:nil];
+   
     // Do any additional setup after loading the view from its nib.
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -334,8 +337,14 @@
         _peoplelistView=nil;
     }
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-200) andPeopleList:(NSArray*)peopleArray];
+    _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-240) andPeopleList:(NSArray*)peopleArray];
     _peoplelistView.tag = 1;
+    if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+        [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_invite_all.png"] forState:UIControlStateNormal];
+    }else{
+        [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_follow_all.png"] forState:UIControlStateNormal];
+    }
+    [followAndInviteImgView bringSubviewToFront:_peoplelistView];
     [self.view addSubview:_peoplelistView];
     
 }
@@ -410,4 +419,37 @@
     [_loadingView show:YES];
 }
 
+- (IBAction)followAndInviteActions:(id)sender {
+    if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+        [self inviteAllAction];
+    }else{
+        [self followAllAction];
+    }
+}
+
+-(void)followAllAction
+{
+    [[WSModelClasses sharedHandler]followAllActionUserID:@"" followAllString:@"" rageValue:@"0" responce:^(BOOL success, id responce){
+        if (success) {
+            
+            
+        }else{
+            
+        }
+    }];
+    
+}
+
+-(void)inviteAllAction
+{
+    [[WSModelClasses sharedHandler]inviteAllActionUserID:@"" inviteAllString:@"" rageValue:@"" responce:^(BOOL success, id responce){
+        if (success) {
+            
+            
+        }else{
+            
+            
+        }
+    }];
+}
 @end

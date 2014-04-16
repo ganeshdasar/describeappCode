@@ -131,7 +131,6 @@
 }
 
 
-
 #pragma mark Event Actions -
 -  (IBAction)SigninClicked:(id)sender
 {
@@ -275,9 +274,11 @@
         }
     }else{
         if (delegate.isFacebook) {
-            [self showAlert:@"Describe" message:@"This Facebook account is already associated with another Describe Identity. Do you want to sign in as " " instead."  tag:100];
+            NSString * messageStr = [NSString stringWithFormat:@"This Facebook account is already associated with another Describe Identity. Do you want to sign in as \"%@\" instead.",[[responseDict valueForKeyPath:@"DataTable.UserData.Username"]objectAtIndex:0]];
+            [self showAlert:@"Describe" message:messageStr  tag:100];
         }else if (delegate.isGooglePlus){
-            [self showAlert:@"Describe" message:@"This Google+ account is already associated with another Describe Identity" tag:100];
+            NSString * messageStr = [NSString stringWithFormat:@"This Google+ account is already associated with another Describe Identity. Do you want to sign in as \"%@\" instead.",[[responseDict valueForKeyPath:@"DataTable.UserData.Username"]objectAtIndex:0]];
+            [self showAlert:@"Describe" message:messageStr tag:100];
         }
     }
 }
@@ -321,6 +322,7 @@
     if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
+        [HUD hide:YES];
         return;
     }
     switch (serviceType) {

@@ -226,7 +226,6 @@
         case cellular_netWork:{
             NSString* status =  [sender isOn] ? @"1":@"0";
             [[NSUserDefaults standardUserDefaults]setObject:status forKey:CELLULAR_STATUS];
-
             break;
         }
         default:
@@ -235,17 +234,22 @@
     
 }
 
+
 -(UILabel*)createLable:(NSString*)title{
-    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 44)];
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(30, 0, 80, 44)];
     lable.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.f];
+    lable.textColor = ELEMENT_FONT_COLOR;
+    [lable setText:title];
     return lable;
 }
+
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
         case DSettingTypeAccount:{
             DESEditAccountDetailsViewController * editView = [[DESEditAccountDetailsViewController alloc]initWithNibName:@"DESEditAccountDetailsViewController" bundle:Nil];
-            [self.navigationController pushViewController:editView animated:NO];
+            [self.navigationController pushViewController:editView animated:YES];
             break;
         }
         case DSettingNotification:{
@@ -256,6 +260,22 @@
                 DESEmailNotificationControll * emailNotificationView = [[DESEmailNotificationControll alloc]initWithNibName:@"DESEmailNotificationControll" bundle:Nil];
                 [self.navigationController pushViewController:emailNotificationView animated:YES];
             }
+        }
+            break;
+        case DSettingSocialServices:{
+            switch (indexPath.row) {
+                case facebook_tag:
+                    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
+                    [tableView reloadData];
+                    break;
+                    case google_plus_Tag:
+                    [[NSUserDefaults standardUserDefaults]removeObjectForKey:GOOGLEPLUESACCESSTOKEN];
+                    [tableView reloadData];
+                    break;
+                default:
+                    break;
+            }
+            break;
         }
         default:
             break;
@@ -383,4 +403,6 @@
 {
     
 }
+
+
 @end

@@ -676,7 +676,7 @@
 {
    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKEXPIRATIONDATE];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
     [[NSUserDefaults standardUserDefaults]synchronize ];
 
 }

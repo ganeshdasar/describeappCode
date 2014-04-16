@@ -11,6 +11,8 @@
                 <outlet property="_searchBarComponent" destination="RM9-wA-IgN" id="U3a-gt-egP"/>
                 <outlet property="_segmentComponent" destination="vor-kK-NX6" id="LGt-IT-BVe"/>
                 <outlet property="backGroundImg" destination="TvP-X0-2Xs" id="BTb-XQ-uZp"/>
+                <outlet property="followAndInviteImgView" destination="4GY-YU-xtc" id="tPb-wR-ruE"/>
+                <outlet property="followAndInviteView" destination="iYv-EH-QA0" id="jAC-h8-B4U"/>
                 <outlet property="searchDisplayController" destination="sw0-ZL-3Px" id="tLp-5i-EnD"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
@@ -45,9 +47,28 @@
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </view>
                 <view contentMode="scaleToFill" id="ajK-cb-jrr" customClass="DPeopleListComponent">
-                    <rect key="frame" x="0.0" y="230" width="320" height="567"/>
+                    <rect key="frame" x="0.0" y="230" width="320" height="301"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" id="iYv-EH-QA0">
+                    <rect key="frame" x="0.0" y="528" width="320" height="40"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="4GY-YU-xtc">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <state key="normal" image="btn_follow_all.png">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="followAndInviteActions:" destination="-1" eventType="touchUpInside" id="REe-og-BIN"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -71,5 +92,6 @@
     </objects>
     <resources>
         <image name="bg_std_4in.png" width="320" height="568"/>
+        <image name="btn_follow_all.png" width="320" height="40"/>
     </resources>
 </document>

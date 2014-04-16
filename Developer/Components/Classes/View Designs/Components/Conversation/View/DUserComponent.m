@@ -19,20 +19,11 @@
 }
 @end
 
-
-
-
-
 @implementation DUserComponent
 @synthesize _userData;
 @synthesize data;
 @synthesize thumbnailImg;
 @synthesize _followUnfollowBtn;
-
-
-
-
-
 
 - (id)initWithFrame:(CGRect)frame
 {
