@@ -7,6 +7,7 @@
 //
 
 #import "CMShareSocialCell.h"
+#import "DESocialConnectios.h"
 
 @implementation CMShareSocialCell
 
@@ -17,6 +18,17 @@
         // Initialization code
     }
     return self;
+}
+
+- (void)awakeFromNib
+{
+    if([[DESocialConnectios sharedInstance] isFacebookLoggedIn]) {
+        [self.fbButton setImage:[UIImage imageNamed:@"btn_shareScreen_fb_off.png"] forState:UIControlStateNormal];
+    }
+    
+    if([[DESocialConnectios sharedInstance] isGooglePlusLoggeIn]) {
+        [self.gpButton setImage:[UIImage imageNamed:@"btn_shareScreen_goog_off.png"] forState:UIControlStateNormal];
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

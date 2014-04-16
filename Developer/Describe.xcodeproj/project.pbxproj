@@ -534,6 +534,7 @@
 		C34BBE7318FE6F84004C9DA9 /* thumb_user_basic_info@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C34BBE7118FE6F84004C9DA9 /* thumb_user_basic_info@2x.png */; };
 		C34BBE7618FE72C8004C9DA9 /* thumb_user_basic_info_stroke@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C34BBE7418FE72C8004C9DA9 /* thumb_user_basic_info_stroke@2x.png */; };
 		C34BBE7718FE72C8004C9DA9 /* thumb_user_basic_info_stroke.png in Resources */ = {isa = PBXBuildFile; fileRef = C34BBE7518FE72C8004C9DA9 /* thumb_user_basic_info_stroke.png */; };
+		C3A533B118FF004E0066C3CC /* UIView+FindFirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A533B018FF004E0066C3CC /* UIView+FindFirstResponder.m */; };
 		C3AD9E7818E8012B0015D65C /* UIImage+FixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */; };
 		C3BAB1F918DE9375001CF903 /* btn_txt_black_done@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07E5E50418C1D977000E489B /* btn_txt_black_done@2x.png */; };
 		C3BAB1FC18DEA119001CF903 /* NSString+DateConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = C3BAB1FB18DEA119001CF903 /* NSString+DateConverter.m */; };
@@ -1078,6 +1079,8 @@
 		C34BBE7118FE6F84004C9DA9 /* thumb_user_basic_info@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb_user_basic_info@2x.png"; sourceTree = "<group>"; };
 		C34BBE7418FE72C8004C9DA9 /* thumb_user_basic_info_stroke@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb_user_basic_info_stroke@2x.png"; sourceTree = "<group>"; };
 		C34BBE7518FE72C8004C9DA9 /* thumb_user_basic_info_stroke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumb_user_basic_info_stroke.png; sourceTree = "<group>"; };
+		C3A533AF18FF004E0066C3CC /* UIView+FindFirstResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+FindFirstResponder.h"; path = "Classes/UIView+FindFirstResponder.h"; sourceTree = SOURCE_ROOT; };
+		C3A533B018FF004E0066C3CC /* UIView+FindFirstResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+FindFirstResponder.m"; path = "Classes/UIView+FindFirstResponder.m"; sourceTree = SOURCE_ROOT; };
 		C3AD9E7618E8012B0015D65C /* UIImage+FixOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FixOrientation.h"; sourceTree = "<group>"; };
 		C3AD9E7718E8012B0015D65C /* UIImage+FixOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FixOrientation.m"; sourceTree = "<group>"; };
 		C3BAB1FA18DEA119001CF903 /* NSString+DateConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DateConverter.h"; sourceTree = "<group>"; };
@@ -1173,6 +1176,8 @@
 		07354D1318B9F5CD008B98F3 /* Data Holder */ = {
 			isa = PBXGroup;
 			children = (
+				C3A533AF18FF004E0066C3CC /* UIView+FindFirstResponder.h */,
+				C3A533B018FF004E0066C3CC /* UIView+FindFirstResponder.m */,
 				C34BBE6918FE4253004C9DA9 /* DESLocationManager.h */,
 				C34BBE6A18FE4253004C9DA9 /* DESLocationManager.m */,
 				07CB621618E7F4F5000F8EB3 /* NSDate+DDate.h */,
@@ -2851,6 +2856,7 @@
 				C3E14BEB18C2EA2A008AC885 /* UIProgressView+AFNetworking.m in Sources */,
 				07354D6E18B9F5CD008B98F3 /* DConversationListView.m in Sources */,
 				C3E14BE618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m in Sources */,
+				C3A533B118FF004E0066C3CC /* UIView+FindFirstResponder.m in Sources */,
 				C3E14BE818C2EA2A008AC885 /* UIAlertView+AFNetworking.m in Sources */,
 				2FB4BAEA18910B280033BDF4 /* AFURLConnectionOperation.m in Sources */,
 				07354D7A18B9F5CD008B98F3 /* DLikesView.m in Sources */,

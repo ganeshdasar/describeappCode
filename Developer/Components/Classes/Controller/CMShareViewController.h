@@ -16,6 +16,8 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *shareTableView;
 @property (weak, nonatomic) IBOutlet UIView *locationContainerView;
+@property (weak, nonatomic) IBOutlet UIView *compositionContainerView;
+@property (weak, nonatomic) IBOutlet UIView *shareBodyContainerView;
 
 @property (nonatomic, strong) NSMutableArray *capturedPhotoList;
 

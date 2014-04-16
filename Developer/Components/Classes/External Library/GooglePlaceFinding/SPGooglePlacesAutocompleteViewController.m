@@ -29,15 +29,17 @@
 - (void)viewDidLoad {
     self.searchDisplayController.searchBar.placeholder = @"add a location";
     
+//    [[UIButton appearanceWhenContainedIn:[MySearchBar class], nil] setBackgroundImage:... forState:UIControlStateNormal];
+    
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.minimumLineHeight = 0.0f;
     paragraphStyle.maximumLineHeight = 16.f;
-    paragraphStyle.firstLineHeadIndent = .0;
+    paragraphStyle.firstLineHeadIndent = 0.0;
     paragraphStyle.paragraphSpacing = 0.0;
     paragraphStyle.lineSpacing = 0.0;
     paragraphStyle.headIndent = 0.0;
-    paragraphStyle.lineBreakMode=NSLineBreakByWordWrapping;
-    paragraphStyle.tailIndent=305.0;
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+//    paragraphStyle.tailIndent = 305.0;
     paragraphStyle.alignment = NSTextAlignmentLeft;
     
 //    UIButton *deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -46,7 +48,7 @@
     UITextField *txfSearchField = [self.searchDisplayController.searchBar valueForKey:@"_searchField"];
     [txfSearchField setBackgroundColor:[UIColor whiteColor]];
     [txfSearchField setLeftViewMode:UITextFieldViewModeNever];
-    [txfSearchField setRightViewMode:UITextFieldViewModeNever];
+//    [txfSearchField setRightViewMode:UITextFieldViewModeNever];
 //    [txfSearchField setRightView:deleteBtn];
     [txfSearchField setBackground:[UIImage imageNamed:@"txtfld_spl_search.png"]];
     [txfSearchField setBorderStyle:UITextBorderStyleNone];
@@ -56,7 +58,7 @@
     //txfSearchField.layer.borderWidth = 8.0f;
     //txfSearchField.layer.cornerRadius = 10.0f;
     txfSearchField.layer.borderColor = [UIColor clearColor].CGColor;
-    txfSearchField.clearButtonMode=UITextFieldViewModeNever;
+    txfSearchField.clearButtonMode = UITextFieldViewModeNever;
 }
 
 - (void)viewDidUnload {
@@ -102,7 +104,7 @@
     self.searchDisplayController.searchResultsTableView.alpha = 0.0;
     [UIView commitAnimations];
     
-    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:YES];
+//    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:YES];
     [self.searchDisplayController.searchBar resignFirstResponder];
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(searchbarEditingWillEnd:)]) {
@@ -144,12 +146,12 @@
 
 - (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
 {
-    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
+//    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
 }
 
 - (void) searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller
 {
-    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
+//    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
 }
 
 #pragma mark -
@@ -177,7 +179,7 @@
         self.searchDisplayController.searchResultsTableView.alpha = 1.0;
         [UIView commitAnimations];
         
-        [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
+//        [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
         
         if(self.delegate && [self.delegate respondsToSelector:@selector(searchbarEditingWillBegin:)]) {
             [self.delegate performSelector:@selector(searchbarEditingWillBegin:) withObject:self];

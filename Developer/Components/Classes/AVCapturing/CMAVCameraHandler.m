@@ -512,23 +512,23 @@ static CMAVCameraHandler *_sharedInstance = nil;
                     
                     // Copy recorded video path and store it in secured place
 //                    NSString* filename = [NSString stringWithFormat:@"%lf.mp4", [[NSDate date] timeIntervalSince1970]];
-                    __block NSString* path = _videoFilenamePath;
-                    NSURL* url = [NSURL fileURLWithPath:path];
+//                    __block NSString* path = _videoFilenamePath;
+//                    NSURL* url = [NSURL fileURLWithPath:path];
                     
-                    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-                    [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error) {
-                        //.......................
-                        //To Do: Share this Url as video file path for that post....
-                        //.......................
-                        //url
-                        
-                        NSLog(@"save completed error = %@, url = %@, path = %@", error, [assetURL absoluteString], path);
-                        if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-//                            NSError *err;
-//                            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
-//                            NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
-                        }
-                    }];
+//                    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+//                    [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error) {
+//                        //.......................
+//                        //To Do: Share this Url as video file path for that post....
+//                        //.......................
+//                        //url
+//                        
+//                        NSLog(@"save completed error = %@, url = %@, path = %@", error, [assetURL absoluteString], path);
+//                        if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+////                            NSError *err;
+////                            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+////                            NSLog(@"%d, error = %@ \n%@", success, err.description, err.debugDescription);
+//                        }
+//                    }];
                 }];
             });
         }

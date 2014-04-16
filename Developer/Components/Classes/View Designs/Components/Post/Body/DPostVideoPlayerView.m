@@ -89,9 +89,13 @@
         return;
     
     
+    if([_video.url hasPrefix:@"http"]) {
+        avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:_video.url]];//[NSURL fileURLWithPath:_video.url]
+    }
+    else {
+        avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL fileURLWithPath:_video.url]];
+    }
     
-    
-    avPlayerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:_video.url]];//[NSURL fileURLWithPath:_video.url]
     avPlayer = [AVPlayer playerWithPlayerItem:avPlayerItem] ;
     AVPlayerLayer *avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer] ;    
     avPlayerLayer.frame = _conentView.bounds;

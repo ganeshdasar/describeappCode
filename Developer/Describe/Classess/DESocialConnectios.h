@@ -25,6 +25,14 @@
 - (void)googlePlusSignIn;
 -(void)facebookSignIn;
 -(void)removeTheAccessTokenInUserDefaults;
+- (BOOL)isFacebookLoggedIn;
+- (BOOL)isGooglePlusLoggeIn;
+
+- (void)facebookSharing:(NSString*)inName
+               picture:(NSURL*)inImage
+               caption:(NSString*)inCaption
+               andLink:(NSURL*)inUrl
+            decription:(NSString*)inDescription;
 
 @property (nonatomic,strong) NSMutableArray * googlePlusFriendsListArry;
 @property (nonatomic,strong) NSMutableArray * facebookFriendsListArray;

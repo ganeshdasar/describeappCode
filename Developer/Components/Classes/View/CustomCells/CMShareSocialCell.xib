@@ -26,43 +26,27 @@
                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" tag="20" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="qEj-GS-NFR">
-                        <rect key="frame" x="108" y="50" width="25" height="25"/>
+                    <button opaque="NO" tag="20" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="qEj-GS-NFR">
+                        <rect key="frame" x="127" y="50" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
-                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
-                        <inset key="contentEdgeInsets" minX="0.0" minY="8" maxX="0.0" maxY="0.0"/>
-                        <state key="normal" backgroundImage="btn_shareScreen_fb_nc.png">
+                        <state key="normal" image="btn_shareScreen_fb_nc.png">
                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
                         <state key="disabled" backgroundImage="btn_shareScreen_fb_on.png"/>
-                        <state key="selected" backgroundImage="btn_shareScreen_fb_off.png"/>
+                        <state key="selected" image="btn_shareScreen_fb_on.png"/>
                     </button>
-                    <button opaque="NO" tag="21" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="bKh-sd-EkK">
-                        <rect key="frame" x="148" y="50" width="25" height="25"/>
+                    <button opaque="NO" tag="21" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bKh-sd-EkK">
+                        <rect key="frame" x="167" y="50" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
-                        <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
-                        <state key="normal" backgroundImage="btn_shareScreen_goog_nc.png">
+                        <state key="normal" image="btn_shareScreen_goog_nc.png">
                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
                         <state key="disabled" backgroundImage="btn_shareScreen_goog_on.png"/>
-                        <state key="selected" backgroundImage="btn_shareScreen_goog_off.png"/>
-                    </button>
-                    <button opaque="NO" tag="22" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4Xb-G4-Y8x">
-                        <rect key="frame" x="188" y="50" width="25" height="25"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
-                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
-                        <inset key="contentEdgeInsets" minX="0.0" minY="8" maxX="0.0" maxY="0.0"/>
-                        <state key="normal" backgroundImage="btn_shareScreen_twit_nc.png">
-                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                        </state>
-                        <state key="disabled" backgroundImage="btn_shareScreen_twit_on.png"/>
-                        <state key="selected" backgroundImage="btn_shareScreen_twit_off.png"/>
+                        <state key="selected" image="btn_shareScreen_goog_on.png"/>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ZNl-7b-Fh3">
                         <rect key="frame" x="110" y="147" width="100" height="36"/>
@@ -81,20 +65,14 @@
                 <outlet property="fbButton" destination="qEj-GS-NFR" id="NB4-G7-kqn"/>
                 <outlet property="gpButton" destination="bKh-sd-EkK" id="jLi-ua-KaU"/>
                 <outlet property="shareButton" destination="ZNl-7b-Fh3" id="CnD-yt-axj"/>
-                <outlet property="twButton" destination="4Xb-G4-Y8x" id="yfg-cK-wgN"/>
             </connections>
         </tableViewCell>
     </objects>
     <resources>
         <image name="btn_shareScreen_fb_nc.png" width="25" height="25"/>
-        <image name="btn_shareScreen_fb_off.png" width="25" height="25"/>
         <image name="btn_shareScreen_fb_on.png" width="25" height="25"/>
         <image name="btn_shareScreen_goog_nc.png" width="25" height="25"/>
-        <image name="btn_shareScreen_goog_off.png" width="25" height="25"/>
         <image name="btn_shareScreen_goog_on.png" width="25" height="25"/>
-        <image name="btn_shareScreen_twit_nc.png" width="25" height="25"/>
-        <image name="btn_shareScreen_twit_off.png" width="25" height="25"/>
-        <image name="btn_shareScreen_twit_on.png" width="25" height="25"/>
         <image name="btn_txt_share.png" width="100" height="36"/>
     </resources>
 </document>

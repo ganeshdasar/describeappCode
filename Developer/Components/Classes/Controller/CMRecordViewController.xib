@@ -107,7 +107,7 @@
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </view>
                 <view multipleTouchEnabled="YES" contentMode="scaleToFill" id="cqC-D7-OTq">
-                    <rect key="frame" x="0.0" y="82" width="320" height="320"/>
+                    <rect key="frame" x="0.0" y="84" width="320" height="320"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <imageView multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="JeS-NX-ZG9">
@@ -129,7 +129,7 @@
                     <color key="backgroundColor" red="0.66357816359999999" green="1" blue="0.52356920330000001" alpha="1" colorSpace="calibratedRGB"/>
                 </view>
                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" id="6ul-Ig-Stx">
-                    <rect key="frame" x="0.0" y="400" width="320" height="2"/>
+                    <rect key="frame" x="0.0" y="402" width="320" height="2"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="tintColor" red="1" green="0.29678840690000002" blue="0.2238166717" alpha="1" colorSpace="calibratedRGB"/>
                 </progressView>

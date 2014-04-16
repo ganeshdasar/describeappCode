@@ -15,6 +15,9 @@
 #import "CMAVCameraHandler.h"
 #import "CMShareSocialCell.h"
 #import "DESLocationManager.h"
+#import "DPostBodyView.h"
+#import "UIView+FindFirstResponder.h"
+#import "DESocialConnectios.h"
 
 #define LOCATION_CELLIDENTIFIER             @"LocationCell"
 #define COMPOSITION_CELLIDENTIFIER          @"CompositionCell"
@@ -23,9 +26,7 @@
 #define SHARE_CELLIDENTIFIER                @"ShareCell"
 
 typedef enum {
-    ShareSectionLocation = -1,
-    ShareSectionComposition = 0,
-    ShareSectionCategory,
+    ShareSectionCategory = 0,
     ShareSectionTag,
     ShareSectionShare,
 }ShareSection;
@@ -34,7 +35,7 @@ typedef enum {
 #define ALERT_TAG_DISMISS                   10
 #define ALERT_TAG_MOVEBACK                  15
 
-@interface CMShareViewController () <DESLocationManagerDelegate>
+@interface CMShareViewController () <DESLocationManagerDelegate, DPostBodyViewDelegate, DESocialConnectiosDelegate>
 {
     BOOL showCompositionCell;
     BOOL showCategoryOption;    // identifies whether to show category options or not
@@ -43,10 +44,15 @@ typedef enum {
     NSArray *categoryColorList;     // holds color object for the category
     
     NSInteger selectedCategoryIndex;
-    SPGooglePlacesAutocompleteViewController *vc;
+    SPGooglePlacesAutocompleteViewController *googleSearchController;
     
     CMCategoryVC *categoryController;
     DPostImage *_imagePost;
+    
+    DPostBodyView *_postBodyView;
+    
+    BOOL fbSelected;
+    BOOL gplusSelected;
 }
 
 @property (nonatomic, strong) NSString *totalVideoDuration;
@@ -73,6 +79,9 @@ typedef enum {
     
     _imagePost = [[DPostImage alloc] init];
     
+    gplusSelected = NO;
+    fbSelected = NO;
+    
     NSMutableArray *images = [[NSMutableArray alloc] init];
     for(CMPhotoModel *modelObj in _capturedPhotoList) {
         if(modelObj.originalImagePath) {
@@ -83,17 +92,7 @@ typedef enum {
     [_imagePost setImages:images];
     [self videoRecordingDone:nil];
     
-   // [_imagePost setImages:[[NSArray alloc] initWithObjects:@"1.jpg",@"2.jpg",@"3.jpg",@"4.jpg",@"5.jpg", nil]];
-   // [_imagePost setDurationList:[[NSArray alloc] initWithObjects:@"10",@"2",@"1",@"4",@"3", nil]];
-    
-    
-    UINib *nib = [UINib nibWithNibName:@"CMShareCompositionCell" bundle:nil];
-    [self.shareTableView registerNib:nib forCellReuseIdentifier:COMPOSITION_CELLIDENTIFIER];
-    
-//    nib = [UINib nibWithNibName:@"CMShareCategoryCell" bundle:nil];
-//    [self.shareTableView registerNib:nib forCellReuseIdentifier:CATEGORY_CELLIDENTIFIER];
-    
-    nib = [UINib nibWithNibName:@"CMShareTagCell" bundle:nil];
+    UINib *nib = [UINib nibWithNibName:@"CMShareTagCell" bundle:nil];
     [self.shareTableView registerNib:nib forCellReuseIdentifier:TAG_CELLIDENTIFIER];
     
     nib = [UINib nibWithNibName:@"CMShareSocialCell" bundle:nil];
@@ -101,19 +100,33 @@ typedef enum {
     
     selectedCategoryIndex = -1;  // default should be -1
     showCategoryOption = NO;  // default do not show category option
-    sectionCellIdentiferList = [[NSArray alloc] initWithObjects:COMPOSITION_CELLIDENTIFIER, CATEGORY_CELLIDENTIFIER, TAG_CELLIDENTIFIER, SHARE_CELLIDENTIFIER, nil];
+    sectionCellIdentiferList = [[NSArray alloc] initWithObjects:CATEGORY_CELLIDENTIFIER, TAG_CELLIDENTIFIER, SHARE_CELLIDENTIFIER, nil];
     
-//    categoryList = [[NSArray alloc] initWithObjects:NSLocalizedString(@"No category", @""), NSLocalizedString(@"Activities", @""), NSLocalizedString(@"Animals & Pets", @""), NSLocalizedString(@"Architecture & Spaces", @""), NSLocalizedString(@"Arts & Crafts", @""), NSLocalizedString(@"Books", @""), NSLocalizedString(@"Celebration", @""), NSLocalizedString(@"Care", @""), NSLocalizedString(@"Design", @""), NSLocalizedString(@"Events", @""), NSLocalizedString(@"Education", @""), NSLocalizedString(@"Family", @""), NSLocalizedString(@"Food", @""), NSLocalizedString(@"Lifestyle", @""), NSLocalizedString(@"Places", @""), NSLocalizedString(@"Humor", @""), NSLocalizedString(@"Inspiration", @""), NSLocalizedString(@"Movies & TV", @""), NSLocalizedString(@"Music", @""), NSLocalizedString(@"News", @""), NSLocalizedString(@"Opinions", @""), NSLocalizedString(@"People", @""), NSLocalizedString(@"Photography", @""), NSLocalizedString(@"Products", @""), NSLocalizedString(@"Stories", @""), NSLocalizedString(@"Science & Nature", @""), NSLocalizedString(@"Technology", @""), NSLocalizedString(@"Things I Love", @""), nil];
-//    
-//    categoryColorList = [[NSArray alloc] initWithObjects:NO_CATEGORY_COLOR, ACTIVITIES_COLOR, ANIMALS_PETS_COLOR, ARCHITECTURE_SPACES_COLOR, ARTS_CRAFTS_COLOR, BOOKS_COLOR, CELEBRATION_COLOR, CARE_COLOR, DESIGN_COLOR, EVENTS_COLOR, EDUCATION_COLOR, FAMILY_COLOR, FOOD_COLOR, LIFESTYLE_COLOR, PLACES_COLOR, HUMOR_COLOR, INSPIRATION_COLOR, MOVIES_TV_COLOR, MUSIC_COLOR, NEWS_COLOR, OPINIONS_COLOR, PEOPLE_COLOR, PHOTOGRAPHY_COLOR, PRODUCTS_COLOR, STORIES_COLOR, SCIENCE_NATURE_COLOR, TECHNOLOGY_COLOR, THINGS_I_LOVE_COLOR, nil];
-    
-    vc = [[SPGooglePlacesAutocompleteViewController alloc] initWithNibName:@"SPGooglePlacesAutocompleteViewController" bundle:nil];
-    vc.delegate = self;
-    [self.locationContainerView addSubview:vc.view];
+    googleSearchController = [[SPGooglePlacesAutocompleteViewController alloc] initWithNibName:@"SPGooglePlacesAutocompleteViewController" bundle:nil];
+    googleSearchController.delegate = self;
+    [self.locationContainerView addSubview:googleSearchController.view];
     
     categoryController = [[CMCategoryVC alloc] initWithNibName:@"CMCategoryVC" bundle:nil];
     [categoryController.view setFrame:CGRectMake(0, 0, 320, 41.0)];
     categoryController.delegate = self;
+    
+}
+
+- (void)createPostBodyView
+{
+    if(_postBodyView == nil)
+    {
+        _postBodyView =  [[DPostBodyView alloc] initWithFrame:CGRectMake(0, 0, 320, 320) withPostImage:_imagePost];
+        [_postBodyView setBackgroundColor:[UIColor clearColor]];
+        [self.compositionContainerView addSubview:_postBodyView];
+    }
+    [_postBodyView setDelegate:self];
+    [_postBodyView setPostImage:_imagePost];
+}
+
+- (void)postBodyViewDidTapOnImage:(DPostBodyView *)bodyView
+{
+    [self compositionCellIsTapped];
 }
 
 - (void)videoRecordingDone:(NSNotification *)notification
@@ -132,6 +145,8 @@ typedef enum {
         
         [video setUrl:[[CMAVCameraHandler sharedHandler] videoFilenamePath]];
         [_imagePost setVideo:video];
+        [self performSelectorOnMainThread:@selector(createPostBodyView) withObject:nil waitUntilDone:YES];
+
     }
 #endif
 }
@@ -214,6 +229,49 @@ typedef enum {
 - (IBAction)socailButtonClicked:(id)sender
 {
     NSLog(@"%s, tag = %ld", __func__, (long)[sender tag]);
+    if([sender tag] == 20) { // facebook
+        UIButton *fbBtn = (UIButton *)sender;
+        if(fbBtn.isSelected) {
+            [fbBtn setSelected:!fbBtn.isSelected];
+            fbSelected = NO;
+            return;
+        }
+        
+        fbSelected = YES;
+        gplusSelected = NO;
+        
+        [[DESocialConnectios sharedInstance] setDelegate:self];
+        if([[DESocialConnectios sharedInstance] isFacebookLoggedIn]) {
+            fbSelected = NO;
+            UIButton *fbBtn = (UIButton *)sender;
+            [fbBtn setSelected:!fbBtn.isSelected];
+        }
+        else {
+            [[DESocialConnectios sharedInstance] facebookSignIn];
+        }
+    }
+    else if([sender tag] == 21) { // GPlus
+        UIButton *gpBtn = (UIButton *)sender;
+        if(gpBtn.isSelected) {
+            [gpBtn setSelected:!gpBtn.isSelected];
+            gplusSelected = NO;
+            return;
+        }
+        
+        gplusSelected = YES;
+        fbSelected = NO;
+        
+        [[DESocialConnectios sharedInstance] setDelegate:self];
+        if([[DESocialConnectios sharedInstance]isGooglePlusLoggeIn]) {
+            gplusSelected = NO;
+            UIButton *gpBtn = (UIButton *)sender;
+            [gpBtn setSelected:!gpBtn.isSelected];
+        }
+        else {
+            [[DESocialConnectios sharedInstance] googlePlusSignIn];
+        }
+    }
+    
 }
 
 - (IBAction)shareButtonClicked:(id)sender
@@ -221,6 +279,26 @@ typedef enum {
     NSLog(@"%s", __func__);
     [[DESLocationManager sharedLocationManager] setDelegate:self];
     [[DESLocationManager sharedLocationManager] initializeFetchingCurrentLocationAndStartUpdating:YES];
+}
+
+#pragma mark - DESocialConnectiosDelegate Method
+- (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray *)inFriendsList
+{
+    CMShareSocialCell *socialCell = (CMShareSocialCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionShare]];
+    if(socialCell == nil) {
+        return;
+    }
+    
+    if(fbSelected == YES) {
+        fbSelected = NO;
+        [socialCell.fbButton setSelected:YES];
+        [socialCell.fbButton setImage:[UIImage imageNamed:@"btn_shareScreen_fb_off.png"] forState:UIControlStateNormal];
+    }
+    else if(gplusSelected == YES) {
+        gplusSelected = NO;
+        [socialCell.gpButton setSelected:YES];
+        [socialCell.gpButton setImage:[UIImage imageNamed:@"btn_shareScreen_goog_off.png"] forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark DESLocationManagerDelegate Method
@@ -234,7 +312,7 @@ typedef enum {
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 4;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -242,8 +320,6 @@ typedef enum {
     NSInteger rowCount = 1;
     ShareSection sectionVal = (ShareSection)section;
     switch (sectionVal) {
-        case ShareSectionLocation:
-        case ShareSectionComposition:
         case ShareSectionShare:
         {
             rowCount = 1;
@@ -277,22 +353,6 @@ typedef enum {
     
     ShareSection sectionVal = (ShareSection)indexPath.section;
     switch (sectionVal) {
-        case ShareSectionLocation:
-        {
-            break;
-        }
-            
-        case ShareSectionComposition:
-        {
-            CMShareCompositionCell *compositeCell = (CMShareCompositionCell *)cell;
-            compositeCell.delegate = self;
-            CMPhotoModel *model = (CMPhotoModel *)self.capturedPhotoList[0];
-            compositeCell.compositionImageView.image = model.editedImage;
-            [compositeCell setPostImage:_imagePost];
-            
-            break;
-        }
-            
         case ShareSectionCategory:
         {
             if(cell == nil) {
@@ -301,6 +361,10 @@ typedef enum {
             
             [categoryController.view removeFromSuperview];
             [cell.contentView addSubview:categoryController.view];
+            
+            CGRect categoryControllerRect = categoryController.view.frame;
+            categoryControllerRect.size.height = cell.bounds.size.height;
+            [categoryController.view setFrame:categoryControllerRect];
             
 //            CMShareCategoryCell *categoryCell = (CMShareCategoryCell *)cell;
 //            if(indexPath.row == 0 && !showCategoryOption) {
@@ -335,7 +399,6 @@ typedef enum {
             CMShareSocialCell *socialCell = (CMShareSocialCell *)cell;
             [socialCell.fbButton addTarget:self action:@selector(socailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             [socialCell.gpButton addTarget:self action:@selector(socailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            [socialCell.twButton addTarget:self action:@selector(socailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             [socialCell.shareButton addTarget:self action:@selector(shareButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             break;
         }
@@ -354,7 +417,6 @@ typedef enum {
     CGFloat rowheight = 41.0f;
     ShareSection sectionVal = (ShareSection)indexPath.section;
     switch (sectionVal) {
-        case ShareSectionLocation:
         case ShareSectionTag:
         {
             rowheight = 41.0f;
@@ -364,23 +426,12 @@ typedef enum {
         case ShareSectionCategory:
         {
             if(showCategoryOption) {
-                rowheight = CGRectGetHeight(tableView.frame) - 100.0f;
+                rowheight = CGRectGetHeight(tableView.frame);// - 100.0f;
                 categoryController.categoryTableView.scrollEnabled = YES;
             }
             else {
                 rowheight = 41.0f;
                 categoryController.categoryTableView.scrollEnabled = NO;
-            }
-            break;
-        }
-            
-        case ShareSectionComposition:
-        {
-            if(!showCompositionCell) {
-                rowheight = 100.0f;
-            }
-            else {
-                rowheight = 320.0f;
             }
             break;
         }
@@ -426,13 +477,36 @@ typedef enum {
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    NSLog(@"%@", [[textField superview] superview]);
-    NSLog(@"%@", [[[textField superview] superview] superview]);
+    if([self.view findFirstResponder]) {
+        id txtfiled = [self.view findFirstResponder];
+        if([txtfiled isKindOfClass:[UITextField class]]) {
+            UITextField *tagField = (UITextField *)txtfiled;
+            UITableViewCell *cell = (UITableViewCell *)[[[txtfiled superview] superview] superview];
+            NSIndexPath *txtfldIndexPath = [self.shareTableView indexPathForCell:cell];
+            if (txtfldIndexPath.section == ShareSectionTag && tagField.text.length == 1) {
+                tagField.text = @"";
+            }
+        }
+    }
+    
+    if(showCompositionCell) {
+        showCompositionCell = NO;
+        [self expandOrCollapseComposition];
+    }
+    
     UITableViewCell *cell = (UITableViewCell *)[[[textField superview] superview] superview];
     NSIndexPath *txtfldIndexPath = [self.shareTableView indexPathForCell:cell];
     if (txtfldIndexPath.section == ShareSectionTag && !textField.text.length) {
         textField.text = @"#";
     }
+    
+    [UIView animateWithDuration:0.3f
+                     animations:^{
+                         CGRect shareBodyFrame = self.shareBodyContainerView.frame;
+                         shareBodyFrame.origin.y = 0.0f;
+                         [self.shareBodyContainerView setFrame:shareBodyFrame];
+                     }
+                     completion:nil];
     
     return YES;
 }
@@ -458,6 +532,14 @@ typedef enum {
     if (txtfldIndexPath.section == ShareSectionTag && textField.text.length == 1) {
         textField.text = @"";
     }
+    
+    [UIView animateWithDuration:0.3f
+                     animations:^{
+                         CGRect shareBodyFrame = self.shareBodyContainerView.frame;
+                         shareBodyFrame.origin.y = 64.0f;
+                         [self.shareBodyContainerView setFrame:shareBodyFrame];
+                     }
+                     completion:nil];
     
     return YES;
 }
@@ -486,11 +568,19 @@ typedef enum {
 {
     showCategoryOption = !showCategoryOption;
     
+    // resign keyboard if on screen.
+    if([self.view findFirstResponder]) {
+        id txtfiled = [self.view findFirstResponder];
+        if([txtfiled isKindOfClass:[UITextField class]]) {
+            [self textFieldShouldReturn:(UITextField *)txtfiled];
+        }
+    }
+    
     if(showCompositionCell) {
         showCompositionCell = NO;
+        [self expandOrCollapseComposition];
 
         [self.shareTableView beginUpdates];
-        [self.shareTableView reloadSections:[NSIndexSet indexSetWithIndex:ShareSectionComposition] withRowAnimation:UITableViewRowAnimationFade];
         [self.shareTableView reloadSections:[NSIndexSet indexSetWithIndex:ShareSectionCategory] withRowAnimation:UITableViewRowAnimationFade]; //
         [self.shareTableView endUpdates];
     }
@@ -508,6 +598,14 @@ typedef enum {
 {
     showCompositionCell = !showCompositionCell;
     
+    // resign keyboard if on screen.
+    if([self.view findFirstResponder]) {
+        id txtfiled = [self.view findFirstResponder];
+        if([txtfiled isKindOfClass:[UITextField class]]) {
+            [self textFieldShouldReturn:(UITextField *)txtfiled];
+        }
+    }
+    
     if(showCategoryOption) {
         showCategoryOption = NO;
         categoryController.showCategoryOptions = NO;
@@ -515,12 +613,28 @@ typedef enum {
         
         [self.shareTableView beginUpdates];
         [self.shareTableView reloadSections:[NSIndexSet indexSetWithIndex:ShareSectionCategory] withRowAnimation:UITableViewRowAnimationFade]; //
-        [self.shareTableView reloadSections:[NSIndexSet indexSetWithIndex:ShareSectionComposition] withRowAnimation:UITableViewRowAnimationFade];
         [self.shareTableView endUpdates];
     }
-    else {
-        [self.shareTableView reloadSections:[NSIndexSet indexSetWithIndex:ShareSectionComposition] withRowAnimation:UITableViewRowAnimationFade];
-    }
+    
+    [self expandOrCollapseComposition];
+
+}
+
+- (void)expandOrCollapseComposition
+{
+    [UIView animateWithDuration:0.3f
+                     animations:^{
+                         CGRect shareTableRect = self.shareTableView.frame;
+                         
+                         if(YES == showCompositionCell) {
+                             shareTableRect.origin.y = CGRectGetMaxY(self.compositionContainerView.frame);
+                         }
+                         else {
+                             shareTableRect.origin.y = CGRectGetMinY(self.compositionContainerView.frame) + 100.0f;
+                         }
+                         self.shareTableView.frame = shareTableRect;
+                     }
+                     completion:nil];
 }
 
 #pragma mark - Webservices Method
@@ -555,23 +669,39 @@ typedef enum {
         latLongStr = [NSString stringWithFormat:@"%@, %lf", latLongStr, [DESLocationManager sharedLocationManager].currentLocation.coordinate.longitude];
         [DESLocationManager sharedLocationManager].delegate = nil;
         [[DESLocationManager sharedLocationManager] stopFetchingCurrentLocation];
-
     }
+    
+    // get tag1 text from tableview cell (section:ShareSectionTag, index:0)
+    CMShareTagCell *tag1Cell = (CMShareTagCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionTag]];
+    CMShareTagCell *tag2Cell = (CMShareTagCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:ShareSectionTag]];
+    
+    NSString *tag1Text = @"";
+    NSString *tag2Text = @"";
+    if(nil != tag1Cell) {
+        tag1Text = tag1Cell.tagTxtfld.text;
+    }
+    
+    if(nil != tag2Cell) {
+        tag2Text = tag2Cell.tagTxtfld.text;
+    }
+    
+    CMShareSocialCell *socialCell = (CMShareSocialCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionShare]];
     
     [argDict setObject:[WSModelClasses sharedHandler].loggedInUserModel.userID forKey:@"UserUID"];
     [argDict setObject:[imgTimeArray componentsJoinedByString:@","] forKey:@"imageTimesArr"];
-    [argDict setObject:@"No Category" forKey:@"txtCategory"];
-    [argDict setObject:@"Hyderabad" forKey:@"txtLocation"];
+    [argDict setObject:[categoryController getSelectedCategory] forKey:@"txtCategory"];
+    [argDict setObject:[googleSearchController.searchDisplayController.searchBar text] forKey:@"txtLocation"];
     [argDict setObject:latLongStr forKey:@"txtLatLongitude"];
-    [argDict setObject:@"NO" forKey:@"shareFB"];
-    [argDict setObject:@"NO" forKey:@"shareGoogle"];
-    [argDict setObject:@"NO" forKey:@"shareTwitter"];
-    [argDict setObject:@"SampleComposition" forKey:@"txtTag1"];
-    [argDict setObject:@"MakeComposition" forKey:@"txtTag2"];
+    [argDict setObject:socialCell.fbButton.isSelected ? @"YES" : @"NO" forKey:@"shareFB"];
+    [argDict setObject:socialCell.gpButton.isSelected ? @"YES" : @"NO" forKey:@"shareGoogle"];
+//    [argDict setObject:@"NO" forKey:@"shareTwitter"];
+    [argDict setObject:tag1Text forKey:@"txtTag1"];
+    [argDict setObject:tag2Text forKey:@"txtTag2"];
     [argDict setObject:videoEncodedString forKey:@"movFile"];
     [argDict setObject:_totalVideoDuration forKey:@"clip_duration"];
     
     NSLog(@"%s sending to url", __func__);
+    [[WSModelClasses sharedHandler] showLoadView];
     [[WSModelClasses sharedHandler] setDelegate:self];
     [[WSModelClasses sharedHandler] postComposition:(NSDictionary *)argDict];
 }
@@ -579,6 +709,7 @@ typedef enum {
 #pragma mark - Webservice Delegate Method
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
 {
+    [[WSModelClasses sharedHandler] removeLoadingView];
     WebservicesType serviceType = (WebservicesType)[responseDict[WS_RESPONSEDICT_KEY_SERVICETYPE] integerValue];
     if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -589,6 +720,14 @@ typedef enum {
     switch (serviceType) {
         case kWebservicesType_PostComposition:
         {
+            // get the weburl from responseDict
+            NSString *postUrl = responseDict[@"ResponseData"][@"DataTable"][0][@"NewData"][@"WebURL"]; //[responseDict valueForKeyPath:@"DataTable.NewData.WebURL"];// 
+            
+            CMShareSocialCell *socialCell = (CMShareSocialCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionShare]];
+            if(socialCell.fbButton.isSelected) {
+                [[DESocialConnectios sharedInstance] facebookSharing:@"DescribeApp" picture:nil caption:nil andLink:[NSURL URLWithString:postUrl] decription:@"Hey check my post of Goa trip."];
+            }
+            
             [self popToFeedScreen];
             break;
         }
