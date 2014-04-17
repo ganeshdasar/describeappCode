@@ -95,7 +95,7 @@ static DPostsViewController *sharedFeedController;
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
     //[sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
-    [sharedInstance getPostDetailsOfUserId:@"1" andRange:0];
+    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] andRange:2];
 }
 
 
@@ -262,7 +262,7 @@ static DPostsViewController *sharedFeedController;
 {
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:@"45" andRange:0];
+    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] andRange:0];
 }
 
 - (void)morePost:(id)sender
@@ -465,6 +465,7 @@ static DPostsViewController *sharedFeedController;
     
     [self pushToCompositionScreen];
 }
+
 
 -(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
 {

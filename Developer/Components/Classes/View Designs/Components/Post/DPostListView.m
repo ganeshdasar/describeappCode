@@ -56,7 +56,6 @@
     if (self) {
         // Initialization code
         _postList = [[NSMutableArray alloc] initWithArray:list];
-        [_postList addObjectsFromArray:list];
         [self createPostListView];
         
     }

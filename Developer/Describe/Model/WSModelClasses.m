@@ -670,7 +670,7 @@ static WSModelClasses *_sharedInstance;
 //http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/range=0
 - (void)getPostDetailsOfUserId:(NSString *)userId andRange:(NSInteger)range
 {
-    userId = @"1";
+//    userId = @"1";
     NSString *ur = [NSString stringWithFormat:@"%@/getFeeds/format=json/UserUID=%@/range=%d", BaseURLString, userId, range];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur

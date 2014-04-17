@@ -513,7 +513,7 @@
         if(model!=nil && model.imageUrl != nil)
             [imageUrls addObject:model.imageUrl];
     }
-    if(_index== 0)
+    if(_index== 0 && _postImage.images.count)
     {
         CMPhotoModel *model = _postImage.images[0];
         [_frontImageView setImageWithURL:[NSURL URLWithString:[model imageUrl]]];
