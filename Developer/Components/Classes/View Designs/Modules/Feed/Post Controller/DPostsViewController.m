@@ -334,6 +334,7 @@ static DPostsViewController *sharedFeedController;
     NSString *currencUserId = [NSString stringWithFormat:@"%d",[[[[WSModelClasses sharedHandler] loggedInUserModel]userID] integerValue]];
     NSString *postId = post.postId;
     
+    _currentPost = post;
     
     WSModelClasses * dataClass = [WSModelClasses sharedHandler];
     dataClass.delegate =self;
@@ -347,19 +348,21 @@ static DPostsViewController *sharedFeedController;
     if(responceDict != nil || ![responceDict isKindOfClass:[NSNull class]])
     {
         NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
-        NSDictionary *conversationHeader = nil;
+        NSMutableDictionary *conversationHeader = [[NSMutableDictionary alloc] init];
         
-        NSString *baseImageUrl = responceDict[@"DataTable"][@"BigImagePath"];
+        NSString *baseImageUrl = [responceDict valueForKeyPath:@"DataTable.BigImagePath"];
         for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"])
         {
-            
-            if(dic == nil || [dic isKindOfClass:[NSNull class]])
+            if(dic == nil || ( [dic isKindOfClass:[NSNull class]]  && [dic isKindOfClass:[NSDictionary class]]))
                 continue;
             
+            NSString *message = dic[@"Msg"];
+            if([message isEqualToString:@"No records available."])
+                continue;
             
             if(conversationHeader == nil)
             {
-                conversationHeader = @{@"PostCategory":dic[@"PostCategory"],@"PostTag1":dic[@"PostTag1"],@"PostTag2":dic[@"PostTag2"],@"PostUID":dic[@"PostUID"]};
+                conversationHeader = (NSMutableDictionary *)@{@"PostCategory":dic[@"PostCategory"],@"PostTag1":dic[@"PostTag1"],@"PostTag2":dic[@"PostTag2"],@"PostUID":dic[@"PostUID"]};
             }
             
             DConversation * data = [[DConversation alloc]init];
@@ -378,6 +381,11 @@ static DPostsViewController *sharedFeedController;
             [conversatonDataArray addObject:data];
             
         }
+        
+        if(conversationHeader[@"PostUID"] == nil && _currentPost!=nil)
+            [conversationHeader setValue:_currentPost.postId forKey:@"PostUID"];
+        
+        _currentPost = nil;
         DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
         conversationController.conversationDetails = @{@"header":conversationHeader, @"content":conversatonDataArray};
         [self.navigationController pushViewController:conversationController animated:YES];
@@ -682,7 +690,6 @@ static DPostsViewController *sharedFeedController;
                         
                         
                         CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-                        [photoModel setImageUrl:imageUrl];
                         [photoModel setImageUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
                         
                         [photoModel setDuration:[durationList[j-1]integerValue]];
@@ -693,8 +700,6 @@ static DPostsViewController *sharedFeedController;
                     
                     //Binding video to the post...
                     DPostVideo *video = [[DPostVideo alloc] init];
-                    [video setDuration:@"10"];
-                    [video setUrl:postDetails[@"VideoFile"]];
                     [video setUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[@"VideoFile"]]];
                     
                     [imagePost setVideo:video];

@@ -8,7 +8,7 @@
 
 #import "DUserComponent.h"
 #import "UIImageView+AFNetworking.h"
-
+#import <CoreGraphics/CoreGraphics.h>
 
 @interface DUserComponent ()
 {
@@ -49,6 +49,14 @@
     [self addSubview:roundImg];
     self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     [self addSubview:self.thumbnailImg];
+    
+    {
+        self.thumbnailImg.layer.cornerRadius = 20.0;
+        self.thumbnailImg.layer.masksToBounds = YES;
+    }
+    
+    
+    
     if (data.profileUserProfilePicture) {
         [self downloadUserImageview:data.profileUserProfilePicture];
     }

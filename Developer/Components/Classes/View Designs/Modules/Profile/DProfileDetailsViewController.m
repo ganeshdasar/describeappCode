@@ -293,12 +293,13 @@
         case 1:
             [self removePostsListView];
             [self removeViewFromSuperView:_followersList];
-            [self designFollowingList];
+            [self getFollowingList];
             break;
         case 2:
             [self removePostsListView];
             [self removeViewFromSuperView:_followingList];
-            [self desingFollwerList];
+            [self getFollowersList];
+
             break;
             
         default:
@@ -361,28 +362,51 @@
     }
 }
 
+-(NSArray *)parseFollowingsList:(NSDictionary *)response
+{
+    if(response == nil) return nil;
+    
+    NSMutableArray *list = [[NSMutableArray alloc] init];
+    
+    NSArray *peopleList = response[@"DataTable"];
+    NSInteger count = peopleList.count;
+    for (int i=0; i<count; i++)
+    {
+        NSDictionary *dict = peopleList[i];
+        NSDictionary *people = dict[@"DescribeUserProfileFollowings"];
+        SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
+        [list addObject:peopleInfo];
+    }
+    
+    
+    return list;
+}
+
+
+-(NSArray *)parseFollowersList:(NSDictionary *)response
+{
+    if(response == nil) return nil;
+    
+    NSMutableArray *list = [[NSMutableArray alloc] init];
+    
+    NSArray *peopleList = response[@"DataTable"];
+    NSInteger count = peopleList.count;
+    for (int i=0; i<count; i++)
+    {
+        NSDictionary *dict = peopleList[i];
+        NSDictionary *people = dict[@"DescribeUserProfileFollowers"];
+        SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
+        [list addObject:peopleInfo];
+    }
+    
+    
+    return list;
+}
+
+
 
 -(void)designFollowingList
 {
-    NSMutableArray *followings = [[NSMutableArray alloc] init];
-    
-    for (int i=0; i<3; i++)
-    {
-        {
-            SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
-            searchData.followingStatus = @"1";
-            searchData.profileUserCity = @"b";
-            searchData.profileUserEmail = @"c";
-            searchData.profileUserFullName = @"Gopal Gundaram";
-            searchData.profileUserProfilePicture = @"e";
-            searchData.profileUserUID = @"f";
-            searchData.profileUserName = @"Gopal";
-            searchData.userActCout = @"h";
-            searchData.proximity = @"i";
-            
-            [followings addObject:searchData];
-        }
-    }
     if(_followingList != nil)
     {
         [_followingList removeFromSuperview];
@@ -391,12 +415,15 @@
     
     if(_followingList == nil)
     {
-        _followingList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:followings];
+        _followingList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followings];
         [_followingList addHeaderViewForTable:[[UIView alloc] init]];
         [_followingList setDelegate:self];
         [_followingList setTag:111];
         [_contentView addSubview:_followingList];
     }
+    
+    [_contentView bringSubviewToFront:_segmentListView];
+    [_contentView bringSubviewToFront:_headerView];
 }
 
 
@@ -449,28 +476,56 @@
 }
 
 
+
+-(void)getFollowingList
+{
+    NSString *currentUserId = [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue];
+    NSString *profileId = self.profileId;
+    NSInteger pageNumber = 0;
+    
+    [[WSModelClasses sharedHandler] getFollowingListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumber response:^(BOOL success, id response) {
+        if(success)
+        {
+            //Need to parse the data...
+            NSLog(@"Follwing List:%@",response);
+            _followings = [self parseFollowingsList:response];
+            [self designFollowingList];
+        }
+        else
+        {
+            //Failed to get the details of the following list...
+            NSLog(@"Failed to get the followings list:%@",response);
+        }
+    }];
+}
+
+
+
+-(void)getFollowersList
+{
+    NSString *currentUserId = [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue];
+    NSString *profileId = self.profileId;
+    NSInteger pageNumber = 0;
+    
+    [[WSModelClasses sharedHandler] getFollowersListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumber response:^(BOOL success, id response) {
+        if(success)
+        {
+            //Need to parse the data...
+            NSLog(@"Followers List:%@",response);
+            _followers = [self parseFollowersList:response];
+            [self desingFollwerList];
+        }
+        else
+        {
+            //Failed to get the details of the following list...
+            NSLog(@"Failed to get the follwers list:%@",response);
+        }
+    }];
+}
+
+
 -(void)desingFollwerList
 {
-    NSMutableArray *followers = [[NSMutableArray alloc] init];
-    
-    for (int i=0; i<20; i++)
-    {
-        {
-            SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
-            searchData.followingStatus = @"1";
-            searchData.profileUserCity = @"b";
-            searchData.profileUserEmail = @"c";
-            searchData.profileUserFullName = @"Gopal Gundaram";
-            searchData.profileUserProfilePicture = @"e";
-            searchData.profileUserUID = @"f";
-            searchData.profileUserName = @"Gopal";
-            searchData.userActCout = @"h";
-            searchData.proximity = @"i";
-            
-            [followers addObject:searchData];
-        }
-    }
-    
     if(_followersList != nil)
     {
         [_followersList removeFromSuperview];
@@ -479,15 +534,20 @@
     
     if(_followersList == nil)
     {
-        _followersList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:followers];
+        _followersList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followers];
         [_followersList addHeaderViewForTable:[[UIView alloc] init]];
         [_followersList setDelegate:self];
         [_contentView addSubview:_followersList];
     }
+    
+    [_contentView bringSubviewToFront:_segmentListView];
+    [_contentView bringSubviewToFront:_headerView];
 }
 
 -(void)designPostListView
 {
+ 
+
     
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
@@ -502,6 +562,8 @@
             [self getPostDetailsResponse:nil withError:response];
         }
     }];
+    
+    
     
 //    [self designListView:nil];
 }

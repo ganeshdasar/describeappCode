@@ -718,6 +718,46 @@ static WSModelClasses *_sharedInstance;
 }
 
 
+#pragma mark Profile Details Apis -
+
+///http://mirusstudent.com/service/describe-service/getUserProfileFollowings/format=json/UserUID=1/ProfileUserUID=1/range=0/
+-(void)getFollowingListForUserId:(NSString *)currentUserId ofPersons:(NSString *)profileId pageNumber:(NSInteger )pageNumber  response:(void (^)(BOOL success, id response))response
+{
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserProfileFollowings/format=json/UserUID=%@/ProfileUserUID=%@/range=%d", BaseURLString, currentUserId, profileId,  pageNumber];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             response(NO, responseObject);
+         }
+     ];
+
+    
+}
+
+//http://mirusstudent.com/service/describe-service/getUserProfileFollowers/format=json/UserUID=1/ProfileUserUID=11/range=0/
+-(void)getFollowersListForUserId:(NSString *)currentUserId ofPersons:(NSString *)profileId pageNumber:(NSInteger )pageNumber  response:(void (^)(BOOL success, id response))response
+{
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserProfileFollowers/format=json/UserUID=%@/ProfileUserUID=%@/range=%d", BaseURLString, currentUserId, profileId,  pageNumber];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             response(NO, responseObject);
+         }
+     ];
+}
+
+
+
+
+
 #pragma mark Like Post
 - (void)likePost:(NSString *)postId userId:(NSString *)userId authUserId:(NSString *)authUID status:(NSInteger)count
 {

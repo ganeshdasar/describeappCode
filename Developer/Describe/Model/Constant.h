@@ -13,7 +13,8 @@
 
 #define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
 
-
+#define dynamiTextSize(text, font) [text length] > 0 ? [text \
+sizeWithAttributes:@{NSFontAttributeName:font}] : CGSizeZero
 
 //Will used to notify the details of the profiles...
 #define kNOTIFY_PROFILE_DETAILS                 @"notify profile details"

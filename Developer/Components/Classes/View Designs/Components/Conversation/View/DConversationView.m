@@ -452,14 +452,19 @@
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
-    
-    
+    if([textView.text isEqualToString:@"Add your comment here."])
+        textView.text = @"";
 }
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
-    if(textView.text.length)
+    NSString *text = textView.text;
+    text = [text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    if(text.length)
         [self postComment:textView.text forConversation:_conversation];
+    
+    textView.text = @"Add your comment here.";
 }
 
 -(void)resignKeyboard

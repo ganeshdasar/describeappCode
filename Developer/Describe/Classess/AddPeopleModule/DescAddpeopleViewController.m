@@ -342,15 +342,7 @@
     NSMutableArray  * peopleArray = [[NSMutableArray alloc]init];
     
     for (NSMutableDictionary * dic in [responceDict valueForKeyPath:@"ResponseData.DataTable"]) {
-        SearchPeopleData * data =  [[SearchPeopleData alloc]init];
-        data.followingStatus = [dic valueForKeyPath:@"DescribeSuggestedUsers.FollowingStatus"];
-        data.gateWayToken = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayToken"];
-        data.gateWayType = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayType"];
-        data.profileUserEmail = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserEmail"];
-        data.profileUserFullName = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserFullName"];
-        data.profileUserProfilePicture = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserProfilePicture"];
-        data.profileUserUID = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserUID"];
-        data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
+        SearchPeopleData * data =  [[SearchPeopleData alloc]initWithDictionary:dic[@"DescribeSearchResultsByPeople"]];
         [peopleArray addObject:data];
     }
     if (_peoplelistView!=nil) {
@@ -403,16 +395,7 @@
     NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
     self.searchListArray = [[NSMutableArray alloc]init];
     for (NSMutableDictionary* dataDic in peopleArray) {
-        SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
-        searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
-        searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
-        searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
-        searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
-        searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
-        searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
-        searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
-        searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
-        searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
+        SearchPeopleData * searchData = [[SearchPeopleData alloc]initWithDictionary:dataDic[@"DescribeSearchResultsByPeople"]];
         [self.searchListArray addObject:searchData];
     }
     backButton.userInteractionEnabled = YES;
