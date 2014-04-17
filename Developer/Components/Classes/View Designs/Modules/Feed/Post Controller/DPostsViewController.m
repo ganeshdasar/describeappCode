@@ -40,6 +40,9 @@
     BOOL            _isSelfPost;
     
     DProfileDetailsViewController *_profileDetailsController;
+    
+    BOOL shouldLoadMore;
+    NSInteger pageLoadNumber;
 }
 @end
 
@@ -81,8 +84,6 @@ static DPostsViewController *sharedFeedController;
 //    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
 //    [self.view addGestureRecognizer:rightSwipeGesture];
     
-  
-    
     UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
     [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
     [self.view addGestureRecognizer:leftSwipeGesture];
@@ -91,26 +92,22 @@ static DPostsViewController *sharedFeedController;
     [self designHeaderView];
     [self designPostListView];
     
-    
-    WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
-    [sharedInstance setDelegate:self];
-    //[sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
-    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] andRange:2];
+    // fetch feed list for home screen
+    [self reloadPostList:nil];
 }
 
 
--(void)viewDidAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
 //    DProfileDetailsViewController *cont = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
 //    [self.navigationController pushViewController:cont animated:YES];
 }
 
--(void)viewWillDisappear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
 {
     //Stop playing post if any...
     
 }
-
 
 - (void)didReceiveMemoryWarning
 {
@@ -118,7 +115,7 @@ static DPostsViewController *sharedFeedController;
     // Dispose of any resources that can be recreated.
 }
 
--(void)viewDidUnload
+- (void)viewDidUnload
 {
 //    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_MORE_BUTTON_NOTIFICATION_KEY];
 //    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
@@ -260,9 +257,9 @@ static DPostsViewController *sharedFeedController;
 
 - (void)reloadPostList:(id)sender
 {
-    WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
-    [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] andRange:0];
+    shouldLoadMore = NO;
+    pageLoadNumber = 0;
+    [self fetchFeedForHomeScreen];
 }
 
 - (void)morePost:(id)sender
@@ -477,138 +474,7 @@ static DPostsViewController *sharedFeedController;
     [self pushToCompositionScreen];
 }
 
-
--(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
-{
-    NSArray *postList = response[@"DataTable"];
-    NSLog(@"Post Details Reponse: %@",response);
-    
-    NSMutableArray *postModelList = [[NSMutableArray alloc] init];
-    int count = [postList count] ;
-    for (int  i=0; i<count; i ++ )
-    {
-        //Post lists...
-        NSDictionary  *post = postList[i];
-        NSDictionary *postData = post[@"PostData"];
-        {
-            NSDictionary *authUserDetails = postData[@"AuthUserDetails"];
-            NSDictionary *postDetails = postData[@"PostDetails"];
-            
-            //Will bind the details with post view...
-            DPost *postModel = [[DPost alloc] init];
-            postModel.postId = postDetails[@"PostUID"];
-            {
-                DPostImage *imagePost = [[DPostImage alloc] init];
-                {
-                    //Binding photo models...
-                    NSMutableArray *images = [[NSMutableArray alloc] init];
-                    NSString *durations = postDetails[@"ImagesDuration"];
-                    NSArray *durationList = nil;
-                    if(durations != nil)
-                    {
-                        durationList = [durations componentsSeparatedByString:@","];
-                    }
-                    
-                    //Will create and add each photo as model and adding them to the list.
-                    int postImagesCount = [postDetails[@"PostImageCount"] integerValue];
-                    postImagesCount = postImagesCount + 1;
-                    //postImagesCount = 10;
-                                        
-                    
-                    for (int j=1; j<postImagesCount; j++)
-                    {
-                        NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
-                        if(imageUrl== nil || !imageUrl.length)
-                            break;
-                        
-                        
-                        CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-                        [photoModel setImageUrl:imageUrl];
-                        [photoModel setImageUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
-
-                        [photoModel setDuration:[durationList[j-1]integerValue]];
-                        [images addObject:photoModel];
-                    }
-                    [imagePost setImages:images];
-                    
-                    
-                    //Binding video to the post...
-                    DPostVideo *video = [[DPostVideo alloc] init];
-                    [video setDuration:@"10"];
-                    [video setUrl:postDetails[@"VideoFile"]];
-                    [video setUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[@"VideoFile"]]];
-                    
-                    [imagePost setVideo:video];
-                    
-                    [postModel setElapsedTime:postDetails[@"ElapsedTime"]];
-                }
-                
-                //Binding the user details...
-                DUser *user = [[DUser alloc] init];
-                {
-                    [user setUserId:authUserDetails[@"AuthUserUID"]];
-                    [user setName:authUserDetails[@"Username"]];
-                    [user setAddress:postDetails[@"PostLocation"]];
-                    [user setUserCanvasImage:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasImage"]]];
-                    [user setUserCanvasSnippet:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasSnippet"]]];
-                    [user setUserProfilePicture:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserProfilePicture"]]];
-                }
-                
-                //The post model here...
-                [postModel setImagePost:imagePost];
-                [postModel setUser:user];
-            }
-            
-            
-            //The footer content added here....
-            {
-                NSMutableArray *tags = [[NSMutableArray alloc] init];
-                if(postDetails[@"Tag1"] != nil && [(NSString *)postDetails[@"Tag1"] length])
-                {
-                    DPostTag *postTag = [[DPostTag alloc] init];
-                    [postTag setTagId:@""];
-                    [postTag setTagName:postDetails[@"Tag1"]];
-                    [tags addObject:postTag];
-                }
-                
-                if(postDetails[@"Tag2"] != nil && [(NSString *)postDetails[@"Tag2"] length])
-                {
-                    DPostTag *postTag = [[DPostTag alloc] init];
-                    [postTag setTagId:@""];
-                    [postTag setTagName:postDetails[@"Tag2"]];
-                    [tags addObject:postTag];
-                }
-                
-                DPostAttachments *attachements = [[DPostAttachments alloc] init];
-                [attachements setLikeRating:[postDetails[@"PostRating"] integerValue]];
-                [attachements setNumberOfComments:[postDetails[@"PostImageCount"] integerValue]];
-                [attachements setNumberOfLikes:[postDetails[@"PostLikeCount"] integerValue]];
-                [attachements setTagsList:tags];
-                [postModel setAttachements:attachements];
-            }
-            
-            
-            [postModelList addObject:postModel];
-        }
-    }
-    
-    if(_listView == nil)
-    {
-        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
-        [self.view addSubview:_listView];
-        [_listView setDelegate:self];
-        [self addNewObserverForDelegateProfileDetails];
-
-    }
-    else
-    {
-        [_listView reloadData:postModelList];
-    }
-    
-}
-
-
--(void)showMoreDetailsOfPost:(DPost *)post
+- (void)showMoreDetailsOfPost:(DPost *)post
 {
     _currentPost = post;
     
@@ -637,7 +503,7 @@ static DPostsViewController *sharedFeedController;
     [self getConversationDetailsOfPost:post];
 }
 
-
+#pragma mark - DPostListDelegate Method
 -(void)showConversationOfThisPost:(DPost *)post
 {
     [self getConversationDetailsOfPost:post];
@@ -648,6 +514,13 @@ static DPostsViewController *sharedFeedController;
     [self showMoreDetailsOfPost:post];
 }
 
+- (void)loadNextPage
+{
+    if(YES == shouldLoadMore) {
+        shouldLoadMore = NO;
+        [self fetchFeedForHomeScreen];
+    }
+}
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -755,8 +628,149 @@ static DPostsViewController *sharedFeedController;
     }
 }
 
+#pragma mark - Webservices Handling
+
+- (void)fetchFeedForHomeScreen
+{
+    WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
+    [sharedInstance setDelegate:self];
+    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] andRange:pageLoadNumber];
+}
+
+- (void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
+{
+    NSArray *postList = response[@"DataTable"];
+    NSLog(@"Post Details Reponse: %@",response);
+    
+    NSMutableArray *postModelList = [[NSMutableArray alloc] init];
+    int count = [postList count] ;
+    for (int  i=0; i<count; i ++ )
+    {
+        //Post lists...
+        NSDictionary  *post = postList[i];
+        NSDictionary *postData = post[@"PostData"];
+        {
+            NSDictionary *authUserDetails = postData[@"AuthUserDetails"];
+            NSDictionary *postDetails = postData[@"PostDetails"];
+            
+            //Will bind the details with post view...
+            DPost *postModel = [[DPost alloc] init];
+            postModel.postId = postDetails[@"PostUID"];
+            {
+                DPostImage *imagePost = [[DPostImage alloc] init];
+                {
+                    //Binding photo models...
+                    NSMutableArray *images = [[NSMutableArray alloc] init];
+                    NSString *durations = postDetails[@"ImagesDuration"];
+                    NSArray *durationList = nil;
+                    if(durations != nil)
+                    {
+                        durationList = [durations componentsSeparatedByString:@","];
+                    }
+                    
+                    //Will create and add each photo as model and adding them to the list.
+                    int postImagesCount = [postDetails[@"PostImageCount"] integerValue];
+                    postImagesCount = postImagesCount + 1;
+                    //postImagesCount = 10;
+                    
+                    
+                    for (int j=1; j<postImagesCount; j++)
+                    {
+                        NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
+                        if(imageUrl== nil || !imageUrl.length)
+                            break;
+                        
+                        
+                        CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
+                        [photoModel setImageUrl:imageUrl];
+                        [photoModel setImageUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
+                        
+                        [photoModel setDuration:[durationList[j-1]integerValue]];
+                        [images addObject:photoModel];
+                    }
+                    [imagePost setImages:images];
+                    
+                    
+                    //Binding video to the post...
+                    DPostVideo *video = [[DPostVideo alloc] init];
+                    [video setDuration:@"10"];
+                    [video setUrl:postDetails[@"VideoFile"]];
+                    [video setUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[@"VideoFile"]]];
+                    
+                    [imagePost setVideo:video];
+                    
+                    [postModel setElapsedTime:postDetails[@"ElapsedTime"]];
+                }
+                
+                //Binding the user details...
+                DUser *user = [[DUser alloc] init];
+                {
+                    [user setUserId:authUserDetails[@"AuthUserUID"]];
+                    [user setName:authUserDetails[@"Username"]];
+                    [user setAddress:postDetails[@"PostLocation"]];
+                    [user setUserCanvasImage:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasImage"]]];
+                    [user setUserCanvasSnippet:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasSnippet"]]];
+                    [user setUserProfilePicture:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserProfilePicture"]]];
+                }
+                
+                //The post model here...
+                [postModel setImagePost:imagePost];
+                [postModel setUser:user];
+            }
+            
+            
+            //The footer content added here....
+            {
+                NSMutableArray *tags = [[NSMutableArray alloc] init];
+                if(postDetails[@"Tag1"] != nil && [(NSString *)postDetails[@"Tag1"] length])
+                {
+                    DPostTag *postTag = [[DPostTag alloc] init];
+                    [postTag setTagId:@""];
+                    [postTag setTagName:postDetails[@"Tag1"]];
+                    [tags addObject:postTag];
+                }
+                
+                if(postDetails[@"Tag2"] != nil && [(NSString *)postDetails[@"Tag2"] length])
+                {
+                    DPostTag *postTag = [[DPostTag alloc] init];
+                    [postTag setTagId:@""];
+                    [postTag setTagName:postDetails[@"Tag2"]];
+                    [tags addObject:postTag];
+                }
+                
+                DPostAttachments *attachements = [[DPostAttachments alloc] init];
+                [attachements setLikeRating:[postDetails[@"PostRating"] integerValue]];
+                [attachements setNumberOfComments:[postDetails[@"PostImageCount"] integerValue]];
+                [attachements setNumberOfLikes:[postDetails[@"PostLikeCount"] integerValue]];
+                [attachements setTagsList:tags];
+                [postModel setAttachements:attachements];
+            }
+            
+            [postModelList addObject:postModel];
+        }
+    }
+    
+    if(_listView == nil) {
+        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
+        [self.view addSubview:_listView];
+        [_listView setDelegate:self];
+        [self addNewObserverForDelegateProfileDetails];
+    }
+    else {
+        if(pageLoadNumber > 0) {
+            [_listView appendMorePosts:postModelList];
+        }
+        else {
+            [_listView reloadData:postModelList];
+        }
+    }
+    
+    if(postList.count == 10) {
+        shouldLoadMore = YES;
+        pageLoadNumber += 1;
+    }
+    
+}
+
 @end
-
-
-
 

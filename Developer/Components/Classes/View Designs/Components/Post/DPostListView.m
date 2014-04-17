@@ -101,6 +101,12 @@
     [_postListView reloadData];
 }
 
+- (void)appendMorePosts:(NSArray *)details
+{
+    [_postList addObjectsFromArray:details];
+    [_postListView reloadData];
+}
+
 -(void)addHeaderViewForTable:(UIView *)headerView
 {
     [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 50)];
@@ -381,6 +387,28 @@
     
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGPoint offset = scrollView.contentOffset;
+    CGRect bounds = scrollView.bounds;
+    CGSize size = scrollView.contentSize;
+    UIEdgeInsets inset = scrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    
+//    NSLog(@"offset = %@, bounds = %@, size = %@, inset = %@", NSStringFromCGPoint(offset), NSStringFromCGRect(bounds), NSStringFromCGSize(size), NSStringFromUIEdgeInsets(inset));
+    
+    float reload_distance = 500.0f;//100;
+    if(y > (h - reload_distance)) {
+        // Call the method.
+        if((_delegate != nil && [_delegate respondsToSelector:@selector(loadNextPage)])) {
+            [_delegate performSelector:@selector(loadNextPage) withObject:nil];
+        }
+        
+        return;
+    }
+    
+}
 
 
 -(BOOL)isCellCompletelyVisible:(NSIndexPath *)indexPath
