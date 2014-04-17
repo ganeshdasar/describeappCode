@@ -21,6 +21,8 @@
 -(void)deletePost:(DPost *)post;
 -(void)addHeaderViewForTable:(UIView *)headerView;
 -(void)reloadData:(NSArray *)details;
+- (void)appendMorePosts:(NSArray *)details;
+
 @end
 
 
@@ -35,4 +37,5 @@
 -(void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction;
 -(void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+- (void)loadNextPage;
 @end
