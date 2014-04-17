@@ -44,6 +44,9 @@
 
 -(void)designConversationListView
 {
+    
+    
+    
     _userCommentViewHeight = 60;
     [self createConversationListView];
     //[self registerKeyboardNotifications];
@@ -103,21 +106,34 @@
     }
 }
 
+//@{@"PostCategory":dic[@"PostCategory"],@"PostTag1":dic[@"PostTag1"],@"PostTag2":dic[@"PostTag2"],@"PostUID":dic[@"PostUID"]};
 
 -(void)createListHeaderView
 {
-    float x,y,w,h,headerHeight = 40;
+    float x,y,w,h,headerHeight = 0;
     
     UIView *headerView = [[UIView alloc] init];
     [headerView setBackgroundColor:[UIColor whiteColor]];
     
     x = 20, y = 12;
     w = 320 - 2*x , h = 20;
-    UILabel *titleLabel = [self createLabelOnView:headerView withText:@"Animals & Pets" atRect:CGRectMake(x,y,w,h)];
+    UILabel *titleLabel = [self createLabelOnView:headerView withText:self.header[@"PostCategory"] atRect:CGRectMake(x,y,w,h)];
     [titleLabel setTextColor:[UIColor grayColor]];
     
     y = y + h;
-    NSArray *tags = @[@"#theBestCompositePhotography", @"#aStoryAboutNothingness"];
+    
+    
+    NSMutableArray *tags = [[NSMutableArray alloc] init];
+  
+    if(self.header[@"PostCategory"] != nil)
+        headerHeight = 40;
+    
+    if(self.header[@"PostTag1"] != nil)
+        [tags addObject:self.header[@"PostTag1"]];
+    
+    if(self.header[@"PostTag2"] != nil)
+        [tags addObject:self.header[@"PostTag2"]];
+    
     int count = tags.count;
     
     for (int i=0; i<count; i++)
@@ -146,6 +162,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    
     return _userCommentViewHeight;
 }
 
@@ -158,8 +175,8 @@
         DConversation *conversation = [[DConversation alloc] init];
         [conversation setUsername:[userDefaults valueForKey:@"UserName"]];
         [conversation setProfilePic:[userDefaults valueForKey:@"UserProfilePicture"]];
-        [conversation setPostId:@"2"];
-        [conversation setUserId:@"45"];
+        [conversation setPostId:self.header[@"PostUID"]];
+        [conversation setUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue]];
         [conversation setType:DConversationTypeCurrentUser];
         
         _userCommentView = [[DConversationView alloc] initWithFrame:CGRectMake(0, 0, 320, 60) withConversation:conversation];
@@ -205,6 +222,9 @@
         [cell.contentView addSubview:conversationView];
         [conversationView setTag:111];
     }
+    
+    
+    cell.contentView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.2];
     
     return cell;
 }
@@ -259,7 +279,12 @@
             break;
         case DConversationTypeComment:
         {
-            CGSize commentSize = [conversation.comment sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:11.0] constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:UILineBreakModeWordWrap];
+
+            UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0];
+            
+            CGRect rect = [conversation.comment boundingRectWithSize:CGSizeMake(224, 60) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font} context:nil];
+            CGSize commentSize = rect.size;
+            
             if(conversation.showFullConversation)
             {
                 //Caliculate the full conversation length...
@@ -273,7 +298,8 @@
                 {
                     height = height + 20;
                 }
-
+                
+                
             }
         }
             break;
@@ -354,9 +380,17 @@
 }
 
 -(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation
-{   
+{
+    [conversation setType:DConversationTypeComment];
+    [conversation setComment:comment];
+    
+    [_conversationList addObject:conversation];
+    [_listView reloadData];
+    
+    
+    
     NSString *convertedString = [comment stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [[WSModelClasses sharedHandler] commentUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] authUId:conversation.userId post:conversation.postId comment:convertedString response:^(BOOL success, id response) {
+    [[WSModelClasses sharedHandler] commentUserId:[[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue] authUId:conversation.userId post:conversation.postId comment:convertedString response:^(BOOL success, id response) {
         //Handle response...
         if(success)
         {

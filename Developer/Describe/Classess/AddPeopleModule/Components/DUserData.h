@@ -30,6 +30,7 @@
 @property (nonatomic,retain) NSString * userActCout;
 @property (nonatomic,retain) NSString * proximity;
 
+-(id)initWithDictionary:(NSDictionary *)dictionary;
 
 @end
 

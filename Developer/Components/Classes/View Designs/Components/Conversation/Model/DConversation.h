@@ -20,6 +20,9 @@ typedef enum ConversationViewType
 
 @interface DConversation : NSObject
 
+
+@property(nonatomic, assign)NSInteger totalCount;
+@property(nonatomic, strong)NSString *conversationId;
 @property(nonatomic, strong)NSString *postId;
 @property(nonatomic, strong)NSString *userId;
 @property(nonatomic, strong)NSString *username;

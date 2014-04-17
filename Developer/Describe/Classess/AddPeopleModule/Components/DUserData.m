@@ -44,6 +44,28 @@
 @synthesize gateWayType;
 
 
+-(id)initWithDictionary:(NSDictionary *)dictionary
+{
+    self = [super init];
+    if(self)
+    {
+        //custom initialize the data...
+        self.followingStatus = [dictionary valueForKeyPath:@"FollowingStatus"];
+        self.profileUserCity = [dictionary valueForKeyPath:@"ProfileUserCity"];
+        self.profileUserEmail = [dictionary valueForKeyPath:@"ProfileUserEmail"];
+        self.profileUserFullName = [dictionary valueForKeyPath:@"ProfileUserFullName"];
+        self.profileUserProfilePicture = [dictionary valueForKeyPath:@"ProfileUserProfilePicture"];
+        self.profileUserUID = [dictionary valueForKeyPath:@"ProfileUserUID"];
+        self.profileUserName = [dictionary valueForKeyPath:@"ProfileUsername"];
+        self.userActCout = [dictionary valueForKeyPath:@"UserActCount"];
+        self.proximity = [dictionary valueForKeyPath:@"proximity"];
+        
+    }
+    
+    return self;
+}
+
+
 @end
 
 

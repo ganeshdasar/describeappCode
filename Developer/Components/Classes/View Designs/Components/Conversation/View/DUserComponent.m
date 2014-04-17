@@ -8,7 +8,7 @@
 
 #import "DUserComponent.h"
 #import "UIImageView+AFNetworking.h"
-
+#import <CoreGraphics/CoreGraphics.h>
 
 @interface DUserComponent ()
 {
@@ -47,14 +47,19 @@
     UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     roundImg.image = [UIImage imageNamed:@"thumb_user_std.png"];
     [self addSubview:roundImg];
-//    self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
-////    self.thumbnailImg.layer.cornerRadius = CGRectGetHeight(self.thumbnailImg.frame)/2.0f;
-//    [self addSubview:self.thumbnailImg];
+    self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
+    [self addSubview:self.thumbnailImg];
     
-//    if (data.profileUserProfilePicture) {
-//        [self downloadUserImageview:data.profileUserProfilePicture];
-//    }
+    {
+        self.thumbnailImg.layer.cornerRadius = 20.0;
+        self.thumbnailImg.layer.masksToBounds = YES;
+    }
     
+    
+    
+    if (data.profileUserProfilePicture) {
+        [self downloadUserImageview:data.profileUserProfilePicture];
+    }
     UILabel * firsLineLbl = [[UILabel alloc]initWithFrame:CGRectMake(65, 0, 150, 30)];
     firsLineLbl.text = data.profileUserName;
     firsLineLbl.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17];

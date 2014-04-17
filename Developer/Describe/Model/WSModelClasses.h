@@ -194,4 +194,7 @@ typedef enum {
 -(void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
 
 
+-(void)getFollowingListForUserId:(NSString *)currentUserId ofPersons:(NSString *)profileId pageNumber:(NSInteger )pageNumber  response:(void (^)(BOOL success, id response))response;
+-(void)getFollowersListForUserId:(NSString *)currentUserId ofPersons:(NSString *)profileId pageNumber:(NSInteger )pageNumber  response:(void (^)(BOOL success, id response))response;
+
 @end
