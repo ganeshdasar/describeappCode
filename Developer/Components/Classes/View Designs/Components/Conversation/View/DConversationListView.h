@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface DConversationListView : UIView
+
+
+
+@property (nonatomic, strong) NSDictionary *header;
 @property (nonatomic,strong)     NSMutableArray *_conversationList;
 
 

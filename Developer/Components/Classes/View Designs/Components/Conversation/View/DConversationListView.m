@@ -103,6 +103,7 @@
     }
 }
 
+//@{@"PostCategory":dic[@"PostCategory"],@"PostTag1":dic[@"PostTag1"],@"PostTag2":dic[@"PostTag2"],@"PostUID":dic[@"PostUID"]};
 
 -(void)createListHeaderView
 {
@@ -113,11 +114,11 @@
     
     x = 20, y = 12;
     w = 320 - 2*x , h = 20;
-    UILabel *titleLabel = [self createLabelOnView:headerView withText:@"Animals & Pets" atRect:CGRectMake(x,y,w,h)];
+    UILabel *titleLabel = [self createLabelOnView:headerView withText:self.header[@"PostCategory"] atRect:CGRectMake(x,y,w,h)];
     [titleLabel setTextColor:[UIColor grayColor]];
     
     y = y + h;
-    NSArray *tags = @[@"#theBestCompositePhotography", @"#aStoryAboutNothingness"];
+    NSArray *tags = @[self.header[@"PostTag1"],self.header[@"PostTag2"]];
     int count = tags.count;
     
     for (int i=0; i<count; i++)

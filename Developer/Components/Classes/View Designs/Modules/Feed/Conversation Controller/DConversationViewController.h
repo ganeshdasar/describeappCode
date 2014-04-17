@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface DConversationViewController : UIViewController
-@property (nonatomic ,strong ) NSMutableArray * conversationListArray;
+@property (nonatomic ,strong ) NSDictionary *conversationDetails;
 
 @end

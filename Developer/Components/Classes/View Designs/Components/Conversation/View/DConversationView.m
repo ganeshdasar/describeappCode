@@ -171,8 +171,8 @@
     _contentView = [[UIView alloc] initWithFrame:self.bounds];
     [_contentView setBackgroundColor:[UIColor clearColor]];
     [self addSubview:_contentView];
-    
-    [self calculateGeometryCalculations];
+    if(_conversation.type == DConversationTypeComment)
+        [self calculateGeometryCalculations];
     [self designConversationView];
 }
 

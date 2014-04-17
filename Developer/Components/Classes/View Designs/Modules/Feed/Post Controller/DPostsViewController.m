@@ -350,28 +350,39 @@ static DPostsViewController *sharedFeedController;
     if(responceDict != nil || ![responceDict isKindOfClass:[NSNull class]])
     {
         NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
-        for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
+        NSDictionary *conversationHeader = nil;
+        
+        NSString *baseImageUrl = responceDict[@"DataTable"][@"BigImagePath"];
+        for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"])
+        {
             
             if(dic == nil || [dic isKindOfClass:[NSNull class]])
                 continue;
             
+            
+            if(conversationHeader == nil)
+            {
+                conversationHeader = @{@"PostCategory":dic[@"PostCategory"],@"PostTag1":dic[@"PostTag1"],@"PostTag2":dic[@"PostTag2"],@"PostUID":dic[@"PostUID"]};
+            }
+            
             DConversation * data = [[DConversation alloc]init];
-            //    data.authUserUID = [dic valueForKey:@"AuthUserUID"];
-            data.comment = [dic valueForKey:@"Comment"];
+            data.comment = (dic[@"Comment"])?(dic[@"Comment"]):@"";
             data.numberOfLikes = [[dic valueForKey:@"LikeCount"]integerValue];
             data.postId = [dic valueForKey:@"PostUID"];
-            //data.conversationID = [dic valueForKey:@"conversationID"];
+            data.conversationId = [dic valueForKey:@"conversationID"];
             data.elapsedTime = [self elapsedTimeFrom:[dic[@"ServerTime"] integerValue] toTime:[dic[@"conversationMadeTime"] integerValue]];
-            data.type =   ([dic[@"conversationType"] isEqualToString:@"LIKE"])?DConversationTypeLike:DConversationTypeComment;// [[dic valueForKey:@"conversationType"]integerValue];
-            // data.conversationUserID = [dic valueForKey:@"conversationUserID"];
-            data.profilePic = [dic valueForKey:@"conversationUserProfilePicture"];
-            data.username = [dic valueForKey:@"conversationUsername"];
+            data.type = [dic[@"conversationType"] integerValue]+1;
+//            data.type =   ([dic[@"conversationType"] isEqualToString:@"LIKE"])?DConversationTypeLike:DConversationTypeComment;
+            data.profilePic = [NSString stringWithFormat:@"%@/%@",baseImageUrl,[dic valueForKey:@"ProfileUserProfilePic"]];
+            data.username = [dic valueForKey:@"ProfileUsername"];
+            data.totalCount = [dic[@"TotalCount"] integerValue];
             data.userId = dic[@"conversationUserID"];
+            
             [conversatonDataArray addObject:data];
             
         }
         DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
-        conversationController.conversationListArray = conversatonDataArray;
+        conversationController.conversationDetails = @{@"header":conversationHeader, @"content":conversatonDataArray};
         [self.navigationController pushViewController:conversationController animated:YES];
     }
 }

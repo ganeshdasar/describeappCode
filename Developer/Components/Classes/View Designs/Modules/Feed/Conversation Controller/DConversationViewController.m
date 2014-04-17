@@ -18,7 +18,7 @@
 @end
 
 @implementation DConversationViewController
-@synthesize conversationListArray;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -75,8 +75,8 @@
 
 -(void)designConversationView
 {
-    _conversationListView._conversationList =  self.conversationListArray;
-    
+    _conversationListView._conversationList =  self.conversationDetails[@"content"];
+    _conversationListView.header = self.conversationDetails[@"header"];
     [_conversationListView designConversationListView];
 }
 
