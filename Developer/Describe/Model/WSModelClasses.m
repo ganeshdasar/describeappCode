@@ -31,6 +31,7 @@ static WSModelClasses *_sharedInstance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _sharedInstance = [[WSModelClasses alloc] init];
+        _sharedInstance.loggedInUserModel = [[UsersModel alloc] init];
     });
     return _sharedInstance;
 }
@@ -745,7 +746,7 @@ static WSModelClasses *_sharedInstance;
 }
 
 
--(void)getWeRecommendedpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+-(void)getWeRecommendedpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSInteger)inRange;
 {
     if (![self checkTheInterConnection]) return;
     
@@ -755,7 +756,7 @@ static WSModelClasses *_sharedInstance;
         return;
     }
     
-    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":inRange};
+    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":[NSString stringWithFormat:@"%ld", (long)inRange]};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:[NSString stringWithFormat:@"%@/getWeRecommendedList", BaseURLString]
        parameters:userDetails
@@ -770,12 +771,11 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
-
--(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+-(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSInteger)inRange;
 {
     if (![self checkTheInterConnection]) return;
     
-    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":inRange};
+    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":[NSString stringWithFormat:@"%ld", (long)inRange]};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:[NSString stringWithFormat:@"%@/getInvitationList", BaseURLString]
        parameters:userDetails

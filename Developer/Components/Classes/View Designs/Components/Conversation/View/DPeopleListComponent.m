@@ -63,10 +63,16 @@
     [_peopleListView setDelegate:self];
     [_peopleListView setBackgroundColor: [UIColor clearColor]];
     _peopleListView.backgroundView =[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"bg_std_4in.png"]];
-    
+    _peopleListView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:_peopleListView];
 
     [_peopleListView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+}
+
+- (void)loadMorePeople:(NSArray *)peopleList
+{
+    [_peopleList addObjectsFromArray:peopleList];
+    [_peopleListView reloadData];
 }
 
 /*
@@ -206,6 +212,29 @@
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     [self scrollviewDidHoldingFinger:@"UNHOLDING"];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGPoint offset = scrollView.contentOffset;
+    CGRect bounds = scrollView.bounds;
+    CGSize size = scrollView.contentSize;
+    UIEdgeInsets inset = scrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    
+    //    NSLog(@"offset = %@, bounds = %@, size = %@, inset = %@", NSStringFromCGPoint(offset), NSStringFromCGRect(bounds), NSStringFromCGSize(size), NSStringFromUIEdgeInsets(inset));
+    
+    float reload_distance = 200.0f;//100;
+    if(y > (h - reload_distance)) {
+        // Call the method.
+        if((_delegate != nil && [_delegate respondsToSelector:@selector(loadNextPage)])) {
+            [_delegate performSelector:@selector(loadNextPage) withObject:nil];
+        }
+        
+        return;
+    }
+    
 }
 
 

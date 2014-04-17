@@ -467,7 +467,7 @@ static DPostsViewController *sharedFeedController;
 {
     _currentPost = post;
     
-    NSString *currentUserId = @"45";
+    NSString *currentUserId = [[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue];
     NSString *postAuthId = [[post user] userId];
     
     
@@ -544,7 +544,7 @@ static DPostsViewController *sharedFeedController;
         if(buttonIndex == 0)
         {
             //Report the post...
-            [[WSModelClasses sharedHandler] reportPost:_currentPost.postId userId:@"45" response:^(BOOL success, id response) {
+            [[WSModelClasses sharedHandler] reportPost:_currentPost.postId userId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] response:^(BOOL success, id response) {
                 if(success)
                 {
                     //Successfully deleted the post...
@@ -579,6 +579,7 @@ static DPostsViewController *sharedFeedController;
         case HeaderButtonTypeProfile:
         {
             DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+            profileController.profileId = [[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue];
             [self.navigationController pushViewController:profileController animated:YES];
         }
             break;

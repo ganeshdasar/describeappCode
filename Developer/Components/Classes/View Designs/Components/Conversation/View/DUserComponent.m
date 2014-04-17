@@ -47,11 +47,14 @@
     UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     roundImg.image = [UIImage imageNamed:@"thumb_user_std.png"];
     [self addSubview:roundImg];
-    self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
-    [self addSubview:self.thumbnailImg];
-    if (data.profileUserProfilePicture) {
-        [self downloadUserImageview:data.profileUserProfilePicture];
-    }
+//    self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
+////    self.thumbnailImg.layer.cornerRadius = CGRectGetHeight(self.thumbnailImg.frame)/2.0f;
+//    [self addSubview:self.thumbnailImg];
+    
+//    if (data.profileUserProfilePicture) {
+//        [self downloadUserImageview:data.profileUserProfilePicture];
+//    }
+    
     UILabel * firsLineLbl = [[UILabel alloc]initWithFrame:CGRectMake(65, 0, 150, 30)];
     firsLineLbl.text = data.profileUserName;
     firsLineLbl.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17];
@@ -92,12 +95,13 @@
     _subTitle = secondLineLbl;
     _thumIcon = roundImg;
     _statusButton = button;
+    _thumIcon.layer.cornerRadius = CGRectGetHeight(_thumIcon.frame)/2.0f;
+    _thumIcon.layer.masksToBounds = YES;
 }
 
 -(void)updateContent:(SearchPeopleData *)userData
 {
     data = userData;
-    
     
     [_thumIcon setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std.png"]];
     _title.text = data.profileUserName;

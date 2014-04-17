@@ -224,7 +224,7 @@
     
     WSModelClasses *sharedModel = [WSModelClasses sharedHandler];
     [sharedModel setDelegate:self];
-    [sharedModel likePost:[_post postId] userId:@"45" authUserId:[[_post user] userId] status:[stars integerValue]];
+    [sharedModel likePost:[_post postId] userId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] authUserId:[[_post user] userId] status:[stars integerValue]];
 }
 
 

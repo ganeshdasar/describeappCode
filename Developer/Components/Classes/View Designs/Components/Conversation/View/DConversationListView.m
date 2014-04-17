@@ -356,7 +356,7 @@
 -(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation
 {   
     NSString *convertedString = [comment stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [[WSModelClasses sharedHandler] commentUserId:@"45" authUId:conversation.userId post:conversation.postId comment:convertedString response:^(BOOL success, id response) {
+    [[WSModelClasses sharedHandler] commentUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] authUId:conversation.userId post:conversation.postId comment:convertedString response:^(BOOL success, id response) {
         //Handle response...
         if(success)
         {

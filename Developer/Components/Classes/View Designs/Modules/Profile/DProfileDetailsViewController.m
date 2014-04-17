@@ -383,6 +383,10 @@
             [followings addObject:searchData];
         }
     }
+    
+    _followings = followings;
+    
+    
     if(_followingList != nil)
     {
         [_followingList removeFromSuperview];
@@ -421,8 +425,11 @@
     if(listView.tag ==  111)//Following list...
     {
         //Navigate the contentview and _profileviewController2 to unvisible and visible...
+        SearchPeopleData *userDetail = _followings[index];
+        NSString *profileId = userDetail.profileUserUID;
         
         DProfileDetailsViewController *profileC = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+        [profileC setProfileId:profileId];
         [self.navigationController pushViewController:profileC animated:YES];
         
 //        [self createAlerternateProfileControllers];
@@ -443,7 +450,11 @@
     }
     else//Followers list...
     {
+        SearchPeopleData *userDetail = _followers[index];
+        NSString *profileId = userDetail.profileUserUID;
+        
         DProfileDetailsViewController *profileC = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+        profileC.profileId = profileId;
         [self.navigationController pushViewController:profileC animated:YES];
     }
 }
@@ -471,6 +482,8 @@
         }
     }
     
+    _followers = followers;
+    
     if(_followersList != nil)
     {
         [_followersList removeFromSuperview];
@@ -491,7 +504,7 @@
     
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45" response:^(BOOL success, id response) {
+    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] anotherUserId:self.profileId response:^(BOOL success, id response) {
         if(success)
         {
             //Success the ...

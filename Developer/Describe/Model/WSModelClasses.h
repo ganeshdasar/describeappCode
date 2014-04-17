@@ -147,8 +147,8 @@ typedef enum {
 - (void)likePost:(NSString *)postId userId:(NSString *)userId authUserId:(NSString *)authUID status:(NSInteger)count;
 
 
--(void)getWeRecommendedpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
--(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSString*)inRange;
+-(void)getWeRecommendedpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSInteger)inRange;
+-(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSInteger)inRange;
 
 //    //http://mirusstudent.com/service/describe-service/getBeAFollower/UserUID=8/OtherUserId=4
 
