@@ -24,4 +24,6 @@ typedef enum types
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
 @property (weak, nonatomic) IBOutlet UITableView *settingTableView;
 
+
+-(void)hideoBottom;
 @end

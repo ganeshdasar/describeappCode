@@ -77,9 +77,9 @@
 
 -(void)rightSwipeGesture:(id)sender
 {
-    if([[DPostsViewController sharedFeedController] respondsToSelector:@selector(rightSwipeGesture:withPost:)])
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showConversationOfThisPost:)])
     {
-        [[DPostsViewController sharedFeedController] rightSwipeGesture:sender withPost:_post];
+        [self.delegate showConversationOfThisPost:_post];
     }
 }
 
@@ -202,9 +202,17 @@
 
 -(void)profileDetailsDidSelected
 {
-    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDetailsDidSelected)])
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDidSelectedForPost:)])
     {
-        [_delegate profileDidSelected];
+        [_delegate profileDidSelectedForPost:_post];
+    }
+}
+
+-(void)profileDetailsDidSelected:(DPostHeaderView *)headerView
+{
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDidSelectedForPost:)])
+    {
+        [_delegate profileDidSelectedForPost:_post];
     }
 }
 
@@ -229,9 +237,9 @@
 {
     //More button action...
     NSLog(@"More Button");
-    if([[DPostsViewController sharedFeedController] respondsToSelector:@selector(showMoreDetailsOfPost:)])
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showMoreDetailsOfThisPost:)])
     {
-        [[DPostsViewController sharedFeedController] showMoreDetailsOfPost:_post];
+        [self.delegate showMoreDetailsOfThisPost:_post];
     }
     
 }
@@ -245,11 +253,9 @@
 -(void)commentButton:(id)sender
 {
     //Comments action...
-        NSLog(@"Comment ");
-    NSLog(@"Likese and Comments");
-    if([[DPostsViewController sharedFeedController] respondsToSelector:@selector(showConversationForThisPost:)])
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showConversationOfThisPost:)])
     {
-        [[DPostsViewController sharedFeedController] showConversationForThisPost:_post];
+        [self.delegate showConversationOfThisPost:_post];
     }
 }
 

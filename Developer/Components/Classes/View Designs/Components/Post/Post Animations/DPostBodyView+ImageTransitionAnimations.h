@@ -12,5 +12,5 @@
 
 
 -(void)presentView:(UIView *)frontView onView:(UIView *)secondView;
-
+-(void)reversePresentView:(UIView *)frontView onView:(UIView *)secondView;
 @end

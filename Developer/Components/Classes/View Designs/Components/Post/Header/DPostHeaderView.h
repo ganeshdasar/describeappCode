@@ -23,6 +23,8 @@
 
 
 @protocol DPostHeaderViewDelegate <NSObject>
+
+@optional
 -(void)profileDetailsDidSelected:(DPostHeaderView *)headerView;
 
 @end

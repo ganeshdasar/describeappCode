@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4510" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMShareViewController">
             <connections>
+                <outlet property="_headerView" destination="u72-5y-e0b" id="Mn3-gn-UsM"/>
                 <outlet property="locationContainerView" destination="ADB-3g-yMb" id="Jps-Fc-xED"/>
                 <outlet property="shareTableView" destination="Qtv-6Q-87h" id="nvT-cd-brS"/>
                 <outlet property="view" destination="bkK-xJ-yX5" id="ihr-vE-nMG"/>
@@ -68,6 +69,11 @@
                                 <action selector="dismissOptionCLicked:" destination="-1" eventType="touchUpInside" id="nEX-i4-wC8"/>
                             </connections>
                         </button>
+                        <view contentMode="scaleToFill" id="u72-5y-e0b" customClass="DHeaderView">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </view>

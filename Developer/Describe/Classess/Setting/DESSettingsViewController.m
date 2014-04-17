@@ -40,6 +40,11 @@
     return UIStatusBarStyleLightContent;
 }
 
+-(void)hideoBottom
+{
+    self.settingTableView.alpha = 0.1;
+
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -54,8 +59,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
     
+//    _headerView.alpha = 0.1;
+//    self.settingTableView.alpha = 0.1;
+
     [self setNeedsStatusBarAppearanceUpdate];
     if (isiPhone5)
     {
@@ -73,6 +80,17 @@
     
 //    CGRect screenRect = [[UIScreen mainScreen] bounds];
     //self.settingTableView.frame = CGRectMake(0, self.settingTableView.frame.origin.x                                             , 320,  screenRect.size.height-65);
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+ [UIView animateWithDuration:0.5 animations:^{
+     
+    _headerView.alpha = 1.0;
+ } completion:^(BOOL finished) {
+     
+ }];
+    
 }
 
 

@@ -15,6 +15,7 @@
 #import "CMAVCameraHandler.h"
 #import "CMShareSocialCell.h"
 #import "DESLocationManager.h"
+#import "DHeaderView.h"
 
 #define LOCATION_CELLIDENTIFIER             @"LocationCell"
 #define COMPOSITION_CELLIDENTIFIER          @"CompositionCell"
@@ -34,7 +35,7 @@ typedef enum {
 #define ALERT_TAG_DISMISS                   10
 #define ALERT_TAG_MOVEBACK                  15
 
-@interface CMShareViewController () <DESLocationManagerDelegate>
+@interface CMShareViewController () <DESLocationManagerDelegate, DHeaderViewDelegate>
 {
     BOOL showCompositionCell;
     BOOL showCategoryOption;    // identifies whether to show category options or not
@@ -47,6 +48,7 @@ typedef enum {
     
     CMCategoryVC *categoryController;
     DPostImage *_imagePost;
+    IBOutlet DHeaderView *_headerView;
 }
 
 @property (nonatomic, strong) NSString *totalVideoDuration;
@@ -68,7 +70,7 @@ typedef enum {
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
+    [self designHeaderView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoRecordingDone:) name:NOTIFICATION_VIDEO_RECORDING_COMPLETED object:nil];
     
     _imagePost = [[DPostImage alloc] init];
@@ -114,6 +116,42 @@ typedef enum {
     categoryController = [[CMCategoryVC alloc] initWithNibName:@"CMCategoryVC" bundle:nil];
     [categoryController.view setFrame:CGRectMake(0, 0, 320, 41.0)];
     categoryController.delegate = self;
+}
+
+-(void)designHeaderView
+{
+    
+    UIButton *closeButton = [[UIButton alloc] init];
+    [closeButton setTag:HeaderButtonTypeClose];
+    [closeButton setImage:[UIImage imageNamed:@"btn_nav_std_cancel.png"] forState:UIControlStateNormal];
+    
+    
+    UIButton *backButton = [[UIButton alloc] init];
+    [backButton setTag:HeaderButtonTypePrev];
+    [backButton setImage:[UIImage imageNamed:@"btn_nav_comp_back.png"] forState:UIControlStateNormal];
+    
+
+    
+    [_headerView designHeaderViewWithTitle:@"Record" andWithButtons:@[backButton,  closeButton]];
+    [_headerView setDelegate:self];
+    [_headerView setbackgroundImage:[UIImage imageNamed:@"bg_nav_comp.png"]];
+    
+    
+}
+
+-(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+{
+    HeaderButtonType buttonType = headerButton.tag;
+    switch (buttonType) {
+        case HeaderButtonTypeClose:
+            [self dismissOptionCLicked:headerButton];
+            break;
+        case HeaderButtonTypePrev:
+            [self prevOptionClicked:headerButton];
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)videoRecordingDone:(NSNotification *)notification

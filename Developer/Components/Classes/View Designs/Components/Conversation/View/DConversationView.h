@@ -30,10 +30,16 @@
 
 @protocol DConversationDelegate <NSObject>
 
+@optional
+-(void)actionOnThisConversation:(DConversation *)conversation;
 -(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation;
 -(void)conversationView:(DConversationView *)conversationView needToExpand:(NSNumber *)expand;
 -(void)conversationView:(DConversationView *)conversationView expandOthersLikeView:(NSNumber *)expand;
 -(void)conversationView:(DConversationView *)conversationView expandCommentView:(NSNumber *)height;
 
-
+//Mentioning the conversation...
+-(void)conversationViewDidStartMentioning:(DConversationView *)conversationView;
+-(void)conversationView:(DConversationView *)conversationView mentioningText:(NSString *)text;
+-(void)conversationView:(DConversationView *)conversationView didFinishedMentioningPerson:(NSString *)person;
+-(void)conversationViewDidEndMentioning:(DConversationView *)conversationView;
 @end

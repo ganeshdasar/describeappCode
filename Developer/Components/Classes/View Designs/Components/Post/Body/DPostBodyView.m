@@ -48,6 +48,7 @@
     
     
     SDWebImagePrefetcher *_prefetcher;
+    CGFloat _onePercentage;
 }
 
 @end
@@ -226,6 +227,14 @@
     [_backImageView setBackgroundColor:[UIColor clearColor]];
     [_backImageView setImage:[UIImage imageNamed:@""]];
     [_contentView addSubview:_backImageView];
+
+    
+//    //Temp code remove this...
+//    {
+//        UIView *view = [[UIView alloc] initWithFrame:_backImageView.bounds];
+//        [view setBackgroundColor:[[UIColor redColor] colorWithAlphaComponent:0.4]];
+//        [_backImageView addSubview:view];
+//    }
 }
 
 
@@ -276,6 +285,7 @@
             }
             
             _currentPlayedTime = [_videoPlayer videoCurrentTime];
+            _onePercentage = 230/[_videoPlayer videoDuration];
             
             break;
         case UIGestureRecognizerStateChanged:
@@ -284,6 +294,15 @@
                 if([self isMovingToLeftDirection:point])
                 {
                     
+                    CGFloat diff = _startPoint.x - point.x;
+                    CGFloat secs = diff/_onePercentage;
+                    [_videoPlayer videoFileSeekToDurationFromTime:secs];
+                    
+                    
+                    
+                    
+                    
+                    return;
                     //Caliculate the remaing percentage...
                     int percentage = [self currentPercentage:point];
                     Float64 timeValue = [_videoPlayer videoCurrentTime];
@@ -378,24 +397,48 @@
 
 -(void)interchangeViews
 {
-    [self bringSubviewToFront:_backImageView];
-    [self sendSubviewToBack:_frontImageView];
+    [_contentView bringSubviewToFront:_backImageView];
+    //[_contentView sendSubviewToBack:_frontImageView];
     
-    _currentImageView = _frontImageView;
-    _frontImageView = _backImageView;
-    _backImageView = _currentImageView;
+
     
-    //_index++;
-    if(_index+1 >= _postImage.images.count)
+    if(_index >= _postImage.images.count)
     {
         //_index = 0;
         return;
     }
     
     CMPhotoModel *photoModel = _postImage.images[_index];
-    [_backgroundView setImageWithURL:[NSURL URLWithString:photoModel.imageUrl]];
+    [_frontImageView setImage:nil];
+    [_frontImageView setImageWithURL:[NSURL URLWithString:photoModel.imageUrl]];
     NSLog(@"Count:%d current index:%d url:%@",_postImage.images.count, _index, photoModel.imageUrl);
+    
+    _currentImageView = _frontImageView;
+    _frontImageView = _backImageView;
+    _backImageView = _currentImageView;
 }
+
+-(void)reverseInterchangeViews
+{
+    [_contentView bringSubviewToFront:_backImageView];
+    
+    if(_index-1 < 0)
+    {
+        //_index = 0;
+        return;
+    }
+    
+    CMPhotoModel *photoModel = _postImage.images[_index-1];
+    [_frontImageView setImageWithURL:[NSURL URLWithString:photoModel.imageUrl]];
+    NSLog(@"Current Index:%d Photomodel:%d ", _index, _index-1);
+    
+    _currentImageView = _frontImageView;
+    _frontImageView = _backImageView;
+    _backImageView = _currentImageView;
+}
+
+
+
 
 #pragma mark Model Operations -
 
@@ -423,13 +466,15 @@
     
     if(_isNeedToPlayImages)
     {
-        if(_index+1 >= _postImage.images.count)
+        
+        if(_index != 0)
+            [self presentView:(UIView *)_frontImageView onView:(UIView *)_backImageView];
+        
+        if(_index >= _postImage.images.count)
         {
-            _index = 0;
+            //_index = 0;
             return;
         }
-        
-        [self presentView:(UIView *)_frontImageView onView:(UIView *)_backImageView];
         
         CMPhotoModel *photoModel = [_postImage images][_index];
         float duration = photoModel.duration;// [_postImage.durationList[_index] floatValue];
@@ -440,6 +485,8 @@
             _transitionImageTimer = nil;
         }
         
+        
+        NSLog(@"-------------------Index:%d duration:%f",_index+1,duration);
         _transitionImageTimer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(transitionNewImage) userInfo:Nil repeats:NO];
         
         _index++;
@@ -456,6 +503,7 @@
     if(!_isNeedToPlayImages)
     {
         _isNeedToPlayImages = YES;
+        [_contentView bringSubviewToFront:_frontImageView];
         [self performSelector:@selector(transitionNewImage) withObject:nil afterDelay:0.0];
     }
     
@@ -467,7 +515,11 @@
         CMPhotoModel *model = _postImage.images[i];
         [imageUrls addObject:model.imageUrl];
     }
-    
+    if(_index== 0)
+    {
+        CMPhotoModel *model = _postImage.images[0];
+        [_frontImageView setImageWithURL:[NSURL URLWithString:[model imageUrl]]];
+    }
     NSLog(@"image urls:%@",imageUrls);
     [_prefetcher prefetchURLs:imageUrls];
     
@@ -478,6 +530,11 @@
     //           [_delegate postBodyViewDidTapOnImage:self];
     //       }
     //   }
+}
+
+-(void)playingConitnue
+{
+    
 }
 
 -(void)didPausePlayingVideo
@@ -507,6 +564,7 @@
 {
     //pause image animations....
     _isNeedToPlayImages = NO;
+    _index = 0;
 }
 
 
@@ -571,6 +629,47 @@
     
     _currentVisibleImageIndex = index;
 }
+
+
+-(void)seekSeconds:(CGFloat)seconds
+{
+   // NSLog(@"The current Index:%d",_index);
+    int tempIndex = _index;
+    //int count = _postImage.images.count;
+    int duration = 0, index;
+    for (index=0; index<tempIndex; index++)
+    {
+        CMPhotoModel *prevPhotoModel = _postImage.images[index];
+        duration = duration  + prevPhotoModel.duration;
+        
+        int diffDuration = seconds - duration;
+        if(diffDuration <= 0)
+        {
+            //Required index is this...
+            break;
+        }
+    }
+    
+    //now here the i is index...
+ 
+    if(_index != index)
+    {
+        NSLog(@"---------------------reverse Index:%d _index:%d",index, _index);
+
+        
+        [_contentView bringSubviewToFront:_frontImageView];
+        [_frontImageView setImageWithURL:[NSURL URLWithString:[_postImage.images[index] imageUrl]]];
+        //change animation in reverse order...
+        //[self reversePresentView:_frontImageView onView:_backImageView];
+        _index = index;
+    }
+    
+    
+
+    
+    
+}
+
 
 -(NSInteger)totalImageDuartions
 {

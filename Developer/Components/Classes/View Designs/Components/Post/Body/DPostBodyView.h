@@ -21,11 +21,13 @@
 - (id)initWithFrame:(CGRect)frame withPostImage:(DPostImage *)imagePost;
 
 -(void)interchangeViews;
+-(void)reverseInterchangeViews;
 -(void)startAniamtion;
 
 -(void)playVideo;
 -(void)pauseVideo;
 -(void)seekContentToPercentage:(NSNumber *)percentage;
+-(void)seekSeconds:(CGFloat)seconds;
 @end
 
 

@@ -31,7 +31,23 @@
 }
 
 
-
+-(void)reversePresentView:(UIView *)frontView onView:(UIView *)secondView
+{
+    [secondView setAlpha:0.0];
+    [UIView animateWithDuration:VIEW_TRANSITION_DURATION animations:^
+     {
+         //Start animation here....
+         frontView.alpha = 0.0;
+         secondView.alpha = 1.0;
+         
+     } completion:^(BOOL finished)
+     {
+         if(finished)
+         {
+             [self reverseInterchangeViews];
+         }
+     }];
+}
 
 
 @end

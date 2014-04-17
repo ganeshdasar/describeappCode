@@ -122,7 +122,7 @@
 
     if([self checkTheSessionId])
     {
-        _postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+        _postViewController = [DPostsViewController sharedFeedController];
         
         [self.navigationController pushViewController:_postViewController animated:YES];
     }

@@ -11,6 +11,7 @@
 @protocol DPostVideoPlayerViewDelegate;
 
 @class DPostVideo;
+
 @interface DPostVideoPlayerView : UIView
 
 @property(nonatomic, strong)DPostVideo *video;
@@ -25,6 +26,8 @@
 -(Float64)videoCurrentTime;
 -(void)seekVideoFileToPercentage:(NSInteger)percentage;
 -(NSInteger )playedPercentage;
+-(CGFloat)videoDuration;
+-(void)videoFileSeekToDurationFromTime:(CGFloat)minusDuration;
 @end
 
 

@@ -60,6 +60,10 @@
     [self designHeaderViewWithTitle:title andWithButtons:buttons andMenuButtons:nil];
 }
 
+-(void)setbackgroundImage:(UIImage *)image
+{
+    imageView.image = image;
+}
 
 -(void)designHeaderViewWithTitle:(NSString *)title andWithButtons:(NSArray *)buttons andMenuButtons:(NSArray *)menuButtons
 {
@@ -84,6 +88,41 @@
     //  [self setTheBackgroundImage];
     [self createTitleLabel];
     [self designButtons];
+    
+}
+
+-(void)hideButton:(UIButton *)hideButton
+{
+    if(_buttons == nil)
+        return;
+    
+    int count = _buttons.count-1;
+    float x= 20;
+    float y = 24;
+    _totalButtonsWidth = (WIDTH + FREESPACE)*count;
+    x = self.bounds.size.width - _totalButtonsWidth;
+    
+    //default Buttons....
+    for (int i=0; i<count; i++)
+    {
+        UIButton *button = (UIButton *)_buttons[i];
+        
+        if(button.tag == hideButton.tag)
+        {
+            [button setHidden:YES];
+            continue;
+        }
+        [button setBackgroundColor:[UIColor clearColor]];
+        [button setFrame:CGRectMake(x, y, WIDTH, WIDTH)];
+        //[self addSubview:button];
+        x = x + WIDTH + FREESPACE;
+        
+        [button addTarget:self action:@selector(buttonSelected:) forControlEvents:UIControlEventTouchUpInside];
+    }
+}
+
+-(void)showButton:(UIButton *)button
+{
     
 }
 
@@ -173,13 +212,21 @@
     else if(buttonType == HeaderButtonTypeClose)
     {
         //Show the default buttons here...
-        [self showDefaultButtons];
+        if(_menuButtons != nil)
+            [self showDefaultButtons];
+        else
+        {
+            [self.delegate headerView:self didSelectedHeaderViewButton:sender];
+        }
+
     }
     else
     {
         //Send the neccessary actions to the delegate...
         if(self.delegate != nil && [self.delegate respondsToSelector:@selector(headerView:didSelectedHeaderViewButton:)])
         {
+            if(_menuButtons != nil)
+                [self showDefaultButtons];
             [self.delegate headerView:self didSelectedHeaderViewButton:sender];
         }
     }

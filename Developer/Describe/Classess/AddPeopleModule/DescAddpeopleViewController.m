@@ -22,7 +22,7 @@
 #import "DESocialConnectios.h"
 #import "DesSearchPeopleViewContrlooerViewController.h"
 #import "DESSettingsViewController.h"
-@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate,DESocialConnectiosDelegate>
+@interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate,DESocialConnectiosDelegate, DHeaderViewDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     UIButton    *backButton,*nextButton;
@@ -97,8 +97,8 @@
     //back button
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
-    [backButton addTarget:self action:@selector(goToBack:) forControlEvents:UIControlEventTouchUpInside];
-    
+    //[backButton addTarget:self action:@selector(goToBack:) forControlEvents:UIControlEventTouchUpInside];
+    [backButton setTag:HeaderButtonTypePrev];
     if([[self.navigationController viewControllers] count] == 2)
         [backButton setHidden:YES];
     else
@@ -107,10 +107,34 @@
     
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
-    [nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
-    [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
+    //[nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
+    [nextButton setTag:HeaderButtonTypeNext];
     
+    
+    if(self.isCommmingFromFeed)
+        [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton]];
+    else
+        [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
+    [_headerView setDelegate:self];
 }
+
+-(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+{
+    HeaderButtonType buttonType = headerButton.tag;
+    switch (buttonType) {
+        case HeaderButtonTypeNext:
+            [self goToFeedScreen:headerButton];
+            break;
+        case HeaderButtonTypePrev:
+            
+            NSLog(@"Controllers:%@",self.navigationController.viewControllers);
+            
+            [self.navigationController popViewControllerAnimated:YES];
+        default:
+            break;
+    }
+}
+
 //Segment
 
 -(void)createSegmenComponent{
@@ -182,9 +206,6 @@
 
 - (void)goToFeedScreen:(UIButton*)inButton
 {
-    DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
-    [self.navigationController pushViewController:setting animated:NO];
-    return;
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
     DPostsViewController *postViewController = [DPostsViewController sharedFeedController];////[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];

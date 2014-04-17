@@ -16,7 +16,7 @@
 #define SUBTITLE_FONT   [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0]
 #define TITLE_FONT      [UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]
 
-@interface DConversationView ()<UITextViewDelegate>
+@interface DConversationView ()<UITextViewDelegate, UITableViewDelegate, UITableViewDataSource>
 {
     UIImageView *_icon;
     UILabel     *_titleLbl;
@@ -27,6 +27,7 @@
     UIButton    *_othersLikesButton;
     UIButton    *_seeMoreButton;
     UIView      *_contentView;
+    UIButton    *_moreButton;
     
     DConversation *_conversation;
     float           _commentTextHeight;
@@ -40,6 +41,11 @@
     float       _textViewMinimumHeight;
     float       _textViewMaximumHeight;
     float       _textViewCurrentHeight;
+    
+    
+    NSMutableString    *mentioning;
+    
+    UITableView *_mentioningTableView;
 }
 @end
 
@@ -114,6 +120,26 @@
     [self performSelector:@selector(activeCommentTextViewToEdit) withObject:nil afterDelay:0.0];
 }
 
+-(void)createMoreButton
+{
+    CGRect moreFrame = CGRectMake(290, _elapsedYPostion+6, 19, 5);
+    
+    _moreButton = [[UIButton alloc] initWithFrame:moreFrame];
+    [_moreButton setBackgroundImage:[UIImage imageNamed:@"btn_overflow.png"] forState:UIControlStateNormal];
+    [_moreButton addTarget:self action:@selector(moreButton:) forControlEvents:UIControlEventTouchUpInside];
+    [_contentView addSubview:_moreButton];
+}
+
+-(void)moreButton:(id)sender
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(actionOnThisConversation:)])
+    {
+        [self.delegate actionOnThisConversation:_conversation];
+    }
+}
+
+
+
 -(void)activeCommentTextViewToEdit
 {
     //[_commentTextView becomeFirstResponder];
@@ -140,10 +166,10 @@
 
 -(void)createContentView
 {
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor clearColor];
     
     _contentView = [[UIView alloc] initWithFrame:self.bounds];
-    [_contentView setBackgroundColor:[UIColor whiteColor]];
+    [_contentView setBackgroundColor:[UIColor clearColor]];
     [self addSubview:_contentView];
     
     [self calculateGeometryCalculations];
@@ -304,6 +330,8 @@
             {
                 [self createSeeMoreButton];
             }
+            [self createMoreButton];
+
             break;
         case DConversationTypeCurrentUser:
             [self createCommentTextView];
@@ -312,7 +340,6 @@
         default:
             break;
     }
-    
     [self createElapsedTime:_conversation.elapsedTime];
 }
 
@@ -445,19 +472,70 @@
     if([text isEqualToString:@"\n"])
     {
         [textView resignFirstResponder];
+        [self removeMentioningTableView];
         return NO;
     }
+    
+    return YES;
+    
+    //Will finish this mentioning feature in the comming versions...
+    
+    
+    if ([text isEqualToString:@"@"] && (mentioning == nil || mentioning.length == 0) )
+    {
+        //Start Mentioning from here...
+        //Display drop down box for related tagging users details...
+        if(mentioning == nil)
+            mentioning = [[NSMutableString alloc] init];
+        [mentioning appendString:text];
+        
+        //Display mentioning list view...
+        
+    }
+    else if(mentioning != nil && mentioning.length)
+    {
+        //Mentioning the person...
+        if(text.length && ![text isEqualToString:@"\n"])
+        {
+            [mentioning appendString:text];
+        }
+        else if(![text isEqualToString:@"\n"])
+        {
+            [mentioning deleteCharactersInRange:NSMakeRange(mentioning.length-1, 1)];
+        }
+        
+        if([text isEqualToString:@"\n"])
+        {
+            NSLog(@"Picked ---%@--- as Mentioning",mentioning);
+            
+            [mentioning deleteCharactersInRange:NSMakeRange(0, mentioning.length)];
+            textView.text = [textView.text stringByAppendingString:@" "];
+            
+            
+            [self hideMentioningListview];
+            return NO;
+        }
+        
+        
+        //NSLog(@"%@",mentioning);
+    }
+    
+    
+     if([text isEqualToString:@"\n"])
+    {
+        [textView resignFirstResponder];
+        [self removeMentioningTableView];
+        return NO;
+    }
+    
     
     return YES;
 }
 
 -(void)textViewDidChangedText:(NSNotification *)notification
 {
-    
     UITextView *textView = (UITextView *)[notification object];
-    
-  CGSize commentSize = [textView.text sizeWithFont:SUBTITLE_FONT constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:NSLineBreakByWordWrapping];
-    
+    CGSize commentSize = [textView.text sizeWithFont:SUBTITLE_FONT constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:NSLineBreakByWordWrapping];
     float height = 0;
     if(commentSize.height > _textViewMinimumHeight)
     {
@@ -479,9 +557,70 @@
     }
     
     _textViewCurrentHeight = height;
-    
-    
 }
+
+
+-(void)startMentioning
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(conversationViewDidStartMentioning:)])
+    {
+        [self.delegate conversationViewDidStartMentioning:self];
+    }
+}
+
+-(void)mentioningText:(NSString *)mentioingText
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(conversationView:mentioningText:)])
+    {
+        [self.delegate conversationView:self mentioningText:mentioingText];
+    }
+}
+
+-(void)personPicked:(NSString *)mentionedPerson
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(conversationView:didFinishedMentioningPerson:)])
+    {
+        [self.delegate conversationView:self mentioningText:mentionedPerson];
+    }
+}
+
+-(void)endMentioning
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(conversationViewDidEndMentioning:)])
+    {
+        [self.delegate conversationViewDidEndMentioning:self];
+    }
+}
+
+
+
+-(void)showMentioningListView
+{
+    if(_mentioningTableView == nil)
+    {
+        _mentioningTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 30, 260, 100) style:UITableViewStyleGrouped];
+        [_mentioningTableView setBackgroundColor:[[UIColor blueColor] colorWithAlphaComponent:0.15]];
+        [_mentioningTableView setDelegate:self];
+        [_mentioningTableView setDataSource:self];
+        [self addSubview:_mentioningTableView];
+    }
+    
+    _mentioningTableView.hidden = NO;
+}
+
+-(void)hideMentioningListview
+{
+    _mentioningTableView.hidden = YES;
+}
+
+-(void)removeMentioningTableView
+{
+    _mentioningTableView.delegate = nil;
+    _mentioningTableView.dataSource = nil;
+    [_mentioningTableView removeFromSuperview];
+    _mentioningTableView = nil;
+}
+
 
 
 -(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation
@@ -492,6 +631,30 @@
     }
 }
 
+
+
+-(NSInteger )tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 10.0;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 26.0;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *identifier = [NSString stringWithFormat:@"indexPath_%d_%d",indexPath.section, indexPath.row];
+    
+    UITableViewCell *cell =  (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    
+    return cell;
+}
 
 
 /*

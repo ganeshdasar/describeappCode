@@ -40,7 +40,6 @@
     
     [self designHeaderView];
     [self designConversationView];
-  
 }
 
 
@@ -70,13 +69,14 @@
     [backButton setTag:HeaderButtonTypePrev];
     [_headerView setDelegate:self];
     
-    [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[backButton] andMenuButtons:nil];
+    [_headerView designHeaderViewWithTitle:@"Conversation" andWithButtons:@[backButton] andMenuButtons:nil];
 }
 
 
 -(void)designConversationView
 {
     _conversationListView._conversationList =  self.conversationListArray;
+    
     [_conversationListView designConversationListView];
 }
 

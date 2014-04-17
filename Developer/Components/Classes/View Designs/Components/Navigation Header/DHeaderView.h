@@ -49,6 +49,8 @@ typedef enum DHeaderButtonType
 -(void)designHeaderViewWithTitle:(NSString *)title andWithButtons:(NSArray *)buttons;
 -(void)reachMe;
 -(void)removeSubviewFromHedderView;
+-(void)setbackgroundImage:(UIImage *)image;
+-(void)hideButton:(UIButton *)hideButton;
 @end
 
 

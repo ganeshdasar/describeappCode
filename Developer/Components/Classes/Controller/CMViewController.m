@@ -12,6 +12,7 @@
 #import "CMAVCameraHandler.h"
 #import "DBAspectFillViewController.h"
 #import "WSModelClasses.h"
+#import "DHeaderView.h"
 
 #define MAX_IMAGE_SELECT_COUNT              10
 #define DEFAULT_IMAGE_RECT                  CGRectMake(0, 0, 320.0, 320.0)
@@ -22,10 +23,11 @@
 #define IMAGE_FLASH_ON                      @"btn_black_trash.png"
 #define IMAGE_FLASH_OFF                     @"btn_black_flash_off.png"
 
-@interface CMViewController () <DBAspectFillViewControllerDelegate>
+@interface CMViewController () <DBAspectFillViewControllerDelegate, DHeaderViewDelegate>
 {
     CameraDevice currentCameraMode;
     AVCaptureFlashMode currentFlashMode;
+    IBOutlet DHeaderView *_headerView;
 }
 
 @property (nonatomic, strong) NSMutableArray *capturedPhotoList;
@@ -41,7 +43,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [self designHeaderView];
+
     UINib *nib = [UINib nibWithNibName:@"CMPhotoCell" bundle:nil];
     [self.photoCollectionView registerNib:nib forCellWithReuseIdentifier:@"PhotoCellIdentifier"];
     
@@ -82,13 +85,45 @@
     [self.photoCollectionView setContentOffset:CGPointMake(0.0, 20.0) animated:NO];
     
     [self.photoCollectionView reloadData];
-    
 #if !(TARGET_IPHONE_SIMULATOR)
 
     [[CMAVCameraHandler sharedHandler] startCaptureSession];
     
 #endif
     
+}
+
+-(void)designHeaderView
+{
+    UIButton *backButton = [[UIButton alloc] init];
+    [backButton setTag:HeaderButtonTypeClose];
+    [backButton setImage:[UIImage imageNamed:@"btn_nav_std_cancel.png"] forState:UIControlStateNormal];
+    
+    UIButton *nextButton = [[UIButton alloc] init];
+    [nextButton setTag:HeaderButtonTypeNext];
+    [nextButton setImage:[UIImage imageNamed:@"btn_nav_comp_next.png"] forState:UIControlStateNormal];
+    [nextButton setHidden:YES];
+    
+    [_headerView designHeaderViewWithTitle:@"Add Photos" andWithButtons:@[nextButton, backButton]];
+    [_headerView setDelegate:self];
+    [_headerView setbackgroundImage:[UIImage imageNamed:@"bg_nav_comp.png"]];
+    
+    self.nextButton = nextButton;
+}
+
+-(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+{
+    HeaderButtonType buttonType = headerButton.tag;
+    switch (buttonType) {
+        case HeaderButtonTypeClose:
+            [self backOptionClicked:headerButton];
+            break;
+        case HeaderButtonTypeNext:
+            [self nextOptionClicked:headerButton];
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated

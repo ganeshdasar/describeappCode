@@ -26,6 +26,9 @@
     UIView *_conentView;
     float _initial_x;
     float _diff;
+    
+    CGFloat _onePercentage;
+    CGFloat _currentDuration;
 }
 @end
 
@@ -97,6 +100,7 @@
     avPlayerLayer.frame = _conentView.bounds;
     [_conentView.layer addSublayer:avPlayerLayer];
     
+    [avPlayer addObserver:self forKeyPath:@"status" options:0 context:nil];
 
     
     avPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
@@ -108,6 +112,27 @@
                                                  name:AVPlayerItemDidPlayToEndTimeNotification
                                                object:[avPlayer currentItem]];
     
+}
+
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+                        change:(NSDictionary *)change context:(void *)context {
+    if (object == avPlayer && [keyPath isEqualToString:@"status"])
+    {
+        if (avPlayer.status == AVPlayerStatusReadyToPlay) {
+            
+            NSLog(@"Ready to play this video");
+            
+//            [self playVideo];
+//            if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didStartPlayingVideo)])
+//            {
+//                [self.delegate performSelector:@selector(didStartPlayingVideo)];
+//            }
+        } else if (avPlayer.status == AVPlayerStatusFailed) {
+            // something went wrong. player.error should contain some information
+        }
+    }
 }
 
 -(void)layoutSubviews
@@ -147,10 +172,7 @@
     [avPlayer play];
     _isPlaying = YES;
     //NSLog(@"Playing");
-    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didStartPlayingVideo)])
-    {
-        [self.delegate performSelector:@selector(didStartPlayingVideo)];
-    }
+   
 }
 
 -(void)pauseVideo
@@ -227,15 +249,40 @@
             _diff = _initial_x - self.frame.origin.x;
             _startPointLocationOnScreen.x = _startPointLocationOnScreen.x - _diff;
             
+            _currentDuration = [self videoCurrentTime];
+            
+            NSLog(@"Vide duration:%d",[self videoDuration]);
+            _onePercentage = 230/[self videoDuration];
             break;
         case UIGestureRecognizerStateChanged:
         {
             CGRect frame = _conentView.frame;
             frame.origin.x =  point1.x-_diff;
-            
             if(frame.origin.x < 0)
                 return;
+           
+            
+            
+            CGFloat diff = _startPoint.x - point.x;
+            CGFloat secs = diff/_onePercentage;
+
+            
+            CGFloat requiredSeconds = _currentDuration - secs;
+            requiredSeconds = (requiredSeconds >= 0)?requiredSeconds:0;            
+            NSLog(@"Req Sec:%f",requiredSeconds);
+            [avPlayer seekToTime:CMTimeMake(requiredSeconds, 1)];
+            
+            
+            //[self videoFileSeekToDurationFromTime:secs];
+            [(DPostBodyView *)[self superview] seekSeconds:requiredSeconds];
+            if(requiredSeconds <= 0)
+                return;
+            
+            
+            
             [_conentView setFrame:frame];
+            
+            return;
             
             //Caliculate the remaing percentage...
             NSInteger percentage = [self currentPercentage:point];
@@ -362,9 +409,14 @@
     return currentTime/totalDuration * 100;
 }
 
+-(CGFloat)videoDuration
+{
+    return CMTimeGetSeconds(avPlayerItem.duration);
+}
+
+
 -(void)seekVideoFileToPercentage:(NSInteger)percentage
 {
-    
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(seekContentToPercentage:)])
     {
         [self.delegate performSelector:@selector(seekContentToPercentage:) withObject:[NSNumber numberWithInteger:percentage]];
@@ -376,12 +428,21 @@
         seekingSeconds = (seekingSeconds>=0)?seekingSeconds:0;
         
         [avPlayer seekToTime:CMTimeMake(seekingSeconds, 1)];
-        
     }
-    
-    
-    
 }
+
+-(void)videoFileSeekToDurationFromTime:(CGFloat)minusDuration
+{
+    CGFloat currentDuration = _currentDuration;
+    CGFloat requiredSeconds = currentDuration - minusDuration;
+    
+    requiredSeconds = (requiredSeconds >= 0)?requiredSeconds:0;
+    
+    ///NSLog(@"Req Sec:%f",requiredSeconds);
+    
+    [avPlayer seekToTime:CMTimeMake(requiredSeconds, 1)];
+}
+
 
 -(void)dealloc
 {

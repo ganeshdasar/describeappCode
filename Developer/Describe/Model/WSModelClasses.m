@@ -657,20 +657,38 @@ static WSModelClasses *_sharedInstance;
     [manager GET:ur
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             NSLog(@"Feed Details: %@",responseObject);
+             //NSLog(@"Feed Details: %@",responseObject);
              [self getPostDetailsResponse:responseObject withError:nil];
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
-             NSLog(@"Feed Details Failed: %@", responseObject);
+             //NSLog(@"Feed Details Failed: %@", responseObject);
              [self getPostDetailsResponse:nil withError:responseObject];
          }
      ];
 }
 
+//http://www.mirusstudent.com/service/describe-service/getFeeds/format=json/UserUID=1/range=0
+- (void)getPostDetailsOfUserId:(NSString *)userId andRange:(NSInteger)range
+{
+    userId = @"1";
+    NSString *ur = [NSString stringWithFormat:@"%@/getFeeds/format=json/UserUID=%@/range=%d", BaseURLString, userId, range];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:ur
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             //NSLog(@"Feed Details: %@",responseObject);
+             [self getPostDetailsResponse:responseObject withError:nil];
+         }
+         failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
+             //NSLog(@"Feed Details Failed: %@", responseObject);
+             [self getPostDetailsResponse:nil withError:responseObject];
+         }
+     ];
+}
+
+
 - (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response
 {
-    //    userId = @"1";
-    //    anotherUserId = @"4";
     //http://mirusstudent.com/service/describe-servicegetUserFeeds/format=json/UserUID=45/OtherUserUID=45
     //http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=45/OtherUserUID=45
     NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/ProfileUserUID=%@/range=0", BaseURLString, userId, anotherUserId];
@@ -678,11 +696,11 @@ static WSModelClasses *_sharedInstance;
     [manager GET:ur
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             NSLog(@"Feed Details: %@",responseObject);
+             //NSLog(@"Feed Details: %@",responseObject);
              response(YES, responseObject);
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
-             NSLog(@"Feed Details Failed: %@", responseObject);
+             //NSLog(@"Feed Details Failed: %@", responseObject);
                           response(NO, responseObject);
          }
      ];
@@ -854,16 +872,21 @@ static WSModelClasses *_sharedInstance;
     
     NSLog(@"Comment url:%@",url);
     
+    NSDictionary* parameters = @{@"UserUID": userId,@"AuthUserUID":authId ,@"PostUID":postid, @"comment":comment};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:url
-      parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             response(YES, responseObject);
-         }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             response(NO, error);
-         }
+    [manager POST:[NSString stringWithFormat:@"%@/makeComment", BaseURLString]
+       parameters:parameters
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              response(YES, responseObject);
+          }
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              response(NO, error);
+          }
      ];
+
+    
+    
+    
 }
 
 -(void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName

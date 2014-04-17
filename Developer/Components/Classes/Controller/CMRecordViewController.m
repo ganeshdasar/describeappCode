@@ -9,17 +9,20 @@
 #import "CMRecordViewController.h"
 #import "CMPhotoCell.h"
 #import "CMShareViewController.h"
+#import "DHeaderView.h"
+
 
 #define SHARE_CONTROLLER_SEAGUE             @"SharePush"
 #define MAX_VIDEO_RECORD_TIME               10.0f
 
-@interface CMRecordViewController ()
+@interface CMRecordViewController ()<DHeaderViewDelegate>
 {
     CGFloat progressVal;
     NSTimer *progressTimer;
     CGFloat currentVideoTime;
     
     BOOL isRecordingCompleted;
+    IBOutlet DHeaderView *_headerView;
 }
 
 @property (assign) NSInteger selectedImageIndex;
@@ -70,6 +73,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    [self designHeaderView];
     self.navigationController.navigationBarHidden = YES;
     
     _videoPreviewView.layer.cornerRadius = 10.0f;
@@ -98,6 +102,52 @@
     
     [self.photoCollectionView setContentOffset:CGPointMake(0.0, 20.0) animated:NO];
     
+}
+
+
+-(void)designHeaderView
+{
+    
+    UIButton *closeButton = [[UIButton alloc] init];
+    [closeButton setTag:HeaderButtonTypeClose];
+    [closeButton setImage:[UIImage imageNamed:@"btn_nav_std_cancel.png"] forState:UIControlStateNormal];
+    
+    
+    UIButton *backButton = [[UIButton alloc] init];
+    [backButton setTag:HeaderButtonTypePrev];
+    [backButton setImage:[UIImage imageNamed:@"btn_nav_comp_back.png"] forState:UIControlStateNormal];
+    
+    
+    UIButton *nextButton = [[UIButton alloc] init];
+    [nextButton setTag:HeaderButtonTypeNext];
+    [nextButton setImage:[UIImage imageNamed:@"btn_nav_comp_next.png"] forState:UIControlStateNormal];
+    [nextButton setHidden:YES];
+    
+    [_headerView designHeaderViewWithTitle:@"Record" andWithButtons:@[backButton, nextButton, closeButton]];
+    [_headerView setDelegate:self];
+    [_headerView setbackgroundImage:[UIImage imageNamed:@"bg_nav_comp.png"]];
+    
+    
+    [_headerView hideButton:nextButton];
+    self.nextButton = nextButton;
+}
+
+-(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+{
+    HeaderButtonType buttonType = headerButton.tag;
+    switch (buttonType) {
+        case HeaderButtonTypeClose:
+            [self dissmissOptionClicked:headerButton];
+            break;
+        case HeaderButtonTypeNext:
+            [self nextOptionClicked:headerButton];
+            break;
+        case HeaderButtonTypePrev:
+            [self prevButtonSelected:headerButton];
+            break;
+        default:
+            break;
+    }
 }
 
 - (BOOL)identifyNotRecordedImageAndDisplay

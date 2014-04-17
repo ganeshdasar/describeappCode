@@ -15,9 +15,6 @@
 +(id)sharedFeedController;
 
 
-- (void)rightSwipeGesture:(UISwipeGestureRecognizer *)rightSwipeGesture withPost:(DPost *)post;
 
--(void)showMoreDetailsOfPost:(DPost *)post;
--(void)showConversationForThisPost:(DPost *)post;
 
 @end

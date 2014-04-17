@@ -27,6 +27,11 @@
 
 @protocol DPostListViewDelegate <NSObject>
 
+@optional
+
+-(void)showMoreDetailsOfThisPost:(DPost *)post;
+-(void)showConversationOfThisPost:(DPost *)post;
+-(void)userProfileSelectedForPost:(DPost *)selected;
 -(void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction;
 -(void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;

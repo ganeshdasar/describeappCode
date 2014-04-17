@@ -72,7 +72,7 @@ typedef enum {
 + (instancetype)sharedHandler;
 
 - (void)updateTheuserModelObject:(UsersModel*)inUserData;
-
+- (void)getPostDetailsOfUserId:(NSString *)userId andRange:(NSInteger)range;
 #pragma mark signIn
 - (void)getSignInWithUsername:(NSString *)username
                      password:(NSString *)password;

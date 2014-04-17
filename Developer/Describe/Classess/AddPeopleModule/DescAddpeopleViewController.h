@@ -11,6 +11,8 @@
 @interface DescAddpeopleViewController : UIViewController{
     BOOL isSearching;
 }
+
+@property (nonatomic, assign)BOOL isCommmingFromFeed;
 @property (weak, nonatomic) IBOutlet UITableView *addPeopleTableview;
 @property (nonatomic, retain) UIButton *selectedType;
 @property (nonatomic,strong) NSMutableArray * peopleListArray;

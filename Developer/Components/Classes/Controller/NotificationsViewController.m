@@ -66,11 +66,12 @@
     [reloadButton setTag:HeaderButtonTypeReload];
     
     moreButton = [[UIButton alloc] init];
-    [moreButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_menu.png"] forState:UIControlStateNormal];
-    [moreButton setTag:HeaderButtonTypeMenu];
+    [moreButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
+    [moreButton setTag:HeaderButtonTypePrev];
     
     [_headerView setDelegate:self];
-    [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[moreButton, reloadButton] andMenuButtons:[self menuButtonsList]];
+    [_headerView designHeaderViewWithTitle:@"Notifications" andWithButtons:@[moreButton, reloadButton] andMenuButtons:nil];
+
 }
 
 -(NSArray *)menuButtonsList
@@ -279,7 +280,9 @@
     HeaderButtonType buttonType = [headerButton tag];
     switch (buttonType)
     {
-       
+       case HeaderButtonTypePrev:
+            [self.navigationController popViewControllerAnimated:YES];
+            break;
         case HeaderButtonTypeReload:
             break;
         case HeaderButtonTypeHome:

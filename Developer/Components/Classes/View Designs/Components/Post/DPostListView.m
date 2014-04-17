@@ -11,7 +11,7 @@
 #import "DPost.h"
 #import "DPromterListView.h"
 
-@interface DPostListView ()<UITableViewDataSource, UITableViewDelegate>
+@interface DPostListView ()<UITableViewDataSource, UITableViewDelegate, DPostViewDelegate>
 {
     UITableView *_postListView;
     
@@ -136,6 +136,7 @@
             
             DPostView *postView = [[DPostView alloc] initWithFrame:CGRectMake(0, 0, 320, height-10) andPost:post];
             //[postView designPostView];
+            [postView setDelegate:self];
             [cell.contentView addSubview:postView];
             [postView setTag:111];
         }
@@ -209,6 +210,13 @@
     
 }
 
+-(void)profileDidSelectedForPost:(DPost *)post
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(userProfileSelectedForPost:)])
+    {
+        [self.delegate userProfileSelectedForPost:post];
+    }
+}
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -253,7 +261,8 @@
 
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    //return;
+    //The auto play wont work if we return from here...
+    return;
     
     [self scrollViewDidEndDeceleratingOfPostList:scrollView];
     
@@ -284,8 +293,9 @@
                 {
                     //NSLog(@"Visible cell:%d current:%@ Post:%@",indexPath.row, _currentPlayingPost, postView);
                     [postView playVideo];
-                    //[_currentPlayingPost pauseVideo];
+                    [_currentPlayingPost pauseVideo];
                     _currentPlayingPost = postView;
+                    break;
                 }
                 
             }
@@ -329,6 +339,8 @@
     [self scrollviewDidHoldingFinger:@"UNHOLDING"];
     // NSLog(@"will end dragging");
     
+    
+    return;
     NSArray *indexPaths = [_postListView indexPathsForVisibleRows];
     int count = indexPaths.count;
     for(int i=0; i<count; i++)
@@ -353,9 +365,10 @@
                 {
                     
                     //NSLog(@"dragging visible cell:%d current:%@ Post:%@",indexPath.row, _currentPlayingPost, postView);
-                    //[_currentPlayingPost pauseVideo];
+                    [_currentPlayingPost pauseVideo];
                     [postView playVideo];
                     _currentPlayingPost = postView;
+                    break;
                 }
                 
             }
@@ -373,6 +386,8 @@
 
 -(BOOL)isCellCompletelyVisible:(NSIndexPath *)indexPath
 {
+    return NO;
+    
     CGPoint contentOffset = _postListView.contentOffset;
     float postYPosition = [self yPostionOfCellForIndexPath:indexPath] + 50;
     float postYBoundary = postYPosition + 320;//Where posting body contains fixed size.
@@ -420,7 +435,21 @@
 }
 
 
+-(void)showMoreDetailsOfThisPost:(DPost *)post
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showMoreDetailsOfThisPost:)])
+    {
+        [self.delegate showMoreDetailsOfThisPost:post];
+    }
+}
 
+-(void)showConversationOfThisPost:(DPost *)post
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showConversationOfThisPost:)])
+    {
+        [self.delegate showConversationOfThisPost:post];
+    }
+}
 
 
 

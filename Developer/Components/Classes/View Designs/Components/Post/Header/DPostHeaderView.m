@@ -79,13 +79,14 @@
 
 -(void)singleTap:(UITapGestureRecognizer *)singleTapGesture
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFY_PROFILE_DETAILS object:self];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFY_PROFILE_DETAILS object:self];
     
-    //    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDetailsDidSelected:)])
-    //    {
-    //        [_delegate profileDetailsDidSelected:self];
-    //    }
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(profileDetailsDidSelected:)])
+    {
+        [_delegate profileDetailsDidSelected:self];
+    }
 }
+
 
 
 

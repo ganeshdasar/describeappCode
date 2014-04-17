@@ -272,9 +272,11 @@
     _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList withHeaderView:[[UIView alloc] init]];
     [_listView setDelegate:self];
     [_contentView addSubview:_listView];
+    [_contentView bringSubviewToFront:_segmentListView];
+    [_contentView bringSubviewToFront:_headerView];
+    //[_contentView sendSubviewToBack:_listView];
     
-    
-    [self segmentViewDidSelected:nil atIndex:[NSNumber numberWithInt:1]];
+    //[[self segmentViewDidSelected:nil atIndex:[NSNumber numberWithInt:1]];
     //[self addNewObserverForDelegateProfileDetails];
     
 }
@@ -593,7 +595,14 @@
     }
 }
 
-
+-(void)userProfileSelectedForPost:(DPost *)post
+{
+    DUser *user = [post user];
+    NSLog(@"user profile id:%@", user.userId);
+    DProfileDetailsViewController *profileDetailsController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+    profileDetailsController.profileId = user.userId;
+    [self.navigationController pushViewController:profileDetailsController animated:YES];
+}
 
 - (void)didReceiveMemoryWarning
 {

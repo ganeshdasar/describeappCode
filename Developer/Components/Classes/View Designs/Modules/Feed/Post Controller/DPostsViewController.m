@@ -27,7 +27,7 @@
 #import "DescAddpeopleViewController.h"
 #import "DProfileDetailsViewController.h"
 
-@interface DPostsViewController ()<DPostHeaderViewDelegate,WSModelClassDelegate, UIActionSheetDelegate, DHeaderViewDelegate>
+@interface DPostsViewController ()<DPostListViewDelegate,WSModelClassDelegate, UIActionSheetDelegate, DHeaderViewDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     IBOutlet DPostListView *_listView;
@@ -94,8 +94,8 @@ static DPostsViewController *sharedFeedController;
     
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
-    
+    //[sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
+    [sharedInstance getPostDetailsOfUserId:@"1" andRange:0];
 }
 
 
@@ -104,6 +104,13 @@ static DPostsViewController *sharedFeedController;
 //    DProfileDetailsViewController *cont = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
 //    [self.navigationController pushViewController:cont animated:YES];
 }
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    //Stop playing post if any...
+    
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -206,6 +213,15 @@ static DPostsViewController *sharedFeedController;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyDelegate:) name:kNOTIFY_PROFILE_DETAILS object:nil];
 }
 
+-(void)userProfileSelectedForPost:(DPost *)post
+{
+    DUser *user = [post user];
+    NSLog(@"user profile id:%@", user.userId);
+    _profileDetailsController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+    _profileDetailsController.profileId = user.userId;
+    [self.navigationController pushViewController:_profileDetailsController animated:YES];
+}
+
 -(void)notifyDelegate:(NSNotification *)notification
 {
     id object = [notification object];
@@ -246,7 +262,7 @@ static DPostsViewController *sharedFeedController;
 {
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:@"45" anotherUserId:@"45"];
+    [sharedInstance getPostDetailsOfUserId:@"45" andRange:0];
 }
 
 - (void)morePost:(id)sender
@@ -298,6 +314,9 @@ static DPostsViewController *sharedFeedController;
     [self.navigationController pushViewController:conversationController animated:YES];
 }
 
+
+
+
 -(void)profileDetailsDidSelected:(DPostHeaderView *)headerView
 {
     //Navigate to the profile screen...
@@ -315,7 +334,7 @@ static DPostsViewController *sharedFeedController;
 
 -(void)getConversationDetailsOfPost:(DPost *)post
 {
-    NSString *currencUserId = @"45";
+    NSString *currencUserId = [NSString stringWithFormat:@"%d",[[[[WSModelClasses sharedHandler] loggedInUserModel]userID] integerValue]];
     NSString *postId = post.postId;
     
     
@@ -333,17 +352,21 @@ static DPostsViewController *sharedFeedController;
         NSMutableArray * conversatonDataArray = [[NSMutableArray alloc]init];
         for (NSDictionary * dic in [responceDict valueForKeyPath:@"DataTable.PostConversation"]) {
             
+            if(dic == nil || [dic isKindOfClass:[NSNull class]])
+                continue;
+            
             DConversation * data = [[DConversation alloc]init];
             //    data.authUserUID = [dic valueForKey:@"AuthUserUID"];
             data.comment = [dic valueForKey:@"Comment"];
             data.numberOfLikes = [[dic valueForKey:@"LikeCount"]integerValue];
             data.postId = [dic valueForKey:@"PostUID"];
             //data.conversationID = [dic valueForKey:@"conversationID"];
-            data.elapsedTime = [dic valueForKey:@"conversationMadeTime"];
-            data.type = [[dic valueForKey:@"conversationType"]integerValue];
+            data.elapsedTime = [self elapsedTimeFrom:[dic[@"ServerTime"] integerValue] toTime:[dic[@"conversationMadeTime"] integerValue]];
+            data.type =   ([dic[@"conversationType"] isEqualToString:@"LIKE"])?DConversationTypeLike:DConversationTypeComment;// [[dic valueForKey:@"conversationType"]integerValue];
             // data.conversationUserID = [dic valueForKey:@"conversationUserID"];
             data.profilePic = [dic valueForKey:@"conversationUserProfilePicture"];
             data.username = [dic valueForKey:@"conversationUsername"];
+            data.userId = dic[@"conversationUserID"];
             [conversatonDataArray addObject:data];
             
         }
@@ -353,7 +376,38 @@ static DPostsViewController *sharedFeedController;
     }
 }
 
-
+-(NSString * )elapsedTimeFrom:(NSInteger)serverTime toTime:(NSInteger )madeTime
+{
+    NSString *elapsedString = nil;
+    
+    NSDate *serTime = [NSDate dateWithTimeIntervalSince1970:serverTime];
+    NSDate *mTime = [NSDate dateWithTimeIntervalSince1970:madeTime];
+    
+    NSCalendar *dateCalendar = [NSCalendar currentCalendar];
+    NSDateComponents *dateComponents = [dateCalendar components:NSCalendarUnitSecond|NSCalendarUnitMinute|NSCalendarUnitHour fromDate:mTime toDate:serTime options:NSCalendarWrapComponents];
+    
+    NSInteger hours = [dateComponents hour];
+    
+    if(hours == 0)
+    {
+        NSInteger mins = [dateComponents minute];
+        if(mins == 0)
+        {
+            NSInteger seconds = [dateComponents second];
+             elapsedString = [NSString stringWithFormat:@"%d s",seconds];
+        }
+        else
+        {
+            elapsedString = [NSString stringWithFormat:@"%d m",mins];
+        }
+    }
+    else if(hours > 24)
+        elapsedString = [NSString stringWithFormat:@"%d d",hours/24];
+    else
+        elapsedString = [NSString stringWithFormat:@"%d h",hours];
+    
+    return elapsedString;
+}
 
 #pragma mark - UIAlertViewDelegate Method
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -530,6 +584,7 @@ static DPostsViewController *sharedFeedController;
     {
         _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
         [self.view addSubview:_listView];
+        [_listView setDelegate:self];
         [self addNewObserverForDelegateProfileDetails];
 
     }
@@ -567,13 +622,18 @@ static DPostsViewController *sharedFeedController;
 
 -(void)showConversationForThisPost:(DPost *)post
 {
-//    DConversationViewController *conversationController = [[DConversationViewController alloc] initWithNibName:@"DConversationViewController" bundle:nil];
-//    conversationController.conversationListArray = nil;
-//    [self.navigationController pushViewController:conversationController animated:NO];
-//    
-    
-    //return;
     [self getConversationDetailsOfPost:post];
+}
+
+
+-(void)showConversationOfThisPost:(DPost *)post
+{
+    [self getConversationDetailsOfPost:post];
+}
+
+-(void)showMoreDetailsOfThisPost:(DPost *)post
+{
+    [self showMoreDetailsOfPost:post];
 }
 
 
@@ -637,6 +697,7 @@ static DPostsViewController *sharedFeedController;
             [self addPost:headerButton];
             break;
         case HeaderButtonTypeReload:
+      
             [self reloadPostList:headerButton];
             break;
         case HeaderButtonTypeHome:
@@ -662,12 +723,19 @@ static DPostsViewController *sharedFeedController;
         case HeaderButtonTypeAddPeople:
         {
             DescAddpeopleViewController *addPeopleViewController = [[DescAddpeopleViewController alloc] initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+            addPeopleViewController.isCommmingFromFeed = YES;
             [self.navigationController pushViewController:addPeopleViewController animated:YES];
+            
+            
+                        NSLog(@"posts controller Controllers:%@",self.navigationController.viewControllers);
         }
+            break;
         case HeaderButtonTypeSettings:
         {
             DESSettingsViewController *settingViewController = [[DESSettingsViewController alloc] initWithNibName:@"DESSettingsViewController" bundle:nil];
-            [self.navigationController pushViewController:settingViewController animated:YES];
+            [self.navigationController pushViewController:settingViewController animated:NO];
+            [settingViewController hideoBottom];
+
         }
             break;
         default:

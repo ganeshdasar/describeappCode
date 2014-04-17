@@ -12,7 +12,7 @@
 #import "DConversationView.h"
 #import "WSModelClasses.h"
 
-@interface DConversationListView ()<UITableViewDataSource, UITableViewDelegate, DConversationDelegate>
+@interface DConversationListView ()<UITableViewDataSource, UITableViewDelegate, DConversationDelegate, UIActionSheetDelegate>
 {
     UITableView *_listView ;
   //  NSMutableArray *_conversationList;
@@ -23,6 +23,10 @@
     float _userCommentViewHeight;
     DConversationView *_userCommentView;
     UIView *_keyboardToolBar;
+    
+    BOOL _isSelfConversation;
+    DConversation *_actionConversation;//Will take action on this conversation...
+    UIActionSheet *_moreActionSheet;
 }
 @end
 
@@ -42,7 +46,7 @@
 {
     _userCommentViewHeight = 60;
     [self createConversationListView];
-    [self registerKeyboardNotifications];
+    //[self registerKeyboardNotifications];
     
 }
 
@@ -162,8 +166,6 @@
         [_userCommentView setDelegate:self];
         _userCommentView.backgroundColor = [UIColor clearColor];
     }
- 
-    
     return _userCommentView;
 }
 
@@ -352,17 +354,21 @@
 }
 
 -(void)postComment:(NSString *)comment forConversation:(DConversation *)conversation
-{
-    
-//    [[WSModelClasses sharedHandler] commentUserId:@"45" authUId:conversation.userId post:conversation.postId comment:[comment UTF8String] response:^(BOOL success, id response) {
-//        //Handle response...
-//        if(success)
-//        {
-//        }
-//        else
-//        {
-//        }
-//    }];
+{   
+    NSString *convertedString = [comment stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [[WSModelClasses sharedHandler] commentUserId:@"45" authUId:conversation.userId post:conversation.postId comment:convertedString response:^(BOOL success, id response) {
+        //Handle response...
+        if(success)
+        {
+            //Comment posted...
+            NSLog(@"Successfully Commented: %@",response);
+        }
+        else
+        {
+            //Commented failed...
+            NSLog(@"Failed to commentL: %@", response);
+        }
+    }];
     
 }
 
@@ -415,6 +421,60 @@
     } completion:^(BOOL finished) {
         //Animation finished...
     }];
+}
+
+-(void)actionOnThisConversation:(DConversation *)conversation
+{
+    NSNumber *currentUserId = [[[WSModelClasses sharedHandler] loggedInUserModel] userID];
+    NSString *userId = [NSString stringWithFormat:@"%d", [currentUserId integerValue]];
+    _isSelfConversation = [userId isEqualToString:conversation.userId];
+    if(_isSelfConversation)
+    {
+        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Delete",nil];
+        _moreActionSheet.tag = 111;
+    }
+    else
+    {
+        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Report",nil];
+        _moreActionSheet.tag = 222;
+    }
+    
+    [_moreActionSheet setFrame:CGRectMake(0, 0, 320, 400)];
+    [_moreActionSheet showInView:self];
+
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(actionSheet.tag == 111)
+    {
+        switch (buttonIndex) {
+            case 0:
+                //Delete the conversation...
+                //And update the ui...
+                break;
+            case 1:
+                
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        switch (buttonIndex) {
+            case 0:
+                //Report the conversation....
+                //and update the ui....
+                
+                break;
+            case 1:
+                //
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 

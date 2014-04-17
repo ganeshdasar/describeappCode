@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0729C52918FE4E8600B1BF3A /* DESLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729C52818FE4DC300B1BF3A /* DESLocationManager.m */; };
 		07354D6C18B9F5CD008B98F3 /* DConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 07354D1F18B9F5CD008B98F3 /* DConversation.m */; };
 		07354D6D18B9F5CD008B98F3 /* DUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 07354D2118B9F5CD008B98F3 /* DUser.m */; };
 		07354D6E18B9F5CD008B98F3 /* DConversationListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 07354D2418B9F5CD008B98F3 /* DConversationListView.m */; };
@@ -552,6 +553,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0729C52718FE4DC300B1BF3A /* DESLocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DESLocationManager.h; sourceTree = "<group>"; };
+		0729C52818FE4DC300B1BF3A /* DESLocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DESLocationManager.m; sourceTree = "<group>"; };
 		07354D1E18B9F5CD008B98F3 /* DConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DConversation.h; sourceTree = "<group>"; };
 		07354D1F18B9F5CD008B98F3 /* DConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DConversation.m; sourceTree = "<group>"; };
 		07354D2018B9F5CD008B98F3 /* DUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DUser.h; sourceTree = "<group>"; };
@@ -1140,6 +1143,8 @@
 				07E5E45018C1D090000E489B /* AVCapturing */,
 				07E5E45518C1D090000E489B /* CMAppDelegate.h */,
 				07E5E45618C1D090000E489B /* CMAppDelegate.m */,
+				0729C52718FE4DC300B1BF3A /* DESLocationManager.h */,
+				0729C52818FE4DC300B1BF3A /* DESLocationManager.m */,
 				07E5E45718C1D090000E489B /* Controller */,
 				07E5E46F18C1D090000E489B /* DatabaseHandler */,
 				07E5E47618C1D090000E489B /* External Library */,
@@ -2913,6 +2918,7 @@
 				07354D7818B9F5CD008B98F3 /* DPostHeaderView.m in Sources */,
 				07E5E4C718C1D090000E489B /* CMPhotoCell.m in Sources */,
 				079CEBD618E82EA200CF4532 /* DAlertView.m in Sources */,
+				0729C52918FE4E8600B1BF3A /* DESLocationManager.m in Sources */,
 				2FCCC6CA18B8E7E70023FEBC /* DBAspectFillViewController.m in Sources */,
 				C3E14BEC18C2EA2A008AC885 /* UIRefreshControl+AFNetworking.m in Sources */,
 				07E5E4C018C1D090000E489B /* SPGooglePlacesPlaceDetailQuery.m in Sources */,

@@ -30,6 +30,9 @@
 
 @protocol DPostViewDelegate <NSObject>
 
--(void)profileDidSelected;
+@optional
+-(void)profileDidSelectedForPost:(DPost *)post;
+-(void)showConversationOfThisPost:(DPost *)post;
+-(void)showMoreDetailsOfThisPost:(DPost *)post;
 
 @end
