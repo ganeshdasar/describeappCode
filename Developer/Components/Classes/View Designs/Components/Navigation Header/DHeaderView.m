@@ -161,7 +161,7 @@
     
     int count = _buttons.count;
     float x= 20;
-    float y = 24;
+    float y = 22;
     x = self.bounds.size.width - _totalButtonsWidth;
     
     //default Buttons....
@@ -327,15 +327,4 @@
     
     
 }
-
-
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect
- {
- // Drawing code
- }
- */
-
 @end

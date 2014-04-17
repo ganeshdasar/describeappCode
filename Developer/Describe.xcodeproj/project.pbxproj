@@ -97,6 +97,7 @@
 		07354E0F18B9F5EC008B98F3 /* user2.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCD18B9F5EC008B98F3 /* user2.png */; };
 		07354E1018B9F5EC008B98F3 /* user3.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCE18B9F5EC008B98F3 /* user3.png */; };
 		07354E1118B9F5EC008B98F3 /* user4.png in Resources */ = {isa = PBXBuildFile; fileRef = 07354DCF18B9F5EC008B98F3 /* user4.png */; };
+		0795F8B118FFAF19007C0A45 /* UIView+FindFirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0795F8B018FFAF19007C0A45 /* UIView+FindFirstResponder.m */; };
 		079919C518F5552A00AB5139 /* DSocialMediaListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 079919C418F5552A00AB5139 /* DSocialMediaListView.m */; };
 		079CEBD618E82EA200CF4532 /* DAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 079CEBD518E82EA200CF4532 /* DAlertView.m */; };
 		07ABD34D18FBE06400CBE4D2 /* btn_nav_std_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 07ABD33F18FBE06400CBE4D2 /* btn_nav_std_back.png */; };
@@ -668,6 +669,8 @@
 		07354DCD18B9F5EC008B98F3 /* user2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user2.png; sourceTree = "<group>"; };
 		07354DCE18B9F5EC008B98F3 /* user3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user3.png; sourceTree = "<group>"; };
 		07354DCF18B9F5EC008B98F3 /* user4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user4.png; sourceTree = "<group>"; };
+		0795F8AF18FFAF19007C0A45 /* UIView+FindFirstResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+FindFirstResponder.h"; path = "Classes/UIView+FindFirstResponder.h"; sourceTree = SOURCE_ROOT; };
+		0795F8B018FFAF19007C0A45 /* UIView+FindFirstResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+FindFirstResponder.m"; path = "Classes/UIView+FindFirstResponder.m"; sourceTree = SOURCE_ROOT; };
 		079919C318F5552A00AB5139 /* DSocialMediaListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSocialMediaListView.h; sourceTree = "<group>"; };
 		079919C418F5552A00AB5139 /* DSocialMediaListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSocialMediaListView.m; sourceTree = "<group>"; };
 		079CEBD418E82EA200CF4532 /* DAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAlertView.h; sourceTree = SOURCE_ROOT; };
@@ -1163,6 +1166,8 @@
 		07354D1318B9F5CD008B98F3 /* Data Holder */ = {
 			isa = PBXGroup;
 			children = (
+				0795F8AF18FFAF19007C0A45 /* UIView+FindFirstResponder.h */,
+				0795F8B018FFAF19007C0A45 /* UIView+FindFirstResponder.m */,
 				07CB621618E7F4F5000F8EB3 /* NSDate+DDate.h */,
 				07CB621718E7F4F5000F8EB3 /* NSDate+DDate.m */,
 				07CB621918E7F64C000F8EB3 /* DDataHolder.h */,
@@ -2827,6 +2832,7 @@
 				C3E14BEB18C2EA2A008AC885 /* UIProgressView+AFNetworking.m in Sources */,
 				07354D6E18B9F5CD008B98F3 /* DConversationListView.m in Sources */,
 				C3E14BE618C2EA2A008AC885 /* AFNetworkActivityIndicatorManager.m in Sources */,
+				0795F8B118FFAF19007C0A45 /* UIView+FindFirstResponder.m in Sources */,
 				C3E14BE818C2EA2A008AC885 /* UIAlertView+AFNetworking.m in Sources */,
 				2FB4BAEA18910B280033BDF4 /* AFURLConnectionOperation.m in Sources */,
 				07354D7A18B9F5CD008B98F3 /* DLikesView.m in Sources */,

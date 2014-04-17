@@ -509,6 +509,13 @@
     [self showSelectedPhoto:0];
     
     [[WSModelClasses sharedHandler] showLoadView];
+//    [UIView animateWithDuration:1.0 animations:^{
+//        CGRect frame = self.cameraOverlayView.frame;
+//        frame.origin.x = -320.0f;
+//        self.cameraOverlayView.frame = frame;
+//    } completion:^(BOOL finished) {
+//        [self goToVideoRecordingScreen];
+//    }];
     [self performSelector:@selector(goToVideoRecordingScreen) withObject:nil afterDelay:0.3];
 }
 
@@ -517,7 +524,7 @@
     CMRecordViewController *recordController = [[CMRecordViewController alloc] initWithNibName:@"CMRecordViewController" bundle:nil];
     recordController.capturedPhotoList = self.capturedPhotoList;
     recordController.parentController = self;
-    [self.navigationController pushViewController:recordController animated:YES];
+    [self.navigationController pushViewController:recordController animated:NO];
     recordController = nil;
 }
 

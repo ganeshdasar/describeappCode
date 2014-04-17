@@ -24,7 +24,7 @@
 #import "ProfileViewController.h"
 
 #define FRAME CGRectMake(0, 0, 320, 480);
-#define BUTTONFRAME CGRectMake(121, 363, 70, 26);
+#define BUTTONFRAME CGRectMake(121, CGRectGetHeight([[UIScreen mainScreen] bounds])-205.0, 70, 26);
 
 @interface DescWelcomeViewController ()<MBProgressHUDDelegate,WSModelClassDelegate,UIAlertViewDelegate,DESocialConnectiosDelegate> {
     GPPSignIn *signIn;
@@ -70,22 +70,23 @@
 
 -  (void)viewDidLoad
 {
-    isClicked = NO;
     [self setNeedsStatusBarAppearanceUpdate];
     self.facebookFriendsListArray = [[NSMutableArray alloc]init];
     self.socialUserDataDic = [[NSMutableDictionary alloc]init];
     self.googlePlusFriendsListArry = [[NSMutableArray alloc]init];
+    
+    self.facebookBtn.frame = BUTTONFRAME;
+    self.googlePlusBtn.frame = BUTTONFRAME;
+    self.emailBtn.frame = BUTTONFRAME;
+    
     if (isiPhone5)
     {
         // this is iphone 4 inch
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_4in.png"];
-        self.facebookBtn.frame = BUTTONFRAME;
-        self.googlePlusBtn.frame = BUTTONFRAME;
-        self.emailBtn.frame = BUTTONFRAME;
     }
     else
     {
-        self.welcomeScrennImage.frame = FRAME;
+//        self.welcomeScrennImage.frame = FRAME;
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_3.5in.png"];
         //Iphone  3.5 inch
     }
@@ -130,7 +131,6 @@
 }
 
 
-
 #pragma mark Event Actions -
 -  (IBAction)SigninClicked:(id)sender
 {
@@ -149,21 +149,46 @@
 
 -  (IBAction)signUpTheUser:(id)sender
 {
-    if (!isClicked) {
-        self.facebookBtn.frame = BUTTONFRAME;
-        self.googlePlusBtn.frame = BUTTONFRAME;
-        self.emailBtn.frame = BUTTONFRAME;
+    if (self.facebookBtn.isHidden == YES) {
         [self buttonHidderAction:NO];
-        [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationDuration: 1.0];
-        self.facebookBtn.frame =CGRectMake(125, 316, 70, 26);
-        self.googlePlusBtn.frame = CGRectMake(125, 352, 70, 26);;
-        self.emailBtn.frame = CGRectMake(125, 424, 70, 26);
-        self.signUpBtn.frame = CGRectMake(110, 270, 100, 36);
-        self.signInBtn.frame = CGRectMake(110, 490, 100, 36);
-        [UIView commitAnimations];
-        isClicked = YES;
+        
+        [UIView animateWithDuration:1.0
+                         animations:^{
+                             self.facebookBtn.alpha = 1.0;
+                             self.googlePlusBtn.alpha = 1.0;
+                             self.emailBtn.alpha = 1.0;
+                             
+                             CGRect windowFrame  = [[UIScreen mainScreen] bounds];
+                             
+                             self.facebookBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)-252.0, 70, 26);
+                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)-216.0, 70, 26);;
+                             self.emailBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)-144.0, 70, 26);
+                             self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-298.0, 100, 36);
+                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-78.0, 100, 36);
+                         }
+                         completion:nil];
     }
+    else {
+        [UIView animateWithDuration:1.0
+                         animations:^{
+                             self.facebookBtn.frame = BUTTONFRAME;
+                             self.googlePlusBtn.frame = BUTTONFRAME;
+                             self.emailBtn.frame = BUTTONFRAME;
+                             
+                             self.facebookBtn.alpha = 0.0;
+                             self.googlePlusBtn.alpha = 0.0;
+                             self.emailBtn.alpha = 0.0;
+                             
+                             CGRect windowFrame  = [[UIScreen mainScreen] bounds];
+                             
+                             self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-232.0, 100, 36);
+                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-175.0, 100, 36);
+                         }
+                         completion:^(BOOL finished) {
+                             [self buttonHidderAction:YES];
+                         }];
+    }
+    
 }
 
 
@@ -249,9 +274,11 @@
         }
     }else{
         if (delegate.isFacebook) {
-            [self showAlert:@"Describe" message:@"This Facebook account is already associated with another Describe Identity. Do you want to sign in as " " instead."  tag:100];
+            NSString * messageStr = [NSString stringWithFormat:@"This Facebook account is already associated with another Describe Identity. Do you want to sign in as \"%@\" instead.",[[responseDict valueForKeyPath:@"DataTable.UserData.Username"]objectAtIndex:0]];
+            [self showAlert:@"Describe" message:messageStr  tag:100];
         }else if (delegate.isGooglePlus){
-            [self showAlert:@"Describe" message:@"This Google+ account is already associated with another Describe Identity" tag:100];
+            NSString * messageStr = [NSString stringWithFormat:@"This Google+ account is already associated with another Describe Identity. Do you want to sign in as \"%@\" instead.",[[responseDict valueForKeyPath:@"DataTable.UserData.Username"]objectAtIndex:0]];
+            [self showAlert:@"Describe" message:messageStr tag:100];
         }
     }
 }
@@ -295,6 +322,7 @@
     if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
+        [HUD hide:YES];
         return;
     }
     switch (serviceType) {

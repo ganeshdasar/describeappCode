@@ -145,12 +145,9 @@
         name.text =self.userPassword;
         [cell.contentView addSubview:name];
     }
-    
-    
     cell.textLabel.text =  securityNamesArray[indexPath.row];
     cell.textLabel.textColor = [UIColor textPlaceholderColor];
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-    
     return cell;
 }
 

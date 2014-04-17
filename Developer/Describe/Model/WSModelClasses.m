@@ -1024,4 +1024,27 @@ static WSModelClasses *_sharedInstance;
      ];
     
 }
+
+-(void)followAllActionUserID:(NSString*)userId followAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
+{
+    
+    //http://mirusstudent.com/service/describe-service/getBeAFollower/format=json/UserUID=4/FollowAllSts=TRUE/GateWay=fb/range=0/
+    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/format=json/UserUID=%@/FollowAllSts=TRUE/GateWay=fb/range=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID,rangeValue];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             responce(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             responce(NO, error);
+         }
+     ];
+}
+
+-(void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
+{
+    
+    
+}
 @end

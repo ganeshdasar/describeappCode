@@ -150,4 +150,15 @@
     [tableView endUpdates];
 }
 
+- (NSString *)getSelectedCategory
+{
+    NSString *categoryName = @"No Category";
+    
+    if(selectedCategoryIndex >= 0) {
+        categoryName = categoryList[selectedCategoryIndex];
+    }
+    
+    return categoryName;
+}
+
 @end

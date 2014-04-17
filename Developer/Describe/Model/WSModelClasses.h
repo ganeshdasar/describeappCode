@@ -187,4 +187,11 @@ typedef enum {
 
 - (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response;
 
+
+#pragma mark followAllAndInviteAll
+-(void)followAllActionUserID:(NSString*)userId followAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
+
+-(void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
+
+
 @end

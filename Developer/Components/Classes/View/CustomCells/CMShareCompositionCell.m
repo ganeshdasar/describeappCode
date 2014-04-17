@@ -23,11 +23,6 @@
 
 @synthesize postImage = _postImage;
 
-
-
-
-
-
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier withPostImage:(DPostImage *)postImage
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -43,8 +38,7 @@
 -(void)createPostBodyView
 {
     if(_postBodyView == nil)
-        
-    {
+    {        
         _postBodyView =  [[DPostBodyView alloc] initWithFrame:CGRectMake(0,0,320,320) withPostImage:_postImage];
         [_postBodyView setBackgroundColor:[UIColor clearColor]];
         [self.contentView addSubview:_postBodyView];

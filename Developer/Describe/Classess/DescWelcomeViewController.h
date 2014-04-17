@@ -25,10 +25,9 @@
 @class GPPSignInButton;
 @class DESocialConnectios;
 
-@interface DescWelcomeViewController : UIViewController<UIActionSheetDelegate,GPPSignInDelegate>{
+@interface DescWelcomeViewController : UIViewController<UIActionSheetDelegate,GPPSignInDelegate>
+{
     DESAppDelegate *appDelegate;
-    BOOL isClicked;
-    
 }
 
 @property (weak, nonatomic) IBOutlet UIButton *signUpBtn;

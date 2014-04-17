@@ -44,7 +44,7 @@
     _imageView.image = nil;
     _cropRect = CGRectNull;
     [_imageContentScrollView setContentOffset:CGPointZero animated:NO];
-    [_imageContentScrollView setZoomScale:1.0f];
+    [_imageContentScrollView setZoomScale:1.0f animated:NO];
 }
 
 - (void)loadImageFromURLString:(NSString *)urlString

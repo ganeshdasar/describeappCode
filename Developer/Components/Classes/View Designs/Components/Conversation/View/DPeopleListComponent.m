@@ -127,9 +127,27 @@
     
     
 }
+
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 56;
 }
+
+
+/*- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UIView *tempView=[[UIView alloc]initWithFrame:CGRectMake(0,0,320,40)];
+    tempView.backgroundColor = [UIColor clearColor];
+    UIImageView *_imgeView = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,320,40)];
+    if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+        _imgeView.image =[UIImage imageNamed:@"btn_invite_all.png"];
+    }else{
+        _imgeView.image =[UIImage imageNamed:@"btn_follow_all.png"];
+
+    }
+    [tempView addSubview:_imgeView];
+    return nil;
+}*/
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

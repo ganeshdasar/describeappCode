@@ -48,17 +48,24 @@
             currentVideoTime = 0.0;
             isRecordingCompleted = NO;
         }
+        
+        if([self isLastPhotoRecording]) {
+            [UIView animateWithDuration:0.3 animations:^{
+                CGRect frame = self.listButton.frame;
+                self.prevButton.frame = frame;
+                
+                frame.origin.x = 139.0;
+                self.listButton.frame = frame;
+                
+                self.nextButton.hidden = NO;
+            }];
+        }
     }
 
     [self showCameraView];
 //    [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -101,7 +108,6 @@
     }
     
     [self.photoCollectionView setContentOffset:CGPointMake(0.0, 20.0) animated:NO];
-    
 }
 
 
@@ -187,6 +193,10 @@
 
 - (BOOL)isLastPhotoRecording
 {
+    if(self.selectedImageIndex < 0) {
+        return NO;
+    }
+    
     CMPhotoModel *modelObj = self.capturedPhotoList[self.selectedImageIndex];
     if(modelObj.originalImage && modelObj.isRecorded == NO) {
         int nextIndex = self.selectedImageIndex+1;
@@ -304,6 +314,15 @@
     
 #if !(TARGET_IPHONE_SIMULATOR)
     if([[CMAVCameraHandler sharedHandler] isVideoRecordingStarted]) {
+        if(self.selectedImageIndex != -1 && self.selectedImageIndex < self.capturedPhotoList.count) {
+            CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[self.selectedImageIndex];
+            if(modelObj != nil && modelObj.originalImage) {
+                modelObj.isRecorded = YES;
+                NSLog(@"duration = %f", currentVideoTime - modelObj.startAppearanceTime - 0.1);
+                modelObj.duration = currentVideoTime - modelObj.startAppearanceTime - 0.1;  // we are removing 0.1 here because 0.1 is added to currentVideoTime before it came here; so getting actualValue
+            }
+        }
+        
         [[CMAVCameraHandler sharedHandler] startOrStopRecordingVideo];
     }
 #endif
@@ -348,7 +367,7 @@
     
 #endif
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (IBAction)startOrPauseVideoRecording:(id)sender

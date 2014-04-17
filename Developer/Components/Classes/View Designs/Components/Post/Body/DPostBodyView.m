@@ -165,8 +165,12 @@
     [_backImageView setImage:secondImage.editedImage];
     [_frontImageView setImage:firstImage.editedImage];
     
-    [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
-    [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
+    if(secondImage != nil && secondImage.imageUrl != nil) {
+        [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
+    }
+    if(firstImage != nil && firstImage.imageUrl != nil) {
+        [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
+    }
     //[_frontImageView setBackgroundColor:[[UIColor orangeColor] colorWithAlphaComponent:0.4]];
     
     
@@ -219,6 +223,7 @@
     [_frontImageView setBackgroundColor:[UIColor clearColor]];
     [_frontImageView setImage:[UIImage imageNamed:@""]];
     [_contentView addSubview:_frontImageView];
+    [_frontImageView setContentMode:UIViewContentModeScaleToFill];
 }
 
 -(void)createBackImageView
@@ -227,14 +232,6 @@
     [_backImageView setBackgroundColor:[UIColor clearColor]];
     [_backImageView setImage:[UIImage imageNamed:@""]];
     [_contentView addSubview:_backImageView];
-
-    
-//    //Temp code remove this...
-//    {
-//        UIView *view = [[UIView alloc] initWithFrame:_backImageView.bounds];
-//        [view setBackgroundColor:[[UIColor redColor] colorWithAlphaComponent:0.4]];
-//        [_backImageView addSubview:view];
-//    }
 }
 
 
@@ -513,7 +510,8 @@
     for (int i=0; i<_postImage.images.count; i++)
     {
         CMPhotoModel *model = _postImage.images[i];
-        [imageUrls addObject:model.imageUrl];
+        if(model!=nil && model.imageUrl != nil)
+            [imageUrls addObject:model.imageUrl];
     }
     if(_index== 0)
     {

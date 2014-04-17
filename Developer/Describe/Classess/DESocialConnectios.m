@@ -41,6 +41,10 @@ static DESocialConnectios *_sharedInstance;
     [signedIn authenticate];
 }
 
+- (BOOL)isGooglePlusLoggeIn
+{
+    return ([GPPSignIn sharedInstance].idToken != nil);
+}
 
 - (GTLServicePlus *)plusService
 {
@@ -144,6 +148,10 @@ static DESocialConnectios *_sharedInstance;
 
 }
 
+- (BOOL)isFacebookLoggedIn
+{
+    return (FBSession.activeSession.state == FBSessionStateOpen);
+}
 
 - (void)getUserDetail
 {

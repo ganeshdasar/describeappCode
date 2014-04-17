@@ -14,16 +14,21 @@
 @synthesize isFacebook;
 @synthesize isGooglePlus;
 @synthesize isTwitter;
--(UIStatusBarStyle)preferredStatusBarStyle{
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
     return UIStatusBarStyleLightContent;
 }
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     [GPPSignIn sharedInstance].clientID = kClientID;
     [GPPDeepLink setDelegate:self];
     [GPPDeepLink readDeepLinkAfterInstall];
     
+    [[UIBarButtonItem appearanceWhenContainedIn:[UISearchBar class], nil] setTitle:@""];
+    [[UIBarButtonItem appearanceWhenContainedIn:[UISearchBar class], nil] setImage:[UIImage imageNamed:@"btn_cancel.png"]];
+
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     DescWelcomeViewController * welComeView = [[DescWelcomeViewController alloc]initWithNibName:@"DescWelcomeViewController" bundle:Nil];

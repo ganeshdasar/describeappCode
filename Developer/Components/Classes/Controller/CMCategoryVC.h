@@ -23,4 +23,6 @@
 @property (nonatomic, weak) id <CMCategoryVCDelegate> delegate;
 @property (assign)     BOOL showCategoryOptions;
 
+- (NSString *)getSelectedCategory;
+
 @end

@@ -64,9 +64,9 @@
     [self createHeadderView];
     [self intializeArray];
     [self setBackGroundImage];
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    self.acountDetailsTableView.frame = CGRectMake(0, self.acountDetailsTableView.frame.origin.x
-                                                   , 320,  screenRect.size.height-65);
+//    CGRect screenRect = [[UIScreen mainScreen] bounds];
+//    self.acountDetailsTableView.frame = CGRectMake(0, self.acountDetailsTableView.frame.origin.x
+//                                                   , 320,  screenRect.size.height-65);
     self.acountDetailsTableView.backgroundColor = [UIColor clearColor];
     self.acountDetailsTableView.showsVerticalScrollIndicator = NO;
     userbirtdayString =  [NSString convertTheepochTimeToDate:[[WSModelClasses sharedHandler].loggedInUserModel.dobDate doubleValue]];
@@ -676,7 +676,7 @@
 {
    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKEXPIRATIONDATE];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
     [[NSUserDefaults standardUserDefaults]synchronize ];
 
 }

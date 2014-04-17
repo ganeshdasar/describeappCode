@@ -20,5 +20,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
 
 
+- (IBAction)followAndInviteActions:(id)sender;
 
 @end

@@ -123,8 +123,8 @@ IBOutlet DHeaderView *_headerView;
     connection =FAcebook_connected;
     [self showLoadView];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
-    [[DESocialConnectios sharedInstance] facebookSignIn];
     [DESocialConnectios sharedInstance].delegate =self;
+    [[DESocialConnectios sharedInstance] facebookSignIn];
 }
 
 
@@ -132,8 +132,8 @@ IBOutlet DHeaderView *_headerView;
 {
     connection =Googleplus_connected;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
-    [[DESocialConnectios sharedInstance] googlePlusSignIn];
     [DESocialConnectios sharedInstance].delegate = self;
+    [[DESocialConnectios sharedInstance] googlePlusSignIn];
     [self showLoadView];
     
 }
@@ -164,6 +164,7 @@ IBOutlet DHeaderView *_headerView;
     if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
+        [HUD hide:YES];
         return;
     }
     switch (serviceType) {

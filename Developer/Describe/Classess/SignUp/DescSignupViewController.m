@@ -345,7 +345,11 @@
 {
       return YES;
 }
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+   
 
+    
+    }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
@@ -407,9 +411,6 @@
 }
 
 
--  (void)textFieldDidEndEditing:(UITextField *)textField
-{
 
-}
 
 @end

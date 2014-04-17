@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UIView *compositionContainerView;
 @property (weak, nonatomic) id <CMShareCompositionCellDelegate> delegate;
 @property (strong, nonatomic) DPostImage *postImage;
+@property (weak, nonatomic) IBOutlet UIView *postBodyContainerView;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier withPostImage:(DPostImage *)postImage;
 

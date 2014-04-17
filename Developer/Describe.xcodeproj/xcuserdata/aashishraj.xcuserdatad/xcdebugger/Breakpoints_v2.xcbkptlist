@@ -30,9 +30,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "-initWithNibName:bundle:"
-            landmarkType = "5">
+            endingLineNumber = "64">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -47,7 +45,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "237"
             endingLineNumber = "237"
-            landmarkName = "-popToFeedScreen"
+            landmarkName = "-alertView:clickedButtonAtIndex:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -223,7 +221,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "259"
             endingLineNumber = "259"
-            landmarkName = "-shareButtonClicked:"
+            landmarkName = "-popToFeedScreen"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2581,7 +2579,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "461"
             endingLineNumber = "461"
-            landmarkName = "-startAniamtion"
+            landmarkName = "-transitionNewImage"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
