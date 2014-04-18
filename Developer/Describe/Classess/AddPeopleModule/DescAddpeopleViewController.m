@@ -239,6 +239,7 @@
 #pragma mark SegmentView Actions
 - (void)getTheWeRecommendDataFromServer:(UIButton*)inSender
 {
+    [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
     inSender.selected = YES;
     invitationsBtn.selected = NO;
     [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
