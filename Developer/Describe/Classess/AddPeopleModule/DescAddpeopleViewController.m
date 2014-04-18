@@ -241,13 +241,15 @@
 {
     inSender.selected = YES;
     invitationsBtn.selected = NO;
+    [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
     
     if(werecommendedList.count == 0) {
         shouldLoadMoreRecommend = NO;
         pageLoadNumberRecommend = 0;
         [self fetchWerecommendList];
     }
-    else {
+
+    if(_peoplelistView != nil) {
         [_peoplelistView reloadTableView:werecommendedList];
     }
 }
@@ -256,13 +258,15 @@
 {
     inSender.selected = YES;
     weRecommendBtn.selected = NO;
+    [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = YES;
     
     if(invitationList.count == 0) {
         shouldLoadMoreInvite = NO;
         pageLoadNumberInvite = 0;
         [self fetchInvitationList];
     }
-    else {
+        
+    if(_peoplelistView != nil) {
         [_peoplelistView reloadTableView:invitationList];
     }
 }
@@ -367,6 +371,14 @@
     if(responseDict[WS_RESPONSEDICT_KEY_ERROR]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Describe", @"") message:NSLocalizedString(@"Error while communicating to server. Please try again later.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
+        if(_peoplelistView != nil) {
+            if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+                [_peoplelistView reloadTableView:invitationList];
+            }
+            else {
+                [_peoplelistView reloadTableView:werecommendedList];
+            }
+        }
         return;
     }
     switch (serviceType) {
