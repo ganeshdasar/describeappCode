@@ -128,6 +128,9 @@ typedef enum {
 
 - (void)fetchUserModelForUserId:(NSNumber *)userID
 {
+    //Getting the details from profile details screen so simply returning from here...
+    return;
+    
     [[WSModelClasses sharedHandler] setDelegate:self];
     [[WSModelClasses sharedHandler] getProfileDetailsForUserID:[userID stringValue]];
 }
@@ -149,6 +152,20 @@ typedef enum {
         [self showProfileDetailOnView];
     }
 }
+
+
+-(void)loadProfileDetails:(NSDictionary *)dictionary
+{
+    NSMutableDictionary *profileDict = [[NSMutableDictionary alloc] initWithDictionary:dictionary[@"UserProfile"] copyItems:YES];
+    if(profileDict[@"ProfileCanvas"]) {
+        [profileDict setObject:profileDict[@"ProfileCanvas"] forKey:USER_MODAL_KEY_PROFILECANVAS];
+    }
+    
+    UsersModel *modelObj = [[UsersModel alloc] initWithDictionary:profileDict];
+    _profileUserModel = modelObj;
+    [self showProfileDetailOnView];
+}
+
 
 - (void)showProfileDetailOnView
 {

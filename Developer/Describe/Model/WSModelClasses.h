@@ -1,3 +1,4 @@
+
 //
 //  WSModelClasses.h
 //  WebServicesTesting
@@ -186,7 +187,7 @@ typedef enum {
 
 
 - (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response;
-
+-(void)getFeedForThisTag:(NSString *)tag forUser:(NSString *)userId andRange:(NSInteger)range response:(void (^)(BOOL success, id response))response;
 
 #pragma mark followAllAndInviteAll
 -(void)followAllActionUserID:(NSString*)userId followAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
@@ -196,5 +197,7 @@ typedef enum {
 
 -(void)getFollowingListForUserId:(NSString *)currentUserId ofPersons:(NSString *)profileId pageNumber:(NSInteger )pageNumber  response:(void (^)(BOOL success, id response))response;
 -(void)getFollowersListForUserId:(NSString *)currentUserId ofPersons:(NSString *)profileId pageNumber:(NSInteger )pageNumber  response:(void (^)(BOOL success, id response))response;
+
+-(void)reportComment:(NSString *)commentId forUser:(NSString *)userId response:(void (^)(BOOL success, id response))response;
 
 @end

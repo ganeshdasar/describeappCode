@@ -30,7 +30,7 @@
 @protocol DPostListViewDelegate <NSObject>
 
 @optional
-
+-(void)didSelectedTag:(NSString *)tag forThisPost:(DPost *)post;
 -(void)showMoreDetailsOfThisPost:(DPost *)post;
 -(void)showConversationOfThisPost:(DPost *)post;
 -(void)userProfileSelectedForPost:(DPost *)selected;

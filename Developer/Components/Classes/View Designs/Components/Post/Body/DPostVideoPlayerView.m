@@ -27,6 +27,7 @@
     float _initial_x;
     float _diff;
     
+    BOOL _isNeedToShowVideoLandingAnimation;
     CGFloat _onePercentage;
     CGFloat _currentDuration;
 }
@@ -254,8 +255,9 @@
             _startPointLocationOnScreen.x = _startPointLocationOnScreen.x - _diff;
             
             _currentDuration = [self videoCurrentTime];
+            _isNeedToShowVideoLandingAnimation = (_currentDuration>0);
+                
             
-            NSLog(@"Vide duration:%d",[self videoDuration]);
             _onePercentage = 230/[self videoDuration];
             break;
         case UIGestureRecognizerStateChanged:
@@ -304,6 +306,9 @@
         case UIGestureRecognizerStateEnded:
             _initial_x = 0;
         {
+            if(!_isNeedToShowVideoLandingAnimation)
+                return;
+            
             [UIView animateWithDuration:0.25 animations:^{ [_conentView setFrame:self.frame];} completion:^(BOOL finished)
              {
                  [UIView animateWithDuration:0.25 animations:^{

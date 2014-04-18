@@ -75,4 +75,6 @@ typedef enum {
 - (IBAction)panGestureDetected:(id)sender;
 - (IBAction)snippetPanGestureDetected:(id)sender;
 
+-(void)loadProfileDetails:(NSDictionary *)dictionary;
+
 @end

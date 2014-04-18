@@ -122,7 +122,7 @@
 
 -(void)createMoreButton
 {
-    CGRect moreFrame = CGRectMake(290, _elapsedYPostion+6, 19, 5);
+    CGRect moreFrame = CGRectMake(290, _elapsedYPostion+8, 19, 5);
     
     _moreButton = [[UIButton alloc] initWithFrame:moreFrame];
     [_moreButton setBackgroundImage:[UIImage imageNamed:@"btn_overflow.png"] forState:UIControlStateNormal];

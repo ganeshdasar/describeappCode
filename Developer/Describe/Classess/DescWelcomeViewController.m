@@ -124,7 +124,7 @@
     if([self checkTheSessionId])
     {
         _postViewController = [DPostsViewController sharedFeedController];
-        
+        [_postViewController loadFeedDetails];
         [self.navigationController pushViewController:_postViewController animated:YES];
     }
 

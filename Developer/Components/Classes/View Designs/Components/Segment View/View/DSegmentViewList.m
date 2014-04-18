@@ -69,6 +69,16 @@
     //[self designSegments];
 }
 
+-(void)setText:(NSString *)text forIndex:(NSInteger )index
+{
+    DSegment *segment = _segments[index];
+    segment.subTitle = text;
+    DSegmentView *segmentView = (DSegmentView *)[_scrollView viewWithTag:100+index];
+    if(segmentView != nil)
+        [segmentView setSegment:segment];
+}
+
+
 -(void)selectSegmentAtIndex:(NSInteger )index
 {
     if (_previousSegment != nil)
@@ -134,9 +144,7 @@
     {
         [_previousSegment unSelectSegment];
     }
-    
-    _previousSegment = segmentView;
-    
+    _previousSegment = segmentView;    
 }
 
 

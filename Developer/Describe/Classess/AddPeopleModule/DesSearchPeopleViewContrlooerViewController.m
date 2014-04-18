@@ -11,9 +11,12 @@
 #import "DSearchBarComponent.h"
 #import "WSModelClasses.h"
 #import "DUserData.h"
+#import "DProfileDetailsViewController.h"
+
+
 #define isiPhone5  ([[UIScreen mainScreen] bounds].size.height == 568)?TRUE:FALSE
 
-@interface DesSearchPeopleViewContrlooerViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate>
+@interface DesSearchPeopleViewContrlooerViewController ()<DSearchBarComponentDelegate, WSModelClassDelegate, DPeopleListDelegate>
 {
     IBOutlet DHeaderView *_headerView;
     UIButton * backButton;
@@ -70,6 +73,7 @@
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     self._peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, _peoplelistView.frame.origin.y, 320, screenRect.size.height-108) andPeopleList:nil];
+    [self._peoplelistView setDelegate:self];
     [self.view addSubview:self._peoplelistView];
     
 }
@@ -111,10 +115,10 @@
         SearchPeopleData * searchData = [[SearchPeopleData alloc]initWithDictionary:dataDic[@"DescribeSearchResultsByPeople"]];
         [self.searchListArray addObject:searchData];
     }
+    
     backButton.userInteractionEnabled = YES;
     [_peoplelistView setBackgroundColor:[UIColor clearColor]];
     [_peoplelistView reloadTableView:self.searchListArray];
-    
 }
 -(void)removeTheSearchViewFromSuperview
 {
@@ -124,4 +128,13 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+
+-(void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
+{
+    SearchPeopleData *people = self.searchListArray[index];    
+    DProfileDetailsViewController *profileDetailViewController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+    profileDetailViewController.profileId = people.profileUserUID;
+    [self.navigationController pushViewController:profileDetailViewController animated:YES];
+}
+
 @end

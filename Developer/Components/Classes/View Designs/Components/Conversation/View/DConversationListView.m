@@ -129,10 +129,10 @@
         headerHeight = 40;
     
     if(self.header[@"PostTag1"] != nil)
-        [tags addObject:self.header[@"PostTag1"]];
+        [tags addObject:[NSString stringWithFormat:@"#%@",self.header[@"PostTag1"]]];
     
     if(self.header[@"PostTag2"] != nil)
-        [tags addObject:self.header[@"PostTag2"]];
+        [tags addObject:[NSString stringWithFormat:@"#%@",self.header[@"PostTag2"]]];
     
     int count = tags.count;
     
@@ -224,7 +224,7 @@
     }
     
     
-    cell.contentView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.2];
+    cell.contentView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.8];
     
     return cell;
 }
@@ -260,7 +260,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    float height = (indexPath.row == 0)?60:80;
+    float height = (indexPath.row == 0)?34:80;
     
     DConversation *conversation = _conversationList[indexPath.row];
     switch (conversation.type)
@@ -289,16 +289,18 @@
             {
                 //Caliculate the full conversation length...
                 
-                height = commentSize.height + 56;
+                height = height + commentSize.height + 10;
             }
             else
             {
-                height = 90;
                 if(commentSize.height > 45)
                 {
-                    height = height + 20;
+                    height = height + 30;
                 }
-                
+                else
+                {
+                    height = height + commentSize.height;
+                }
                 
             }
         }
@@ -368,8 +370,6 @@
     _isNeedToExpandUserCommentView = YES;
     
     //NSLog(@"new height available:%@",height);
-    
-    
     _userCommentViewHeight = [height floatValue]+30;
     [_userCommentView setFrame:CGRectMake(0, 0, 320, _userCommentViewHeight)];
     [_userCommentView increaseContentSize];
@@ -460,7 +460,7 @@
 -(void)actionOnThisConversation:(DConversation *)conversation
 {
     NSNumber *currentUserId = [[[WSModelClasses sharedHandler] loggedInUserModel] userID];
-    NSString *userId = [NSString stringWithFormat:@"%d", [currentUserId integerValue]];
+    NSString *userId = [currentUserId stringValue];
     _isSelfConversation = [userId isEqualToString:conversation.userId];
     if(_isSelfConversation)
     {
@@ -475,7 +475,8 @@
     
     [_moreActionSheet setFrame:CGRectMake(0, 0, 320, 400)];
     [_moreActionSheet showInView:self];
-
+    
+    _actionConversation = conversation;
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -486,6 +487,8 @@
             case 0:
                 //Delete the conversation...
                 //And update the ui...
+               
+               
                 break;
             case 1:
                 
@@ -500,6 +503,17 @@
             case 0:
                 //Report the conversation....
                 //and update the ui....
+                [[WSModelClasses sharedHandler] reportComment:_actionConversation.conversationId   forUser:[[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue]
+                                                     response:^(BOOL success, id response) {
+                                                         if(success)
+                                                         {
+                                                             //Reported the success fully...
+                                                         }
+                                                         else
+                                                         {
+                                                             //Reported failed...
+                                                         }
+                                                     }];
                 
                 break;
             case 1:
@@ -509,6 +523,12 @@
                 break;
         }
     }
+
+    //Will simply reload the data to update content...
+    [_conversationList removeObject:_actionConversation];
+    [_listView reloadData];
+    _actionConversation = nil;
+
 }
 
 

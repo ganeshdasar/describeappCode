@@ -19,7 +19,7 @@
 #define CONTENT_FRAME CGRectMake(0,50.5,320,320)
 #define FOOTER_FRAME CGRectMake(0,370,320,126)
 
-@interface DPostView ()<DPostHeaderViewDelegate, DPostHeaderViewDelegate, DLikesViewDelegate, WSModelClassDelegate>
+@interface DPostView ()<DPostHeaderViewDelegate, DPostHeaderViewDelegate, DLikesViewDelegate, WSModelClassDelegate, DPostFooterViewDelegate>
 {
     DPostHeaderView *_headerView;
     DPostBodyView *_contentView;
@@ -160,7 +160,7 @@
         [self addSubview:_footerView];
     }
     [_footerView setPostAttachments:_post.attachements];
-    [_footerView setContentDelegate:self];
+    [_footerView setDelegate:self];
 }
 
 
@@ -259,6 +259,30 @@
     }
 }
 
+-(void)showCommmentsOfPost:(id)sernder
+{
+    //Comments action...
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showConversationOfThisPost:)])
+    {
+        [self.delegate showConversationOfThisPost:_post];
+    }
+}
+
+-(void)showMoreDetailsOfPost:(id)sender
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showMoreDetailsOfThisPost:)])
+    {
+        [self.delegate showMoreDetailsOfThisPost:_post];
+    }
+}
+
+-(void)didSelectedTag:(NSString *)tagedString
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didSelectedTag:forThisPost:)])
+    {
+        [self.delegate didSelectedTag:tagedString forThisPost:_post];
+    }
+}
 
 
 -(void)dealloc

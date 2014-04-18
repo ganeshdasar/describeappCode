@@ -16,17 +16,18 @@
 
 
 - (id)initWithFrame:(CGRect)frame withPostAttachements:(DPostAttachments *)attachements;
--(void)setContentDelegate:(id)sender;
 
 
 @property(nonatomic, strong)DPostAttachments *postAttachments;
-@property(nonatomic, strong)id<DPostFooterViewDelegate> ßdelegate;
+@property(nonatomic, strong)id<DPostFooterViewDelegate> delegate;
 @end
 
 
 @class DPostFooterView;
 @protocol DPostFooterViewDelegate <NSObject>
 
+@optional
+-(void)didSelectedTag:(NSString *)tagedString;
 -(void)showMoreDetailsOfPost:(id)sender;
 -(void)showCommmentsOfPost:(id)sernder;
 

@@ -58,6 +58,7 @@
     if (self) {
         // Custom initialization
         _profileController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
+        
         _profileController.delegate = self;
     }
     return self;
@@ -71,7 +72,43 @@
     [self designPostListView];
     [self designSegmentListView];
     
+    
+    _profileController.profileUserID = [NSNumber numberWithInteger:[self.profileId integerValue]];
     [self .view addSubview:_profileController.view];
+    
+    
+    [self fetchUserModelForUserId:self.profileId];
+}
+
+
+
+
+- (void)fetchUserModelForUserId:(NSString *)userID
+{
+    [[WSModelClasses sharedHandler] setDelegate:self];
+    [[WSModelClasses sharedHandler] getProfileDetailsForUserID:userID];
+}
+
+- (void)getTheUserProfileDataFromServer:(NSDictionary *)responceDict error:(NSError *)error
+{
+    if(error) {
+        NSLog(@"%s error = %@", __func__, error.localizedDescription);
+    }
+    else {
+        NSLog(@"%s responseDict = %@", __func__, responceDict);
+        NSMutableDictionary *profileDict = [[NSMutableDictionary alloc] initWithDictionary:responceDict[@"UserProfile"] copyItems:YES];
+        if(profileDict[@"ProfileCanvas"]) {
+            [profileDict setObject:profileDict[@"ProfileCanvas"] forKey:USER_MODAL_KEY_PROFILECANVAS];
+        }
+        
+        UsersModel *modelObj = [[UsersModel alloc] initWithDictionary:profileDict];
+        [_profileController loadProfileDetails:responceDict];
+        
+        
+        [_segmentListView setText:[[modelObj postCount] stringValue] forIndex:0];
+        [_segmentListView setText:[[modelObj followingCount] stringValue] forIndex:1];
+        [_segmentListView setText:[[modelObj followerCount] stringValue] forIndex:2];
+   }
 }
 
 
@@ -113,19 +150,19 @@
     {
         DSegment *segment = [[DSegment alloc] init];
         [segment setTitle:@"Posts"];
-        [segment setSubTitle:@"126"];
+        [segment setSubTitle:@""];
         [segmentList addObject:segment];
     }
     {
         DSegment *segment = [[DSegment alloc] init];
         [segment setTitle:@"Following"];
-        [segment setSubTitle:@"53"];
+        [segment setSubTitle:@""];
         [segmentList addObject:segment];
     }
     {
         DSegment *segment = [[DSegment alloc] init];
         [segment setTitle:@"Followers"];
-        [segment setSubTitle:@"904"];
+        [segment setSubTitle:@""];
         [segmentList addObject:segment];
     }
     
@@ -134,7 +171,6 @@
     [_segmentListView setDelegate:self];
     [_segmentListView setSegments:segmentList];
     [_segmentListView designSegmentView];
-    [_segmentListView setDelegate:self];
     [_segmentListView selectSegmentAtIndex:0];
 }
 

@@ -904,6 +904,23 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
+// http://mirusstudent.com/service/describe-service/getSearchWithTags/UserUID=108/SearchWord=SecondTag/range=0/
+-(void)getFeedForThisTag:(NSString *)tag forUser:(NSString *)userId andRange:(NSInteger)range response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/getSearchWithTags/UserUID=%@/SearchWord=%@/range=%d/", BaseURLString, userId, tag, range];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+}
+
+
 //Comment the post....
 -(void)commentUserId:(NSString *)userId authUId:(NSString *)authId post:(NSString *)postid comment:(NSString *)comment response:(void (^)(BOOL success, id response))response
 {
@@ -923,11 +940,26 @@ static WSModelClasses *_sharedInstance;
               response(NO, error);
           }
      ];
-
-    
-    
-    
 }
+
+//http://www.mirusstudent.com/service/describe-service/makeBlockTheComment/format=json/UserUID=45/CommentID=412
+-(void)reportComment:(NSString *)commentId forUser:(NSString *)userId response:(void (^)(BOOL success, id response))response
+{
+    NSString *url = [NSString stringWithFormat:@"%@/makeBlockTheComment/format=json/UserUID=%@/CommentID=%@", BaseURLString,commentId, userId];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             response(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             response(NO, error);
+         }
+     ];
+}
+
+
+
 
 -(void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName
 {

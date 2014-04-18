@@ -239,13 +239,15 @@
 #pragma mark ServerResponce Delegate Method
 - (void)signUpStatus:(NSDictionary *)responseDict error:(NSError *)error
 {
-
+    
     NSString * message = [[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
     if ([message isEqualToString:@"TRUE"]) {
         
-    [[NSUserDefaults standardUserDefaults]setValue:[[responseDict valueForKeyPath:@"DataTable.UserData.UserUID"]objectAtIndex:0] forKey:@"USERID"];
-            [self goToBasicInfoScreen];
-            [HUD hide:YES];
+        NSString *userId = [[responseDict valueForKeyPath:@"DataTable.UserData.UserUID"]objectAtIndex:0];        
+        [[NSUserDefaults standardUserDefaults]setValue:userId forKey:@"USERID"];
+        [[[WSModelClasses sharedHandler] loggedInUserModel] setUserID:[NSNumber numberWithInteger:[userId integerValue]]];
+        [self goToBasicInfoScreen];
+        [HUD hide:YES];
     }else{
         [HUD hide:YES];
         [self showAlert:@"AuthenticationFail" message:message];

@@ -31,6 +31,7 @@
 @protocol DPostViewDelegate <NSObject>
 
 @optional
+-(void)didSelectedTag:(NSString *)tag forThisPost:(DPost *)post;
 -(void)profileDidSelectedForPost:(DPost *)post;
 -(void)showConversationOfThisPost:(DPost *)post;
 -(void)showMoreDetailsOfThisPost:(DPost *)post;

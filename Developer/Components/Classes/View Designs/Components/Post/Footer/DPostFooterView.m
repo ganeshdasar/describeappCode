@@ -109,20 +109,25 @@
     {
         CGRect frame = CGRectMake(x, y, w, h);
         
-        UILabel *label = [[UILabel alloc] initWithFrame:frame];
-        [label setBackgroundColor:[UIColor clearColor]];
-        [_tagsView addSubview:label];
-        [label setTextAlignment:NSTextAlignmentCenter];
-        [label setTextColor:[UIColor colorWithRed:140.0/255.0 green:185.0/255.0 blue:210.0/255.0 alpha:1]];
-        [label setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12.0]];
-        
+        UIButton *tagButton = [[UIButton alloc] initWithFrame:frame];
+        [tagButton setBackgroundColor:[UIColor clearColor]];
+        [_tagsView addSubview:tagButton];
+        [tagButton addTarget:self  action:@selector(tagSelected:) forControlEvents:UIControlEventTouchUpInside];
+        [tagButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
+        [tagButton.titleLabel setTextColor:[UIColor colorWithRed:140.0/255.0 green:185.0/255.0 blue:210.0/255.0 alpha:1]];
+        [tagButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12.0]];
+        [tagButton setTitleColor:[UIColor colorWithRed:140.0/255.0 green:185.0/255.0 blue:210.0/255.0 alpha:1] forState:UIControlStateNormal];
         DPostTag *tag= _postAttachments.tagsList[i];
         if(tag != nil && tag.tagName != nil)
-            [label setText:tag.tagName];
-        
+            [tagButton setTitle:tag.tagName forState:UIControlStateNormal];
+        [tagButton setTag:100+i];
         y = y + h;
     }
 }
+
+
+
+
 
 
 -(void)createStarView
@@ -207,7 +212,7 @@
     
     float x,y,w,h;
     int count = 0;
-    x = 0, y = 6, w = 320, h = 20;
+    x = 0, y = 6, w = 320, h = 25;
     if(_postAttachments.tagsList != nil)
         count = _postAttachments.tagsList.count;
     
@@ -216,8 +221,8 @@
     
     for (int i=0; i<count; i++)
     {
-        tagsFrame = CGRectMake(x, y, w, h);
         h = y + h;
+        tagsFrame = CGRectMake(x, y, w, h);
     }
     
     likesFrame = CGRectMake(110, bounds.size.height-64, 80, 20);
@@ -251,6 +256,11 @@
 {
     //[self postNotification:POST_MORE_BUTTON_NOTIFICATION_KEY];
     
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showMoreDetailsOfPost:)])
+    {
+        [self.delegate showMoreDetailsOfPost:nil];
+    }
+    
     NSLog(@"");
 }
 
@@ -258,6 +268,10 @@
 -(void)likesAndComments:(id)sender
 {
   // [self postNotification:POST_LIKES_BUTTON_NOTIFICATION_KEY];
+//    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showMoreDetailsOfPost:)])
+//    {
+//        [self.delegate showMoreDetailsOfPost:nil];
+//    }
 }
 
 
@@ -265,7 +279,26 @@
 -(void)commentButton:(id)sender
 {
     //[self postNotification:POST_COMMENT_BUTTON_NOTIFICATION_KEY];
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(showCommmentsOfPost:)])
+    {
+        [self.delegate showCommmentsOfPost:nil];
+    }
 }
+
+-(void)tagSelected:(id)sender
+{
+    int tag = [sender tag];
+    int index = tag-100;
+    
+    DPostTag *postTag = _postAttachments.tagsList[index];
+    NSString *taggedText = postTag.tagName;
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didSelectedTag:)])
+    {
+        [self.delegate didSelectedTag:taggedText];
+    }
+    
+}
+
 
 -(void)postNotification:(NSString *)key
 {

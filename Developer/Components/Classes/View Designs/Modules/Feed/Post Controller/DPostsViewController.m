@@ -92,6 +92,11 @@ static DPostsViewController *sharedFeedController;
     [self designHeaderView];
     [self designPostListView];
     
+    
+}
+
+-(void)loadFeedDetails
+{
     // fetch feed list for home screen
     [self reloadPostList:nil];
 }
@@ -144,7 +149,17 @@ static DPostsViewController *sharedFeedController;
 
 -(void)designHeaderView
 {
-    UIButton *addButton, *reloadButton, *moreButton;
+    BOOL isNeedToShowBackButtonOnHeader = NO;
+    NSArray *stackViewControllers = [self.navigationController viewControllers];
+    int count = stackViewControllers.count;
+    UIViewController *controller = stackViewControllers[count-2];
+    if([controller isKindOfClass:[DPostsViewController class]])
+        isNeedToShowBackButtonOnHeader = YES;
+    
+    NSLog(@"Controllers:%@ \nController:%@",stackViewControllers, stackViewControllers[count-2]);
+
+    
+    UIButton *addButton, *reloadButton, *moreButton, *backButton;
     
     addButton = [[UIButton alloc] init];
     [addButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_compose.png"] forState:UIControlStateNormal];
@@ -158,9 +173,19 @@ static DPostsViewController *sharedFeedController;
     [moreButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_menu.png"] forState:UIControlStateNormal];
     [moreButton setTag:HeaderButtonTypeMenu];
 
-    
     [_headerView setDelegate:self];
-    [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[moreButton, reloadButton, addButton] andMenuButtons:[self menuButtonsList]];
+
+    if(isNeedToShowBackButtonOnHeader)
+    {
+        
+        backButton = [[UIButton alloc] init];
+        [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
+        [backButton setTag:HeaderButtonTypePrev];
+        
+        [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[moreButton,backButton, reloadButton, addButton] andMenuButtons:[self menuButtonsList]];
+    }
+    else
+        [_headerView designHeaderViewWithTitle:@"Following" andWithButtons:@[moreButton, reloadButton, addButton] andMenuButtons:[self menuButtonsList]];
 }
 
 -(NSArray *)menuButtonsList
@@ -376,7 +401,7 @@ static DPostsViewController *sharedFeedController;
             data.profilePic = [NSString stringWithFormat:@"%@/%@",baseImageUrl,[dic valueForKey:@"ProfileUserProfilePic"]];
             data.username = [dic valueForKey:@"ProfileUsername"];
             data.totalCount = [dic[@"TotalCount"] integerValue];
-            data.userId = dic[@"conversationUserID"];
+            data.userId = dic[@"ProfileUserUID"];
             
             [conversatonDataArray addObject:data];
             
@@ -522,6 +547,27 @@ static DPostsViewController *sharedFeedController;
     [self showMoreDetailsOfPost:post];
 }
 
+-(void)didSelectedTag:(NSString *)tag forThisPost:(DPost *)post
+{
+    //Get feedd based on this tag...
+    [[WSModelClasses sharedHandler] getFeedForThisTag:tag forUser:[[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue] andRange:0 response:^(BOOL success, id response) {
+        if(success)
+        {
+            //Successfully got the details of tagged...
+            //NSArray *posts = [self parsePosetDetails:response];
+            DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+            [self.navigationController pushViewController:postViewController animated:NO];
+            //[postViewController showPostDetails:posts];
+            [postViewController loadFeedDetails];
+        }
+        else
+        {
+            //Failed to get the response of tagged feed...
+        }
+    }];
+}
+
+
 - (void)loadNextPage
 {
     if(YES == shouldLoadMore) {
@@ -595,6 +641,9 @@ static DPostsViewController *sharedFeedController;
             break;
         case HeaderButtonTypeHome:
             break;
+        case HeaderButtonTypePrev:
+            [self.navigationController popViewControllerAnimated:NO];
+            break;
         case HeaderButtonTypeProfile:
         {
             DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
@@ -648,8 +697,42 @@ static DPostsViewController *sharedFeedController;
 
 - (void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
 {
+    NSArray *postModelList = [self parsePosetDetails:response];
+    [self showPostDetails:postModelList];
+}
+
+
+-(void)showPostDetails:(NSArray *)posts
+{
+    if(_listView == nil) {
+        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:posts];
+        [self.view addSubview:_listView];
+        [_listView setDelegate:self];
+        [self addNewObserverForDelegateProfileDetails];
+    }
+    else {
+        if(pageLoadNumber > 0) {
+            [_listView appendMorePosts:posts];
+        }
+        else {
+            [_listView reloadData:posts];
+        }
+    }
+}
+
+
+
+-(NSArray *)parsePosetDetails:(NSDictionary *)response
+{
     NSArray *postList = response[@"DataTable"];
     NSLog(@"Post Details Reponse: %@",response);
+    
+    
+    if(postList.count == 10) {
+        shouldLoadMore = YES;
+        pageLoadNumber += 1;
+    }
+    
     
     NSMutableArray *postModelList = [[NSMutableArray alloc] init];
     int count = [postList count] ;
@@ -756,27 +839,9 @@ static DPostsViewController *sharedFeedController;
         }
     }
     
-    if(_listView == nil) {
-        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList];
-        [self.view addSubview:_listView];
-        [_listView setDelegate:self];
-        [self addNewObserverForDelegateProfileDetails];
-    }
-    else {
-        if(pageLoadNumber > 0) {
-            [_listView appendMorePosts:postModelList];
-        }
-        else {
-            [_listView reloadData:postModelList];
-        }
-    }
-    
-    if(postList.count == 10) {
-        shouldLoadMore = YES;
-        pageLoadNumber += 1;
-    }
-    
+    return postModelList;
 }
+
 
 @end
 

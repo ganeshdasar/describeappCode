@@ -226,6 +226,7 @@ IBOutlet DHeaderView *_headerView;
         if([self checkTheUserFollowingCount:userData])//is he is following any one or not?
         {
             DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+            [postViewController loadFeedDetails];
             [self.navigationController pushViewController:postViewController animated:YES];
         }
         else
@@ -406,6 +407,7 @@ IBOutlet DHeaderView *_headerView;
             if(1)//is he is following any one or not?
             {
                 DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+                [postViewController loadFeedDetails];
                 [self.navigationController pushViewController:postViewController animated:YES];
             }
             else

@@ -169,12 +169,10 @@
     {
         _segment = nil;
         _segment = segment;
-        
-     
-        
-        [_titleLabel setText:_segment.title];
-        [_subTitleLabel setText:_segment.subTitle];
     }
+    
+    [_titleLabel setText:_segment.title];
+    [_subTitleLabel setText:_segment.subTitle];
 }
 
 

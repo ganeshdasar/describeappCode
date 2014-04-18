@@ -34,6 +34,9 @@
 @protocol DPeopleListDelegate <NSObject>
 
 @optional
+
+
+
 -(void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction;
 -(void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;

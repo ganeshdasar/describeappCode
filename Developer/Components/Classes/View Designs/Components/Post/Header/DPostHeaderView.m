@@ -96,7 +96,6 @@
 {
     _backgroundView = [[UIImageView alloc] initWithFrame:self.bounds];
     [_backgroundView setBackgroundColor:[UIColor clearColor]];
-    [_backgroundView setImage:[UIImage imageNamed:@"12.png"]];
     [_backgroundView setImageWithURL:[NSURL URLWithString:_user.userCanvasSnippet]];//http://mirusstudent.com/service/postimages/1394270433_45_27.jpeg
     //[_backgroundView setImageWithURL:[NSURL URLWithString:@"http://mirusstudent.com/service/postimages/1394270433_45_27.jpeg"]];
     

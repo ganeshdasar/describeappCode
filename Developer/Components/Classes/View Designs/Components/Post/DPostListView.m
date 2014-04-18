@@ -479,7 +479,13 @@
 }
 
 
-
+-(void)didSelectedTag:(NSString *)tag forThisPost:(DPost *)post
+{
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didSelectedTag:forThisPost:)])
+    {
+        [self.delegate didSelectedTag:tag forThisPost:post];
+    }
+}
 
 
 

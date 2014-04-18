@@ -19,6 +19,7 @@
 
 -(void)designSegmentView;
 -(void)selectSegmentAtIndex:(NSInteger )index;
+-(void)setText:(NSString *)text forIndex:(NSInteger )index;
 @end
 
 
