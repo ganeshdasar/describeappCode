@@ -177,7 +177,7 @@
         {
             if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Msg"]objectAtIndex:0] isEqualToString:@"You are following this User now."]) {
                 [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
-             data.followingStatus = @"1";
+                data.followingStatus = @"1";
             }else{
                 [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"0";

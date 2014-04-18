@@ -277,7 +277,7 @@
 {
     inSender.selected = YES;
     inSender.selected = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
     [[DESocialConnectios sharedInstance] facebookSignIn];
     [DESocialConnectios sharedInstance].delegate =self;
     
@@ -286,7 +286,7 @@
 - (void)requestToGooglePlusForFriendsList:(UIButton*)inSender
 {
     inSender.selected = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
     [[DESocialConnectios sharedInstance] googlePlusSignIn];
     [DESocialConnectios sharedInstance].delegate = self;
     inSender.selected = YES;
@@ -562,14 +562,22 @@
 
 - (void)followAllAction
 {
-    [[WSModelClasses sharedHandler]followAllActionUserID:@"" followAllString:@"" rageValue:@"0" responce:^(BOOL success, id responce){
-        if (success) {
-            
-            
-        }else{
-            
-        }
-    }];
+    [[WSModelClasses sharedHandler] followAllActionUserID:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue]
+                                                followAll:YES
+                                               forGateway:@""
+                                                rageValue:[NSString stringWithFormat:@"%ld", (long)pageLoadNumberRecommend]
+                                                 responce:^(BOOL success, id responce) {
+                                                     if (success) {
+                                                         for(SearchPeopleData *peopleData in werecommendedList) {
+                                                             peopleData.followingStatus = @"1";
+                                                         }
+                                                         
+                                                         [_peoplelistView reloadTableView:werecommendedList];
+                                                     }
+                                                     else {
+                                                         
+                                                     }
+                                                 }];
     
 }
 
@@ -578,9 +586,8 @@
     [[WSModelClasses sharedHandler]inviteAllActionUserID:@"" inviteAllString:@"" rageValue:@"" responce:^(BOOL success, id responce){
         if (success) {
             
-            
-        }else{
-            
+        }
+        else{
             
         }
     }];

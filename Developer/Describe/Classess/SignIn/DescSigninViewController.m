@@ -122,7 +122,7 @@ IBOutlet DHeaderView *_headerView;
 {
     connection =FAcebook_connected;
     [self showLoadView];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
     [DESocialConnectios sharedInstance].delegate =self;
     [[DESocialConnectios sharedInstance] facebookSignIn];
 }
@@ -131,7 +131,7 @@ IBOutlet DHeaderView *_headerView;
 - (IBAction)signInWithGooglePlus:(id)sender
 {
     connection =Googleplus_connected;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
     [DESocialConnectios sharedInstance].delegate = self;
     [[DESocialConnectios sharedInstance] googlePlusSignIn];
     [self showLoadView];

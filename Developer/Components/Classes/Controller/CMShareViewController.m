@@ -707,8 +707,9 @@ typedef enum {
         latLongStr = [NSString stringWithFormat:@"%lf", [DESLocationManager sharedLocationManager].currentLocation.coordinate.latitude];
         latLongStr = [NSString stringWithFormat:@"%@, %lf", latLongStr, [DESLocationManager sharedLocationManager].currentLocation.coordinate.longitude];
         [DESLocationManager sharedLocationManager].delegate = nil;
-        [[DESLocationManager sharedLocationManager] stopFetchingCurrentLocation];
     }
+    [[DESLocationManager sharedLocationManager] stopFetchingCurrentLocation];
+
     
     // get tag1 text from tableview cell (section:ShareSectionTag, index:0)
     CMShareTagCell *tag1Cell = (CMShareTagCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionTag]];
@@ -767,12 +768,31 @@ typedef enum {
                 [[DESocialConnectios sharedInstance] facebookSharing:@"DescribeApp" picture:nil caption:nil andLink:[NSURL URLWithString:postUrl] decription:@"Hey check my post of Goa trip."];
             }
             
+            if(socialCell.gpButton.isSelected) {
+                [[DESocialConnectios sharedInstance] setDelegate:self];
+                [[DESocialConnectios sharedInstance] shareLinkOnGooglePlus:postUrl];
+                return;
+            }
+            
             [self popToFeedScreen];
             break;
         }
             
         default:
             break;
+    }
+}
+
+- (void)finishedSharingGooglePlusWithError:(NSError *)error
+{
+    if (!error) {
+        [self popToFeedScreen];
+    }
+    else if (error.code == kGPPErrorShareboxCanceled) {
+        [self popToFeedScreen];
+    }
+    else {
+        NSLog(@"%s Error (%@)", __func__, [error localizedDescription]);
     }
 }
 

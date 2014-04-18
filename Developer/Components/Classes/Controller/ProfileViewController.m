@@ -10,6 +10,7 @@
 #import "DBAspectFillViewController.h"
 #import "WSModelClasses.h"
 #import "UsersModel.h"
+#import "UIImage+ImageEffects.h"
 
 typedef enum {
     kProfileModeNormal = 1,
@@ -421,10 +422,14 @@ typedef enum {
     _profileUserModel.snippetPosition = [NSString stringWithFormat:@"%0.2f", CGRectGetMinY(_snippetRegionImgView.frame)];
     
     UIImage *snippetImg = [_canvasImageViewController getImageCroppedAtVisibleRect:_snippetRegionImgView.frame];
+    
+    // applying blur effect on the snippet image
+    UIImage *blurSnippetImg = [snippetImg applyBlurWithRadius:20.0f tintColor:[UIColor clearColor] saturationDeltaFactor:1.8f maskImage:nil];
+    
     [[WSModelClasses sharedHandler] saveUserProfile:_profileUserModel
                                          profilePic:_profilePicImageViewController.imageView.image
                                           canvasPic:_canvasImageViewController.imageView.image
-                                         snippetPic:snippetImg];
+                                         snippetPic:blurSnippetImg];
     
     [self profileModeChangedTo:kProfileModeNormal];
 }
