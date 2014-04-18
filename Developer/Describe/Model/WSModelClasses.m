@@ -836,7 +836,7 @@ static WSModelClasses *_sharedInstance;
     //
     // http://mirusstudent.com/service/describe-service/getBeAFollower/UserUID=8/OtherUserId=4
     
-    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/UserUID=%@/OtherUserId=%@", BaseURLString,userId,friendUserId];
+    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/format=json/UserUID=%@/OtherUserId=%@", BaseURLString, userId, friendUserId];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
@@ -1065,11 +1065,19 @@ static WSModelClasses *_sharedInstance;
     
 }
 
--(void)followAllActionUserID:(NSString*)userId followAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
+- (void)followAllActionUserID:(NSString*)userId
+                    followAll:(BOOL)followAll
+                   forGateway:(NSString *)gatewayStr
+                    rageValue:(NSString*)rangeValue
+                     responce:(void(^)(BOOL success, id responce))responce
 {
+    NSString *followStr = @"FALSE";
+    if(followAll) {
+        followStr = @"TRUE";
+    }
     
     //http://mirusstudent.com/service/describe-service/getBeAFollower/format=json/UserUID=4/FollowAllSts=TRUE/GateWay=fb/range=0/
-    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/format=json/UserUID=%@/FollowAllSts=TRUE/GateWay=fb/range=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID,rangeValue];
+    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/format=json/UserUID=%@/FollowAllSts=%@/GateWay=%@/range=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID, followStr, gatewayStr, rangeValue];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
       parameters:nil
@@ -1082,7 +1090,7 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
--(void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
+- (void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
 {
     
     

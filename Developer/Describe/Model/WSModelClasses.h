@@ -189,7 +189,7 @@ typedef enum {
 
 
 #pragma mark followAllAndInviteAll
--(void)followAllActionUserID:(NSString*)userId followAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
+- (void)followAllActionUserID:(NSString*)userId followAll:(BOOL)followAll forGateway:(NSString *)gatewayStr rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
 
 -(void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
 

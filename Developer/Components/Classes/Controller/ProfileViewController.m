@@ -404,6 +404,18 @@ typedef enum {
     _profileUserModel.snippetPosition = [NSString stringWithFormat:@"%0.2f", CGRectGetMinY(_snippetRegionImgView.frame)];
     
     UIImage *snippetImg = [_canvasImageViewController getImageCroppedAtVisibleRect:_snippetRegionImgView.frame];
+    
+//    CIContext *context = [CIContext contextWithOptions:nil];
+    CIImage *snipCIImg = [[CIImage alloc] initWithCGImage:snippetImg.CGImage options:nil];// snippetImg.CIImage;
+    CIFilter *blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
+    [blurFilter setValue:snipCIImg forKey:kCIInputImageKey];
+    [blurFilter setValue:[NSNumber numberWithFloat:20.00] forKey:kCIInputRadiusKey];
+    CIImage *result = [blurFilter valueForKey:kCIOutputImageKey];              // 4
+//    CGRect extent = [result extent];
+//    CGImageRef cgImage = [context createCGImage:result fromRect:extent];
+    
+    snippetImg = [[UIImage alloc] initWithCIImage:result];
+    
     [[WSModelClasses sharedHandler] saveUserProfile:_profileUserModel
                                          profilePic:_profilePicImageViewController.imageView.image
                                           canvasPic:_canvasImageViewController.imageView.image

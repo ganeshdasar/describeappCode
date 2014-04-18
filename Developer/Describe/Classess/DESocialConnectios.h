@@ -14,9 +14,10 @@
 
 @optional
 - (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList;
+- (void)finishedSharingGooglePlusWithError:(NSError *)error;
 @end
 
-@interface DESocialConnectios : NSObject<GPPSignInDelegate>
+@interface DESocialConnectios : NSObject<GPPSignInDelegate, GPPShareDelegate>
 
 
 @property (nonatomic, assign) id <DESocialConnectiosDelegate> delegate;
@@ -33,6 +34,8 @@
                caption:(NSString*)inCaption
                andLink:(NSURL*)inUrl
             decription:(NSString*)inDescription;
+
+- (void)shareLinkOnGooglePlus:(NSString *)urlLink;
 
 @property (nonatomic,strong) NSMutableArray * googlePlusFriendsListArry;
 @property (nonatomic,strong) NSMutableArray * facebookFriendsListArray;

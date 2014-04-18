@@ -31,6 +31,8 @@ static DESocialConnectios *_sharedInstance;
 #pragma mark Get the Friends List from google plus
 - (void)googlePlusSignIn
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
+
     GPPSignIn *signedIn = [GPPSignIn sharedInstance];
     signedIn.delegate = self;
     signedIn.shouldFetchGoogleUserEmail = YES;
@@ -121,6 +123,9 @@ static DESocialConnectios *_sharedInstance;
                                              selector:@selector(getUserDetail)
                                                  name:@"getUserDetail"
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
+    
     // If the session state is  any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
         || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
@@ -150,7 +155,7 @@ static DESocialConnectios *_sharedInstance;
 
 - (BOOL)isFacebookLoggedIn
 {
-    return (FBSession.activeSession.state == FBSessionStateOpen);
+    return ((FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) && [[NSUserDefaults standardUserDefaults] objectForKey:@"FACEBOOKACCESSTOKENKEY"]);
 }
 
 - (void)getUserDetail
@@ -309,7 +314,37 @@ static DESocialConnectios *_sharedInstance;
 
 #pragma mark google plus sharing
 
+- (void)shareLinkOnGooglePlus:(NSString *)urlLink
+{    
+    [GPPShare sharedInstance].delegate = self;
+    
+    id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
+    
+    // This line will fill out the title, description, and thumbnail from
+    // the URL that you are sharing and includes a link to that URL.
+    [shareBuilder setURLToShare:[NSURL URLWithString:urlLink]];
+    
+    [shareBuilder open];
+}
 
+- (void)finishedSharingWithError:(NSError *)error
+{
+    NSString *text;
+    
+    if (!error) {
+        text = @"Success";
+    } else if (error.code == kGPPErrorShareboxCanceled) {
+        text = @"Canceled";
+    } else {
+        text = [NSString stringWithFormat:@"Error (%@)", [error localizedDescription]];
+    }
+    
+    NSLog(@"Status: %@", text);
+    
+    if(delegate != nil && [delegate respondsToSelector:@selector(finishedSharingGooglePlusWithError:)]) {
+        [delegate finishedSharingGooglePlusWithError:error];
+    }
+}
 
 @end
 

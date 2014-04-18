@@ -196,7 +196,7 @@
 -  (IBAction)loginWithFacebookAction:(id)sender
 {
     [self showLoadView];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
     [[DESocialConnectios sharedInstance] facebookSignIn];
     [DESocialConnectios sharedInstance].delegate =self;
 }
@@ -350,7 +350,7 @@
 #pragma mark googlePlusintegration
 - (IBAction)loginWithgooglePlusAction:(id)sender
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
     [[DESocialConnectios sharedInstance] googlePlusSignIn];
     [DESocialConnectios sharedInstance].delegate = self;
     [self showLoadView];
