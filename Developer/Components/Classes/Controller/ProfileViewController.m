@@ -10,6 +10,7 @@
 #import "DBAspectFillViewController.h"
 #import "WSModelClasses.h"
 #import "UsersModel.h"
+#import "UIImage+ImageEffects.h"
 
 typedef enum {
     kProfileModeNormal = 1,
@@ -405,21 +406,13 @@ typedef enum {
     
     UIImage *snippetImg = [_canvasImageViewController getImageCroppedAtVisibleRect:_snippetRegionImgView.frame];
     
-//    CIContext *context = [CIContext contextWithOptions:nil];
-    CIImage *snipCIImg = [[CIImage alloc] initWithCGImage:snippetImg.CGImage options:nil];// snippetImg.CIImage;
-    CIFilter *blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
-    [blurFilter setValue:snipCIImg forKey:kCIInputImageKey];
-    [blurFilter setValue:[NSNumber numberWithFloat:20.00] forKey:kCIInputRadiusKey];
-    CIImage *result = [blurFilter valueForKey:kCIOutputImageKey];              // 4
-//    CGRect extent = [result extent];
-//    CGImageRef cgImage = [context createCGImage:result fromRect:extent];
-    
-    snippetImg = [[UIImage alloc] initWithCIImage:result];
+    // applying blur effect on the snippet image
+    UIImage *blurSnippetImg = [snippetImg applyBlurWithRadius:20.0f tintColor:[UIColor clearColor] saturationDeltaFactor:1.8f maskImage:nil];
     
     [[WSModelClasses sharedHandler] saveUserProfile:_profileUserModel
                                          profilePic:_profilePicImageViewController.imageView.image
                                           canvasPic:_canvasImageViewController.imageView.image
-                                         snippetPic:snippetImg];
+                                         snippetPic:blurSnippetImg];
     
     [self profileModeChangedTo:kProfileModeNormal];
 }

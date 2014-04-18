@@ -113,7 +113,10 @@
 {
     if (isChangedUserData ==YES) {
         [self updateTheUserInformation];
-    }else{    [self.navigationController popViewControllerAnimated:YES];}
+    }
+    else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
     
 }
 
@@ -262,16 +265,19 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
-        case DUserSecurity:{
+        case DUserSecurity:
+        {
             [self showAlertView];
             break;
         }
-        case DUserInformation:{
+        case DUserInformation:
+        {
             if (indexPath.row == 1) {
                 [self inputAccessaryViewandTag:DMaleTag];
             }else if (indexPath.row==2){
                 [self inputAccessaryViewandTag:DdateTag];
             }
+            break;
         }
         case DUserSignOut:{
             [self removeTheKeysInUserDefaults];
@@ -444,14 +450,8 @@
 
 
 #pragma mark picker
--(void)showPickerView:(UIActionSheet*)inActionSheet
+- (void)showPickerView:(UIActionSheet*)inActionSheet
 {
-    UIPickerView *_pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 40, 0, 0)];
-    _pickerView.delegate = self;
-    _pickerView.dataSource = self;
-    _pickerView.showsSelectionIndicator=YES;
-    [inActionSheet addSubview:_pickerView];
-    [_pickerView setBackgroundColor:[UIColor whiteColor]];
     UIToolbar *_myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
     [self setToolBarColor:_myToolBar];
     NSMutableArray *_toolBarItems = [[NSMutableArray alloc]init];
@@ -463,6 +463,13 @@
     [_toolBarItems addObject:done];
     [_myToolBar setItems:_toolBarItems animated:NO];
     [inActionSheet addSubview:_myToolBar];
+    
+    UIPickerView *_pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 216)];
+    _pickerView.delegate = self;
+    _pickerView.dataSource = self;
+    _pickerView.showsSelectionIndicator=YES;
+    [inActionSheet addSubview:_pickerView];
+    [_pickerView setBackgroundColor:[UIColor whiteColor]];
  }
 
 
@@ -479,7 +486,7 @@
 #pragma mark datepicker
 -(void)showDatePickerView:(UIActionSheet*)inActionSheet
 {
-    UIDatePicker* _datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 40, 0, 0)];
+    UIDatePicker* _datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 44, 0, 0)];
     _datePicker.datePickerMode = UIDatePickerModeDate;
     _datePicker.hidden = NO;
     _datePicker.date = [NSDate date];
@@ -574,16 +581,16 @@
 
 
 #pragma mark - Action sheet will present
-- (UIActionSheet*)inputAccessaryViewandTag:(int)inTag
+- (void)inputAccessaryViewandTag:(int)inTag
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    UIActionSheet *aSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles: nil];
+    UIActionSheet *aSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles: nil];
     aSheet.tag = inTag;
     aSheet.backgroundColor = [UIColor whiteColor];
-    [aSheet showInView:[self.view superview]];
-    [aSheet setFrame:CGRectMake(0, screenRect.size.height-180, 320, 180)];
+    [aSheet showInView:self.view];
+    [aSheet setFrame:CGRectMake(0, screenRect.size.height-216, 320, 216)];
     self.pickerActionSheet = aSheet;
-    return aSheet;
+//    return aSheet;
 }
 
 
