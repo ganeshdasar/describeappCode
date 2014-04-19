@@ -26,12 +26,12 @@
 #define FRAME CGRectMake(0, 0, 320, 480);
 #define BUTTONFRAME CGRectMake(121, CGRectGetHeight([[UIScreen mainScreen] bounds])-205.0, 70, 26);
 
-@interface DescWelcomeViewController ()<MBProgressHUDDelegate,WSModelClassDelegate,UIAlertViewDelegate,DESocialConnectiosDelegate> {
-    GPPSignIn *signIn;
+@interface DescWelcomeViewController ()<MBProgressHUDDelegate,WSModelClassDelegate,UIAlertViewDelegate,DESocialConnectiosDelegate>
+{
     MBProgressHUD * HUD;
-    
     DPostsViewController *_postViewController;
 }
+
 @end
 
 @implementation DescWelcomeViewController
@@ -39,11 +39,12 @@
 @synthesize socialUserDataDic;
 @synthesize googlePlusFriendsListArry;
 
--(UIStatusBarStyle)preferredStatusBarStyle{
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
     return UIStatusBarStyleLightContent;
 }
 
--(BOOL)checkTheSessionId
+- (BOOL)checkTheSessionId
 {
     NSMutableDictionary *dic = (NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USERSAVING_DATA_KEY];
     NSDictionary*dataDic = [dic valueForKeyPath:@"ResponseData.DataTable.UserData"][0];
@@ -57,19 +58,21 @@
 }
 
 #pragma mark Life Cycles -
--  (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
         
     }
+    
     return self;
 }
 
-
--  (void)viewDidLoad
+- (void)viewDidLoad
 {
+    [super viewDidLoad];
+
     [self setNeedsStatusBarAppearanceUpdate];
     self.facebookFriendsListArray = [[NSMutableArray alloc]init];
     self.socialUserDataDic = [[NSMutableDictionary alloc]init];
@@ -79,40 +82,31 @@
     self.googlePlusBtn.frame = BUTTONFRAME;
     self.emailBtn.frame = BUTTONFRAME;
     
-    if (isiPhone5)
-    {
+    if (isiPhone5) {
         // this is iphone 4 inch
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_4in.png"];
     }
-    else
-    {
+    else {
 //        self.welcomeScrennImage.frame = FRAME;
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_3.5in.png"];
         //Iphone  3.5 inch
     }
-    [super viewDidLoad];
+    
     self.view.backgroundColor = [UIColor whiteColor];
 }
 
-
-
--  (void)didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-
--  (void)viewDidAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [HUD hide:YES];
-    return;
     
-    ProfileViewController *profile = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
-    [self.navigationController pushViewController:profile animated:YES];
+    [HUD hide:YES];
 }
-
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -121,8 +115,7 @@
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_topbar.png"] forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationController.navigationBar.translucent = NO;
 
-    if([self checkTheSessionId])
-    {
+    if([self checkTheSessionId]) {
         _postViewController = [DPostsViewController sharedFeedController];
         [_postViewController loadFeedDetails];
         [self.navigationController pushViewController:_postViewController animated:YES];
@@ -130,14 +123,12 @@
 
 }
 
-
 #pragma mark Event Actions -
--  (IBAction)SigninClicked:(id)sender
+- (IBAction)SigninClicked:(id)sender
 {
     DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
     [self.navigationController pushViewController:signin animated:NO];
 }
-
 
 - (void)buttonHidderAction:(BOOL)inHidden
 {
@@ -146,8 +137,7 @@
     self.emailBtn.hidden = inHidden;
 }
 
-
--  (IBAction)signUpTheUser:(id)sender
+- (IBAction)signUpTheUser:(id)sender
 {
     if (self.facebookBtn.isHidden == YES) {
         [self buttonHidderAction:NO];
@@ -191,9 +181,8 @@
     
 }
 
-
 #pragma mark FacebookIntegration
--  (IBAction)loginWithFacebookAction:(id)sender
+- (IBAction)loginWithFacebookAction:(id)sender
 {
     [self showLoadView];
 //    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
@@ -201,43 +190,49 @@
     [DESocialConnectios sharedInstance].delegate =self;
 }
 
-
 #pragma mark socialConnection Delegate methods
--  (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
+- (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
 {
-
+    if(responseDict == nil) {
+        [HUD hide:YES];
+        return;
+    }
+    
     WSModelClasses * dataClass = [WSModelClasses sharedHandler];
-    dataClass.delegate =self;
+    dataClass.delegate = self;
     self.socialUserDataDic = responseDict;
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
     if (delegate.isFacebook) {
         [dataClass checkTheSocialIDwithDescriveServerCheckType:@"fb" andCheckValue:[responseDict valueForKey:@"id"]];
-    }else if (delegate.isGooglePlus){
+    }
+    else if (delegate.isGooglePlus){
         [dataClass checkTheSocialIDwithDescriveServerCheckType:@"gplus" andCheckValue:[responseDict valueForKey:@"id"]];
     }
 }
 
-
--(void)saveTheUserDetailsOfFacebook:(NSDictionary*)inDic
+- (void)saveTheUserDetailsOfFacebook:(NSDictionary*)inDic
 {
     NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
     [dic setValue: [inDic valueForKey:@"email"] forKey:USER_MODAL_KEY_EMAIL];
     [dic setValue: [inDic valueForKey:@"first_name"] forKey:USER_MODAL_KEY_USERNAME];
     [dic setValue: [inDic valueForKey:@"last_name"] forKey:USER_MODAL_KEY_FULLNAME];
+    
     if ([[inDic valueForKey:@"gender"]isEqualToString:@"male"]) {
         [dic setValue:[NSNumber numberWithInteger:1] forKey:USER_MODAL_KEY_GENDER];
-    }else{
+    }
+    else{
         [dic setValue:[NSNumber numberWithInteger:0] forKey:USER_MODAL_KEY_GENDER];
     }
+    
     [dic setValue: [inDic valueForKey:@"location.name"] forKey:USER_MODAL_KEY_CITY];
     [dic setValue: [NSString convertThesocialNetworkDateToepochtime:[dic valueForKey:@"birthday"]] forKey:USER_MODAL_KEY_DOB];
     [dic setValue: [inDic valueForKeyPath:@"picture.data.url"] forKey:USER_MODAL_KEY_PROFILEPIC];
+    
     UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
     [WSModelClasses sharedHandler].loggedInUserModel = data;
-    
 }
 
--(void)saveTheUserDetailsOfGooglePlus:(NSDictionary *)inDic
+- (void)saveTheUserDetailsOfGooglePlus:(NSDictionary *)inDic
 {
 
     NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
@@ -254,9 +249,8 @@
     [dic setValue: [inDic valueForKeyPath:@"url"] forKey:USER_MODAL_KEY_PROFILEPIC];
     UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
     [WSModelClasses sharedHandler].loggedInUserModel = data;
- 
-    
 }
+
 - (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
 {
     DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
@@ -267,16 +261,19 @@
             signUpView.userDataDic =  self.socialUserDataDic;
             [self saveTheUserDetailsOfFacebook:self.socialUserDataDic];
             [self.navigationController pushViewController:signUpView animated:NO];
-        }else if (delegate.isGooglePlus){
+        }
+        else if (delegate.isGooglePlus){
             signUpView.userDataDic =  self.socialUserDataDic;
             [self saveTheUserDetailsOfGooglePlus:self.socialUserDataDic];
             [self.navigationController pushViewController:signUpView animated:NO];
         }
-    }else{
+    }
+    else{
         if (delegate.isFacebook) {
             NSString * messageStr = [NSString stringWithFormat:@"This Facebook account is already associated with another Describe Identity. Do you want to sign in as \"%@\" instead.",[[responseDict valueForKeyPath:@"DataTable.UserData.Username"]objectAtIndex:0]];
             [self showAlert:@"Describe" message:messageStr  tag:100];
-        }else if (delegate.isGooglePlus){
+        }
+        else if (delegate.isGooglePlus){
             NSString * messageStr = [NSString stringWithFormat:@"This Google+ account is already associated with another Describe Identity. Do you want to sign in as \"%@\" instead.",[[responseDict valueForKeyPath:@"DataTable.UserData.Username"]objectAtIndex:0]];
             [self showAlert:@"Describe" message:messageStr tag:100];
         }
@@ -285,7 +282,7 @@
 
 
 #pragma mark Alerview And delegate methods
--(void)showAlert:(NSString*)title message:(NSString*)inMessage tag:(int)InAlertTag
+- (void)showAlert:(NSString*)title message:(NSString*)inMessage tag:(int)InAlertTag
 {
     UIAlertView * alert = [[UIAlertView alloc]initWithTitle:title message:inMessage delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
     alert.tag =  InAlertTag;
@@ -293,24 +290,29 @@
 }
 
 
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (buttonIndex) {
-        case 0:{
+        case 0:
+        {
             DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
             if (delegate.isFacebook){
                 [WSModelClasses sharedHandler].delegate = self;
                 [[WSModelClasses sharedHandler]signInWithSocialNetwork:@"fb" andGateWauTokern:[[NSUserDefaults standardUserDefaults]valueForKey:FACEBOK_ID]];
-                
-            }else if (delegate.isGooglePlus){
+            }
+            else if (delegate.isGooglePlus) {
                 [WSModelClasses sharedHandler].delegate = self;
                 [[WSModelClasses sharedHandler]signInWithSocialNetwork:@"gplus" andGateWauTokern:[[NSUserDefaults standardUserDefaults]valueForKey:Google_plus_ID]];
             }
         }
             break;
-            case 1:
             
+        case 1:
+        {
+            [[DESocialConnectios sharedInstance] logoutGooglePlus];
+            [[DESocialConnectios sharedInstance] logoutFacebook];
             break;
+        }
         default:
             break;
     }

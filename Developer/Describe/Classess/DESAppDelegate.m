@@ -68,6 +68,7 @@
                                              selector:@selector(facebookButtonClicked:)
                                                  name:@"faceBookButtonClicked"
                                                object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(googlePlusButtonClicked:)
                                                  name:@"googlePlusButtonClicked"
@@ -75,11 +76,15 @@
 
 }
 
+- (void)removeNotficationForSocialNetwork
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)facebookButtonClicked:(NSNotificationCenter*)inNotification
 {
     self.isFacebook = YES;
     self.isGooglePlus = NO;
-
 }
 
 - (void)googlePlusButtonClicked:(NSNotificationCenter*)inNotification
@@ -130,7 +135,9 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    [self removeNotficationForSocialNetwork];
 }
+
 #pragma mark Facebook Integration
 - (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error
 {
@@ -149,7 +156,7 @@
     }
     
     // Handle errors
-    if (error){
+    if (error) {
         NSLog(@"Error");
         NSString *alertText;
         NSString *alertTitle;
@@ -182,6 +189,8 @@
         // Clear this token
         [FBSession.activeSession closeAndClearTokenInformation];
         // Show the user the logged-out UI
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertText delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
 }
 

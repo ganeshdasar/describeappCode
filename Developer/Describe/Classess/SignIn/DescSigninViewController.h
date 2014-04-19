@@ -9,18 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "DescBasicinfoViewController.h"
 #import "DESAppDelegate.h"
-typedef  enum{
-    FAcebook_connected = 0,
-    Googleplus_connected = 1
-    
-}socialConnections;
+
+typedef enum {
+    SignInConnectionType_Facebook = 0,
+    SignInConnectionType_GooglePlus = 1,
+    SignInConnectionType_DescribeName = 2,
+} SignInConnectionType;
+
 @interface DescSigninViewController : UIViewController<UIAlertViewDelegate>
 {
     DESAppDelegate *appDelegate;
-    socialConnections connection;
-
-
+    SignInConnectionType signInType;
 }
+
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImage;
 @property (weak, nonatomic) IBOutlet UITextField *txtusername;
 @property (weak, nonatomic) IBOutlet UITextField *txtpassword;
@@ -29,6 +30,5 @@ typedef  enum{
 @property (retain, nonatomic)NSMutableArray *loginjsonArray;
 
 - (IBAction)forgetpwdClicked:(id)sender;
--(void)goToNext:(id)sender;
 
 @end

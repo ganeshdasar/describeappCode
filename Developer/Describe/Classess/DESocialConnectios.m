@@ -23,10 +23,19 @@ static DESocialConnectios *_sharedInstance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _sharedInstance = [[DESocialConnectios alloc] init];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:_sharedInstance
+                                                 selector:@selector(getUserDetail)
+                                                     name:@"getUserDetail"
+                                                   object:nil];
     });
     return _sharedInstance;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 #pragma mark Get the Friends List from google plus
 - (void)googlePlusSignIn
@@ -41,6 +50,19 @@ static DESocialConnectios *_sharedInstance;
     signedIn.scopes = [NSArray arrayWithObjects:kGTLAuthScopePlusLogin,kGTLAuthScopePlusMe,nil];
     signedIn.actions = [NSArray arrayWithObjects:@"http://schemas.google.com/ListenActivity",nil];
     [signedIn authenticate];
+}
+
+- (void)logoutGooglePlus
+{
+    GPPSignIn *signedIn = [GPPSignIn sharedInstance];
+    if(signedIn.idToken != nil) {
+        [signedIn disconnect];
+    }
+    
+    if([[NSUserDefaults standardUserDefaults] objectForKey:GOOGLEPLUESACCESSTOKEN]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:GOOGLEPLUESACCESSTOKEN];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
+    }
 }
 
 - (BOOL)isGooglePlusLoggeIn
@@ -74,6 +96,9 @@ static DESocialConnectios *_sharedInstance;
     self.googlePlusFriendsListArry = [[NSMutableArray alloc]init];
     if (error) {
         NSLog(@"Error is %@",[error description]);
+        if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+            [self.delegate googlePlusResponce:nil andFriendsList:nil];
+        }
     } else {
         __block NSArray* peoplesList;
         GTLPlusPerson *person = [GPPSignIn sharedInstance].googlePlusUser;
@@ -115,42 +140,90 @@ static DESocialConnectios *_sharedInstance;
     }
 }
 
+#pragma mark google plus sharing
+
+- (void)shareLinkOnGooglePlus:(NSString *)urlLink
+{
+    [GPPShare sharedInstance].delegate = self;
+    
+    id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
+    
+    // This line will fill out the title, description, and thumbnail from
+    // the URL that you are sharing and includes a link to that URL.
+    [shareBuilder setURLToShare:[NSURL URLWithString:urlLink]];
+    
+    [shareBuilder open];
+}
+
+- (void)finishedSharingWithError:(NSError *)error
+{
+    NSString *text;
+    
+    if (!error) {
+        text = @"Success";
+    } else if (error.code == kGPPErrorShareboxCanceled) {
+        text = @"Canceled";
+    } else {
+        text = [NSString stringWithFormat:@"Error (%@)", [error localizedDescription]];
+    }
+    
+    NSLog(@"Status: %@", text);
+    
+    if(delegate != nil && [delegate respondsToSelector:@selector(finishedSharingGooglePlusWithError:)]) {
+        [delegate finishedSharingGooglePlusWithError:error];
+    }
+}
 
 #pragma mark facebook signIn
 - (void)facebookSignIn
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(getUserDetail)
-                                                 name:@"getUserDetail"
-                                               object:nil];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
     
     // If the session state is  any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
         || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
         
-        // Close the session and remove the access token from the cache
-        // The session state handler (in the app delegate) will be called automatically
+        DESAppDelegate* appdelegate =(DESAppDelegate*) [UIApplication sharedApplication].delegate;
+        // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+        [appdelegate sessionStateChanged:FBSession.activeSession state:FBSession.activeSession.state error:nil];
         
-        [FBSession.activeSession closeAndClearTokenInformation];
-        // If the session state is not any of the two "open" states when the button is clicked
-    } else {
+    }
+    else {
         // Open a session showing the user the login UI
         // You must ALWAYS ask for basic_info permissions when opening a session
         [FBSession openActiveSessionWithReadPermissions:@[@"basic_info",@"user_photos",@"read_friendlists",@"email",@"user_birthday",@"friends_about_me"]
                                            allowLoginUI:YES
-                                      completionHandler:
-         ^(FBSession *session, FBSessionState state, NSError *error) {
-             
-             // Retrieve the app delegate
-             [self insertTheFacebookAccessTokenData:session.accessTokenData.accessToken andExpirationData:session.accessTokenData.expirationDate];
-             DESAppDelegate* appdelegate =(DESAppDelegate*) [UIApplication sharedApplication].delegate;
-             // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
-             [appdelegate sessionStateChanged:session state:state error:error];
-         }];
+                                      completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
+                                          // Retrieve the app delegate
+                                         [self insertTheFacebookAccessTokenData:session.accessTokenData.accessToken andExpirationData:session.accessTokenData.expirationDate];
+                                         DESAppDelegate* appdelegate = (DESAppDelegate*) [UIApplication sharedApplication].delegate;
+                                         // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+                                         [appdelegate sessionStateChanged:session state:state error:error];
+                                         
+                                         if(error) {
+                                             if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+                                                 [self.delegate googlePlusResponce:nil andFriendsList:nil];
+                                             }
+                                         }
+                                      }];
     }
 
+}
+
+- (void)logoutFacebook
+{
+    if (FBSession.activeSession.state == FBSessionStateOpen
+        || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+        // Close the session and remove the access token from the cache
+        // The session state handler (in the app delegate) will be called automatically
+        
+        [FBSession.activeSession closeAndClearTokenInformation];
+    }
+    
+    if([[NSUserDefaults standardUserDefaults] objectForKey:FACEBOOKACCESSTOKENKEY]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:FACEBOOKACCESSTOKENKEY];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:FACEBOOKEXPIRATIONDATE];
+    }
 }
 
 - (BOOL)isFacebookLoggedIn
@@ -164,18 +237,12 @@ static DESocialConnectios *_sharedInstance;
     // Request the permissions the user currently has
     [FBRequestConnection startWithGraphPath:@"/me?fields=email,birthday,last_name,first_name,gender,location,picture"
                           completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                              if (!error){
-                                //  NSLog(@"%@",result);
+                              if (!error) {
+                                  //  NSLog(@"%@",result);
                                   [[NSUserDefaults standardUserDefaults]setObject:[result objectForKey:@"id"] forKey:FACEBOK_ID];
-                                //  [self checkTheuserSocialIdWithDescriveServer:result];
-                                                                [FBRequestConnection startWithGraphPath:@"/me/friends?fields=id"
+                                  [FBRequestConnection startWithGraphPath:@"/me/friends?fields=id"
                                                         completionHandler:^(FBRequestConnection *connection1, id result1, NSError *error1) {
-                                                            if (!error1){
-                                                                if (self.facebookFriendsListArray==nil) {
-                                                                    self.facebookFriendsListArray = [[NSMutableArray alloc]init];
-                                                                }
-                                                                for (NSDictionary* datadic in [result1 valueForKey:@"data"]) {
-                                                                }
+                                                            if (!error1) {
                                                                 if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
                                                                     [self.delegate googlePlusResponce:result andFriendsList:nil];
                                                                 }
@@ -183,6 +250,9 @@ static DESocialConnectios *_sharedInstance;
                                                                 // An error occurred, we need to handle the error
                                                                 // Check out our error handling guide: https://developers.facebook.com/docs/ios/errors/
                                                                 NSLog(@"%@",[NSString stringWithFormat:@"error %@", error1.description]);
+                                                                if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+                                                                    [self.delegate googlePlusResponce:nil andFriendsList:nil];
+                                                                }
                                                             }
                                                         }];
                                                             } else {
@@ -217,7 +287,7 @@ static DESocialConnectios *_sharedInstance;
 }
 
 #pragma mark facebook sharing
--(void)facebookSharing:(NSString*)inName
+- (void)facebookSharing:(NSString*)inName
                      picture:(NSURL*)inImage
                caption:(NSString*)inCaption
                   andLink:(NSURL*)inUrl
@@ -300,7 +370,8 @@ static DESocialConnectios *_sharedInstance;
 }
 
 
-- (NSDictionary*)parseURLParams:(NSString *)query {
+- (NSDictionary*)parseURLParams:(NSString *)query
+{
     NSArray *pairs = [query componentsSeparatedByString:@"&"];
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     for (NSString *pair in pairs) {
@@ -310,40 +381,6 @@ static DESocialConnectios *_sharedInstance;
         params[kv[0]] = val;
     }
     return params;
-}
-
-#pragma mark google plus sharing
-
-- (void)shareLinkOnGooglePlus:(NSString *)urlLink
-{    
-    [GPPShare sharedInstance].delegate = self;
-    
-    id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
-    
-    // This line will fill out the title, description, and thumbnail from
-    // the URL that you are sharing and includes a link to that URL.
-    [shareBuilder setURLToShare:[NSURL URLWithString:urlLink]];
-    
-    [shareBuilder open];
-}
-
-- (void)finishedSharingWithError:(NSError *)error
-{
-    NSString *text;
-    
-    if (!error) {
-        text = @"Success";
-    } else if (error.code == kGPPErrorShareboxCanceled) {
-        text = @"Canceled";
-    } else {
-        text = [NSString stringWithFormat:@"Error (%@)", [error localizedDescription]];
-    }
-    
-    NSLog(@"Status: %@", text);
-    
-    if(delegate != nil && [delegate respondsToSelector:@selector(finishedSharingGooglePlusWithError:)]) {
-        [delegate finishedSharingGooglePlusWithError:error];
-    }
 }
 
 @end

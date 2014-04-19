@@ -15,6 +15,7 @@
 @optional
 - (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList;
 - (void)finishedSharingGooglePlusWithError:(NSError *)error;
+
 @end
 
 @interface DESocialConnectios : NSObject<GPPSignInDelegate, GPPShareDelegate>
@@ -24,10 +25,12 @@
 
 + (instancetype)sharedInstance;
 - (void)googlePlusSignIn;
--(void)facebookSignIn;
--(void)removeTheAccessTokenInUserDefaults;
+- (void)facebookSignIn;
+- (void)removeTheAccessTokenInUserDefaults;
 - (BOOL)isFacebookLoggedIn;
 - (BOOL)isGooglePlusLoggeIn;
+- (void)logoutFacebook;
+- (void)logoutGooglePlus;
 
 - (void)facebookSharing:(NSString*)inName
                picture:(NSURL*)inImage

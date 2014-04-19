@@ -31,4 +31,19 @@
     return nil;
 }
 
+- (void)registerToResignKeyboard
+{
+    UITapGestureRecognizer *singleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGesture:)];
+    [self addGestureRecognizer:singleTapGesture];
+}
+
+- (void)singleTapGesture:(UITapGestureRecognizer *)gesture
+{
+    UIView *view = [self findFirstResponder];
+    if(view != nil)
+    {
+        [view resignFirstResponder];
+    }
+}
+
 @end
