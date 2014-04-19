@@ -537,6 +537,7 @@
     dialog.alertViewStyle = UIAlertViewStylePlainTextInput;
     [dialog textFieldAtIndex:0].keyboardType = UIKeyboardTypeASCIICapable;
     [dialog textFieldAtIndex:0].keyboardAppearance=UIKeyboardAppearanceDefault;
+    [dialog textFieldAtIndex:0].secureTextEntry=YES;
     CGAffineTransform moveUp = CGAffineTransformMakeTranslation(0.0, 10.0);
     [dialog setTransform: moveUp];
     [dialog show];
@@ -665,18 +666,31 @@
 
 - (void)textViewDidEndEditing:(UITextView *)textView;
 {
+    
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
 }
 - (BOOL) textViewShouldBeginEditing:(UITextView *)textView {
+    [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, -50, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
     return YES;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
     if ([text isEqualToString:@"\n"]) {
+         [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
+        [textView resignFirstResponder];
+
         return NO; // or true, whetever you's like
     }
     return YES;
+}
+
+-(void)tableViewAnimatedWhileTypingTheDataWithFrame:(CGRect)rect
+{
+    [UIView animateWithDuration:.25f animations:^{
+        self.acountDetailsTableView.frame = rect;
+    } completion:^(BOOL finished) {
+    }];
 }
 
 -(void)removeTheKeysInUserDefaults

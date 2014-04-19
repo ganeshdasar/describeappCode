@@ -20,6 +20,7 @@
     UIImageView* imageView;
     
     NSArray *_menuButtons;
+    UIView *_contentView;
     
 }
 @end
@@ -57,7 +58,9 @@
 
 -(void)designHeaderViewWithTitle:(NSString *)title andWithButtons:(NSArray *)buttons
 {
+  
     [self designHeaderViewWithTitle:title andWithButtons:buttons andMenuButtons:nil];
+    
 }
 
 -(void)setbackgroundImage:(UIImage *)image
@@ -70,6 +73,19 @@
     // Initialization code...
     [self setTheBackgroundImage];
     _menuButtons = menuButtons;
+    
+        if(_contentView != nil)
+    {
+        [_contentView removeFromSuperview];
+        _contentView = nil;
+    }
+    
+    if(_contentView == nil)
+    {
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        [_contentView setBackgroundColor:[UIColor clearColor]];
+        [self addSubview:_contentView];
+    }
     
     _totalButtonsWidth = 0.0;
     _title = title;
@@ -131,20 +147,25 @@
     NSLog(@"Reaching");
 }
 
--(void)setTheBackgroundImage{
-    imageView = [[UIImageView alloc]initWithFrame:self.bounds];
-    imageView.image = [UIImage imageNamed:@"bg_nav_std.png"];
-    [self addSubview:imageView];
+-(void)setTheBackgroundImage
+{
+    if(imageView == nil)
+    {
+        imageView = [[UIImageView alloc]initWithFrame:self.bounds];
+        imageView.image = [UIImage imageNamed:@"bg_nav_std.png"];
+        [self addSubview:imageView];
+    }
 }
 -(void)createTitleLabel
 {
+    
     _titleLabel = [[UILabel alloc] initWithFrame:_titleFrame];
     [_titleLabel setBackgroundColor:[UIColor clearColor]];
     [_titleLabel setText:_title];
     [_titleLabel setTextAlignment:NSTextAlignmentLeft];
     [_titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:25.0]];
     [_titleLabel setTextColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
-    [self addSubview:_titleLabel];
+    [_contentView addSubview:_titleLabel];
 }
 -(void)removeSubviewFromHedderView{
     
@@ -156,6 +177,8 @@
 
 -(void)designButtons
 {
+    [self bringSubviewToFront:_contentView];
+    
     if(_buttons == nil)
         return;
     
@@ -170,7 +193,7 @@
         UIButton *button = (UIButton *)_buttons[i];
         [button setBackgroundColor:[UIColor clearColor]];
         [button setFrame:CGRectMake(x, y, WIDTH, WIDTH)];
-        [self addSubview:button];
+        [_contentView addSubview:button];
         x = x + WIDTH + FREESPACE;
         
         [button addTarget:self action:@selector(buttonSelected:) forControlEvents:UIControlEventTouchUpInside];
@@ -190,13 +213,14 @@
         UIButton *button = (UIButton *)_menuButtons[i];
         [button setBackgroundColor:[UIColor clearColor]];
         [button setFrame:CGRectMake(x, y, WIDTH, WIDTH)];
-        [self addSubview:button];
+        [_contentView addSubview:button];
         x = x + WIDTH + FREESPACE;
         
         [button setAlpha:0.0];
         [button addTarget:self action:@selector(buttonSelected:) forControlEvents:UIControlEventTouchUpInside];
     }
     
+ 
 }
 
 
