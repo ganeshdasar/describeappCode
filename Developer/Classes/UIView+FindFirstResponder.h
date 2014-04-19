@@ -18,5 +18,6 @@
  * If no firstRespnder object was found then it returns nil. If itself is an firsResponder then it return its own reference.
  */
 - (UIView *)findFirstResponder;
+- (void)registerToResignKeyboard;
 
 @end

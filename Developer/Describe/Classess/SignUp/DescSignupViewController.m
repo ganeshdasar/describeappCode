@@ -14,7 +14,7 @@
 #import "DESAppDelegate.h"
 #import "DesPeopleSortingComponent.h"
 #import "Constant.h"
-
+#import "UIView+FindFirstResponder.h"
 
 @interface DescSignupViewController ()<MBProgressHUDDelegate>{
     IBOutlet DHeaderView *_headerView;
@@ -58,7 +58,11 @@
     [self designHeaderView];
     [self intilizTextFieldColors];
     [self setTheUserDataInTextFields];
+    [self registerKeyboardNotifications];
     // Do any additional setup after loading the view from its nib.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange:) name:UITextFieldTextDidChangeNotification object:nil];
+    [self.view registerToResignKeyboard];
 }
 
 
@@ -82,6 +86,7 @@
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
     [nextButton addTarget:self action:@selector(goToBasicInfoView:) forControlEvents:UIControlEventTouchUpInside];
+    
     [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton]];
 }
 
@@ -91,10 +96,23 @@
     DESAppDelegate * appDelegate = (DESAppDelegate*)[UIApplication sharedApplication].delegate;
     if (appDelegate.isFacebook == YES) {
         self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
-        self.nameTxt.text = [NSString stringWithFormat:@"%@ %@",[self.userDataDic valueForKey:@"first_name"],[self.userDataDic valueForKey:@"last_name"]];
+        
+        NSString *firstName = [self.userDataDic valueForKey:@"first_name"];
+        NSString *lastName = [self.userDataDic valueForKey:@"last_name"];
+        
+        if(firstName != nil && lastName != nil)
+            self.nameTxt.text = [NSString stringWithFormat:@"%@ %@",firstName, lastName];
+        else if(firstName != nil)
+            self.nameTxt.text = firstName;
+        else if(lastName != nil)
+            self.nameTxt.text = lastName;
+            
     }else if (appDelegate.isGooglePlus == YES){
         self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
-        self.nameTxt.text = [NSString stringWithFormat:@"%@ ",[self.userDataDic valueForKey:@"displayName"]];
+        
+        NSString *displayName = [self.userDataDic valueForKey:@"last_name"];
+        if(displayName != nil)
+            self.nameTxt.text = [NSString stringWithFormat:@"%@ ",displayName];
     }
     
 }
@@ -221,7 +239,7 @@
         [self showAlert:@"Validation" message:@"Please enter your name"];
         return NO;
 	}else if ([nameTxt.text length]>30){
-        [self showAlert:@"Validation" message:@"Please enter your name minumu Thirty characters"];
+        [self showAlert:@"Validation" message:@"Please enter your name max Thirty characters"];
         return NO;
     }
     return YES;
@@ -277,12 +295,12 @@
 
 - (BOOL)checkTheTextFileds
 {
-    if (isUserNameFilled == YES && isPwsFilled == YES && isEmailFilled == YES && isNameFilled == YES) {
-        [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton,nextButton]];
-        return YES;
-    }else{
-        [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton]];
-    }
+//    if (isUserNameFilled == YES && isPwsFilled == YES && isEmailFilled == YES && isNameFilled == YES) {
+//        [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton,nextButton]];
+//        return YES;
+//    }else{
+//        [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton]];
+//    }
     return NO;
 }
 
@@ -290,7 +308,7 @@
 #pragma mark Textfield Delegate Methods
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [textField resignFirstResponder];
+    //[textField resignFirstResponder];
     if (textField.tag == USERNAME_TEXT_FIELD_TAG){
         if ([self userNameTextFieldValidation]) {
             isUserNameFilled = YES;
@@ -329,15 +347,17 @@
         }
     }
     else if (textField.tag == NAME_TEXT_FIELD_TAG){
-        if ([self fullNameTextFiledValidataion]) {
-            isNameFilled = YES;
-            [self checkTheTextFileds];
-            return YES;
-        }else{
-            [self.nameTxt becomeFirstResponder];
-            isNameFilled = NO;
-            return NO;
+        
+        if (textField.tag == NAME_TEXT_FIELD_TAG)
+        {
+            if([self checkMinimumFieldValidation])
+                [self goToBasicInfoView:nil];
+            else
+                return NO;
         }
+        
+        
+        
     }
     return YES;
 }
@@ -345,16 +365,20 @@
 
 -  (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    _currentTextField = textField;
+    
       return YES;
 }
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-   
-
-    
-    }
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+  
+}
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    [self showTextFieldInVisibleRect:textField inView:_contentView];
+
+    
     if ([self.userNameTxt.text length]!=0 &&! [self.userNameTxt.text length]<6) {
         isUserNameFilled =YES;
     }
@@ -376,6 +400,9 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 {
+    
+    [self checkTheTextFileds];
+    
     if ([string isEqualToString:@""]) {
         return  YES;
     }
@@ -400,10 +427,92 @@
                 return YES;
             }
         }
-    }
+    }    
     return YES;
 }
 
+-(void)textFieldDidChange:(NSNotification *)notification
+{
+    [self checkMinimumFieldValidation];
+}
+
+-(BOOL )checkMinimumFieldValidation
+{
+    BOOL isValidDetailsEntering = YES;
+
+    if([[self.userNameTxt text] length] < 6)
+        isValidDetailsEntering = NO;
+    else if(![self validateEmailWithString:self.emailTxt.text])
+        isValidDetailsEntering = NO;
+    else if([[self.pwdTxt text] length] < 8)
+        isValidDetailsEntering = NO;
+    else if(![[self.nameTxt text] length])
+        isValidDetailsEntering = NO;
+   
+    NSLog(@"isValidFields:%d _isModified:%d ",isValidDetailsEntering, _isModifiedHeaderView);
+    if(_isModifiedHeaderView != isValidDetailsEntering)
+    {
+        if(isValidDetailsEntering)
+        {
+            [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton,nextButton]];
+            _isModifiedHeaderView = isValidDetailsEntering;
+        }
+        else
+        {
+            [_headerView designHeaderViewWithTitle:@"Sign up" andWithButtons:@[backButton]];
+            _isModifiedHeaderView = isValidDetailsEntering;
+        }
+    }
+    
+    return isValidDetailsEntering;
+}
+
+
+-(void)registerKeyboardNotifications
+{
+    // Add two notifications for the keyboard. One when the keyboard is shown and one when it's about to hide.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShown:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+
+
+-(void)keyboardWillShown:(id)notification
+{
+}
+
+-(void)keyboardWillHide:(id)notification
+{
+    [self showTextFieldInVisibleRect:_currentTextField inView:_contentView];
+}
+
+
+-(void)showTextFieldInVisibleRect:(UITextField *)textField inView:(UIView *)view
+{
+    CGRect textFieldRect = textField.frame;
+    CGRect mainViewRect = self.view.bounds;
+    CGRect viewRect = view.bounds;
+    mainViewRect.size.height = mainViewRect.size.height - 218;//Where 218 is the original keyboard height...
+    
+    CGRect originalRectOfTextField = [self.view convertRect:textFieldRect fromView:_contentView];
+    if(!CGRectContainsRect(mainViewRect, originalRectOfTextField))
+    {
+        //Text field is not there in visible rect....
+        float diff = originalRectOfTextField.origin.y + originalRectOfTextField.size.height - mainViewRect.size.height;
+        diff = diff + 10;//Buffer to visible rect...
+        
+        viewRect.origin.y = diff;
+    }
+    else
+    {
+        viewRect.origin.y = 0;
+    }
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        [view setBounds:viewRect];
+    }];
+}
 
 - (BOOL) validateEmailWithString:(NSString *)emailStr
 {

@@ -31,6 +31,9 @@ typedef  enum{
     BOOL isPwsFilled;
     BOOL isEmailFilled;
     BOOL isNameFilled;
+    IBOutlet UIView *_contentView;
+    UITextField *_currentTextField;
+    BOOL _isModifiedHeaderView;
 }
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImageView;
 @property (weak, nonatomic) IBOutlet UITextField *userNameTxt;
