@@ -262,14 +262,12 @@
     self.datePicker.datePickerMode = UIDatePickerModeDate;
     CGRect rect;
 	rect = [self.datePickerView frame];
-    rect.origin.y = 568.f;
-    rect.size.height = 280;
     self.datePickerView.frame = rect;
-	[self.view addSubview:self.datePickerView];
-    rect.origin.y = self.view.bounds.size.height - 280.f;
+    rect.origin.y = self.view.bounds.size.height - rect.size.height;
     self.datePicker.maximumDate = [NSDate date];
     
-    
+    [self.view addSubview:self.datePickerView];
+
     [UIView animateWithDuration:.25f animations:^{
         [self.datePickerView setFrame:rect];
     } completion:^(BOOL finished) {

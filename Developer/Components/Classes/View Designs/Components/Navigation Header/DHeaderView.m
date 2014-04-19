@@ -58,18 +58,7 @@
 
 -(void)designHeaderViewWithTitle:(NSString *)title andWithButtons:(NSArray *)buttons
 {
-    if(_contentView != nil)
-    {
-        [_contentView removeFromSuperview];
-        _contentView = nil;
-    }
-    
-    if(_contentView == nil)
-    {
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        [_contentView setBackgroundColor:[UIColor clearColor]];
-        [self addSubview:_contentView];
-    }
+  
     [self designHeaderViewWithTitle:title andWithButtons:buttons andMenuButtons:nil];
     
 }
@@ -84,6 +73,19 @@
     // Initialization code...
     [self setTheBackgroundImage];
     _menuButtons = menuButtons;
+    
+        if(_contentView != nil)
+    {
+        [_contentView removeFromSuperview];
+        _contentView = nil;
+    }
+    
+    if(_contentView == nil)
+    {
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        [_contentView setBackgroundColor:[UIColor clearColor]];
+        [self addSubview:_contentView];
+    }
     
     _totalButtonsWidth = 0.0;
     _title = title;
