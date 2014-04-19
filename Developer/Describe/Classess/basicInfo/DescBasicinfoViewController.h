@@ -7,6 +7,7 @@
 //
 #import <UIKit/UIKit.h>
 #import "CMPassTouchesView.h"
+#import "DESAboutTextView.h"
 
 @class SPGooglePlacesAutocompleteQuery;
 @interface DescBasicinfoViewController : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
@@ -21,7 +22,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *userprofileImg;
 @property (weak, nonatomic) IBOutlet UITextField *cityTxt;
 @property (weak, nonatomic) IBOutlet UITextField *birthdayTxt;
-@property (weak, nonatomic) IBOutlet UITextView *bioTxt;
+@property (weak, nonatomic) IBOutlet DESAboutTextView *bioTxt;
 @property (weak, nonatomic) IBOutlet UIButton *btnmale;
 @property (weak, nonatomic) IBOutlet UIButton *btnfemale;
 @property (strong, nonatomic) IBOutlet UIView *datePickerView;
@@ -39,6 +40,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *cityTxtImgView;
 @property (weak, nonatomic) IBOutlet UIImageView *dateofBirthImgView;
 @property (weak, nonatomic) IBOutlet UIImageView *txtBioImgView;
+@property (weak, nonatomic) IBOutlet UILabel *textviewPlaceholderLabel;
 
 
 - (IBAction)profilePicTapped:(id)sender;

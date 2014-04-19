@@ -43,14 +43,14 @@
     
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:self.searchTxt];
     
-    searchImgView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 13, 10, 14)];
+    searchImgView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 15, 10, 14)];
     searchImgView.image =[UIImage imageNamed:@"icon_search.png"];
     [self addSubview:searchImgView];
     
 //search by name or username ,13px ,14Px,helvictic neue thin ,20Px, 200,200,200.(pls), same font (150,150,150);
     
     cancelBtnImage    = [[UIButton alloc]init];
-    cancelBtnImage.frame = CGRectMake(280, 15, 15, 15);
+    cancelBtnImage.frame = CGRectMake(295, 13, 15, 15);
     [cancelBtnImage setImage:[UIImage imageNamed:@"btn_cancel.png"] forState:UIControlStateNormal];
     cancelBtnImage.hidden = YES;
     [cancelBtnImage addTarget:self action:@selector(cancelButtonClicked:) forControlEvents:UIControlEventTouchUpInside];

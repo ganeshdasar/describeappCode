@@ -48,7 +48,7 @@
 
 - (void)addHeaderViewForTable:(UIView *)headerView
 {
-    [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 50)];
+    [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 60)];
     [_peopleListView setTableHeaderView:headerView];
     [_peopleListView reloadData];
 }
@@ -135,6 +135,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 56;
 }
+
 
 #pragma mark - DUserComponentDelegate Method
 

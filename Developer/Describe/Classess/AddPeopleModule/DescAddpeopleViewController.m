@@ -169,15 +169,15 @@
 {
     weRecommendBtn = [[UIButton alloc] init];
     [weRecommendBtn setTitle: @"We recommend" forState: UIControlStateNormal];
-    [weRecommendBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     weRecommendBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
+    [weRecommendBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [weRecommendBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
-    [weRecommendBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_1.png"] forState:UIControlStateNormal];
+   // [weRecommendBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_1.png"] forState:UIControlStateNormal];
     weRecommendBtn.selected = YES;
     [weRecommendBtn addTarget:self action:@selector(getTheWeRecommendDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
     
     invitationsBtn = [[UIButton alloc] init];
-    [invitationsBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_2.png"] forState:UIControlStateNormal];
+   // [invitationsBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_2.png"] forState:UIControlStateNormal];
     [invitationsBtn setTitle: @"Invitations" forState: UIControlStateNormal];
     invitationsBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [invitationsBtn addTarget:self action:@selector(getTheInvitationsDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
@@ -438,6 +438,7 @@
         data.profileUserUID = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserUID"];
         data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
         [peopleArray addObject:data];
+        
     }
     
     if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
