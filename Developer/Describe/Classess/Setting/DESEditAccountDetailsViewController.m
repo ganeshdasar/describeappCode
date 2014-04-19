@@ -15,7 +15,7 @@
 #import "DESAppDelegate.h"
 #import "DESecurityViewCnt.h"
 #import "DescWelcomeViewController.h"
-
+#import "DESocialConnectios.h"
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -696,8 +696,8 @@
 -(void)removeTheKeysInUserDefaults
 {
    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
+    [[DESocialConnectios sharedInstance]logoutGooglePlus];
+    [[DESocialConnectios sharedInstance]logoutFacebook];
     [[NSUserDefaults standardUserDefaults]synchronize ];
 
 }

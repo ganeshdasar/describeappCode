@@ -13,14 +13,15 @@
 #import "DESEmailNotificationControll.h"
 #import "UIColor+DesColors.h"
 #import "Constant.h"
-
+#import "DESocialConnectios.h"
+#import "WSModelClasses.h"
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
 
 #define HEADER_FONT_COLOR  [UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1];
 
-@interface DESSettingsViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface DESSettingsViewController ()<UITableViewDataSource,UITableViewDelegate,DESocialConnectiosDelegate>
 {
     IBOutlet DHeaderView * _headerView;
     UIButton    *backButton;
@@ -168,13 +169,13 @@
             cell.textLabel.textColor = ELEMENT_FONT_COLOR;
             cell.accessoryView = [self createBackGroundImageView:[UIImage imageNamed:@"chevron.png"]];
             break;
-        case DSettingSocialServices:
+        case DSettingSocialServices:{
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             cell.textLabel.textColor = ELEMENT_FONT_COLOR;
             cell.textLabel.text = socialAccountSectionsArray[indexPath.row];
             switch (indexPath.row) {
                 case facebook_tag:{
-                    if ( [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
+                    if ([[DESocialConnectios sharedInstance] isFacebookLoggedIn]) {
                         cell.accessoryView = [self createLable:@"connected"];
                     }else{
                         cell.accessoryView = [self createLable:@"connect"];
@@ -182,7 +183,7 @@
                     break;
                 }
                 case google_plus_Tag:{
-                    if ( [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]) {
+                    if ([[DESocialConnectios sharedInstance] isGooglePlusLoggeIn]) {
                         cell.accessoryView = [self createLable:@"connected"];
                     }else{
                         cell.accessoryView = [self createLable:@"connect"];
@@ -193,6 +194,7 @@
                     break;
             }
             break;
+        }
         case DSettingNetwork:
         {
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -283,12 +285,27 @@
         case DSettingSocialServices:{
             switch (indexPath.row) {
                 case facebook_tag:
-                    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
-                    [tableView reloadData];
+                    if ([[DESocialConnectios sharedInstance] isFacebookLoggedIn]) {
+                        [self showLoadingView];
+                        [[DESocialConnectios sharedInstance] setDelegate:self];
+                        [[DESocialConnectios sharedInstance] logoutFacebook ];
+                    }else{
+                        [self showLoadingView];
+                        [[DESocialConnectios sharedInstance] setDelegate:self];
+                        [[DESocialConnectios sharedInstance] facebookSignIn ];
+
+                    }
                     break;
                     case google_plus_Tag:
-                    [[NSUserDefaults standardUserDefaults]removeObjectForKey:GOOGLEPLUESACCESSTOKEN];
-                    [tableView reloadData];
+                    if ([[DESocialConnectios sharedInstance] isGooglePlusLoggeIn]) {
+                        [self showLoadingView];
+                        [[DESocialConnectios sharedInstance] setDelegate:self];
+                        [[DESocialConnectios sharedInstance] logoutGooglePlus ];
+                    }else{
+                        [self showLoadingView];
+                        [[DESocialConnectios sharedInstance] setDelegate:self];
+                        [[DESocialConnectios sharedInstance] googlePlusSignIn ];
+                    }
                     break;
                 default:
                     break;
@@ -422,5 +439,19 @@
     
 }
 
+- (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
+{
+    [self.settingTableView reloadSections:[NSIndexSet indexSetWithIndex:DSettingNetwork] withRowAnimation:UITableViewRowAnimationNone];
+    [self removeLoadingView];
+}
 
+-(void)showLoadingView
+{
+    [[WSModelClasses sharedHandler] showLoadView];
+}
+
+-(void)removeLoadingView
+{
+    [[WSModelClasses sharedHandler] removeLoadingView];
+}
 @end

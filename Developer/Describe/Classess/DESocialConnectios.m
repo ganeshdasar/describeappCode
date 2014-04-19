@@ -54,15 +54,20 @@ static DESocialConnectios *_sharedInstance;
 
 - (void)logoutGooglePlus
 {
+    
     GPPSignIn *signedIn = [GPPSignIn sharedInstance];
     if(signedIn.idToken != nil) {
         [signedIn disconnect];
     }
-    
+    if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+        [self.delegate googlePlusResponce:nil andFriendsList:nil];
+    }
     if([[NSUserDefaults standardUserDefaults] objectForKey:GOOGLEPLUESACCESSTOKEN]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:GOOGLEPLUESACCESSTOKEN];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
+    
 }
 
 - (BOOL)isGooglePlusLoggeIn
@@ -219,16 +224,19 @@ static DESocialConnectios *_sharedInstance;
         
         [FBSession.activeSession closeAndClearTokenInformation];
     }
-    
+    if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+        [self.delegate googlePlusResponce:nil andFriendsList:nil];
+    }
     if([[NSUserDefaults standardUserDefaults] objectForKey:FACEBOOKACCESSTOKENKEY]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:FACEBOOKACCESSTOKENKEY];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:FACEBOOKEXPIRATIONDATE];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
 }
 
 - (BOOL)isFacebookLoggedIn
 {
-    return ((FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) && [[NSUserDefaults standardUserDefaults] objectForKey:@"FACEBOOKACCESSTOKENKEY"]);
+    return ((FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) && [[NSUserDefaults standardUserDefaults] objectForKey:FACEBOOKACCESSTOKENKEY]);
 }
 
 - (void)getUserDetail
@@ -268,6 +276,7 @@ static DESocialConnectios *_sharedInstance;
 {
     [[NSUserDefaults standardUserDefaults]setObject:inAccessToken forKey:FACEBOOKACCESSTOKENKEY];
     [[NSUserDefaults standardUserDefaults]setObject:inExpirationDate forKey:FACEBOOKEXPIRATIONDATE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
 
@@ -276,6 +285,7 @@ static DESocialConnectios *_sharedInstance;
 {
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKEXPIRATIONDATE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
    
 }
 
@@ -283,6 +293,7 @@ static DESocialConnectios *_sharedInstance;
 {
     [[NSUserDefaults standardUserDefaults]setObject:inAccessToken forKey:GOOGLEPLUESACCESSTOKEN];
     [[NSUserDefaults standardUserDefaults]setObject:inExpirationDate forKey:GOOGLEPLUSEXPIRATIONDATE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
 
