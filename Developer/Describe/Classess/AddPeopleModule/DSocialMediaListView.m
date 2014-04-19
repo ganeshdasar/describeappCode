@@ -81,7 +81,7 @@
         [_titleLbl setText:@"To see more people you know, connect to"];
         [_titleLbl setTextAlignment:NSTextAlignmentCenter];
         [_contentView addSubview:_titleLbl];
-        [_titleLbl setTextColor:[UIColor colorWithValue:150.0]];
+        [_titleLbl setTextColor:[UIColor colorWithRed:180.f/255.0 green:180.f/255.0 blue:180.f/255.0 alpha:1.0]];
     }
     
     
@@ -89,7 +89,7 @@
     int count = _mediaList.count;
     CGFloat mediaItemsOccupingWidth = count*_mediaItemSize.width + (count -1)*_freeSpace;
     CGFloat availWidth = self.bounds.size.width;
-    CGFloat x = availWidth/2 - mediaItemsOccupingWidth/2, y = 30.f;
+    CGFloat x = availWidth/2 - mediaItemsOccupingWidth/2, y = 34;
     
     for (int i=0; i<count; i++)
     {
