@@ -142,7 +142,7 @@
 -(void)createMoreButton
 {
     _moreButton = [[UIButton alloc] initWithFrame:moreFrame];
-    [_moreButton setBackgroundImage:[UIImage imageNamed:@"btn_overflow.png"] forState:UIControlStateNormal];
+    [_moreButton setImage:[UIImage imageNamed:@"btn_overflow.png"] forState:UIControlStateNormal];
     [_moreButton addTarget:self action:@selector(moreButton:) forControlEvents:UIControlEventTouchUpInside];
     [_contentView addSubview:_moreButton];
 }
@@ -226,7 +226,7 @@
     }
     
     likesFrame = CGRectMake(110, bounds.size.height-64, 80, 20);
-    moreFrame = CGRectMake(20, bounds.size.height-32, 19, 5);
+    moreFrame = CGRectMake(20, bounds.size.height-70, 19, 44);
     likeAndCommentFrame = CGRectMake(80, bounds.size.height-38, 140, 20);
     commentFrame = CGRectMake(320-80, bounds.size.height-38, 70, 20);
     

@@ -12,7 +12,7 @@
 @interface DPostsViewController : UIViewController <UIAlertViewDelegate>
 
 
-+(id)sharedFeedController;
++(id)sharedFeedController1;
 
 -(void)loadFeedDetails;
 -(void)showPostDetails:(NSArray *)posts;

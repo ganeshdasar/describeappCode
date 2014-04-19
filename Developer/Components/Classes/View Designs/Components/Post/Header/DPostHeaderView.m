@@ -116,7 +116,7 @@
     _userIcon = [[UIImageView alloc] initWithFrame:USER_ICON_FRAME];
     [_userIcon setBackgroundColor:[UIColor clearColor]];
     [_userIcon setImage:[UIImage imageNamed:@"apple.jpg"]];
-    [_userIcon setImageWithURL:[NSURL URLWithString:_user.userProfilePicture]];
+    [_userIcon setImageWithURL:[NSURL URLWithString:_user.userProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std_null.png"]];
     
     //Place the user image based on user model...
     [_contentView addSubview:_userIcon];

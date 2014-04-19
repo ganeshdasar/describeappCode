@@ -677,11 +677,14 @@ static WSModelClasses *_sharedInstance;
     [manager GET:ur
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             [self removeLoadingView];
+             
              //NSLog(@"Feed Details: %@",responseObject);
              [self getPostDetailsResponse:responseObject withError:nil];
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
              //NSLog(@"Feed Details Failed: %@", responseObject);
+             [self removeLoadingView];
              [self getPostDetailsResponse:nil withError:responseObject];
          }
      ];

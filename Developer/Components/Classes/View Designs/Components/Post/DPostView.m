@@ -57,12 +57,15 @@
         // Initialization code
         self.backgroundColor = [UIColor clearColor];
         
-        _post = post;
-        [self createPostHeaderView];
-        [self createPostBodyView];
-        [self createPostFooterView];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _post = post;
+            [self createPostHeaderView];
+            [self createPostBodyView];
+            [self createPostFooterView];
+            
+            [self addRightSwipeGesture];
+        });
         
-        [self addRightSwipeGesture];
     }
     return self;
 }
@@ -130,8 +133,12 @@
 {
     if(_contentView == nil)
     {
-        _contentView = [[DPostBodyView alloc] initWithFrame:CONTENT_FRAME withPostImage:_post.imagePost];
-        [self addSubview:_contentView];
+        dispatch_async(dispatch_get_main_queue(), ^{
+        
+            _contentView = [[DPostBodyView alloc] initWithFrame:CONTENT_FRAME withPostImage:_post.imagePost];
+            [self addSubview:_contentView];
+        });
+        
     }
     
     return;

@@ -51,7 +51,7 @@
 
 static DPostsViewController *sharedFeedController;
 
-+(id)sharedFeedController
++(id)sharedFeedController1
 {
     
     if(sharedFeedController == nil)
@@ -98,7 +98,10 @@ static DPostsViewController *sharedFeedController;
 -(void)loadFeedDetails
 {
     // fetch feed list for home screen
-    [self reloadPostList:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+    [self reloadPostList:nil];    
+    });
+    
 }
 
 
@@ -690,8 +693,10 @@ static DPostsViewController *sharedFeedController;
 
 - (void)fetchFeedForHomeScreen
 {
+    
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
+    [sharedInstance showLoadView];
     [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] andRange:pageLoadNumber];
 }
 
@@ -747,94 +752,122 @@ static DPostsViewController *sharedFeedController;
             
             //Will bind the details with post view...
             DPost *postModel = [[DPost alloc] init];
-            postModel.postId = postDetails[@"PostUID"];
+            
+            [postModel setType:(DpostType)[postData[@"PostType"] integerValue]];
+            if(postModel.type == DpostTypePost)
             {
-                DPostImage *imagePost = [[DPostImage alloc] init];
                 {
-                    //Binding photo models...
-                    NSMutableArray *images = [[NSMutableArray alloc] init];
-                    NSString *durations = postDetails[@"ImagesDuration"];
-                    NSArray *durationList = nil;
-                    if(durations != nil)
+                
+                postModel.postId = postDetails[@"PostUID"];
+
+                    DPostImage *imagePost = [[DPostImage alloc] init];
                     {
-                        durationList = [durations componentsSeparatedByString:@","];
+                        //Binding photo models...
+                        NSMutableArray *images = [[NSMutableArray alloc] init];
+                        NSString *durations = postDetails[@"ImagesDuration"];
+                        NSArray *durationList = nil;
+                        if(durations != nil)
+                        {
+                            durationList = [durations componentsSeparatedByString:@","];
+                        }
+                        
+                        //Will create and add each photo as model and adding them to the list.
+                        int postImagesCount = [postDetails[@"PostImageCount"] integerValue];
+                        postImagesCount = postImagesCount + 1;
+                        //postImagesCount = 10;
+                        
+                        
+                        for (int j=1; j<postImagesCount; j++)
+                        {
+                            NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
+                            if(imageUrl== nil || !imageUrl.length)
+                                break;
+                            
+                            
+                            CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
+                            [photoModel setImageUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
+                            
+                            [photoModel setDuration:[durationList[j-1]integerValue]];
+                            [images addObject:photoModel];
+                        }
+                        [imagePost setImages:images];
+                        
+                        
+                        //Binding video to the post...
+                        DPostVideo *video = [[DPostVideo alloc] init];
+                        [video setUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[@"VideoFile"]]];
+                        
+                        [imagePost setVideo:video];
+                        
+                        [postModel setElapsedTime:postDetails[@"ElapsedTime"]];
                     }
                     
-                    //Will create and add each photo as model and adding them to the list.
-                    int postImagesCount = [postDetails[@"PostImageCount"] integerValue];
-                    postImagesCount = postImagesCount + 1;
-                    //postImagesCount = 10;
-                    
-                    
-                    for (int j=1; j<postImagesCount; j++)
+                    //Binding the user details...
+                    DUser *user = [[DUser alloc] init];
                     {
-                        NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
-                        if(imageUrl== nil || !imageUrl.length)
-                            break;
-                        
-                        
-                        CMPhotoModel *photoModel = [[CMPhotoModel alloc] init];
-                        [photoModel setImageUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
-                        
-                        [photoModel setDuration:[durationList[j-1]integerValue]];
-                        [images addObject:photoModel];
+                        [user setUserId:authUserDetails[@"AuthUserUID"]];
+                        [user setName:authUserDetails[@"Username"]];
+                        [user setAddress:postDetails[@"PostLocation"]];
+                        [user setUserCanvasImage:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasImage"]]];
+                        [user setUserCanvasSnippet:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasSnippet"]]];
+                        [user setUserProfilePicture:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserProfilePicture"]]];
                     }
-                    [imagePost setImages:images];
                     
-                    
-                    //Binding video to the post...
-                    DPostVideo *video = [[DPostVideo alloc] init];
-                    [video setUrl:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[@"VideoFile"]]];
-                    
-                    [imagePost setVideo:video];
-                    
-                    [postModel setElapsedTime:postDetails[@"ElapsedTime"]];
+                    //The post model here...
+                    [postModel setImagePost:imagePost];
+                    [postModel setUser:user];
                 }
                 
-                //Binding the user details...
-                DUser *user = [[DUser alloc] init];
+                
+                
+                //The footer content added here....
                 {
-                    [user setUserId:authUserDetails[@"AuthUserUID"]];
-                    [user setName:authUserDetails[@"Username"]];
-                    [user setAddress:postDetails[@"PostLocation"]];
-                    [user setUserCanvasImage:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasImage"]]];
-                    [user setUserCanvasSnippet:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserCanvasSnippet"]]];
-                    [user setUserProfilePicture:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",authUserDetails[@"UserProfilePicture"]]];
+                    NSMutableArray *tags = [[NSMutableArray alloc] init];
+                    if(postDetails[@"Tag1"] != nil && [(NSString *)postDetails[@"Tag1"] length])
+                    {
+                        DPostTag *postTag = [[DPostTag alloc] init];
+                        [postTag setTagId:@""];
+                        [postTag setTagName:postDetails[@"Tag1"]];
+                        [tags addObject:postTag];
+                    }
+                    
+                    if(postDetails[@"Tag2"] != nil && [(NSString *)postDetails[@"Tag2"] length])
+                    {
+                        DPostTag *postTag = [[DPostTag alloc] init];
+                        [postTag setTagId:@""];
+                        [postTag setTagName:postDetails[@"Tag2"]];
+                        [tags addObject:postTag];
+                    }
+                    
+                    DPostAttachments *attachements = [[DPostAttachments alloc] init];
+                    [attachements setLikeRating:[postDetails[@"PostRating"] integerValue]];
+                    [attachements setNumberOfComments:[postDetails[@"PostImageCount"] integerValue]];
+                    [attachements setNumberOfLikes:[postDetails[@"PostLikeCount"] integerValue]];
+                    [attachements setTagsList:tags];
+                    [postModel setAttachements:attachements];
                 }
-                
-                //The post model here...
-                [postModel setImagePost:imagePost];
-                [postModel setUser:user];
-                [postModel setType:(DpostType)[postData[@"PostType"] integerValue]];
+
             }
-            
-            
-            //The footer content added here....
+            else
             {
-                NSMutableArray *tags = [[NSMutableArray alloc] init];
-                if(postDetails[@"Tag1"] != nil && [(NSString *)postDetails[@"Tag1"] length])
+                NSDictionary *postDetails = postData[@"PostDetails"];
+                NSMutableArray *promters = [[NSMutableArray alloc] init];
+                for (int j=1; j<10; j++)
                 {
-                    DPostTag *postTag = [[DPostTag alloc] init];
-                    [postTag setTagId:@""];
-                    [postTag setTagName:postDetails[@"Tag1"]];
-                    [tags addObject:postTag];
+                    NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
+                    if(imageUrl== nil || !imageUrl.length)
+                        break;
+                    
+                    
+                    DPrompterProfile *photoModel = [[DPrompterProfile alloc] init];
+                    [photoModel setProfilePromterImageName:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
+                    [promters addObject:photoModel];
                 }
                 
-                if(postDetails[@"Tag2"] != nil && [(NSString *)postDetails[@"Tag2"] length])
-                {
-                    DPostTag *postTag = [[DPostTag alloc] init];
-                    [postTag setTagId:@""];
-                    [postTag setTagName:postDetails[@"Tag2"]];
-                    [tags addObject:postTag];
-                }
-                
-                DPostAttachments *attachements = [[DPostAttachments alloc] init];
-                [attachements setLikeRating:[postDetails[@"PostRating"] integerValue]];
-                [attachements setNumberOfComments:[postDetails[@"PostImageCount"] integerValue]];
-                [attachements setNumberOfLikes:[postDetails[@"PostLikeCount"] integerValue]];
-                [attachements setTagsList:tags];
-                [postModel setAttachements:attachements];
+                [postModel setPrompters:promters];
             }
+
+            
             
             [postModelList addObject:postModel];
         }
