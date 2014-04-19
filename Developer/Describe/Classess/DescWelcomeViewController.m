@@ -24,7 +24,16 @@
 #import "ProfileViewController.h"
 
 #define FRAME CGRectMake(0, 0, 320, 480);
-#define BUTTONFRAME CGRectMake(121, CGRectGetHeight([[UIScreen mainScreen] bounds])-205.0, 70, 26);
+#define BUTTONFRAME CGRectMake(125, CGRectGetHeight([[UIScreen mainScreen] bounds])-205.0, 70, 26);
+
+#define FaceBookButtonPersentage 316.0f/568.0f
+#define GooglePlusButtonPersentage 352.f/568.0f
+#define EmailButtonPersentage 388.f/568.0f
+#define SingUpButtonClosePersentage 337.f/568.0f
+#define SignInButtonClosePersentage 393.f/568.0f
+
+#define SingUpButtonOpenPersentage 454.f/568.0f
+#define SignInButtonOpenPersentage 270.f/568.0f
 
 @interface DescWelcomeViewController ()<MBProgressHUDDelegate,WSModelClassDelegate,UIAlertViewDelegate,DESocialConnectiosDelegate>
 {
@@ -39,10 +48,6 @@
 @synthesize socialUserDataDic;
 @synthesize googlePlusFriendsListArry;
 
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
-}
 
 - (BOOL)checkTheSessionId
 {
@@ -73,11 +78,10 @@
 {
     [super viewDidLoad];
 
-    [self setNeedsStatusBarAppearanceUpdate];
     self.facebookFriendsListArray = [[NSMutableArray alloc]init];
     self.socialUserDataDic = [[NSMutableDictionary alloc]init];
     self.googlePlusFriendsListArry = [[NSMutableArray alloc]init];
-    
+    [self setUpThePosttionOfbuttonsFrame];
     self.facebookBtn.frame = BUTTONFRAME;
     self.googlePlusBtn.frame = BUTTONFRAME;
     self.emailBtn.frame = BUTTONFRAME;
@@ -91,7 +95,7 @@
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_3.5in.png"];
         //Iphone  3.5 inch
     }
-    
+   // [[UIApplication sharedApplication]setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     self.view.backgroundColor = [UIColor whiteColor];
 }
 
@@ -104,10 +108,13 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+
     [HUD hide:YES];
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 - (void)viewWillAppear:(BOOL)animated
 {
     self.view.backgroundColor = [UIColor whiteColor];
@@ -141,7 +148,6 @@
 {
     if (self.facebookBtn.isHidden == YES) {
         [self buttonHidderAction:NO];
-        
         [UIView animateWithDuration:1.0
                          animations:^{
                              self.facebookBtn.alpha = 1.0;
@@ -149,12 +155,11 @@
                              self.emailBtn.alpha = 1.0;
                              
                              CGRect windowFrame  = [[UIScreen mainScreen] bounds];
-                             
-                             self.facebookBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)-252.0, 70, 26);
-                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)-216.0, 70, 26);;
-                             self.emailBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)-144.0, 70, 26);
-                             self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-298.0, 100, 36);
-                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-78.0, 100, 36);
+                             self.facebookBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)*FaceBookButtonPersentage, 70, 26);
+                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)*GooglePlusButtonPersentage, 70, 26);;
+                             self.emailBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)*EmailButtonPersentage, 70, 26);
+                             self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonOpenPersentage, 100, 36);
+                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SingUpButtonOpenPersentage, 100, 36);
                          }
                          completion:nil];
     }
@@ -168,11 +173,9 @@
                              self.facebookBtn.alpha = 0.0;
                              self.googlePlusBtn.alpha = 0.0;
                              self.emailBtn.alpha = 0.0;
-                             
                              CGRect windowFrame  = [[UIScreen mainScreen] bounds];
-                             
-                             self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-232.0, 100, 36);
-                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)-175.0, 100, 36);
+                             self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SingUpButtonClosePersentage, 100, 36);
+                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonClosePersentage, 100, 36);
                          }
                          completion:^(BOOL finished) {
                              [self buttonHidderAction:YES];
@@ -181,6 +184,15 @@
     
 }
 
+
+-(void)setUpThePosttionOfbuttonsFrame
+{
+    CGRect windowFrame  = [[UIScreen mainScreen] bounds];
+    self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SingUpButtonClosePersentage, 100, 36);
+    self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonClosePersentage, 100, 36);
+
+    
+}
 #pragma mark FacebookIntegration
 - (IBAction)loginWithFacebookAction:(id)sender
 {
@@ -306,7 +318,6 @@
             }
         }
             break;
-            
         case 1:
         {
             [[DESocialConnectios sharedInstance] logoutGooglePlus];
