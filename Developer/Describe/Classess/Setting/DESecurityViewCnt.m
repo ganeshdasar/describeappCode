@@ -143,6 +143,7 @@
         name.textColor = [UIColor textFieldTextColor];
         name.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
         name.text =self.userPassword;
+        name.secureTextEntry = YES;
         [cell.contentView addSubview:name];
     }
     cell.textLabel.text =  securityNamesArray[indexPath.row];

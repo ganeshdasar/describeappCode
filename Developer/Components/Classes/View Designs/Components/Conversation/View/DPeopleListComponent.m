@@ -9,10 +9,11 @@
 #import "DPeopleListComponent.h"
 #import "DUserComponent.h"
 #import "DUserData.h"
-@interface DPeopleListComponent ()<UITableViewDataSource,UITableViewDelegate>{
+
+@interface DPeopleListComponent () <UITableViewDataSource, UITableViewDelegate, DUserComponentDelegate>
+{
     UITableView *_peopleListView;
     DUserComponent * _userComponent;
-
 }
 
 @end
@@ -22,8 +23,6 @@
 @synthesize isSearchPeople;
 @synthesize delegate = _delegate;
 
-
-
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -32,6 +31,7 @@
     }
     return self;
 }
+
 - (id)initWithFrame:(CGRect)frame andPeopleList:(NSArray *)list
 {
     self = [super initWithFrame:frame];
@@ -46,14 +46,14 @@
     return self;
 }
 
--(void)addHeaderViewForTable:(UIView *)headerView
+- (void)addHeaderViewForTable:(UIView *)headerView
 {
     [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 50)];
     [_peopleListView setTableHeaderView:headerView];
     [_peopleListView reloadData];
 }
 
--(void)createPeopleListView
+- (void)createPeopleListView
 {
     _peopleListView = [[UITableView alloc] initWithFrame:self.bounds];
     _peopleListView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -83,13 +83,14 @@
     // Drawing code
 }
 */
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [self._peopleList count];
 }
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = [NSString stringWithFormat:@"identifier_%d_%ld",indexPath.section, (long)indexPath.row];
+    NSString *identifier = [NSString stringWithFormat:@"identifier_%ld_%ld", (long)indexPath.section, (long)indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if(cell == nil)
     {
@@ -106,31 +107,27 @@
     if (userDataView == nil)
     {
         SearchPeopleData * data = self._peopleList[indexPath.row];
-         userDataView = [[DUserComponent alloc] initWithFrame:CGRectMake(0, 0, 320, 56) AndUserData:data];
-        userDataView.tag =111;
+        userDataView = [[DUserComponent alloc] initWithFrame:CGRectMake(0, 0, 320, 56) AndUserData:data];
+        userDataView.tag = 111;
+        userDataView.delegate = self;
         [cell.contentView addSubview:userDataView];
         [userDataView setBackgroundColor:[UIColor clearColor]];
     }
-    else
-    {
-        
-    }
-
+    
     [userDataView updateContent:self._peopleList[indexPath.row]];
     
     //40Px 16*2
     return cell;
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    
     
     if(_delegate != nil && [_delegate respondsToSelector:@selector(peopleListView:didSelectedItemIndex:)])
     {
         [_delegate peopleListView:self didSelectedItemIndex:indexPath.row];
     }
-    
     
 }
 
@@ -139,6 +136,14 @@
     return 56;
 }
 
+#pragma mark - DUserComponentDelegate Method
+
+- (void)statusChange
+{
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(statusChange)]) {
+        [_delegate statusChange];
+    }
+}
 
 /*- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {

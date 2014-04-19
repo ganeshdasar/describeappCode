@@ -323,6 +323,9 @@ typedef enum {
 #pragma mark - DESocialConnectiosDelegate Method
 - (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray *)inFriendsList
 {
+    if(responseDict == nil)
+        return;
+    
     CMShareSocialCell *socialCell = (CMShareSocialCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionShare]];
     if(socialCell == nil) {
         return;

@@ -14,6 +14,7 @@
 #import "DESAppDelegate.h"
 #import "DesPeopleSortingComponent.h"
 #import "Constant.h"
+#import "DESocialConnectios.h"
 #import "UIView+FindFirstResponder.h"
 
 @interface DescSignupViewController ()<MBProgressHUDDelegate>{
@@ -139,6 +140,9 @@
 
 - (void)goToBack:(id)sender
 {
+    [[DESocialConnectios sharedInstance] logoutFacebook];
+    [[DESocialConnectios sharedInstance] logoutGooglePlus];
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 

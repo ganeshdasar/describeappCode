@@ -25,7 +25,7 @@
 @class GPPSignInButton;
 @class DESocialConnectios;
 
-@interface DescWelcomeViewController : UIViewController<UIActionSheetDelegate,GPPSignInDelegate>
+@interface DescWelcomeViewController : UIViewController<UIActionSheetDelegate>
 {
     DESAppDelegate *appDelegate;
 }

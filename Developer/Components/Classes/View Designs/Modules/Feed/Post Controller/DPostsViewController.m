@@ -805,6 +805,7 @@ static DPostsViewController *sharedFeedController;
                 //The post model here...
                 [postModel setImagePost:imagePost];
                 [postModel setUser:user];
+                [postModel setType:(DpostType)[postData[@"PostType"] integerValue]];
             }
             
             

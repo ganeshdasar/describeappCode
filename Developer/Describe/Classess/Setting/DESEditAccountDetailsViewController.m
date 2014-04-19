@@ -15,7 +15,7 @@
 #import "DESAppDelegate.h"
 #import "DESecurityViewCnt.h"
 #import "DescWelcomeViewController.h"
-
+#import "DESocialConnectios.h"
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -537,6 +537,7 @@
     dialog.alertViewStyle = UIAlertViewStylePlainTextInput;
     [dialog textFieldAtIndex:0].keyboardType = UIKeyboardTypeASCIICapable;
     [dialog textFieldAtIndex:0].keyboardAppearance=UIKeyboardAppearanceDefault;
+    [dialog textFieldAtIndex:0].secureTextEntry=YES;
     CGAffineTransform moveUp = CGAffineTransformMakeTranslation(0.0, 10.0);
     [dialog setTransform: moveUp];
     [dialog show];
@@ -665,25 +666,38 @@
 
 - (void)textViewDidEndEditing:(UITextView *)textView;
 {
+    
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
 }
 - (BOOL) textViewShouldBeginEditing:(UITextView *)textView {
+    [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, -50, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
     return YES;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
     if ([text isEqualToString:@"\n"]) {
+         [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
+        [textView resignFirstResponder];
+
         return NO; // or true, whetever you's like
     }
     return YES;
 }
 
+-(void)tableViewAnimatedWhileTypingTheDataWithFrame:(CGRect)rect
+{
+    [UIView animateWithDuration:.25f animations:^{
+        self.acountDetailsTableView.frame = rect;
+    } completion:^(BOOL finished) {
+    }];
+}
+
 -(void)removeTheKeysInUserDefaults
 {
    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:FACEBOOKACCESSTOKENKEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
+    [[DESocialConnectios sharedInstance]logoutGooglePlus];
+    [[DESocialConnectios sharedInstance]logoutFacebook];
     [[NSUserDefaults standardUserDefaults]synchronize ];
 
 }

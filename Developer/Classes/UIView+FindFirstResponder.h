@@ -1,9 +1,5 @@
 //
 //  UIView+FindFirstResponder.h
-//  SpotOWord
-//
-//  Created by [x]cube LABS on 9/11/13.
-//  Copyright (c) 2013 KPT. All rights reserved.
 //
 //  Class Description:
 //  This class over-rides the super UIView Class. In this we are adding a method to identify the first responder
@@ -18,6 +14,13 @@
  * If no firstRespnder object was found then it returns nil. If itself is an firsResponder then it return its own reference.
  */
 - (UIView *)findFirstResponder;
+- (void)registerToResignKeyboard;
+
+/**
+ * - (void)registerToResignKeyboard:
+ * This method registers the view for tap gesture.
+ * Upon detecting tap, it will find if there is any subview which is firstresponder and will resignFirstResponder
+ */
 - (void)registerToResignKeyboard;
 
 @end
