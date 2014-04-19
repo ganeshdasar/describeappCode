@@ -116,7 +116,7 @@
     self.navigationController.navigationController.navigationBar.translucent = NO;
 
     if([self checkTheSessionId]) {
-        _postViewController = [DPostsViewController sharedFeedController];
+        _postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
         [_postViewController loadFeedDetails];
         [self.navigationController pushViewController:_postViewController animated:YES];
     }

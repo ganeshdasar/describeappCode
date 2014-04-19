@@ -22,6 +22,7 @@
 #import "DESocialConnectios.h"
 #import "DesSearchPeopleViewContrlooerViewController.h"
 #import "DESSettingsViewController.h"
+#import "DProfileDetailsViewController.h"
 
 @interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate,DESocialConnectiosDelegate, DHeaderViewDelegate, DPeopleListDelegate>
 {
@@ -202,7 +203,7 @@
 - (void)designSocialComponent
 {
     NSString *gpSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN])?@"1":@"0";
-        NSString *fbSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY])?@"1":@"0";
+    NSString *fbSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY])?@"1":@"0";
     
     NSDictionary *mediaItem0 = @{@"ImageNormal": @"btn_3rd_fb_nc.png", @"ImageSelected": @"btn_3rd_fb_on.png", @"Selected":fbSelected};
     NSDictionary *mediaItem1 = @{@"ImageNormal": @"btn_3rd_goog_nc.png", @"ImageSelected": @"btn_3rd_goog_on.png", @"Selected":gpSelected};
@@ -232,7 +233,7 @@
 - (void)goToFeedScreen:(UIButton*)inButton
 {
     [[WSModelClasses  sharedHandler] getTheGenaralFeedServices:@"" andPageValue:@""];
-    DPostsViewController *postViewController = [DPostsViewController sharedFeedController];////[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+    DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
     [self.navigationController pushViewController:postViewController animated:YES];
 }
 
@@ -249,10 +250,14 @@
         pageLoadNumberRecommend = 0;
         [self fetchWerecommendList];
     }
+    
+    [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_follow_all.png"] forState:UIControlStateNormal];
 
     if(_peoplelistView != nil) {
         [_peoplelistView reloadTableView:werecommendedList];
     }
+    
+    [self showStatusView:YES];
 }
 
 - (void)getTheInvitationsDataFromServer:(UIButton*)inSender
@@ -266,10 +271,14 @@
         pageLoadNumberInvite = 0;
         [self fetchInvitationList];
     }
-        
+    
+    [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_invite_all.png"] forState:UIControlStateNormal];
+    
     if(_peoplelistView != nil) {
         [_peoplelistView reloadTableView:invitationList];
     }
+    
+    [self showStatusView:YES];
 }
 
 #pragma mark Socialnetwork actions
@@ -308,10 +317,22 @@
 - (void)designPeopleListView:(NSArray *)list
 {
     if(_peoplelistView == nil) {
+        CGRect socialFrame = _mediaListView.frame;
         CGRect screenRect = [[UIScreen mainScreen] bounds];
-        _peoplelistView = [[DPeopleListComponent alloc] initWithFrame:CGRectMake(0, 200, 320, screenRect.size.height-240) andPeopleList:list];
+        
+        CGRect peopleListFrame = CGRectZero;
+        peopleListFrame.origin.y = CGRectGetMinY(socialFrame);
+        peopleListFrame.size.width = CGRectGetWidth(screenRect);
+        peopleListFrame.size.height = CGRectGetHeight(screenRect) - CGRectGetMinY(socialFrame) - CGRectGetHeight(followAndInviteView.frame);
+        
+        [_mediaListView removeFromSuperview];
+        socialFrame.origin = CGPointZero;
+        _mediaListView.frame = socialFrame;
+        
+        _peoplelistView = [[DPeopleListComponent alloc] initWithFrame:peopleListFrame andPeopleList:list];
         _peoplelistView.delegate = self;
         _peoplelistView.tag = 1;
+        [_peoplelistView addHeaderViewForTable:_mediaListView];
         [self.view addSubview:_peoplelistView];
     }
 }
@@ -380,6 +401,8 @@
                 [_peoplelistView reloadTableView:werecommendedList];
             }
         }
+        
+        [self showStatusView:YES];
         return;
     }
     switch (serviceType) {
@@ -453,9 +476,10 @@
     }
     else {
         [self designPeopleListView:peopleArray];
-        [self.view bringSubviewToFront:followAndInviteImgView];
+        [self.view bringSubviewToFront:followAndInviteView];
     }
     
+    [self showStatusView:YES];
 }
 
 - (void)addSearchBarView
@@ -479,14 +503,17 @@
         [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
         [backButton addTarget:self action:@selector(removeTheSearchViewFromSuperview:) forControlEvents:UIControlEventTouchUpInside];
         [_headerView designHeaderViewWithTitle:@"Search" andWithButtons:@[backButton]];
+        
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         CGRect peopleListFrame = _peoplelistView.frame;
         peopleListFrame.origin.y = 105.0f;
-        peopleListFrame.size.height = CGRectGetHeight(screenRect) - 105.0f - CGRectGetHeight(followAndInviteImgView.frame);
+        peopleListFrame.size.height = CGRectGetHeight(screenRect) - 105.0f;
         [_peoplelistView setFrame:peopleListFrame];
+        
+        [_peoplelistView addHeaderViewForTable:nil];
         [_peoplelistView reloadTableView:self.searchListArray];
-//        _peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, 105, 320, screenRect.size.height-108) andPeopleList:nil];
-//        [self.view addSubview:_peoplelistView];
+
+        [self showStatusView:NO];
     }
     else{
         if ([searchBar.searchTxt.text length]!=0) {
@@ -514,6 +541,7 @@
     }
     
     backButton.userInteractionEnabled = YES;
+    [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
     [_peoplelistView reloadTableView:self.searchListArray];
 }
 
@@ -526,20 +554,26 @@
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGRect peopleListFrame = _peoplelistView.frame;
-    peopleListFrame.origin.y = 200.0f;
-    peopleListFrame.size.height = CGRectGetHeight(screenRect) - 240.0f;
+    peopleListFrame.origin.y = 136.0f;
+    peopleListFrame.size.height = CGRectGetHeight(screenRect) - CGRectGetMinY(peopleListFrame) - CGRectGetHeight(followAndInviteView.frame);
     [_peoplelistView setFrame:peopleListFrame];
+    [_peoplelistView addHeaderViewForTable:_mediaListView];
     
     if(weRecommendBtn.isSelected == YES) {
+        [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
         [_peoplelistView reloadTableView:werecommendedList];
     }
     else {
+        [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = YES;
         [_peoplelistView reloadTableView:invitationList];
     }
     
     isSearching = YES;
     [_searchBarComponent.searchTxt resignFirstResponder];
     [self designHeaderView];
+
+    [self showStatusView:YES];
+//    [self.view bringSubviewToFront:followAndInviteView];
 }
 
 - (void)showLoadView
@@ -573,6 +607,8 @@
                                                          }
                                                          
                                                          [_peoplelistView reloadTableView:werecommendedList];
+                                                         
+                                                         [self showStatusView:NO];
                                                      }
                                                      else {
                                                          
@@ -614,5 +650,89 @@
     }
 }
 
+- (void)statusChange
+{
+    if(isSearching) {
+        [self showStatusView:YES];
+    }
+}
+
+- (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
+{
+    if(self.isCommmingFromFeed == YES) {
+        SearchPeopleData *peopleDetail = nil;
+        if(isSearching) {
+            if(weRecommendBtn.isSelected) {
+                peopleDetail = (SearchPeopleData *)werecommendedList[index];
+            }
+            else {
+                peopleDetail = (SearchPeopleData *)invitationList[index];
+            }
+        }
+        else {
+            peopleDetail = (SearchPeopleData *)self.searchListArray[index];
+        }
+        
+        DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+        profileController.profileId = [[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue];
+        [self.navigationController pushViewController:profileController animated:YES];
+    }
+}
+
+#pragma mark - Handle showing/hide of the bottom view (followUnfollowView)
+- (void)showStatusView:(BOOL)showStatus
+{
+    if(isSearching) {  // do below steps when we are not in search view
+        if([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == NO) {
+            int count = 0;
+            for(SearchPeopleData *peopleDetail in werecommendedList) {
+                if([peopleDetail.followingStatus isEqualToString:@"0"]) {
+                    break;
+                }
+                
+                count++;
+            }
+            
+            if(count == werecommendedList.count) {
+                showStatus = NO;
+            }
+        }
+        else {
+            int count = 0;
+            for(SearchPeopleData *peopleDetail in invitationList) {
+                if([peopleDetail.followingStatus isEqualToString:@"0"]) {
+                    break;
+                }
+                
+                count++;
+            }
+            
+            if(count == invitationList.count) {
+                showStatus = NO;
+            }
+        }
+    }
+    
+    [UIView animateWithDuration:0.3f
+                     animations:^{
+                         CGRect frame = followAndInviteView.frame;
+                         CGRect screenRect = [[UIScreen mainScreen] bounds];
+                         frame.origin.y = showStatus ? (CGRectGetHeight(screenRect) - CGRectGetHeight(frame)) : CGRectGetHeight(screenRect);
+                         
+                         if(isSearching) {
+                             CGRect peopleListFrame = _peoplelistView.frame;
+                             if(showStatus == NO) {
+                                 peopleListFrame.size.height = CGRectGetHeight(screenRect) - CGRectGetMinY(peopleListFrame);
+                             }
+                             else {
+                                 peopleListFrame.size.height = CGRectGetHeight(screenRect) - CGRectGetMinY(peopleListFrame) - CGRectGetHeight(followAndInviteView.frame);
+                             }
+                             _peoplelistView.frame = peopleListFrame;
+                         }
+                         
+                         followAndInviteView.frame = frame;
+                     }
+                     completion:nil];
+}
 
 @end

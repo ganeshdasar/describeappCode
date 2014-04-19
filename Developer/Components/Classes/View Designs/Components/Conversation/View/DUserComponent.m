@@ -33,7 +33,8 @@
     }
     return self;
 }
--(id)initWithFrame:(CGRect)frame AndUserData:(SearchPeopleData*)inUserData{
+
+- (id)initWithFrame:(CGRect)frame AndUserData:(SearchPeopleData*)inUserData{
     self = [super initWithFrame:frame];
     if (self) {
         data = inUserData;
@@ -43,7 +44,9 @@
     }
     return self;
 }
--(void)createUserComponent{
+
+- (void)createUserComponent
+{
     UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
     roundImg.image = [UIImage imageNamed:@"thumb_user_std.png"];
     [self addSubview:roundImg];
@@ -104,29 +107,39 @@
     _thumIcon.layer.masksToBounds = YES;
 }
 
--(void)updateContent:(SearchPeopleData *)userData
+- (void)updateContent:(SearchPeopleData *)userData
 {
+    [_thumIcon cancelImageRequestOperation];
+    
     data = userData;
     
-    [_thumIcon setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std.png"]];
+    [_thumIcon setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std_null.png"]];
     _title.text = data.profileUserName;
-    _subTitle.text =data.profileUserFullName;
+    _subTitle.text = data.profileUserFullName;
      if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
-         if ([data.followingStatus isEqualToString:@"1"])
-         {
-             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
-         }else{
-             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
-         }
-     }else{
-    
-    //Updating the details on the content...
-    if ([data.followingStatus isEqualToString:@"1"])
-    {
-        [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
-    }else{
-        [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
-    }
+        CGRect statusFrame = CGRectZero;
+        statusFrame = CGRectMake(250, 9, 60, 26);
+        [_statusButton setFrame:statusFrame];
+
+        if ([data.followingStatus isEqualToString:@"1"]) {
+         [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
+        }
+        else {
+         [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
+        }
+     }
+     else {
+        CGRect statusFrame = CGRectZero;
+        statusFrame = CGRectMake(275, 9, 30, 30);
+        [_statusButton setFrame:statusFrame];
+         
+        //Updating the details on the content...
+        if ([data.followingStatus isEqualToString:@"1"]) {
+            [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
+        }
+        else {
+            [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
+        }
      }
 }
 
@@ -181,7 +194,6 @@
             }else{
                 [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"0";
-
             }
             break;
         }
@@ -215,9 +227,14 @@
         default:
             break;
     }
+    
+    if(_delegate != nil && [_delegate respondsToSelector:@selector(statusChange)]) {
+        [_delegate statusChange];
+    }
+    
 }
 
--(void)downloadUserImageview:(NSString*)inUrlString{
+- (void)downloadUserImageview:(NSString*)inUrlString{
     dispatch_queue_t backgroundQueue =
     dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(backgroundQueue, ^{

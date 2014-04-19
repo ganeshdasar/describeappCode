@@ -266,7 +266,7 @@
     {
         if([self checkTheUserFollowingCount:userData])//is he is following any one or not?
         {
-            DPostsViewController *postViewController = [DPostsViewController sharedFeedController];//[[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+            DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
             [postViewController loadFeedDetails];
             [self.navigationController pushViewController:postViewController animated:YES];
         }

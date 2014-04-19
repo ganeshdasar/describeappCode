@@ -15,12 +15,12 @@
 @interface DPeopleListComponent : UIView{
     
 }
-@property (nonatomic,assign) BOOL isAddPeople;
-@property (nonatomic,assign) BOOL isSearchPeople;
-@property(nonatomic, strong)id<DPeopleListDelegate> delegate;
+@property (nonatomic, assign) BOOL isAddPeople;
+@property (nonatomic, assign) BOOL isSearchPeople;
+@property (nonatomic, assign) id<DPeopleListDelegate> delegate;
+@property (nonatomic, strong) NSMutableArray *_peopleList;
 
 - (id)initWithFrame:(CGRect)frame andPeopleList:(NSArray *)list;
-@property (nonatomic,strong)     NSMutableArray *_peopleList;
 -(void)reloadTableView:(NSMutableArray*)inArray;
 -(void)addHeaderViewForTable:(UIView *)headerView;
 
@@ -29,18 +29,14 @@
 @end
 
 
-
-
 @protocol DPeopleListDelegate <NSObject>
 
 @optional
-
-
-
--(void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction;
--(void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
--(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
--(void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger )index;
+- (void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction;
+- (void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+- (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger )index;
 - (void)loadNextPage;
+- (void)statusChange;
 
 @end
