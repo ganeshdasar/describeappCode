@@ -128,25 +128,22 @@
 }
 
 
--(void)lineSpacingFroTextView
+- (void)lineSpacingFroTextView
 {
-    UITextView *lab = self.bioTxt;
+    DESAboutTextView *lab = self.bioTxt;
     
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    //paragraphStyle.lineSpacing = 10.f;
-    paragraphStyle.minimumLineHeight = 45.f;
-    paragraphStyle.maximumLineHeight = 30.f;
-    paragraphStyle.lineHeightMultiple = 50.f;
+    paragraphStyle.lineSpacing = 15.0f;
     
-    
-    NSString *string = @"Gopaflas fafasjf sjadlfkjsaldfj l lksjfljljk alslsdajflkjs ljflasj flasljljlkj sadlfj lsf ljlj saljf lsjljlj ljl aljljljalsf ljljljl aljlas jljl afj ljljljla s ljlaj lajl ljfasdljl lfsdajlj lalkdsfjlsaj flsfjlsajf lsjflj  sadjflj l sjflj ljlasdj";
+    NSString *string = @" ";
     NSDictionary *ats = @{
                           NSParagraphStyleAttributeName : paragraphStyle,
+                          NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0],
+                          NSForegroundColorAttributeName : [UIColor lightGrayColor],
                           };
     
     lab.attributedText = [[NSAttributedString alloc] initWithString:string attributes:ats];
-    [lab setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0]];
-
+    lab.text = @"";
 }
 
 
@@ -810,10 +807,20 @@
     
 }
 
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView
+{
+    if([textView.text length]) {
+        [self.textviewPlaceholderLabel setHidden:YES];
+    }
+    else {
+        [self.textviewPlaceholderLabel setHidden:NO];
+    }
+    
+    return YES;
+}
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
-    
     _currentTextField = textView;
     _profilePicOverlayView.hidden = YES;
     
@@ -874,25 +881,42 @@
     }
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
- replacementText:(NSString *)text
+- (void)textViewDidChange:(UITextView *)textView
 {
-    
-    return YES;
-    
-    if([[textView text] length] - range.length + text.length > 1000)
-        return NO;
-    
-    
-    // Any new character added is passed in as the "text" parameter
+    if([textView.text length]) {
+        [self.textviewPlaceholderLabel setHidden:YES];
+    }
+    else {
+        [self.textviewPlaceholderLabel setHidden:NO];
+    }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
     if ([text isEqualToString:@"\n"]) {
         // Be sure to test for equality using the "isEqualToString" message
         [textView resignFirstResponder];
         // Return FALSE so that the final '\n' character doesn't get added
-        return FALSE;
+        return NO;
     }
-    // For any other character return TRUE so that the text gets added to the view
-    return TRUE;
+    
+    NSString *string = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    UIFont *font = textView.font;
+    
+    CGSize maximumSize = textView.frame.size;
+    maximumSize.width -= 10.0f;
+    NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject:textView.font forKey: NSFontAttributeName];
+    CGSize expectedLabelSize2 = [string boundingRectWithSize:maximumSize
+                                                     options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
+                                                  attributes:stringAttributes context:nil].size;
+    
+    float numberOfLines = expectedLabelSize2.height / font.lineHeight;
+//    NSLog(@"numberOfLines = %f", numberOfLines);
+    if(numberOfLines > 3.0) {
+        return NO;
+    }
+    
+    return YES;
 }
 
 #pragma mark - Webservices Methods
