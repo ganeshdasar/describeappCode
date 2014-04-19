@@ -127,7 +127,7 @@
         
         [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
         [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
-        
+     
         
         
         [self createVideoPlayer];
@@ -398,7 +398,6 @@
     //[_contentView sendSubviewToBack:_frontImageView];
     
 
-    
     if(_index >= _postImage.images.count)
     {
         //_index = 0;
@@ -408,11 +407,24 @@
     CMPhotoModel *photoModel = _postImage.images[_index];
     [_frontImageView setImage:nil];
     [_frontImageView setImageWithURL:[NSURL URLWithString:photoModel.imageUrl]];
-    NSLog(@"Count:%d current index:%d url:%@",_postImage.images.count, _index, photoModel.imageUrl);
     
     _currentImageView = _frontImageView;
     _frontImageView = _backImageView;
     _backImageView = _currentImageView;
+    
+    
+    float duration = photoModel.duration;
+    if(_transitionImageTimer != nil)
+    {
+        [_transitionImageTimer invalidate];
+        _transitionImageTimer = nil;
+    }
+    
+    NSLog(@"-------------------Index:%d duration:%f",_index+1,duration);
+    _transitionImageTimer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(transitionNewImage) userInfo:Nil repeats:NO];
+    
+    _index++;
+    
 }
 
 -(void)reverseInterchangeViews
@@ -455,38 +467,24 @@
 //Temporarly keeping for having animations...
 -(void)startAniamtion
 {
-    [self performSelector:@selector(transitionNewImage) withObject:nil afterDelay:1.0];
+    _index ++;
+    [self transitionNewImage];
 }
 
 -(void)transitionNewImage
-{
-    
+{    
     if(_isNeedToPlayImages)
     {
-        
         if(_index != 0)
             [self presentView:(UIView *)_frontImageView onView:(UIView *)_backImageView];
-        
-        if(_index >= _postImage.images.count)
+        else
         {
-            //_index = 0;
-            return;
+            if(_postImage.images.count)
+            {
+                CMPhotoModel *photoModel = _postImage.images[_index];
+                _transitionImageTimer = [NSTimer scheduledTimerWithTimeInterval:photoModel.duration target:self selector:@selector(startAniamtion) userInfo:Nil repeats:NO];
+            }
         }
-        
-        CMPhotoModel *photoModel = [_postImage images][_index];
-        float duration = photoModel.duration;// [_postImage.durationList[_index] floatValue];
-        
-        if(_transitionImageTimer != nil)
-        {
-            [_transitionImageTimer invalidate];
-            _transitionImageTimer = nil;
-        }
-        
-        
-        NSLog(@"-------------------Index:%d duration:%f",_index+1,duration);
-        _transitionImageTimer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(transitionNewImage) userInfo:Nil repeats:NO];
-        
-        _index++;
     }
 }
 
@@ -568,7 +566,7 @@
 
 -(void)singleTap:(id)sender
 {
-    if(_enablePlayVideoTapnOnImage)
+    //if(_enablePlayVideoTapnOnImage)
     {
         if([_videoPlayer isPlayingVideo])
         {
@@ -579,13 +577,13 @@
             [_videoPlayer playVideo];
         }
     }
-    else
-    {
-        if(_delegate != nil && [_delegate respondsToSelector:@selector(postBodyViewDidTapOnImage:)])
-        {
-            [_delegate postBodyViewDidTapOnImage:self];
-        }
-    }
+//    else
+//    {
+//        if(_delegate != nil && [_delegate respondsToSelector:@selector(postBodyViewDidTapOnImage:)])
+//        {
+//            [_delegate postBodyViewDidTapOnImage:self];
+//        }
+//    }
 }
 
 

@@ -14,6 +14,7 @@
 @property (nonatomic,retain) NSString * imageUrl;
 
 @end
+
 @interface SearchPeopleData : NSString
 {
     

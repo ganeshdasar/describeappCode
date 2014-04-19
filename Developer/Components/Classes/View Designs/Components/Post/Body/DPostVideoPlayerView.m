@@ -1,4 +1,4 @@
-//
+ //
 //  DPostVideoPlayerView.m
 //  Describe
 //
@@ -129,7 +129,7 @@
             
             NSLog(@"Ready to play this video");
             
-//            [self playVideo];
+            //[self playVideo];
 //            if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didStartPlayingVideo)])
 //            {
 //                [self.delegate performSelector:@selector(didStartPlayingVideo)];

@@ -52,9 +52,10 @@
                                     <rect key="frame" x="123" y="24" width="75" height="75"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="haj-5R-IQi">
+                                <button opaque="NO" tag="111" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="haj-5R-IQi">
                                     <rect key="frame" x="123" y="24" width="75" height="75"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <state key="normal" backgroundImage="thumb_user_basic_info.png">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
@@ -82,10 +83,10 @@
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bFx-9s-hSl">
                                             <rect key="frame" x="60" y="2" width="47" height="42"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <state key="normal" title="Button" image="female_inactive.png">
+                                            <state key="normal" title="Button" image="swtch_sex_f_off.png">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
-                                            <state key="selected" image="female_active.png"/>
+                                            <state key="selected" image="swtch_sex_f_on.png"/>
                                             <connections>
                                                 <action selector="femaleClicked:" destination="-1" eventType="touchUpInside" id="Vsi-bb-Yq6"/>
                                             </connections>
@@ -93,10 +94,10 @@
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="doW-xu-t18">
                                             <rect key="frame" x="24" y="2" width="47" height="42"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <state key="normal" image="male_active.png">
+                                            <state key="normal" image="swtch_sex_m_off.png">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
-                                            <state key="selected" image="male_inactive.png"/>
+                                            <state key="selected" image="swtch_sex_m_on.png"/>
                                             <connections>
                                                 <action selector="maleClicked:" destination="-1" eventType="touchUpInside" id="hlC-k6-VHV"/>
                                             </connections>
@@ -105,8 +106,8 @@
                                             <rect key="frame" x="120" y="2" width="177" height="42"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         </imageView>
-                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="birthday" minimumFontSize="17" id="4GW-nf-ceg">
-                                            <rect key="frame" x="126" y="2" width="167" height="34"/>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="birthday" textAlignment="center" minimumFontSize="17" id="4GW-nf-ceg">
+                                            <rect key="frame" x="126" y="6" width="167" height="34"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
                                             <textInputTraits key="textInputTraits"/>
@@ -130,7 +131,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         </imageView>
                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="ckV-H9-q1o">
-                                            <rect key="frame" x="25" y="52" width="270" height="165"/>
+                                            <rect key="frame" x="35" y="59" width="251" height="111"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <rect key="contentStretch" x="0.0" y="1" width="1" height="1"/>
@@ -186,7 +187,7 @@
                                 <action selector="doneProfilePicChange:" destination="-1" eventType="touchUpInside" id="ko7-5B-WeD"/>
                             </connections>
                         </button>
-                        <view contentMode="scaleToFill" id="jQq-o9-tpc">
+                        <view tag="111" contentMode="scaleToFill" id="jQq-o9-tpc">
                             <rect key="frame" x="122" y="89" width="75" height="75"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -216,10 +217,16 @@
                     </textAttributes>
                     <items>
                         <navigationItem title="Date of birth" id="YDi-CR-KIk">
-                            <barButtonItem key="rightBarButtonItem" title="Done" id="iXT-pP-J1c">
+                            <barButtonItem key="leftBarButtonItem" title="Cancel" id="RSj-8l-CTn">
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
-                                    <action selector="dateDoneClicked:" destination="-1" id="qzN-QG-qbX"/>
+                                    <action selector="dateCancelButtonClicked:" destination="-1" id="rhz-b6-p99"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem key="rightBarButtonItem" title="Done" id="tSu-4Q-b53">
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <action selector="dateDoneClicked:" destination="-1" id="YHe-hn-RV5"/>
                                 </connections>
                             </barButtonItem>
                         </navigationItem>
@@ -252,6 +259,9 @@ AQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
 AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
 </data>
                     </timeZone>
+                    <connections>
+                        <action selector="dateSelected:" destination="-1" eventType="valueChanged" id="QIm-k4-GTD"/>
+                    </connections>
                 </datePicker>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -276,10 +286,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
     <resources>
         <image name="btn_txt_black_cancel.png" width="70" height="26"/>
         <image name="btn_txt_black_done.png" width="70" height="26"/>
-        <image name="female_active.png" width="47" height="42"/>
-        <image name="female_inactive.png" width="47" height="42"/>
-        <image name="male_active.png" width="47" height="42"/>
-        <image name="male_inactive.png" width="47" height="42"/>
+        <image name="swtch_sex_f_off.png" width="47" height="42"/>
+        <image name="swtch_sex_f_on.png" width="47" height="42"/>
+        <image name="swtch_sex_m_off.png" width="47" height="42"/>
+        <image name="swtch_sex_m_on.png" width="47" height="42"/>
         <image name="thumb_user_basic_info.png" width="75" height="75"/>
         <image name="thumb_user_basic_info_stroke.png" width="75" height="75"/>
         <image name="thumb_user_profile.png" width="155" height="155"/>

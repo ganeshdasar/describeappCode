@@ -32,8 +32,23 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     DescWelcomeViewController * welComeView = [[DescWelcomeViewController alloc]initWithNibName:@"DescWelcomeViewController" bundle:Nil];
+    
+    
+    
+    
+    
+    
+    
     [self declareNotificationsForSocialNetwork];
     UINavigationController * welcomeNav = [[UINavigationController alloc]initWithRootViewController:welComeView];
+    
+//    //****** temp code remove when no need ********//
+//    DescBasicinfoViewController *binfo = [[DescBasicinfoViewController alloc] initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+//    welcomeNav = [[UINavigationController alloc]initWithRootViewController:binfo];
+//    //*********** End for temp code ***************//
+    
+    
+    
     [welcomeNav setNavigationBarHidden:YES];
     [self.window setRootViewController:welcomeNav];
     self.window.backgroundColor = [UIColor whiteColor];

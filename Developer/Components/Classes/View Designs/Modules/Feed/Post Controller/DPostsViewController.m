@@ -84,9 +84,9 @@ static DPostsViewController *sharedFeedController;
 //    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
 //    [self.view addGestureRecognizer:rightSwipeGesture];
     
-    UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
-    [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
-    [self.view addGestureRecognizer:leftSwipeGesture];
+//    UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
+//    [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+//    [self.view addGestureRecognizer:leftSwipeGesture];
     
     //[self designPostView];
     [self designHeaderView];
