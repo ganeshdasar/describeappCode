@@ -48,7 +48,7 @@
 
 - (void)addHeaderViewForTable:(UIView *)headerView
 {
-    [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 60)];
+    [headerView setFrame:CGRectMake(0, 0, self.bounds.size.width, 70)];
     [_peopleListView setTableHeaderView:headerView];
     [_peopleListView reloadData];
 }
