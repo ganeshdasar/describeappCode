@@ -85,6 +85,8 @@ sizeWithAttributes:@{NSFontAttributeName:font}] : CGSizeZero
 //UserData saving key for checking sessionid
 #define USERSAVING_DATA_KEY                                           @"userSavingData"
 
+#define USER_PUSHNOTIFICATIONS                                   @"user_pushNotifications"
+#define USER_EMAILNOTIFICAIONS                                  @"user_emailNotifications"
 // Webservices Response Dict Keys
 #define WS_RESPONSEDICT_KEY_RESPONSEDATA                @"ResponseData"
 #define WS_RESPONSEDICT_KEY_ERROR                       @"ErrorInfo"

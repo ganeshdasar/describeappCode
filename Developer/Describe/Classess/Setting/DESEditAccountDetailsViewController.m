@@ -88,11 +88,7 @@
 - (void)intializeArray
 {
     _userInfoArray = [NSArray arrayWithObjects:@"Name",@"Gender",@"Birthday", nil];
-   // _userinfoDetailsArray = [NSArray arrayWithObjects:@"mahesh ",@"Male",@"jun-25-1990", nil];
      self.optionsArr = [[NSMutableArray alloc] initWithObjects:@"Male",@"Female", nil];
-   // self.dateString = @"March 22 2013";
-    //self.genderSting = @"Male";
-    //@"Not specified",
 }
 
 
@@ -273,7 +269,13 @@
         case DUserInformation:
         {
             if (indexPath.row == 1) {
-                [self inputAccessaryViewandTag:DMaleTag];
+                if ([[WSModelClasses sharedHandler].loggedInUserModel.gender isEqualToNumber:[NSNumber numberWithInt:1]]) {
+                    [WSModelClasses sharedHandler].loggedInUserModel.gender =[NSNumber numberWithInt:0];
+                }else if ([[WSModelClasses sharedHandler].loggedInUserModel.gender   isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    [WSModelClasses sharedHandler].loggedInUserModel.gender =[NSNumber numberWithInt:1];
+                }
+             [self.acountDetailsTableView reloadSections:[NSIndexSet indexSetWithIndex:DUserInformation] withRowAnimation:UITableViewRowAnimationNone];
+                
             }else if (indexPath.row==2){
                 [self inputAccessaryViewandTag:DdateTag];
             }
@@ -464,12 +466,18 @@
     [_myToolBar setItems:_toolBarItems animated:NO];
     [inActionSheet addSubview:_myToolBar];
     
-    UIPickerView *_pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 216)];
+    UIPickerView *_pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 170)];
     _pickerView.delegate = self;
     _pickerView.dataSource = self;
     _pickerView.showsSelectionIndicator=YES;
     [inActionSheet addSubview:_pickerView];
     [_pickerView setBackgroundColor:[UIColor whiteColor]];
+    for (int i = 0; i<self.optionsArr.count; i++) {
+        if ([[self.optionsArr objectAtIndex:i] isEqualToString:selectedTxt]) {
+            [_pickerView selectRow:i inComponent:0 animated:YES];
+        }
+    }
+    
  }
 
 
@@ -552,10 +560,9 @@
         case 1:{
             [[WSModelClasses sharedHandler]checkingTheUserPassword:textField.text UserUID:[NSString stringWithFormat:@"%@",[WSModelClasses sharedHandler].loggedInUserModel.userID]  response:^(BOOL success, id response){
                 if (success) {
-                    NSLog(@"responce %@",response);
                     NSString * message = [[(NSDictionary*)response valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
                     if ([message isEqualToString:@"FALSE"]) {
-                        UIAlertView* dialog = [[UIAlertView alloc]initWithTitle:@"Describe" message:@"Password wrong" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                        UIAlertView* dialog = [[UIAlertView alloc]initWithTitle:@"Describe" message:@"The password you have entered is incorrect." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
                         dialog.tag = 10;
                         [dialog show];
                     }else{
@@ -589,7 +596,7 @@
     aSheet.tag = inTag;
     aSheet.backgroundColor = [UIColor whiteColor];
     [aSheet showInView:self.view];
-    [aSheet setFrame:CGRectMake(0, screenRect.size.height-216, 320, 216)];
+    [aSheet setFrame:CGRectMake(0, screenRect.size.height-170, 320, 170)];
     self.pickerActionSheet = aSheet;
 //    return aSheet;
 }
@@ -628,6 +635,8 @@
     }else if ([[self.optionsArr objectAtIndex:row] isEqualToString:@"Female"]){
         [WSModelClasses sharedHandler].loggedInUserModel.gender =[NSNumber numberWithInt:0];
         gender = 0;
+    }else{
+        
     }
     isChangedUserData = NO;
     return [self.optionsArr objectAtIndex:row];
@@ -696,6 +705,8 @@
 -(void)removeTheKeysInUserDefaults
 {
    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USER_PUSHNOTIFICATIONS];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USER_EMAILNOTIFICAIONS];
     [[DESocialConnectios sharedInstance]logoutGooglePlus];
     [[DESocialConnectios sharedInstance]logoutFacebook];
     [[NSUserDefaults standardUserDefaults]synchronize ];

@@ -54,6 +54,7 @@ static WSModelClasses *_sharedInstance;
              _loggedInUserModel = userModelObj;
                  NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_SignIn]};
              [_delegate didFinishWSConnectionWithResponse:signInResponseDict];
+             [self getTheUserPushNotification];
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
              NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_SignIn]};
@@ -1017,22 +1018,28 @@ static WSModelClasses *_sharedInstance;
 }
 
 
--(void)getTheUserPushNotificationresponce:(void(^)(BOOL success, id response))response;
+-(void)getTheUserPushNotification
 {
     NSString *url = [NSString stringWithFormat:@"%@/getUserPushNotifications/UserUID=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             response(YES, responseObject);
+             [self saveTheUserPushNotifications:[[(NSDictionary*)responseObject valueForKeyPath:@"DataTable.UserData"]objectAtIndex:0]];
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             response(NO, error);
          }
      ];
-    
 }
 
+-(void)saveTheUserPushNotifications:(NSDictionary*)responceDic
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:responceDic forKeyPath:USER_PUSHNOTIFICATIONS];
+    [[NSUserDefaults standardUserDefaults]synchronize];
+    [self getTHeUserEmailNotifications];
+    
+}
 -(void)updatTheUserPushNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc responce:(void(^)(BOOL success, id response))response
 {
     
@@ -1050,7 +1057,7 @@ static WSModelClasses *_sharedInstance;
     
 }
 
--(void)getTHeUserEmailNotificationsresponce:(void(^)(BOOL success, id response))response
+-(void)getTHeUserEmailNotifications
 {
 //    http://mirusstudent.com/service/describe-service/getUserEmailNotifications/UserUID=3
     NSString *url = [NSString stringWithFormat:@"%@//getUserEmailNotifications/UserUID=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID];
@@ -1058,13 +1065,21 @@ static WSModelClasses *_sharedInstance;
     [manager GET:url
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             response(YES, responseObject);
+             [self saveTheUserEmailNotifications:[[(NSDictionary*)responseObject valueForKeyPath:@"DataTable.UserData"]objectAtIndex:0]];
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             response(NO, error);
          }
      ];
 }
+
+
+-(void)saveTheUserEmailNotifications:(NSDictionary *)responceDic
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:responceDic forKeyPath:USER_EMAILNOTIFICAIONS];
+    [[NSUserDefaults standardUserDefaults]synchronize];
+}
+
 
 -(void)updatTheUserEmailNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc activityUpdates:(NSNumber*)activitystc importentUpdates:(NSNumber*)importentStc responce:(void(^)(BOOL success, id response))response
 {
