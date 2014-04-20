@@ -26,6 +26,7 @@ typedef enum {
 {
     CGFloat lastScale;
     CGPoint lastPanPoint;
+    UIImageView *abcImgView;
 }
 
 @property (nonatomic, assign) ProfileMode currentProfileMode;
@@ -56,12 +57,17 @@ typedef enum {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    if(_profileUserID) {
-        [self fetchUserModelForUserId:_profileUserID];
-    }
-    else {
-        [self fetchUserModelForUserId:[[WSModelClasses sharedHandler] loggedInUserModel].userID];
-    }
+//    if(_profileUserID) {
+//        [self fetchUserModelForUserId:_profileUserID];
+//        _currentProfileType = kProfileTypeOthers;
+//    }
+//    else {
+//        [self fetchUserModelForUserId:[[WSModelClasses sharedHandler] loggedInUserModel].userID];
+//        _currentProfileType = kProfileTypeOwn;
+//    }
+    
+    _followUnfollowBtn.hidden = YES;
+    _editBtn.hidden = YES;
     
     // hide the navigation bar
     self.navigationController.navigationBarHidden = YES;
@@ -85,7 +91,7 @@ typedef enum {
     [_profilePicImageViewController.imageView addGestureRecognizer:_profilePicTapGesture];
     
     [_canvasImageViewController placeSelectedImage:[UIImage imageNamed:@"profileSampleImage.png"] withCropRect:CGRectNull];
-    [self profileModeChangedTo:kProfileModeNormal];
+//    [self profileModeChangedTo:kProfileModeNormal];
     
     [self addSwipeViewController];
 
@@ -155,7 +161,7 @@ typedef enum {
 }
 
 
--(void)loadProfileDetails:(NSDictionary *)dictionary
+- (void)loadProfileDetails:(NSDictionary *)dictionary
 {
     NSMutableDictionary *profileDict = [[NSMutableDictionary alloc] initWithDictionary:dictionary[@"UserProfile"] copyItems:YES];
     if(profileDict[@"ProfileCanvas"]) {
@@ -164,7 +170,16 @@ typedef enum {
     
     UsersModel *modelObj = [[UsersModel alloc] initWithDictionary:profileDict];
     _profileUserModel = modelObj;
+    
+    if([modelObj.userID integerValue] == [[[WSModelClasses sharedHandler] loggedInUserModel].userID integerValue]) {
+        _currentProfileType = kProfileTypeOwn;
+    }
+    else {
+        _currentProfileType = kProfileTypeOthers;
+    }
+    
     [self showProfileDetailOnView];
+    [self profileModeChangedTo:kProfileModeNormal];
 }
 
 
@@ -180,7 +195,20 @@ typedef enum {
     
     _profileStatusTxtView.text = _profileUserModel.statusMessage ? _profileUserModel.statusMessage : @"";
     
-    [_profilePicImageViewController loadImageFromURLString:_profileUserModel.profileImageName];
+    if(_profileUserModel.snippetPosition != nil) {
+        CGRect snippetFrame = _snippetRegionImgView.frame;
+        snippetFrame.origin.y = [_profileUserModel.snippetPosition doubleValue];
+        _snippetRegionImgView.frame = snippetFrame;
+    }
+    
+    NSString *profilePicStr = _profileUserModel.profileImageName;
+    if(profilePicStr != nil) {
+        profilePicStr = [profilePicStr lastPathComponent];
+        profilePicStr = [NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",profilePicStr];
+        [_profilePicImageViewController loadImageFromURLString:profilePicStr];
+    }
+    
+//    [_profilePicImageViewController loadImageFromURLString:_profileUserModel.profileImageName];
     [_canvasImageViewController loadImageFromURLString:_profileUserModel.canvasImageName];
 }
 
@@ -420,15 +448,27 @@ typedef enum {
 {
     // here we need to send the edited details to server and disable editing mode (change editingDoneBtn to editBtn)
     _profileUserModel.snippetPosition = [NSString stringWithFormat:@"%0.2f", CGRectGetMinY(_snippetRegionImgView.frame)];
+    CGFloat screenScaleValue = [[UIScreen mainScreen] scale];
     
-    UIImage *snippetImg = [_canvasImageViewController getImageCroppedAtVisibleRect:_snippetRegionImgView.frame];
+    CGRect snippetCropRect = _snippetRegionImgView.frame;
+    snippetCropRect.origin.x = CGRectGetMinX(_canvasImageViewController.cropRect);
+    snippetCropRect.origin.y = (CGRectGetMinY(snippetCropRect) * screenScaleValue) + CGRectGetMinY(_canvasImageViewController.cropRect);
+    snippetCropRect.size.width *= screenScaleValue;
+    snippetCropRect.size.height *= screenScaleValue;
+    UIImage *snippetImg = [_canvasImageViewController getImageCroppedAtVisibleRect:snippetCropRect];
+//    if(abcImgView == nil)
+//        abcImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 200, 320.0, 50.0)];
+//    [abcImgView setImage:snippetImg];
+//    [self.view addSubview:abcImgView];
+//    [self.view bringSubviewToFront:abcImgView];
+//    return;
     
     // applying blur effect on the snippet image
     UIImage *blurSnippetImg = [snippetImg applyBlurWithRadius:20.0f tintColor:[UIColor clearColor] saturationDeltaFactor:1.8f maskImage:nil];
     
     [[WSModelClasses sharedHandler] saveUserProfile:_profileUserModel
-                                         profilePic:_profilePicImageViewController.imageView.image
-                                          canvasPic:_canvasImageViewController.imageView.image
+                                         profilePic:[_profilePicImageViewController getImageCroppedAtVisibleRect:_profilePicImageViewController.cropRect]
+                                          canvasPic:[_canvasImageViewController getImageCroppedAtVisibleRect:_canvasImageViewController.cropRect]
                                          snippetPic:blurSnippetImg];
     
     [self profileModeChangedTo:kProfileModeNormal];

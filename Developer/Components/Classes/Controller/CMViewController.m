@@ -586,7 +586,7 @@
     //[self imageWithImage:image scaledToSize:CGSizeMake(CGRectGetWidth(DEFAULT_IMAGE_RECT), CGRectGetHeight(DEFAULT_IMAGE_RECT))];
 //    image = [_aspectFillImageController imageWithImage:image scaledToSize:_cameraContainerView.frame.size];
     [_aspectFillImageController resetImageContentToEmpty];
-    [_aspectFillImageController placeSelectedImage:image withCropRect:CGRectMake(0, 0, 320.0, 320.0)];
+    [_aspectFillImageController placeSelectedImage:image withCropRect:CGRectNull];
     [_aspectFillImageController calculateCropRectForSelectImage];
     
     CMPhotoModel *modelObj = self.capturedPhotoList[_selectedImageCount];

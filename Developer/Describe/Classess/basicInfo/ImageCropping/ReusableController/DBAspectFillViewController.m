@@ -74,25 +74,29 @@
     // AspectFill effect
     // step 1: Check image width & height with screenSize
 //    if(imageSize.width < _screenSize.width || imageSize.height < _screenSize.height) {
+        CGFloat screenScaleValue = [[UIScreen mainScreen] scale];
+    
         // find x calcualtion factor and y factor too
         CGFloat xFactor = imageSize.width/imageSize.height;
         CGFloat yFactor = imageSize.height/imageSize.width;
+    
+    
         
         CGSize newImgSize = imageSize;
         // identify out of width & height which is less
         if(imageSize.width < imageSize.height) {
             // width is less
-            newImgSize.width = _screenSize.width;// * 2.0f;
-            newImgSize.height = _screenSize.width * yFactor;// * 2.0f;
+            newImgSize.width = _screenSize.width * screenScaleValue;
+            newImgSize.height = _screenSize.width * yFactor * screenScaleValue;
         }
         else {
             // height is less
-            newImgSize.height = _screenSize.height;// * 2.0f;
-            newImgSize.width = _screenSize.height * xFactor;// * 2.0f;
+            newImgSize.height = _screenSize.height * screenScaleValue;
+            newImgSize.width = _screenSize.height * xFactor * screenScaleValue;
         }
         
-        imageSize.width = newImgSize.width;///2.0f;
-        imageSize.height = newImgSize.height;///2.0f;
+        imageSize.width = newImgSize.width/screenScaleValue;
+        imageSize.height = newImgSize.height/screenScaleValue;
         image = [self imageWithImage:image scaledToSize:newImgSize];
 //    }
     
@@ -105,6 +109,10 @@
     _imageContentScrollView.contentSize = imageSize;
     
     if(!CGRectIsNull(cropRect)) {
+        cropRect.origin.x /= screenScaleValue;
+        cropRect.origin.y /= screenScaleValue;
+        cropRect.size.width /= screenScaleValue;
+        cropRect.size.height /= screenScaleValue;
         [_imageContentScrollView zoomToRect:cropRect animated:NO];
     }
     else {
@@ -186,16 +194,17 @@
         // the logic here is to check the zoomscale of scrollview. then using zoomscale value
         // 1. we will find the x, y value for crop rect with respect to contentoffset of scrollview
         // 2. we will find the width, height value for crop rect with respect to width and height of selectedImageView
+        CGFloat screenScaleValue = [[UIScreen mainScreen] scale];
         
         CGFloat zoomScale = _imageContentScrollView.zoomScale;
         
         // Step1: Find x and y value using contentOffset of scrollview
-        CGFloat xVal = _imageContentScrollView.contentOffset.x/zoomScale;
-        CGFloat yVal = _imageContentScrollView.contentOffset.y/zoomScale;
+        CGFloat xVal = _imageContentScrollView.contentOffset.x/zoomScale * screenScaleValue;
+        CGFloat yVal = _imageContentScrollView.contentOffset.y/zoomScale * screenScaleValue;
         
         // Step2: Find width and height value
-        CGFloat widthVal = CGRectGetWidth(_imageContentScrollView.frame)/zoomScale;
-        CGFloat heightVal = CGRectGetHeight(_imageContentScrollView.frame)/zoomScale;
+        CGFloat widthVal = CGRectGetWidth(_imageContentScrollView.frame)/zoomScale * screenScaleValue;
+        CGFloat heightVal = CGRectGetHeight(_imageContentScrollView.frame)/zoomScale * screenScaleValue;
         
         _cropRect = CGRectMake(xVal, yVal, widthVal, heightVal);
         

@@ -44,7 +44,6 @@
     
     NSArray *_postDetails;
     
-    ProfileViewController *_profileController2;
     DPostListView *_listView2;
     IBOutlet UIView *_contentView;
 }
@@ -58,7 +57,6 @@
     if (self) {
         // Custom initialization
         _profileController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
-        
         _profileController.delegate = self;
     }
     return self;
@@ -112,7 +110,7 @@
 }
 
 
--(void)showPreviousScreen:(ProfileViewController *)profileViewController
+- (void)showPreviousScreen:(ProfileViewController *)profileViewController
 {
     //move this screen to unvisible area to appear profile details...
    if(1)//Check the number of moves available here...
@@ -132,7 +130,7 @@
     }
 }
 
--(void)showNextScreen:(ProfileViewController *)profileViewController
+- (void)showNextScreen:(ProfileViewController *)profileViewController
 {
     [UIView animateWithDuration:0.5 animations:^{
         CGRect profileFrame = _profileController.view.frame;
@@ -144,7 +142,7 @@
     }];
 }
 
--(void)designSegmentListView
+- (void)designSegmentListView
 {
     NSMutableArray *segmentList = [[NSMutableArray alloc] init];
     {
@@ -174,7 +172,7 @@
     [_segmentListView selectSegmentAtIndex:0];
 }
 
--(void)setProfileId:(NSString *)profileId
+- (void)setProfileId:(NSString *)profileId
 {
     _profileId = profileId;
     
@@ -183,13 +181,13 @@
     
 }
 
--(void)segmentViewDidSelected:(DSegmentView *)segmentView
+- (void)segmentViewDidSelected:(DSegmentView *)segmentView
 {
    
   // [self designListView:_posts];
 }
 
--(void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
+- (void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
 {
     NSArray *postList = response[@"DataTable"];
     NSLog(@"Post Details Reponse: %@",response);
@@ -305,6 +303,7 @@
     
     _postDetails = postModelList;
     _posts= postModelList;
+    
     _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList withHeaderView:[[UIView alloc] init]];
     [_listView setDelegate:self];
     [_contentView addSubview:_listView];
@@ -317,7 +316,7 @@
     
 }
 
--(void)segmentViewDidSelected:(DSegmentView *)segmentView atIndex:(NSNumber *)index
+- (void)segmentViewDidSelected:(DSegmentView *)segmentView atIndex:(NSNumber *)index
 {
     int indexx = [index integerValue];
     switch (indexx) {
@@ -345,29 +344,24 @@
     [_contentView bringSubviewToFront:_segmentListView];
     [_contentView bringSubviewToFront:_headerView];
 }
--(void)removePostsListView
+
+- (void)removePostsListView
 {
-    
-    
-    
-    if(_listView != nil)
-    {
+    if(_listView != nil) {
         [_listView removeFromSuperview];
         _listView = nil;
     }
 }
 
-
--(void)removeViewFromSuperView:(UIView *)view
+- (void)removeViewFromSuperView:(UIView *)view
 {
-    if(view != nil)
-    {
+    if(view != nil) {
         [view removeFromSuperview];
         view = nil;
     }
 }
 
--(void)designHeaderView
+- (void)designHeaderView
 {
     UIButton *backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
@@ -376,7 +370,7 @@
     [_headerView designHeaderViewWithTitle:@"Profile" andWithButtons:@[backButton]];
 }
 
--(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+- (void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
 {
     HeaderButtonType buttonType = headerButton.tag;
     switch (buttonType) {
@@ -398,7 +392,7 @@
     }
 }
 
--(NSArray *)parseFollowingsList:(NSDictionary *)response
+- (NSArray *)parseFollowingsList:(NSDictionary *)response
 {
     if(response == nil) return nil;
     
@@ -406,20 +400,17 @@
     
     NSArray *peopleList = response[@"DataTable"];
     NSInteger count = peopleList.count;
-    for (int i=0; i<count; i++)
-    {
+    for (int i=0; i<count; i++) {
         NSDictionary *dict = peopleList[i];
         NSDictionary *people = dict[@"DescribeUserProfileFollowings"];
         SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
         [list addObject:peopleInfo];
     }
     
-    
     return list;
 }
 
-
--(NSArray *)parseFollowersList:(NSDictionary *)response
+- (NSArray *)parseFollowersList:(NSDictionary *)response
 {
     if(response == nil) return nil;
     
@@ -427,8 +418,7 @@
     
     NSArray *peopleList = response[@"DataTable"];
     NSInteger count = peopleList.count;
-    for (int i=0; i<count; i++)
-    {
+    for (int i=0; i<count; i++) {
         NSDictionary *dict = peopleList[i];
         NSDictionary *people = dict[@"DescribeUserProfileFollowers"];
         SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
@@ -438,9 +428,7 @@
     return list;
 }
 
-
-
--(void)designFollowingList
+- (void)designFollowingList
 {
     if(_followingList != nil)
     {
@@ -461,27 +449,9 @@
     [_contentView bringSubviewToFront:_headerView];
 }
 
-
-
--(void)createAlerternateProfileControllers
+- (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
 {
-    if(_profileController2 == nil)
-    {
-        _profileController2 = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
-        [self.view addSubview:_profileController2.view];
-        
-        
-        CGRect profileCont2Rect = _profileController2.view.frame;
-        profileCont2Rect.origin.x = 320;
-        [_profileController2.view setFrame:profileCont2Rect];
-    }
-}
-
-
--(void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
-{
-    if(listView.tag ==  111)//Following list...
-    {
+    if(listView.tag ==  111) { //Following list...
         //Navigate the contentview and _profileviewController2 to unvisible and visible...
         SearchPeopleData *userDetail = _followings[index];
         NSString *profileId = userDetail.profileUserUID;
@@ -489,25 +459,8 @@
         DProfileDetailsViewController *profileC = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
         [profileC setProfileId:profileId];
         [self.navigationController pushViewController:profileC animated:YES];
-        
-//        [self createAlerternateProfileControllers];
-//        
-//        CGRect contentViewRect  = _contentView.frame;
-//        CGRect profile2Rect     = _profileController2.view.frame;
-//        
-//        contentViewRect.origin.x    = -320;
-//        profile2Rect.origin.x       = 0;
-//        
-//        [UIView animateWithDuration:0.5 animations:^{
-//            //Animate the views....
-//            [_contentView setFrame:contentViewRect];
-//            [_profileController2.view setFrame:profile2Rect];
-//        } completion:^(BOOL finished) {
-//           //Finished the content...
-//        }];
     }
-    else//Followers list...
-    {
+    else { //Followers list...
         SearchPeopleData *userDetail = _followers[index];
         NSString *profileId = userDetail.profileUserUID;
         
@@ -517,54 +470,45 @@
     }
 }
 
-
-
--(void)getFollowingList
+- (void)getFollowingList
 {
     NSString *currentUserId = [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue];
     NSString *profileId = self.profileId;
     NSInteger pageNumber = 0;
     
     [[WSModelClasses sharedHandler] getFollowingListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumber response:^(BOOL success, id response) {
-        if(success)
-        {
+        if(success) {
             //Need to parse the data...
             NSLog(@"Follwing List:%@",response);
             _followings = [self parseFollowingsList:response];
             [self designFollowingList];
         }
-        else
-        {
+        else {
             //Failed to get the details of the following list...
             NSLog(@"Failed to get the followings list:%@",response);
         }
     }];
 }
 
-
-
--(void)getFollowersList
+- (void)getFollowersList
 {
     NSString *currentUserId = [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue];
     NSString *profileId = self.profileId;
     NSInteger pageNumber = 0;
     
     [[WSModelClasses sharedHandler] getFollowersListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumber response:^(BOOL success, id response) {
-        if(success)
-        {
+        if(success) {
             //Need to parse the data...
             NSLog(@"Followers List:%@",response);
             _followers = [self parseFollowersList:response];
             [self desingFollwerList];
         }
-        else
-        {
+        else {
             //Failed to get the details of the following list...
             NSLog(@"Failed to get the follwers list:%@",response);
         }
     }];
 }
-
 
 - (void)desingFollwerList
 {
@@ -586,14 +530,11 @@
     [_contentView bringSubviewToFront:_headerView];
 }
 
--(void)designPostListView
+- (void)designPostListView
 {
- 
-
-    
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] anotherUserId:self.profileId response:^(BOOL success, id response) {
+    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] anotherUserId:self.profileId pageNumber:0 response:^(BOOL success, id response) {
         if(success)
         {
             //Success the ...
@@ -604,13 +545,9 @@
             [self getPostDetailsResponse:nil withError:response];
         }
     }];
-    
-    
-    
-//    [self designListView:nil];
 }
 
--(void)designListView:(NSArray *)array
+- (void)designListView:(NSArray *)array
 {
     if(_listView != nil)
     {
@@ -623,26 +560,24 @@
     [_contentView addSubview:_listView];
 }
 
--(void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger
+- (void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger
 {
-    if([finger isEqualToString:@"HOLDING"])
-    {
+    if([finger isEqualToString:@"HOLDING"]) {
         _holdingFingerOnPostListView = YES;
     }
-    else
-    {
+    else {
         _holdingFingerOnPostListView = NO;
     }
     _currentContentOffset = scrollView.contentOffset;
 
 }
 
--(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     _currentContentOffset = scrollView.contentOffset;
 }
 
--(void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction
+- (void)scrollView:(UIScrollView *)scrollView scrollingDirection:(NSString *)direction
 {
     if(!_holdingFingerOnPostListView)
         return;
@@ -699,7 +634,7 @@
     }
 }
 
--(void)userProfileSelectedForPost:(DPost *)post
+- (void)userProfileSelectedForPost:(DPost *)post
 {
     DUser *user = [post user];
     NSLog(@"user profile id:%@", user.userId);

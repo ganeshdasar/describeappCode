@@ -244,8 +244,8 @@
 }
 
 
--(void)reloadTableView:(NSMutableArray*)inArray{
-    
+- (void)reloadTableView:(NSMutableArray*)inArray
+{
     self._peopleList = inArray;
     [_peopleListView reloadData];
 }
