@@ -286,6 +286,7 @@ typedef enum {
             [fbBtn setSelected:!fbBtn.isSelected];
         }
         else {
+            [[WSModelClasses sharedHandler] showLoadView];
             [[DESocialConnectios sharedInstance] facebookSignIn];
         }
     }
@@ -307,6 +308,7 @@ typedef enum {
             [gpBtn setSelected:!gpBtn.isSelected];
         }
         else {
+            [[WSModelClasses sharedHandler] showLoadView];
             [[DESocialConnectios sharedInstance] googlePlusSignIn];
         }
     }
@@ -323,24 +325,76 @@ typedef enum {
 #pragma mark - DESocialConnectiosDelegate Method
 - (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray *)inFriendsList
 {
-    if(responseDict == nil)
-        return;
-    
-    CMShareSocialCell *socialCell = (CMShareSocialCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionShare]];
-    if(socialCell == nil) {
+    if(responseDict == nil) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
         return;
     }
     
-    if(fbSelected == YES) {
-        fbSelected = NO;
-        [socialCell.fbButton setSelected:YES];
-        [socialCell.fbButton setImage:[UIImage imageNamed:@"btn_shareScreen_fb_off.png"] forState:UIControlStateNormal];
+    WSModelClasses * dataClass = [WSModelClasses sharedHandler];
+    dataClass.delegate = self;
+    
+    if (fbSelected == YES) {
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"fb" andCheckValue:[responseDict valueForKey:@"id"]];
     }
-    else if(gplusSelected == YES) {
-        gplusSelected = NO;
-        [socialCell.gpButton setSelected:YES];
-        [socialCell.gpButton setImage:[UIImage imageNamed:@"btn_shareScreen_goog_off.png"] forState:UIControlStateNormal];
+    else if (gplusSelected == YES){
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"gplus" andCheckValue:[responseDict valueForKey:@"id"]];
     }
+
+}
+
+- (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
+{
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    
+    if ([[[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
+        // make either facebook / Gplus button as ON
+        CMShareSocialCell *socialCell = (CMShareSocialCell *)[self.shareTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:ShareSectionShare]];
+        if(socialCell == nil) {
+            return;
+        }
+        
+        if(fbSelected == YES) {
+            fbSelected = NO;
+            [socialCell.fbButton setSelected:YES];
+            [socialCell.fbButton setImage:[UIImage imageNamed:@"btn_shareScreen_fb_off.png"] forState:UIControlStateNormal];
+        }
+        else if(gplusSelected == YES) {
+            gplusSelected = NO;
+            [socialCell.gpButton setSelected:YES];
+            [socialCell.gpButton setImage:[UIImage imageNamed:@"btn_shareScreen_goog_off.png"] forState:UIControlStateNormal];
+        }
+        
+    }
+    else {
+        NSString * messageStr = @"";
+        if (fbSelected == YES) {
+            messageStr = NSLocalizedString(@"This Facebook account is already associated with another Describe account.", @"");
+            [[DESocialConnectios sharedInstance] logoutFacebook];
+        }
+        else if (gplusSelected == YES){
+            messageStr = NSLocalizedString(@"This Google+ account is already associated with another Describe account.", @"");
+            [[DESocialConnectios sharedInstance] logoutGooglePlus];
+        }
+        
+        [self showAlertWithTitle:NSLocalizedString(@"Describe", @"") message:messageStr tag:0 delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    }
+}
+
+- (void)showAlertWithTitle:(NSString *)titleString message:(NSString *)message tag:(NSUInteger)tagValue delegate:(id /*<UIAlertViewDelegate>*/)target cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:message delegate:target cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+    
+    // get the variable arguments into argumentList(va_list) using va_start and then iterate through list to get all the button titles
+    // add the button titles to the alert
+    va_list args;
+    va_start(args, otherButtonTitles);
+    for(NSString *arg = otherButtonTitles; arg != nil; arg = va_arg(args, NSString*)) {
+        [alert addButtonWithTitle:arg];
+    }
+    va_end(args);
+    
+    alert.tag = tagValue;
+    [alert show];
 }
 
 #pragma mark DESLocationManagerDelegate Method

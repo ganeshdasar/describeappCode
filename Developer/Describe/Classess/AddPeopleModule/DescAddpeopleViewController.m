@@ -23,6 +23,7 @@
 #import "DesSearchPeopleViewContrlooerViewController.h"
 #import "DESSettingsViewController.h"
 #import "DProfileDetailsViewController.h"
+#import "DESAppDelegate.h"
 
 @interface DescAddpeopleViewController ()<DSearchBarComponentDelegate,WSModelClassDelegate,MBProgressHUDDelegate, DSocialMediaListViewDelegate,DESocialConnectiosDelegate, DHeaderViewDelegate, DPeopleListDelegate>
 {
@@ -51,6 +52,8 @@
     BOOL shouldLoadMoreInvite;
     NSInteger pageLoadNumberInvite;
     NSMutableArray *invitationList;
+    
+    NSInteger selecedSocialBtnTag;
 }
 @end
 
@@ -87,6 +90,7 @@
         //Iphone  3.5 inch
     }
     self.selectedType.selected = NO;
+    selecedSocialBtnTag = -1;
     
     shouldLoadMoreInvite = NO;
     shouldLoadMoreRecommend = NO;
@@ -284,35 +288,107 @@
 #pragma mark Socialnetwork actions
 - (void)requestToFaceboookForFriendsList:(UIButton*)inSender
 {
-    inSender.selected = YES;
-    inSender.selected = YES;
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"faceBookButtonClicked" object:nil];
-    [[DESocialConnectios sharedInstance] facebookSignIn];
-    [DESocialConnectios sharedInstance].delegate =self;
-    
+    if([[DESocialConnectios sharedInstance] isFacebookLoggedIn]) {
+        inSender.selected = YES;
+    }
+    else {
+        selecedSocialBtnTag = [inSender tag];
+        [[WSModelClasses sharedHandler] showLoadView];
+        [DESocialConnectios sharedInstance].delegate = self;
+        [[DESocialConnectios sharedInstance] facebookSignIn];
+    }
 }
 
 - (void)requestToGooglePlusForFriendsList:(UIButton*)inSender
 {
-    inSender.selected = YES;
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"googlePlusButtonClicked" object:nil];
-    [[DESocialConnectios sharedInstance] googlePlusSignIn];
-    [DESocialConnectios sharedInstance].delegate = self;
-    inSender.selected = YES;
+    if([[DESocialConnectios sharedInstance] isGooglePlusLoggeIn]) {
+        inSender.selected = YES;
+    }
+    else {
+        selecedSocialBtnTag = [inSender tag];
+        [[WSModelClasses sharedHandler] showLoadView];
+        [[DESocialConnectios sharedInstance] googlePlusSignIn];
+        [DESocialConnectios sharedInstance].delegate = self;
+    }
 }
 
+- (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
+{
+    if(responseDict == nil) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
+        return;
+    }
+    
+    WSModelClasses * dataClass = [WSModelClasses sharedHandler];
+    dataClass.delegate = self;
+    
+    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+    if (delegate.isFacebook) {
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"fb" andCheckValue:[responseDict valueForKey:@"id"]];
+    }
+    else if (delegate.isGooglePlus){
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"gplus" andCheckValue:[responseDict valueForKey:@"id"]];
+    }
+}
 
--(void)goToBack:(id)sender{
+- (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
+{
+    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    
+    if ([[[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
+        // make either facebook / Gplus button as ON
+        [_mediaListView makeSocialBtnSelected:YES withTag:selecedSocialBtnTag];
+    }
+    else {
+        [_mediaListView makeSocialBtnSelected:YES withTag:selecedSocialBtnTag];
+        NSString * messageStr = @"";
+        if (delegate.isFacebook) {
+            messageStr = NSLocalizedString(@"This Facebook account is already associated with another Describe account.", @"");
+            [[DESocialConnectios sharedInstance] logoutFacebook];
+        }
+        else if (delegate.isGooglePlus){
+            messageStr = NSLocalizedString(@"This Google+ account is already associated with another Describe account.", @"");
+            [[DESocialConnectios sharedInstance] logoutGooglePlus];
+        }
+        
+        [self showAlertWithTitle:NSLocalizedString(@"Describe", @"") message:messageStr tag:0 delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    }
+}
+
+- (void)showAlertWithTitle:(NSString *)titleString message:(NSString *)message tag:(NSUInteger)tagValue delegate:(id /*<UIAlertViewDelegate>*/)target cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:message delegate:target cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+    
+    // get the variable arguments into argumentList(va_list) using va_start and then iterate through list to get all the button titles
+    // add the button titles to the alert
+    va_list args;
+    va_start(args, otherButtonTitles);
+    for(NSString *arg = otherButtonTitles; arg != nil; arg = va_arg(args, NSString*)) {
+        [alert addButtonWithTitle:arg];
+    }
+    va_end(args);
+    
+    alert.tag = tagValue;
+    [alert show];
+}
+
+- (void)goToBack:(id)sender
+{
     [self.navigationController popViewControllerAnimated:YES];
 }
--(void)nextButton:(id)inSender{
+
+- (void)nextButton:(id)inSender
+{
     
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 #pragma mark Design PeopleListView
 - (void)designPeopleListView:(NSArray *)list
 {
@@ -408,12 +484,12 @@
     switch (serviceType) {
         case kWebserviesType_addPeople_wRecommended:
         {
-            [self parsingTheData:responseDict];
+            [self parsingTheData:responseDict forInvitation:NO];
             break;
         }
         case kWebserviesType_addPeople_wInvitations:
         {
-            [self parsingTheData:responseDict];
+            [self parsingTheData:responseDict forInvitation:YES];
             break;
         }
         default:
@@ -423,7 +499,7 @@
     
 }
 
-- (void)parsingTheData:(NSDictionary*)responceDict
+- (void)parsingTheData:(NSDictionary*)responceDict forInvitation:(BOOL)isInvitation
 {
     NSMutableArray  * peopleArray = [[NSMutableArray alloc]init];
     
@@ -441,7 +517,9 @@
         
     }
     
-    if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+    BOOL reloadList = NO;
+    
+    if (isInvitation == YES) {
         if(pageLoadNumberInvite == 0) {
             [invitationList removeAllObjects];
         }
@@ -453,8 +531,11 @@
             pageLoadNumberInvite += 1;
         }
         
-        peopleArray = invitationList;
-        [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_invite_all.png"] forState:UIControlStateNormal];
+        if(isSearching && [[WSModelClasses sharedHandler] loggedInUserModel].isInvitation == YES) {
+            reloadList = YES;
+            peopleArray = invitationList;
+            [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_invite_all.png"] forState:UIControlStateNormal];
+        }
     }
     else {
         if(pageLoadNumberRecommend == 0) {
@@ -468,19 +549,24 @@
             pageLoadNumberRecommend += 1;
         }
         
-        peopleArray = werecommendedList;
-        [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_follow_all.png"] forState:UIControlStateNormal];
+        if(isSearching && [[WSModelClasses sharedHandler] loggedInUserModel].isInvitation == NO) {
+            reloadList = YES;
+            peopleArray = werecommendedList;
+            [followAndInviteImgView setImage:[UIImage imageNamed:@"btn_follow_all.png"] forState:UIControlStateNormal];
+        }
     }
     
-    if (_peoplelistView != nil) {
-        [_peoplelistView reloadTableView:peopleArray];
+    if(reloadList == YES) {
+        if (_peoplelistView != nil) {
+            [_peoplelistView reloadTableView:peopleArray];
+        }
+        else {
+            [self designPeopleListView:peopleArray];
+            [self.view bringSubviewToFront:followAndInviteView];
+        }
+        
+        [self showStatusView:YES];
     }
-    else {
-        [self designPeopleListView:peopleArray];
-        [self.view bringSubviewToFront:followAndInviteView];
-    }
-    
-    [self showStatusView:YES];
 }
 
 - (void)addSearchBarView

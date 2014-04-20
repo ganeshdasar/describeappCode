@@ -24,7 +24,7 @@
 #import "ProfileViewController.h"
 
 #define FRAME CGRectMake(0, 0, 320, 480);
-#define BUTTONFRAME CGRectMake(125, CGRectGetHeight([[UIScreen mainScreen] bounds])-205.0, 70, 26);
+#define BUTTONFRAME CGRectMake(125, CGRectGetHeight([[UIScreen mainScreen] bounds])*SingUpButtonClosePersentage, 70, 26);
 
 #define FaceBookButtonPersentage 316.0f/568.0f
 #define GooglePlusButtonPersentage 352.f/568.0f
@@ -82,9 +82,6 @@
     self.socialUserDataDic = [[NSMutableDictionary alloc]init];
     self.googlePlusFriendsListArry = [[NSMutableArray alloc]init];
     [self setUpThePosttionOfbuttonsFrame];
-    self.facebookBtn.frame = BUTTONFRAME;
-    self.googlePlusBtn.frame = BUTTONFRAME;
-    self.emailBtn.frame = BUTTONFRAME;
     
     if (isiPhone5) {
         // this is iphone 4 inch
@@ -127,6 +124,16 @@
         [_postViewController loadFeedDetails];
         [self.navigationController pushViewController:_postViewController animated:YES];
     }
+    
+    if (self.facebookBtn.isHidden == YES) {
+        CGRect windowFrame  = [[UIScreen mainScreen] bounds];
+        self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SingUpButtonClosePersentage, 100, 36);
+        self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonClosePersentage, 100, 36);
+        
+        self.facebookBtn.frame = BUTTONFRAME;
+        self.googlePlusBtn.frame = BUTTONFRAME;
+        self.emailBtn.frame = BUTTONFRAME;
+    }
 
 }
 
@@ -155,11 +162,13 @@
                              self.emailBtn.alpha = 1.0;
                              
                              CGRect windowFrame  = [[UIScreen mainScreen] bounds];
-                             self.facebookBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)*FaceBookButtonPersentage, 70, 26);
-                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)*GooglePlusButtonPersentage, 70, 26);;
-                             self.emailBtn.frame = CGRectMake(125, CGRectGetHeight(windowFrame)*EmailButtonPersentage, 70, 26);
                              self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonOpenPersentage, 100, 36);
-                             self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SingUpButtonOpenPersentage, 100, 36);
+                             
+                             self.facebookBtn.frame = CGRectMake(125, CGRectGetMinY(self.signUpBtn.frame) + 46.0, 70, 26);
+                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetMinY(self.facebookBtn.frame) + 36.0, 70, 26);;
+                             self.emailBtn.frame = CGRectMake(125, CGRectGetMinY(self.googlePlusBtn.frame) + 36.0, 70, 26);
+                             
+                             self.signInBtn.frame = CGRectMake(110, CGRectGetMinY(self.emailBtn.frame) + 66.0, 100, 36);
                          }
                          completion:nil];
     }
@@ -300,7 +309,6 @@
     alert.tag =  InAlertTag;
     [alert show];
 }
-
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

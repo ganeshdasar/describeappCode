@@ -95,7 +95,6 @@
     {
         NSDictionary *item = _mediaList[i];
         
-        
         UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(x, y, _mediaItemSize.width, _mediaItemSize.height)];
         [_contentView addSubview:button];
         [button setTag:i];
@@ -107,13 +106,19 @@
     }
 }
 
--(void)mediaItemSelected:(UIButton *)sender
+- (void)mediaItemSelected:(UIButton *)sender
 {
-    sender.selected = YES;
-    [self.delegate socailMediaDidSelectedItemAtIndex:[sender tag]];return ;
-    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(socailMediaDidSelectedItemAtIndex:)])
-    {
+//    sender.selected = YES;
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(socailMediaDidSelectedItemAtIndex:)]) {
         [self.delegate socailMediaDidSelectedItemAtIndex:[sender tag]];
+    }
+}
+
+- (void)makeSocialBtnSelected:(BOOL)isSelect withTag:(NSInteger)btnTag
+{
+    UIButton *socialBtn = (UIButton *)[_contentView viewWithTag:btnTag];
+    if(socialBtn != nil && [socialBtn isKindOfClass:[UIButton class]]) {
+        [socialBtn setSelected:isSelect];
     }
 }
 

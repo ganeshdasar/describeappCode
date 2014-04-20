@@ -21,8 +21,9 @@
 
 @property(nonatomic, assign)id<DSocialMediaListViewDelegate>delegate;
 
+- (void)setMedaiList:(NSArray *)medias;
+- (void)makeSocialBtnSelected:(BOOL)isSelect withTag:(NSInteger)btnTag;
 
--(void)setMedaiList:(NSArray *)medias;
 @end
 
 

@@ -10,11 +10,20 @@
 #import "UIImageView+AFNetworking.h"
 #import <CoreGraphics/CoreGraphics.h>
 
+#define WERECOMMENDED_TITLE_COLOR           [UIColor colorWithRed:53/255.0 green:168/255.0 blue:157/255.0 alpha:1.0]
+#define WERECOMMENDED_SUBTITLE_COLOR        [UIColor colorWithRed:120/255.0 green:120/255.0 blue:120/255.0 alpha:1.0]
+#define WERECOMMENDED_TITLE_FONT            [UIFont fontWithName:@"HelveticaNeue-Light" size:17.0]
+#define WERECOMMENDED_SUBTITLE_FONT         [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.0]
+
+#define INVITATION_TITLE_COLOR              [UIColor colorWithRed:120/255.0 green:120/255.0 blue:120/255.0 alpha:1.0]
+#define INVITATION_SUBTITLE_COLOR           [UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1.0]
+#define INVITATION_TITLE_FONT               [UIFont fontWithName:@"HelveticaNeue-Thin" size:17.0]
+#define INVITATION_SUBTITLE_FONT            [UIFont fontWithName:@"HelveticaNeue" size:12.0]
+
 @interface DUserComponent ()
 {
     UILabel *_title;
     UILabel *_subTitle;
-    UIImageView *_thumIcon;
     UIButton *_statusButton;
 }
 @end
@@ -47,38 +56,29 @@
 
 - (void)createUserComponent
 {
-    UIImageView * roundImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
-    roundImg.image = [UIImage imageNamed:@"thumb_user_std.png"];
-    [self addSubview:roundImg];
     self.thumbnailImg = [[UIImageView alloc]initWithFrame:CGRectMake(15, 8, 40, 40)];
+    self.thumbnailImg.layer.cornerRadius = CGRectGetHeight(self.thumbnailImg.frame)/2.0f;;
+    self.thumbnailImg.layer.masksToBounds = YES;
     [self addSubview:self.thumbnailImg];
     
-    {
-        self.thumbnailImg.layer.cornerRadius = 20.0;
-        self.thumbnailImg.layer.masksToBounds = YES;
-    }
+    [thumbnailImg setImage:[UIImage imageNamed:@"thumb_user_std_null.png"]];
     
-    
-    
-    if (data.profileUserProfilePicture) {
-        [self downloadUserImageview:data.profileUserProfilePicture];
-    }
     UILabel * firsLineLbl = [[UILabel alloc]initWithFrame:CGRectMake(65, 0, 150, 30)];
     firsLineLbl.text = data.profileUserName;
-    firsLineLbl.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17];
-    firsLineLbl.textColor = [UIColor colorWithRed:53/255.0 green:168/255.0 blue:157/255.0 alpha:1.0];
+    firsLineLbl.font = WERECOMMENDED_TITLE_FONT;
+    firsLineLbl.textColor = WERECOMMENDED_TITLE_COLOR;
     firsLineLbl.numberOfLines = 0;
     [self addSubview:firsLineLbl];
     
     UILabel * secondLineLbl = [[UILabel alloc]initWithFrame:CGRectMake(65, 20, 150, 30)];
     secondLineLbl.text =data.profileUserFullName;
-    secondLineLbl.font = [UIFont fontWithName:@"HelveticaNeue-thin" size:15];
-    secondLineLbl.textColor = [UIColor colorWithRed:120/255.0 green:120/255.0 blue:120/255.0 alpha:1.0];
+    secondLineLbl.font = WERECOMMENDED_SUBTITLE_FONT;
+    secondLineLbl.textColor = WERECOMMENDED_SUBTITLE_COLOR;
     secondLineLbl.numberOfLines = 0;
     [self addSubview:secondLineLbl];
     
     UIButton * button = [[UIButton alloc]initWithFrame:CGRectMake(275, 9, 30, 30)];
-    _followUnfollowBtn =button;
+    _followUnfollowBtn = button;
     if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
         button.frame = CGRectMake(250, 9, 60, 26);
         if ([data.followingStatus isEqualToString:@"1"]) {
@@ -101,22 +101,28 @@
     
     _title = firsLineLbl;
     _subTitle = secondLineLbl;
-    _thumIcon = roundImg;
     _statusButton = button;
-    _thumIcon.layer.cornerRadius = CGRectGetHeight(_thumIcon.frame)/2.0f;
-    _thumIcon.layer.masksToBounds = YES;
+
 }
 
 - (void)updateContent:(SearchPeopleData *)userData
 {
-    [_thumIcon cancelImageRequestOperation];
+    [self.thumbnailImg cancelImageRequestOperation];
     
     data = userData;
     
-    [_thumIcon setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std_null.png"]];
-    _title.text = data.profileUserName;
-    _subTitle.text = data.profileUserFullName;
+    [self.thumbnailImg setImage:[UIImage imageNamed:@"thumb_user_std_null.png"]];
+    [self.thumbnailImg setImageWithURL:[NSURL URLWithString:data.profileUserProfilePicture] placeholderImage:[UIImage imageNamed:@"thumb_user_std_null.png"]];
+    
+    _title.text = data.profileUserName ? data.profileUserName : @"";
      if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+         _subTitle.text = data.gateWayType ? [data.gateWayType isEqualToString:@"fb"] ? @"facebook" : @"google+" : @"";
+         
+         _title.font = INVITATION_TITLE_FONT;
+         _title.textColor = INVITATION_TITLE_COLOR;
+         _subTitle.font = INVITATION_SUBTITLE_FONT;
+         _subTitle.textColor = INVITATION_SUBTITLE_COLOR;
+
         CGRect statusFrame = CGRectZero;
         statusFrame = CGRectMake(250, 9, 60, 26);
         [_statusButton setFrame:statusFrame];
@@ -129,6 +135,13 @@
         }
      }
      else {
+         _subTitle.text = data.profileUserFullName ? data.profileUserFullName : @"";
+         
+         _title.font = WERECOMMENDED_TITLE_FONT;
+         _title.textColor = WERECOMMENDED_TITLE_COLOR;
+         _subTitle.font = WERECOMMENDED_SUBTITLE_FONT;
+         _subTitle.textColor = WERECOMMENDED_SUBTITLE_COLOR;
+
         CGRect statusFrame = CGRectZero;
         statusFrame = CGRectMake(275, 9, 30, 30);
         [_statusButton setFrame:statusFrame];

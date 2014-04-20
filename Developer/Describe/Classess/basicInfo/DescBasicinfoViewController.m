@@ -28,6 +28,12 @@
 #define BIRTHDAYFRAME
 #define BIOTEXTFRAME
 
+typedef enum {
+    kUserGender_Female = 0,
+    kUserGender_Male,
+    kUserGender_Unspecified
+} UserGender;
+
 @interface DescBasicinfoViewController ()<WSModelClassDelegate,UITextViewDelegate,NSLayoutManagerDelegate>
 {
     IBOutlet DHeaderView *_headerView;
@@ -47,6 +53,8 @@
     
     BOOL shouldHideStatusBar;
     BOOL _isDatePickerVisble;
+    
+    UserGender userGender;
 }
 
 @property (nonatomic, strong) UIImage *previousPicRef;
@@ -59,7 +67,6 @@
 @synthesize bioTxt,birthdayTxt,cityTxt;
 @synthesize cityTableView;
 @synthesize userBasicInfoDic;
-@synthesize isGenderMale;
 
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -102,7 +109,7 @@
     shouldHideStatusBar = NO;
     
     
-    self.btnmale.selected = YES;
+//    self.btnmale.selected = YES;
     self.cityTxt.returnKeyType = UIReturnKeyDone;
     self.bioTxt.returnKeyType = UIReturnKeyDone;
 
@@ -284,17 +291,28 @@
 
 -  (IBAction)maleClicked:(id)sender
 {
-    self.isGenderMale = YES;
-    [self.btnmale setSelected:YES];
+    [self.btnmale setSelected:!self.btnmale.isSelected];
     [self.btnfemale setSelected:NO];
-
+    
+    if(self.btnmale.isSelected) {
+        userGender = kUserGender_Male;
+    }
+    else {
+        userGender = kUserGender_Unspecified;
+    }
 }
 
 - (IBAction)femaleClicked:(id)sender
 {
-    self.isGenderMale = NO;
     [self.btnmale setSelected:NO];
-    [self.btnfemale setSelected:YES];
+    [self.btnfemale setSelected:!self.btnfemale.isSelected];
+    
+    if(self.btnfemale.isSelected) {
+        userGender = kUserGender_Female;
+    }
+    else {
+        userGender = kUserGender_Unspecified;
+    }
 }
 
 - (IBAction)profilePicTapped:(id)sender
@@ -924,13 +942,8 @@
 {
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate = self;
-    NSString * gender = nil;
-    if (isGenderMale) {
-        gender = @"1";
-    }
-    else{
-        gender = @"0";
-    }
+    NSString * gender = [NSString stringWithFormat:@"%ld", (long)userGender];
+    
     [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [NSString convertTheDateToepochtime:(NSString*)self.birthdayTxt.text ]  userGender:gender profilePic:profilePicAspectController.imageView.image];
     
 }
