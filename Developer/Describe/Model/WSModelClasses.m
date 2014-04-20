@@ -531,7 +531,7 @@ static WSModelClasses *_sharedInstance;
         canvasPicStr = [canvasImgData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
     }
     
-    NSData *snippetImgData = UIImageJPEGRepresentation(profileImg, 0.8);
+    NSData *snippetImgData = UIImageJPEGRepresentation(snippetImg, 0.8);
     NSString *snippetPicStr = @"";
     if(snippetImgData != nil) {
         snippetPicStr = [snippetImgData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
@@ -677,22 +677,25 @@ static WSModelClasses *_sharedInstance;
     [manager GET:ur
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             [self removeLoadingView];
+             
              //NSLog(@"Feed Details: %@",responseObject);
              [self getPostDetailsResponse:responseObject withError:nil];
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
              //NSLog(@"Feed Details Failed: %@", responseObject);
+             [self removeLoadingView];
              [self getPostDetailsResponse:nil withError:responseObject];
          }
      ];
 }
 
 
-- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response
+- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId pageNumber:(NSInteger)pageNo response:(void (^)(BOOL success, id response))response
 {
-    //http://mirusstudent.com/service/describe-servicegetUserFeeds/format=json/UserUID=45/OtherUserUID=45
     //http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=45/OtherUserUID=45
-    NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/ProfileUserUID=%@/range=0", BaseURLString, userId, anotherUserId];
+    //http://mirusstudent.com/service/describe-service/getUserFeeds/format=json/UserUID=1/ProfileUserUID=11/PageValue=0/
+    NSString *ur = [NSString stringWithFormat:@"%@/getUserFeeds/format=json/UserUID=%@/ProfileUserUID=%@/PageValue=%ld", BaseURLString, userId, anotherUserId, (long)pageNo];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil

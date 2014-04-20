@@ -186,8 +186,8 @@ typedef enum {
 -(void)updateTheUserInformationDataUSerID:(NSString*)userId userName:(NSString*)userName userCity:(NSString*)city userDob:(NSString*)dob userGender:(NSString*)gender userBioData:(NSString*)bioData responce:(void(^)(BOOL success, id response))response;
 
 
-- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId response:(void (^)(BOOL success, id response))response;
--(void)getFeedForThisTag:(NSString *)tag forUser:(NSString *)userId andRange:(NSInteger)range response:(void (^)(BOOL success, id response))response;
+- (void)getPostDetailsOfUserId:(NSString *)userId anotherUserId:(NSString *)anotherUserId pageNumber:(NSInteger)pageNo response:(void (^)(BOOL success, id response))response;
+- (void)getFeedForThisTag:(NSString *)tag forUser:(NSString *)userId andRange:(NSInteger)range response:(void (^)(BOOL success, id response))response;
 
 #pragma mark followAllAndInviteAll
 - (void)followAllActionUserID:(NSString*)userId followAll:(BOOL)followAll forGateway:(NSString *)gatewayStr rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;

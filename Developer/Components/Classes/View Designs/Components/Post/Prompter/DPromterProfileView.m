@@ -8,7 +8,7 @@
 
 #import "DPromterProfileView.h"
 #import "DPost.h"
-
+#import "UIImageView+AFNetworking.h"
 @interface DPromterProfileView ()
 {
     UIImageView      *_prompterImageView;
@@ -42,6 +42,7 @@
 {
     _prompterImageView = [[UIImageView alloc] initWithFrame:self.bounds];
     [_prompterImageView setImage:[UIImage imageNamed:_promterProfile.profilePromterImageName]];
+    [_prompterImageView setImageWithURL:[NSURL URLWithString:_promterProfile.profilePromterImageName]];
     [self addSubview:_prompterImageView];
 }
 

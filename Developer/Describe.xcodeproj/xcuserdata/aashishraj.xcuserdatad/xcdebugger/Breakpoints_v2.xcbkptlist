@@ -250,11 +250,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522532.785733"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "410"
-            endingLineNumber = "410"
+            startingLineNumber = "413"
+            endingLineNumber = "413"
             landmarkName = "-getThePostConversationDetailsFromServer:error:"
             landmarkType = "5">
          </BreakpointContent>
@@ -314,11 +314,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522532.785733"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "392"
-            endingLineNumber = "392"
+            startingLineNumber = "395"
+            endingLineNumber = "395"
             landmarkName = "-getThePostConversationDetailsFromServer:error:"
             landmarkType = "5">
          </BreakpointContent>
@@ -346,11 +346,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522532.785733"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "513"
-            endingLineNumber = "513"
+            startingLineNumber = "516"
+            endingLineNumber = "516"
             landmarkName = "-showMoreDetailsOfPost:"
             landmarkType = "5">
          </BreakpointContent>
@@ -362,11 +362,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Components/Post/DPostView.m"
-            timestampString = "419518704.442532"
+            timestampString = "419615535.821463"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
             landmarkName = "-didSelectedTag:"
             landmarkType = "5">
          </BreakpointContent>
@@ -378,11 +378,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522532.785733"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "707"
-            endingLineNumber = "707"
+            startingLineNumber = "712"
+            endingLineNumber = "712"
             landmarkName = "-showPostDetails:"
             landmarkType = "5">
          </BreakpointContent>
@@ -394,11 +394,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522532.785733"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "557"
-            endingLineNumber = "557"
+            startingLineNumber = "560"
+            endingLineNumber = "560"
             landmarkName = "-didSelectedTag:forThisPost:"
             landmarkType = "5">
          </BreakpointContent>
@@ -410,11 +410,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522324.475255"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "-designHeaderView"
             landmarkType = "5">
          </BreakpointContent>
@@ -426,11 +426,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419522653.153611"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "693"
-            endingLineNumber = "693"
+            startingLineNumber = "697"
+            endingLineNumber = "697"
             landmarkName = "-fetchFeedForHomeScreen"
             landmarkType = "5">
          </BreakpointContent>
@@ -713,7 +713,7 @@
                   symbolName = "-[DescBasicinfoViewController textFieldAnimation:]"
                   moduleName = "Describe"
                   urlString = "file:///Users/aashishraj/Desktop/Gopal/April%20/Apr%2019/Developer/Describe/Classess/basicInfo/DescBasicinfoViewController.m"
-                  timestampString = "419607960.776412"
+                  timestampString = "419615098.960887"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "733"
@@ -727,7 +727,7 @@
                   symbolName = "__50-[DescBasicinfoViewController textFieldAnimation:]_block_invoke393"
                   moduleName = "Describe"
                   urlString = "file:///Users/aashishraj/Desktop/Gopal/April%20/Apr%2019/Developer/Describe/Classess/basicInfo/DescBasicinfoViewController.m"
-                  timestampString = "419607960.776605"
+                  timestampString = "419615098.961073"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "733"
@@ -776,11 +776,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
-            timestampString = "419607043.926794"
+            timestampString = "419611215.030823"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
             landmarkName = "-initWithFrame:withPostImage:"
             landmarkType = "5">
          </BreakpointContent>
@@ -804,22 +804,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
-            timestampString = "419607471.040056"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "569"
-            endingLineNumber = "569"
-            landmarkName = "-singleTap:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -836,7 +820,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Components/Post/Body/DPostVideoPlayerView.m"
@@ -872,11 +856,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
-            timestampString = "419607471.040056"
+            timestampString = "419611795.16309"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "497"
-            endingLineNumber = "497"
+            startingLineNumber = "492"
+            endingLineNumber = "492"
             landmarkName = "-didStartPlayingVideo"
             landmarkType = "5">
          </BreakpointContent>
@@ -884,15 +868,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
-            timestampString = "419607471.040056"
+            timestampString = "419611795.16309"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "538"
-            endingLineNumber = "538"
+            startingLineNumber = "532"
+            endingLineNumber = "532"
             landmarkName = "-didPausePlayingVideo"
             landmarkType = "5">
          </BreakpointContent>
@@ -900,31 +884,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
-            timestampString = "419607471.040056"
+            timestampString = "419611795.16309"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "561"
-            endingLineNumber = "561"
-            landmarkName = "-didEndPlayingVideo"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
-            timestampString = "419607056.481515"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "476"
-            endingLineNumber = "476"
+            startingLineNumber = "462"
+            endingLineNumber = "462"
             landmarkName = "-transitionNewImage"
             landmarkType = "5">
          </BreakpointContent>
@@ -936,12 +904,218 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/View Designs/Modules/Feed/Post Controller/DPostsViewController.m"
-            timestampString = "419607212.65492"
+            timestampString = "419609081.512702"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "729"
-            endingLineNumber = "729"
+            startingLineNumber = "734"
+            endingLineNumber = "734"
             landmarkName = "-parsePosetDetails:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Describe/Model/WSModelClasses.m"
+            timestampString = "419608919.449083"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "616"
+            endingLineNumber = "616"
+            landmarkName = "-showLoadView"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
+            timestampString = "419611795.16309"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "484"
+            endingLineNumber = "484"
+            landmarkName = "-didStartPlayingVideo"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
+            timestampString = "419611795.16309"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "456"
+            endingLineNumber = "456"
+            landmarkName = "-startAniamtion"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
+            timestampString = "419611671.376454"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "384"
+            endingLineNumber = "384"
+            landmarkName = "-interchangeViews"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
+            timestampString = "419612480.088297"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "562"
+            endingLineNumber = "562"
+            landmarkName = "-didEndPlayingVideo"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
+            timestampString = "419612842.654432"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "558"
+            endingLineNumber = "558"
+            landmarkName = "-didEndPlayingVideo"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[DPostBodyView didEndPlayingVideo]"
+                  moduleName = "Describe"
+                  urlString = "file:///Users/aashishraj/Desktop/Gopal/April%20/Apr%2019/Developer/Components/Classes/View%20Designs/Components/Post/Body/DPostBodyView.m"
+                  timestampString = "419615098.963553"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "559"
+                  endingLineNumber = "559"
+                  offsetFromSymbolStart = "112">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__35-[DPostBodyView didEndPlayingVideo]_block_invoke"
+                  moduleName = "Describe"
+                  urlString = "file:///Users/aashishraj/Desktop/Gopal/April%20/Apr%2019/Developer/Components/Classes/View%20Designs/Components/Post/Body/DPostBodyView.m"
+                  timestampString = "419615098.963743"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "559"
+                  endingLineNumber = "559"
+                  offsetFromSymbolStart = "76">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Body/DPostBodyView.m"
+            timestampString = "419612869.364692"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "160"
+            endingLineNumber = "160"
+            landmarkName = "-setPostImage:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/DPostListView.m"
+            timestampString = "419615078.275596"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "150"
+            endingLineNumber = "150"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Prompter/DPromterListView.m"
+            timestampString = "419615535.821463"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "-designContentOfProfile"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Prompter/DPromterProfileView.m"
+            timestampString = "419615147.977009"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "-initWithFrame:withPrompterImage:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/View Designs/Components/Post/Prompter/DPromterProfileView.m"
+            timestampString = "419615149.903512"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "-designPrompterImage"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

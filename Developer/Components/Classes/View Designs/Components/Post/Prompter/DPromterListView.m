@@ -29,6 +29,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        
         _profileImages = prompterImages;
         [self designPromterScrollView];
         [self designFooterView];
@@ -44,7 +45,7 @@
     [self addSubview:_scrollView];
     
     
-    [_scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    //[_scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
 
     [_scrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [self designContentOfProfile];
@@ -156,7 +157,7 @@
 
 -(void)dealloc
 {
-    [_scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    //[_scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
     
 }
 

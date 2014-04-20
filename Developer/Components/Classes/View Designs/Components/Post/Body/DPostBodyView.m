@@ -129,6 +129,10 @@
         [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
      
         
+        //[_frontImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",1]]];
+        //[_backgroundView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",2]]];
+        
+        
         
         [self createVideoPlayer];
         
@@ -165,12 +169,20 @@
     [_backImageView setImage:secondImage.editedImage];
     [_frontImageView setImage:firstImage.editedImage];
     
+    
+    
+    
+    
     if(secondImage != nil && secondImage.imageUrl != nil) {
         [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
     }
     if(firstImage != nil && firstImage.imageUrl != nil) {
         [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
     }
+    
+   // [_frontImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",1]]];
+   // [_backgroundView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",2]]];
+    [_contentView bringSubviewToFront:_frontImageView];
     //[_frontImageView setBackgroundColor:[[UIColor orangeColor] colorWithAlphaComponent:0.4]];
     
     
@@ -296,31 +308,6 @@
                     [_videoPlayer videoFileSeekToDurationFromTime:secs];
                     
                     
-                    
-                    
-                    
-                    return;
-                    //Caliculate the remaing percentage...
-                    int percentage = [self currentPercentage:point];
-                    Float64 timeValue = [_videoPlayer videoCurrentTime];
-                    NSLog(@"Current Time:%f currect Percentage:%d index:%d",timeValue,percentage, _index);
-                    
-                    //percentage = timeValue*percentage/100;
-                    //NSLog(@"222percentage its moving:%d",percentage);
-                    
-                    [_videoPlayer seekVideoFileToPercentage:percentage];
-                    [self seekContentToPercentage:[NSNumber numberWithInteger:percentage]];
-                    
-                    
-                    //Update video player content...
-                    {
-                        CGRect videoFrame = _videoPlayer.frame;
-                        videoFrame.origin.x = (VIDEO_FRAME.origin.x*percentage)/100;
-                        //[_videoPlayer setFrame:videoFrame];
-                        [UIView animateWithDuration:0.0 animations:^{ [_videoPlayer setFrame:videoFrame];} completion:^(BOOL finished)
-                         {
-                         }];
-                    }
                 }
             }
             
@@ -405,8 +392,8 @@
     }
     
     CMPhotoModel *photoModel = _postImage.images[_index];
-    [_frontImageView setImage:nil];
     [_frontImageView setImageWithURL:[NSURL URLWithString:photoModel.imageUrl]];
+    //[_frontImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",_index+1]]];
     
     _currentImageView = _frontImageView;
     _frontImageView = _backImageView;
@@ -420,9 +407,8 @@
         _transitionImageTimer = nil;
     }
     
-    NSLog(@"-------------------Index:%d duration:%f",_index+1,duration);
+    NSLog(@"-------------------Index:%d duration:%f",_index,duration);
     _transitionImageTimer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(transitionNewImage) userInfo:Nil repeats:NO];
-    
     _index++;
     
 }
@@ -485,6 +471,7 @@
                 _transitionImageTimer = [NSTimer scheduledTimerWithTimeInterval:photoModel.duration target:self selector:@selector(startAniamtion) userInfo:Nil repeats:NO];
             }
         }
+        NSLog(@"Transition--- index:%d",_index);
     }
 }
 
@@ -499,7 +486,12 @@
     {
         _isNeedToPlayImages = YES;
         [_contentView bringSubviewToFront:_frontImageView];
-        [self performSelector:@selector(transitionNewImage) withObject:nil afterDelay:0.0];
+        [_backgroundView setImage:nil];
+        
+
+        NSLog(@"################Index:%d", _index);
+        [self transitionNewImage];
+        //[self performSelector:@selector(transitionNewImage) withObject:nil afterDelay:0.0];
     }
     
     _prefetcher = [SDWebImagePrefetcher sharedImagePrefetcher];
@@ -515,6 +507,8 @@
     {
         CMPhotoModel *model = _postImage.images[0];
         [_frontImageView setImageWithURL:[NSURL URLWithString:[model imageUrl]]];
+       // [_frontImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",1]]];
+       // [_backgroundView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",2]]];
     }
     NSLog(@"image urls:%@",imageUrls);
     [_prefetcher prefetchURLs:imageUrls];
@@ -561,6 +555,23 @@
     //pause image animations....
     _isNeedToPlayImages = NO;
     _index = 0;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        
+        [_frontImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",1]]];
+        [_backgroundView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",2]]];
+        
+        _frontImageView.image = nil;
+        _backgroundView.image = nil;
+        
+        NSLog(@"Did End playing vedio 2222222222222222222 ########################### CT:%@, MT:%@",[NSThread currentThread], [NSThread mainThread]);
+
+    });
+  
+    //[self setPostImage:_postImage];
+    
+    NSLog(@"Did End playing vedio ########################### CT:%@, MT:%@",[NSThread currentThread], [NSThread mainThread]);
 }
 
 
