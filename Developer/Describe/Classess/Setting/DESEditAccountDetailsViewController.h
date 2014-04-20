@@ -24,6 +24,7 @@ typedef enum accountType
     DdateLblTag = 300
 
 }editAccountTyopes;
+@class DESAboutTextView;
 @interface DESEditAccountDetailsViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITableView *acountDetailsTableView;
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
@@ -37,5 +38,6 @@ typedef enum accountType
 @property (nonatomic,strong) NSString * dateString;
 
 @property (weak, nonatomic) IBOutlet UIDatePicker *datePicker;
+@property (weak, nonatomic)  DESAboutTextView *bioTxt;
 
 @end

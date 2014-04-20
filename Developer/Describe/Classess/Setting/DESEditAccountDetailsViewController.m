@@ -16,6 +16,7 @@
 #import "DESecurityViewCnt.h"
 #import "DescWelcomeViewController.h"
 #import "DESocialConnectios.h"
+#import "DESAboutTextView.h"
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -219,17 +220,18 @@
             
         }
         case DUserBio:{
-            UITextView * textview = [[UITextView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+            
+            UITextView * textview = [[UITextView alloc]initWithFrame:CGRectMake(0, 0, 320, 123)];
             textview.backgroundColor = [UIColor clearColor];
             UIImageView * image = [self createBackGroundImageView:[UIImage imageNamed:@"set_about.png"]];
             cell.backgroundView = image;
             textview.delegate =self;
-            textview.layoutManager.delegate = self;
-            textview.textContainer.lineFragmentPadding = 10;
-            textview.contentInset=UIEdgeInsetsZero;
             textview.scrollEnabled = NO;
             textview.text = [WSModelClasses sharedHandler].loggedInUserModel.biodata;
             textview.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+            self.bioTxt = (DESAboutTextView*)textview;
+            self.bioTxt.returnKeyType = UIReturnKeyDone;
+            [self lineSpacingFroTextView:self.bioTxt];
             [cell.contentView addSubview:textview];
         
             
@@ -258,6 +260,23 @@
     return cell;
 }
 
+- (void)lineSpacingFroTextView:(UITextView*)text
+{
+    DESAboutTextView *lab = self.bioTxt;
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 15.0f;
+    
+    NSString *string = @" ";
+    NSDictionary *ats = @{
+                          NSParagraphStyleAttributeName : paragraphStyle,
+                          NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0],
+                          NSForegroundColorAttributeName : [UIColor lightGrayColor],
+                          };
+    
+    lab.attributedText = [[NSAttributedString alloc] initWithString:string attributes:ats];
+    lab.text = @"";
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
@@ -313,7 +332,7 @@
 {
     switch (indexPath.section) {
         case DUserBio:
-            return 118;
+            return 123;
             break;
         default:
             return 40;
@@ -662,6 +681,35 @@
         }
 }
 
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
+    if ([text isEqualToString:@"\n"]) {
+        // Be sure to test for equality using the "isEqualToString" message
+        [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
+        [textView resignFirstResponder];
+        // Return FALSE so that the final '\n' character doesn't get added
+        return NO;
+    }
+    
+    NSString *string = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    UIFont *font = textView.font;
+    
+    CGSize maximumSize = textView.frame.size;
+    maximumSize.width -= 10.0f;
+    NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject:textView.font forKey: NSFontAttributeName];
+    CGSize expectedLabelSize2 = [string boundingRectWithSize:maximumSize
+                                                     options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
+                                                  attributes:stringAttributes context:nil].size;
+    
+    float numberOfLines = expectedLabelSize2.height / font.lineHeight;
+    //    NSLog(@"numberOfLines = %f", numberOfLines);
+    if(numberOfLines > 3.0) {
+        return NO;
+    }
+    
+    return YES;
+}
 
 -(void)updateTheUserInformation
 {
@@ -683,16 +731,6 @@
     return YES;
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
-    if ([text isEqualToString:@"\n"]) {
-         [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
-        [textView resignFirstResponder];
-
-        return NO; // or true, whetever you's like
-    }
-    return YES;
-}
 
 -(void)tableViewAnimatedWhileTypingTheDataWithFrame:(CGRect)rect
 {
