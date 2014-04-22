@@ -293,11 +293,12 @@ static WSModelClasses *_sharedInstance;
 #pragma mrak SearchResult
 - (void)getSearchDetailsUserID:(NSString*)inUserID
                    searchType:(NSString*)inSearchType
-                   searchWord:(NSString*)inSearchString;
+                   searchWord:(NSString*)inSearchString
+                         range:(NSInteger)pageNo;
 {
     if (![self checkTheInterConnection]) return;
     //http://mirusstudent.com/service/describe-service/getSearchPeople/format=json/UserUID=1/SearchWord=a
-    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,[WSModelClasses sharedHandler].loggedInUserModel.userID,inSearchString];
+    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@/range=%ld", BaseURLString,[WSModelClasses sharedHandler].loggedInUserModel.userID,inSearchString, (long)pageNo];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil

@@ -11,7 +11,7 @@
 @protocol DSearchBarComponentDelegate <NSObject>
 @optional
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar;
--(void)searchBarClicked:(BOOL)inClicked;
+- (void)searchBarClicked:(BOOL)inClicked;
 // called when keyboard search
 //- (void)searchBarCancelButtonClicked:(CRSearchView *) searchBar;                    // called when cancel or Close button
 @end

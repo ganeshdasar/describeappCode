@@ -20,7 +20,6 @@
 #import "MBProgressHUD.h"
 #import "DSocialMediaListView.h"
 #import "DESocialConnectios.h"
-#import "DesSearchPeopleViewContrlooerViewController.h"
 #import "DESSettingsViewController.h"
 #import "DProfileDetailsViewController.h"
 #import "DESAppDelegate.h"
@@ -41,7 +40,6 @@
     IBOutlet DSegmentComponent * _segmentComponent;
     IBOutlet DSearchBarComponent * _searchBarComponent;
     IBOutlet DSocialComponent * socialComponent;
-    DesSearchPeopleViewContrlooerViewController *searchViewCntrl;
     __weak IBOutlet UIView *followAndInviteView;
     __weak IBOutlet UIButton *followAndInviteImgView;
     
@@ -53,13 +51,15 @@
     NSInteger pageLoadNumberInvite;
     NSMutableArray *invitationList;
     
+    BOOL shouldLoadMoreSearch;
+    NSInteger pageLoadNumberSearch;
+    
     NSInteger selecedSocialBtnTag;
 }
 @end
 
 @implementation DescAddpeopleViewController
 @synthesize selectedType;
-@synthesize peopleListArray;
 @synthesize searchListArray;
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -96,6 +96,10 @@
     shouldLoadMoreRecommend = NO;
     pageLoadNumberInvite = 0;
     pageLoadNumberRecommend = 0;
+    
+    shouldLoadMoreSearch = NO;
+    pageLoadNumberSearch = 0;
+    
     werecommendedList = [[NSMutableArray alloc] initWithCapacity:0];
     invitationList = [[NSMutableArray alloc] initWithCapacity:0];
     self.searchListArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -580,8 +584,6 @@
 #pragma serchThe People
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar
 {
-    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
-    modelClass.delegate = self;
     if (isSearching) {
         isSearching = NO;
         [_headerView removeSubviewFromHedderView];
@@ -604,15 +606,42 @@
     }
     else{
         if ([searchBar.searchTxt.text length]!=0) {
-            [modelClass getSearchDetailsUserID:@"1" searchType:nil  searchWord:searchBar.searchTxt.text];
+            shouldLoadMoreSearch = NO;
+            pageLoadNumberSearch = 0;
+            
+            [self fetchSearchPeopleForWord:searchBar.searchTxt.text];
         }
     }
 }
 
+- (void)fetchSearchPeopleForWord:(NSString *)searchWord
+{
+    [[WSModelClasses sharedHandler] showLoadView];
+    
+    backButton.userInteractionEnabled = NO;
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    modelClass.delegate = self;
+    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchType:nil  searchWord:searchWord range:pageLoadNumberSearch];
+}
+
 - (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error
 {
-    [self.searchListArray removeAllObjects];
+    if(isSearching) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
+        backButton.userInteractionEnabled = YES;
+        return;
+    }
+    
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    
+    if(pageLoadNumberSearch == 0) {
+        [self.searchListArray removeAllObjects];
+    }
+    
     NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
+    
+    NSMutableArray *pepoleListArray = [[NSMutableArray alloc] init];
+    
     for (NSMutableDictionary* dataDic in peopleArray) {
         SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
         searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
@@ -624,12 +653,25 @@
         searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
         searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
         searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
-        [self.searchListArray addObject:searchData];
+        [pepoleListArray addObject:searchData];
     }
+    
+    if(pepoleListArray.count > 50) {
+        shouldLoadMoreSearch = YES;
+        [pepoleListArray removeLastObject];
+    }
+    
+    [self.searchListArray addObjectsFromArray:pepoleListArray];
     
     backButton.userInteractionEnabled = YES;
     [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
-    [_peoplelistView reloadTableView:self.searchListArray];
+    
+    if(pageLoadNumberSearch == 0) {
+        [_peoplelistView reloadTableView:self.searchListArray];
+    }
+    else {
+        [_peoplelistView loadMorePeople:pepoleListArray];
+    }
 }
 
 - (void)removeTheSearchViewFromSuperview:(id)inSender
@@ -716,9 +758,14 @@
 }
 
 #pragma mark - DPeopleListComponentDelegate Method
-- (void)loadNextPage
+- (void)loadNextPageOfPeopleList:(DPeopleListComponent *)peopleListComp
 {
     if(isSearching == NO) {
+        if(shouldLoadMoreSearch) {
+            shouldLoadMoreSearch = NO;
+            pageLoadNumberSearch += 1;
+            [self fetchSearchPeopleForWord:_searchBarComponent.searchTxt.text];
+        }
         return;
     }
     

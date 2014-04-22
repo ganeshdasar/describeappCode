@@ -571,7 +571,7 @@ static DPostsViewController *sharedFeedController;
 }
 
 
-- (void)loadNextPage
+- (void)loadNextPageOfPost:(DPostListView *)postListView
 {
     if(YES == shouldLoadMore) {
         shouldLoadMore = NO;
