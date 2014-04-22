@@ -16,6 +16,8 @@
 #import "DESecurityViewCnt.h"
 #import "DescWelcomeViewController.h"
 #import "DESocialConnectios.h"
+#import "DESAboutTextView.h"
+
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -164,13 +166,89 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         cell.selectedBackgroundView = nil;
-        genderLbl  = [self createLabel:cell];
-        genderLbl.tag = DGenderLblTag;
-        [cell.contentView addSubview:genderLbl];
-        datelabl = [self createLabel:cell];
-        datelabl.tag = DdateLblTag;
-        [cell.contentView addSubview:datelabl];
+        
+        switch (indexPath.section) {
+            case DUserInformation:
+            {
+                if (indexPath.row == DUerNameTxt) {
+                    UITextField *name = [self createDetailTextField:cell AndTag:DUerNameTxt];
+                    name.textColor = [UIColor textFieldTextColor];
+                    name.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                    name.tag = DUsernameTag;
+                    name.text = [WSModelClasses sharedHandler].loggedInUserModel.userName;
+                    userNameString = [WSModelClasses sharedHandler].loggedInUserModel.userName;
+                    [cell.contentView addSubview:name];
+                }
+                else if(indexPath.row == DUserGenderTxt){
+                    genderLbl  = [self createLabel:cell];
+                    genderLbl.tag = DGenderLblTag;
+                    genderLbl.textColor = [UIColor textFieldTextColor];
+                    genderLbl.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                    [cell.contentView addSubview:genderLbl];
+                }
+                else if(indexPath.row ==DUserBirhDayTxt ){
+                    datelabl = [self createLabel:cell];
+                    datelabl.tag = DdateLblTag;
+                    datelabl.textColor = [UIColor textFieldTextColor];
+                    datelabl.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                    [cell.contentView addSubview:datelabl];
+                }
+                
+                break;
+            }
+            case DUserCity:
+            {
+                UITextField * city = [self createDetailTextField:cell AndTag:DUserCity];
+                city.textColor = [UIColor textFieldTextColor];
+                city.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                [cell.contentView addSubview:city];
+                
+                break;
+            }
+                
+            case DUserBio:
+            {
+                UIImageView * image = [self createBackGroundImageView:[UIImage imageNamed:@"set_about.png"]];
+                cell.backgroundView = image;
+                
+                DESAboutTextView * textview = [[DESAboutTextView alloc] initWithFrame:CGRectMake(0, 0, 320, 120)];
+                textview.backgroundColor = [UIColor clearColor];
+                textview.delegate = self;
+                textview.layoutManager.delegate = self;
+                textview.contentInset = UIEdgeInsetsZero;
+                textview.scrollEnabled = NO;
+                textview.tag = DUserBio;
+                textview.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                [cell.contentView addSubview:textview];
+                
+                [self lineSpacingFroTextView:textview];
+                
+                break;
+            }
+                
+            case DUserSecurity:{
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                cell.textLabel.textColor = ELEMENT_FONT_COLOR;
+                cell.textLabel.text= @"Security";
+                cell.accessoryView = [self createBackGroundImageView:[UIImage imageNamed:@"chevron.png"]];
+                break;
+            }
+            case DUserSignOut:{
+                cell.textLabel.text = @"Sign out";
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                cell.textLabel.textColor = [UIColor whiteColor];
+                cell.textLabel.textAlignment = NSTextAlignmentCenter;
+                cell.backgroundColor=  [UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1];
+                break;
+                
+            }
+            
+            default:
+                break;
+        }
+        
     }
+    
     switch (indexPath.section) {
         case DUserInformation:{
             cell.textLabel.text = _userInfoArray[indexPath.row];
@@ -178,16 +256,11 @@
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             
             if (indexPath.row==DUerNameTxt) {
-                UITextField * name = [self createDetailTextField:cell AndTag:DUerNameTxt];
-                name.textColor = [UIColor textFieldTextColor];
-                name.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-                name.text =[WSModelClasses sharedHandler].loggedInUserModel.userName;
-                userNameString = [WSModelClasses sharedHandler].loggedInUserModel.userName;
-                [cell.contentView addSubview:name];
-            }else if (indexPath.row == DUserGenderTxt){
+                UITextField *name = (UITextField*)[cell.contentView viewWithTag:DUsernameTag];
+                name.text = [WSModelClasses sharedHandler].loggedInUserModel.userName;
+            }
+            else if (indexPath.row == DUserGenderTxt){
                 genderLbl  = (UILabel*) [cell viewWithTag:DGenderLblTag];
-                genderLbl.textColor = [UIColor textFieldTextColor];
-                genderLbl.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
                 if ([[WSModelClasses sharedHandler].loggedInUserModel.gender isEqualToNumber:[NSNumber numberWithInt:1]]) {
                    genderLbl.text = @"Male";
                     selectedTxt =[NSString stringWithFormat:@"%@",@"Male"];
@@ -198,63 +271,32 @@
                     genderLbl.text = @"Not specified";
                     selectedTxt =[NSString stringWithFormat:@"%@",@"Not specified"];
                 }
-            }else if (indexPath.row ==DUserBirhDayTxt ){
+            }
+            else if (indexPath.row ==DUserBirhDayTxt ){
                 datelabl  = (UILabel*) [cell viewWithTag:DdateLblTag];
-                datelabl.textColor = [UIColor textFieldTextColor];
-                datelabl.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
                 datelabl.text =userbirtdayString;
             }
             break;
         }
         case DUserCity:{
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-            cell.textLabel.text =@"City";
+            cell.textLabel.text = @"City";
             cell.textLabel.textColor = [UIColor textFieldTextColor];
-            UITextField * city = [self createDetailTextField:cell AndTag:DUserCity];
-            city.textColor = [UIColor textFieldTextColor];
-            city.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-            city.text =[WSModelClasses sharedHandler].loggedInUserModel.city;
-            [cell.contentView addSubview:city];
-            break;
             
+            UITextField *city = (UITextField*)[cell.contentView viewWithTag:DUserCity];
+            city.text = [WSModelClasses sharedHandler].loggedInUserModel.city;
+            break;
         }
         case DUserBio:{
-            UITextView * textview = [[UITextView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
-            textview.backgroundColor = [UIColor clearColor];
-            UIImageView * image = [self createBackGroundImageView:[UIImage imageNamed:@"set_about.png"]];
-            cell.backgroundView = image;
-            textview.delegate =self;
-            textview.layoutManager.delegate = self;
-            textview.textContainer.lineFragmentPadding = 10;
-            textview.contentInset=UIEdgeInsetsZero;
-            textview.scrollEnabled = NO;
+            UITextView * textview = (UITextView*)[cell.contentView viewWithTag:DUserBio];
             textview.text = [WSModelClasses sharedHandler].loggedInUserModel.biodata;
-            textview.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-            [cell.contentView addSubview:textview];
+            break;
+        }
         
-            
-            break;
-            
-        }
-        case DUserSecurity:{
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-            cell.textLabel.textColor = ELEMENT_FONT_COLOR;
-            cell.textLabel.text= @"Security";
-            cell.accessoryView = [self createBackGroundImageView:[UIImage imageNamed:@"chevron.png"]];
-            break;
-        }
-        case DUserSignOut:{
-            cell.textLabel.text = @"Sign out";
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-            cell.textLabel.textColor = [UIColor whiteColor];
-            cell.textLabel.textAlignment = NSTextAlignmentCenter;
-            cell.backgroundColor=  [UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1];
-            break;
-            
-        }
         default:
             break;
     }
+    
     return cell;
 }
 
@@ -292,7 +334,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
--(void)addTheWelcomesViewControllerToWindow
+- (void)addTheWelcomesViewControllerToWindow
 {
     
     [self.navigationController popToRootViewControllerAnimated:YES];
@@ -321,6 +363,21 @@
     }
 }
 
+- (void)lineSpacingFroTextView:(DESAboutTextView *)textView
+{
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 15.0f;
+    
+    NSString *string = @" ";
+    NSDictionary *ats = @{
+                          NSParagraphStyleAttributeName : paragraphStyle,
+                          NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0],
+                          NSForegroundColorAttributeName : [UIColor lightGrayColor],
+                          };
+    
+    textView.attributedText = [[NSAttributedString alloc] initWithString:string attributes:ats];
+    textView.text = @"";
+}
 
 - (UILabel*)createLableTitle:(NSString*)inTitle fontName:(NSString*)inFontName textSize:(CGFloat)inFloat tag:(int)inTag
 {
@@ -683,7 +740,8 @@
     return YES;
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
     if ([text isEqualToString:@"\n"]) {
          [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
@@ -691,6 +749,23 @@
 
         return NO; // or true, whetever you's like
     }
+    
+    NSString *string = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    UIFont *font = textView.font;
+    
+    CGSize maximumSize = textView.frame.size;
+    maximumSize.width -= 10.0f;
+    NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject:textView.font forKey: NSFontAttributeName];
+    CGSize expectedLabelSize2 = [string boundingRectWithSize:maximumSize
+                                                     options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
+                                                  attributes:stringAttributes context:nil].size;
+    
+    float numberOfLines = expectedLabelSize2.height / font.lineHeight;
+//    NSLog(@"numberOfLines = %f", numberOfLines);
+    if(numberOfLines > 3.0) {
+        return NO;
+    }
+    
     return YES;
 }
 
