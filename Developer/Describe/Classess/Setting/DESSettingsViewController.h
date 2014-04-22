@@ -20,10 +20,13 @@ typedef enum types
     google_plus_Tag =1
     
 } settingType;
+
 @interface DESSettingsViewController : UIViewController
+
 @property (weak, nonatomic) IBOutlet UIImageView *backGroundImg;
 @property (weak, nonatomic) IBOutlet UITableView *settingTableView;
 
 
--(void)hideoBottom;
+- (void)hideoBottom;
+
 @end

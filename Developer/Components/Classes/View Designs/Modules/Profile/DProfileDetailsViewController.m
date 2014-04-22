@@ -318,7 +318,7 @@
 
 - (void)segmentViewDidSelected:(DSegmentView *)segmentView atIndex:(NSNumber *)index
 {
-    int indexx = [index integerValue];
+    NSInteger indexx = [index integerValue];
     switch (indexx) {
         case 0:
             [self removeViewFromSuperView:_followersList];
