@@ -174,12 +174,11 @@ typedef enum {
 
 -(void)updateTheUserEmaiIdAndPassword:(NSString*)emilId AndPassword:(NSString*)password responce:(void(^)(BOOL success, id response))response;
 
--(void)getTheUserPushNotificationresponce:(void(^)(BOOL success, id response))response;
+-(void)getTheUserPushNotification;
 
 -(void)updatTheUserPushNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc responce:(void(^)(BOOL success, id response))response;
 
--(void)getTHeUserEmailNotificationsresponce:(void(^)(BOOL success, id response))response;
-
+-(void)getTHeUserEmailNotifications;
 -(void)updatTheUserEmailNotifications:(NSNumber*)likeStatus CommentsStatus:(NSNumber*)commentSts mymentionsStatus:(NSNumber*)metionsStc followsStatus:(NSNumber*)followStc activityUpdates:(NSNumber*)activitystc importentUpdates:(NSNumber*)importentStc responce:(void(^)(BOOL success, id response))response;
 //http://mirusstudent.com/service/describe-service/updateUserInfoSettings/UserUID=1/UserFullName=shekahr/UserCity=hyderabad/UserDob=yyyy-mm-dd/UserGender=1/UserBiodata=biodataoftheuser
 

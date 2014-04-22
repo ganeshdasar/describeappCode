@@ -178,17 +178,17 @@
             switch (indexPath.row) {
                 case facebook_tag:{
                     if ([[DESocialConnectios sharedInstance] isFacebookLoggedIn]) {
-                        cell.accessoryView = [self createLable:@"connected"];
+                        cell.accessoryView = [self createLable:@"connected"AndFrame:CGRectMake(0, 0, 75, 44) status:YES];
                     }else{
-                        cell.accessoryView = [self createLable:@"connect"];
+                        cell.accessoryView = [self createLable:@"connect" AndFrame:CGRectMake(0, 0, 58, 44) status:NO];
                     }
                     break;
                 }
                 case google_plus_Tag:{
                     if ([[DESocialConnectios sharedInstance] isGooglePlusLoggeIn]) {
-                        cell.accessoryView = [self createLable:@"connected"];
+                        cell.accessoryView = [self createLable:@"connected"AndFrame:CGRectMake(0, 0, 75, 44) status:YES] ;
                     }else{
-                        cell.accessoryView = [self createLable:@"connect"];
+                        cell.accessoryView = [self createLable:@"connect" AndFrame:CGRectMake(0, 0, 58, 44) status:NO];
                     }
                     break;
                 }
@@ -257,10 +257,17 @@
 }
 
 
--(UILabel*)createLable:(NSString*)title{
-    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(30, 0, 80, 44)];
-    lable.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.f];
-    lable.textColor = ELEMENT_FONT_COLOR;
+-(UILabel*)createLable:(NSString*)title AndFrame:(CGRect)rect status:(BOOL)status{
+    UILabel *lable = [[UILabel alloc]initWithFrame:rect];
+    if (status) {
+        lable.textColor = ELEMENT_FONT_COLOR;
+
+    }else{
+        lable.textColor = HEADER_FONT_COLOR;
+    }
+    lable.font =  [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.f];
+    //15,150,150,150 connected ,connect color 200,200,200
+    lable.textAlignment = NSTextAlignmentCenter;
     [lable setText:title];
     return lable;
 }
@@ -351,7 +358,7 @@
     tempView.backgroundColor = [UIColor clearColor];
     switch (section) {
         case DSettingTypeAccount:{
-            UILabel * label = [self createLableTitle:@"Edit your name, city, password, email address and other information associated with your Describe account." fontName:@"HelveticaNeue-Light" textSize:10.0 tag:1];
+            UILabel * label = [self createLableTitle:@"Edit your name, city, password, email address and other information associated with this Describe account." fontName:@"HelveticaNeue-Light" textSize:10.0 tag:1];
             label.frame = CGRectMake(15, 0, 320, 30);
             [tempView addSubview:label];
             break;

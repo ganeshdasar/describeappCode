@@ -155,11 +155,9 @@
 
 -(UITextField*)createDetailTextField:(UITableViewCell*)inTableViewCell
 {
-    
-    UITextField * textField = [[UITextField alloc]initWithFrame:CGRectMake(100, 0, 220, 40)];
+    UITextField * textField = [[UITextField alloc]initWithFrame:CGRectMake(120, 0, 200, 40)];
     textField.delegate = self;
     return textField;
-
 }
 
 

@@ -196,21 +196,17 @@
 
 -(void)getTheUserPushNotification
 {
-    [[WSModelClasses sharedHandler]getTheUserPushNotificationresponce:^(BOOL success, id responce){
-        if (success) {
-        [self updateTheStatus:[[(NSDictionary*)responce valueForKeyPath:@"DataTable.UserData"]objectAtIndex:0]];
-        }else{
-        }
-    }];
+    NSMutableDictionary *dic = (NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USER_PUSHNOTIFICATIONS];
+    [self updateTheStatus:dic];
 }
 
 
 -(void)updateTheStatus:(NSDictionary*)responceDic
 {
-    isLikesOnMyPost=  [[responceDic valueForKey:@"UserPushNotifyLikesStatus"] isEqualToString:@"1"]? YES:NO;
-    isCommentsOnMypost=  [[responceDic valueForKey:@"UserPushNotifyCommentsStatus"] isEqualToString:@"1"]? YES:NO;
-    ismymentionInComment=  [[responceDic valueForKey:@"UserPushNotifyMentsionsStatus"] isEqualToString:@"1"]? YES:NO;
-    isNotfollower=  [[responceDic valueForKey:@"UserPushNotifyFollowersStatus"] isEqualToString:@"1"]? YES:NO;
+    isLikesOnMyPost= [[responceDic valueForKey:@"UserPushNotifyLikesStatus"] boolValue];
+    isCommentsOnMypost= [[responceDic valueForKey:@"UserPushNotifyCommentsStatus"] boolValue];
+    ismymentionInComment= [[responceDic valueForKey:@"UserPushNotifyMentsionsStatus"] boolValue];
+    isNotfollower= [[responceDic valueForKey:@"UserPushNotifyFollowersStatus"] boolValue];
     [self.pustNotificationTbl reloadData];
 }
 
@@ -218,13 +214,26 @@
     
     [[WSModelClasses sharedHandler]updatTheUserPushNotifications:[NSNumber numberWithBool:isLikesOnMyPost] CommentsStatus:[NSNumber numberWithBool:isCommentsOnMypost] mymentionsStatus:[NSNumber numberWithBool:ismymentionInComment] followsStatus:[NSNumber numberWithBool:isNotfollower] responce:^(BOOL success, id responce){
         if (success) {
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:USER_PUSHNOTIFICATIONS];
+            [self updateThePushNotificationsInUserDefaults];
              [self.navigationController popViewControllerAnimated:YES];
         }else{
         }
         
     }];
+    
 }
 
+-(void)updateThePushNotificationsInUserDefaults
+{
+    NSMutableDictionary * dic  =[[NSMutableDictionary alloc]init];
+    [dic setObject:[NSString stringWithFormat:@"%d",isLikesOnMyPost] forKey:@"UserPushNotifyLikesStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",isCommentsOnMypost] forKey:@"UserPushNotifyCommentsStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",ismymentionInComment] forKey:@"UserPushNotifyMentsionsStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",isNotfollower] forKey:@"UserPushNotifyFollowersStatus"];
+    [[NSUserDefaults standardUserDefaults]setObject:dic forKey:USER_PUSHNOTIFICATIONS];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 -  (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section==0) {

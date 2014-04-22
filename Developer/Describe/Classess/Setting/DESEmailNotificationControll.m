@@ -297,26 +297,18 @@
 
 -(void)getTheUserEmailNotification
 {
-    [[WSModelClasses sharedHandler]getTHeUserEmailNotificationsresponce:^(BOOL success, id responce){
-        if (success) {
-            [self updateTheStatus:[[(NSDictionary*)responce valueForKeyPath:@"DataTable.UserData"]objectAtIndex:0]];
-
-        }else{
-            
-        }
-    }];
-
+      NSMutableDictionary *dic = (NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USER_EMAILNOTIFICAIONS];
+    [self updateTheStatus:dic];
 }
 -(void)updateTheStatus:(NSDictionary*)responceDic
 {
-    isLikesOnMyPost=  [[responceDic valueForKey:@"UserEmailNotifyLikesStatus"] isEqualToString:@"1"]? YES:NO;
-    isCommentsOnMypost=  [[responceDic valueForKey:@"UserEmailNotifyCommentsStatus"] isEqualToString:@"1"]? YES:NO;
-    ismymentionInComment=  [[responceDic valueForKey:@"UserEmailNotifyMentsionsStatus"] isEqualToString:@"1"]? YES:NO;
-    isNotfollower=  [[responceDic valueForKey:@"UserEmailNotifyFollowersStatus"] isEqualToString:@"1"]? YES:NO;
-    isActivityUpdates=  [[responceDic valueForKey:@"UserEmailNotifyActivitiesStatus"] isEqualToString:@"1"]? YES:NO;
-    isImportentAnnouncements=  [[responceDic valueForKey:@"UserEmailNotifyAnnouncesStatus"] isEqualToString:@"1"]? YES:NO;
+    isLikesOnMyPost= [[responceDic valueForKey:@"UserEmailNotifyLikesStatus"] boolValue];
+    isCommentsOnMypost= [[responceDic valueForKey:@"UserEmailNotifyCommentsStatus"] boolValue];
+    ismymentionInComment= [[responceDic valueForKey:@"UserEmailNotifyMentsionsStatus"] boolValue];
+    isNotfollower= [[responceDic valueForKey:@"UserEmailNotifyFollowersStatus"] boolValue];
+    isActivityUpdates= [[responceDic valueForKey:@"UserEmailNotifyActivitiesStatus"] boolValue];
+    isImportentAnnouncements= [[responceDic valueForKey:@"UserEmailNotifyAnnouncesStatus"] boolValue];
     [self.emailNotificationTbl reloadData];
-    
 }
 
 
@@ -324,9 +316,24 @@
 {
     [[WSModelClasses sharedHandler]updatTheUserEmailNotifications:[NSNumber numberWithBool:isLikesOnMyPost] CommentsStatus:[NSNumber numberWithBool:isCommentsOnMypost] mymentionsStatus:[NSNumber numberWithBool:ismymentionInComment] followsStatus:[NSNumber numberWithBool:isNotfollower] activityUpdates:[NSNumber numberWithBool:isActivityUpdates] importentUpdates:[NSNumber numberWithBool:isImportentAnnouncements] responce:^(BOOL success, id responce){
         if (success) {
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:USER_EMAILNOTIFICAIONS];
+            [self updateTheEmailNotificationsInUserDefaults];
             [self.navigationController popViewControllerAnimated:YES];
         }else{
         }
     }];
+}
+
+-(void)updateTheEmailNotificationsInUserDefaults
+{
+    NSMutableDictionary * dic  =[[NSMutableDictionary alloc]init];
+    [dic setObject:[NSString stringWithFormat:@"%d",isLikesOnMyPost] forKey:@"UserEmailNotifyLikesStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",isCommentsOnMypost] forKey:@"UserEmailNotifyCommentsStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",ismymentionInComment] forKey:@"UserEmailNotifyMentsionsStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",isNotfollower] forKey:@"UserEmailNotifyFollowersStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",isActivityUpdates] forKey:@"UserEmailNotifyActivitiesStatus"];
+    [dic setObject:[NSString stringWithFormat:@"%d",isImportentAnnouncements] forKey:@"UserEmailNotifyAnnouncesStatus"];
+    [[NSUserDefaults standardUserDefaults]setObject:dic forKey:USER_EMAILNOTIFICAIONS];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 @end

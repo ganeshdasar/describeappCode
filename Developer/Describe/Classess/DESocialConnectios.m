@@ -59,15 +59,16 @@ static DESocialConnectios *_sharedInstance;
     if(signedIn.idToken != nil) {
         [signedIn disconnect];
     }
-    if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
-        [self.delegate googlePlusResponce:nil andFriendsList:nil];
-    }
+    
     if([[NSUserDefaults standardUserDefaults] objectForKey:GOOGLEPLUESACCESSTOKEN]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:GOOGLEPLUESACCESSTOKEN];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:GOOGLEPLUSEXPIRATIONDATE];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
+    if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+        [self.delegate googlePlusResponce:nil andFriendsList:nil];
+    }
 }
 
 - (BOOL)isGooglePlusLoggeIn
@@ -224,13 +225,15 @@ static DESocialConnectios *_sharedInstance;
         
         [FBSession.activeSession closeAndClearTokenInformation];
     }
-    if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
-        [self.delegate googlePlusResponce:nil andFriendsList:nil];
-    }
+    
     if([[NSUserDefaults standardUserDefaults] objectForKey:FACEBOOKACCESSTOKENKEY]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:FACEBOOKACCESSTOKENKEY];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:FACEBOOKEXPIRATIONDATE];
         [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(googlePlusResponce:andFriendsList:)]) {
+        [self.delegate googlePlusResponce:nil andFriendsList:nil];
     }
 }
 
