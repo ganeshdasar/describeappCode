@@ -20,7 +20,7 @@
 
 @interface NotifcationsCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIImageView *notificationImageView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *subTitleLable;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;

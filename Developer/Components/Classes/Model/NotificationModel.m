@@ -13,6 +13,10 @@
 - (id)initWithDictionary:(NSDictionary *)notificationDict
 {
     if (self = [super init]) {
+        self.shouldLoadNextPage = NO;
+        self.pageNumber = 0;
+        self.pageLoadNotificationId = nil;
+        
         if (notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID]]) {
             if([notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID] isKindOfClass:[NSNumber class]]) {
                 self.notificationId = notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONID];
@@ -24,10 +28,25 @@
         
         if (notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE]]) {
             self.notificationType = (NotificationType)[notificationDict[NOTIFICATION_MODEL_KEY_NOTIFICATIONTYPE] integerValue];
+            
+            if(self.notificationType == kNotificationTypeFBFriendJoined) {
+                self.socialName = @"Facebook";
+            }
+            else if(self.notificationType == kNotificationTypeGPFriendsJoined) {
+                self.socialName = @"Google+";
+            }
+            
         }
         
-        if (notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL]]) {
-            self.imageUrlString = notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL];
+        if(self.notificationType == kNotificationTypeComment || self.notificationType == kNotificationTypeLike) {
+            if (notificationDict[NOTIFICATION_MODEL_KEY_POSTIMAGE] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_POSTIMAGE]]) {
+                self.imageUrlString = notificationDict[NOTIFICATION_MODEL_KEY_POSTIMAGE];
+            }
+        }
+        else {
+            if (notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL]]) {
+                self.imageUrlString = notificationDict[NOTIFICATION_MODEL_KEY_IMAGEURL];
+            }
         }
         
         if (notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID] && [NotificationModel isValidValue:notificationDict[NOTIFICATION_MODEL_KEY_PROFILEUSERUID]]) {
@@ -68,6 +87,10 @@
             }
             else {
                 self.similarCount = [NSNumber numberWithInteger:[notificationDict[NOTIFICATION_MODEL_KEY_TOTALCOUNT] integerValue]];
+            }
+            
+            if([self.similarCount integerValue] > 1) {
+                self.shouldLoadNextPage = YES;
             }
         }
         

@@ -685,7 +685,6 @@
 {
     [[WSModelClasses sharedHandler] followAllActionUserID:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue]
                                                 followAll:YES
-                                               forGateway:@""
                                                 rageValue:[NSString stringWithFormat:@"%ld", (long)pageLoadNumberRecommend]
                                                  responce:^(BOOL success, id responce) {
                                                      if (success) {
