@@ -56,6 +56,7 @@
     
     NSInteger selecedSocialBtnTag;
 }
+
 @end
 
 @implementation DescAddpeopleViewController
@@ -79,16 +80,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    if (isiPhone5)
-    {
+    // Do any additional setup after loading the view from its nib.
+
+    if (isiPhone5) {
         self.backGroundImg.image = [UIImage imageNamed:@"bg_std_4in.png"];
     }
-    else
-    {
+    else {
         self.backGroundImg.image = [UIImage imageNamed:@"bg_std_3.5in.png"];
-        
-        //Iphone  3.5 inch
     }
+    
     self.selectedType.selected = NO;
     selecedSocialBtnTag = -1;
     
@@ -115,12 +115,16 @@
                                                  name:@"refreshTheView"
                                                object:nil];
    
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 //HeadderView
@@ -134,24 +138,24 @@
     //back button
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
-    //[backButton addTarget:self action:@selector(goToBack:) forControlEvents:UIControlEventTouchUpInside];
     [backButton setTag:HeaderButtonTypePrev];
-    if([[self.navigationController viewControllers] count] == 2)
+    if([[self.navigationController viewControllers] count] == 2) {
         [backButton setHidden:YES];
-    else
+    }
+    else {
         [backButton setHidden:NO];
-    
+    }
     
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
-    //[nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
     [nextButton setTag:HeaderButtonTypeNext];
     
-    
-    if(self.isCommmingFromFeed)
+    if(self.isCommmingFromFeed) {
         [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton]];
-    else
+    }
+    else {
         [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
+    }
     [_headerView setDelegate:self];
 }
 
@@ -180,29 +184,17 @@
     weRecommendBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [weRecommendBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [weRecommendBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
-   // [weRecommendBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_1.png"] forState:UIControlStateNormal];
     weRecommendBtn.selected = YES;
     [weRecommendBtn addTarget:self action:@selector(getTheWeRecommendDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
     
     invitationsBtn = [[UIButton alloc] init];
-   // [invitationsBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_2.png"] forState:UIControlStateNormal];
     [invitationsBtn setTitle: @"Invitations" forState: UIControlStateNormal];
     invitationsBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [invitationsBtn addTarget:self action:@selector(getTheInvitationsDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
     [invitationsBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [invitationsBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
     invitationsBtn.selected = NO;
-//    BOOL iskeyAvilable;
-//    if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
-//        iskeyAvilable = YES;
-//    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
-//        iskeyAvilable = YES;
-//    }else {
-//        iskeyAvilable = NO;
-//    }
-//    if (!iskeyAvilable) {
-//        invitationsBtn.userInteractionEnabled = NO;
-//    }
+
     _searchBarComponent.tag = 2;
     [_segmentComponent designSegmentControllerWithButtons:@[weRecommendBtn,invitationsBtn]];
 }
@@ -428,10 +420,12 @@
     if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
         gateWay = @"fb";
         accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
-    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+    }
+    else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
         gateWay = @"gplus";
         accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
-    }else {
+    }
+    else {
         gateWay =@"";
         accessToken = @"";
     }
@@ -453,10 +447,12 @@
     if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
         gateWay = @"fb";
         accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
-    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+    }
+    else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
         gateWay = @"gplus";
         accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
-    }else {
+    }
+    else {
         gateWay = @"";
         accessToken = @"";
     }
@@ -485,22 +481,23 @@
         [self showStatusView:YES];
         return;
     }
+    
     switch (serviceType) {
         case kWebserviesType_addPeople_wRecommended:
         {
             [self parsingTheData:responseDict forInvitation:NO];
             break;
         }
+            
         case kWebserviesType_addPeople_wInvitations:
         {
             [self parsingTheData:responseDict forInvitation:YES];
             break;
         }
+            
         default:
             break;
     }
-    
-    
 }
 
 - (void)parsingTheData:(NSDictionary*)responceDict forInvitation:(BOOL)isInvitation
@@ -604,7 +601,7 @@
 
         [self showStatusView:NO];
     }
-    else{
+    else {
         if ([searchBar.searchTxt.text length]!=0) {
             shouldLoadMoreSearch = NO;
             pageLoadNumberSearch = 0;
@@ -621,7 +618,7 @@
     backButton.userInteractionEnabled = NO;
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate = self;
-    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchType:nil  searchWord:searchWord range:pageLoadNumberSearch];
+    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchWord:searchWord range:pageLoadNumberSearch];
 }
 
 - (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error
@@ -702,7 +699,6 @@
     [self designHeaderView];
 
     [self showStatusView:YES];
-//    [self.view bringSubviewToFront:followAndInviteView];
 }
 
 - (void)showLoadView
@@ -718,7 +714,8 @@
 {
     if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
         [self inviteAllAction];
-    }else{
+    }
+    else {
         [self followAllAction];
     }
 }

@@ -25,16 +25,19 @@
     BOOL shouldLoadMoreForSearch;
     NSInteger pageLoadNumberForSearch;
 }
+
 @end
 
 @implementation DesSearchPeopleViewContrlooerViewController
 @synthesize _peoplelistView;
 @synthesize searchListArray;
 @synthesize backGroundImg;
--(UIStatusBarStyle)preferredStatusBarStyle
+
+- (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
 }
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -75,17 +78,16 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)designSerchList
+- (void)designSerchList
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     self._peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, _peoplelistView.frame.origin.y, 320, screenRect.size.height-108) andPeopleList:nil];
     [self._peoplelistView setDelegate:self];
     [_peoplelistView setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:self._peoplelistView];
-    
 }
 
--(void)designHeadderView
+- (void)designHeadderView
 {
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
@@ -93,26 +95,20 @@
     [_headerView designHeaderViewWithTitle:@"Search" andWithButtons:@[backButton]];
 }
 
-
--(void)addSearchBar
+- (void)addSearchBar
 {
     [_searchBarComponent designSerachBar];
     _searchBarComponent.searchDelegate =self;
     [_searchBarComponent setBackgroundColor:[UIColor whiteColor]];
-
 }
 
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar
 {
     if ([searchBar.searchTxt.text length]!=0) {
-//        WSModelClasses * modelClass = [WSModelClasses sharedHandler];
-//        modelClass.delegate = self;
-//        [modelClass getSearchDetailsUserID:@"" searchType:nil  searchWord:searchBar.searchTxt.text range:0];
         shouldLoadMoreForSearch = NO;
         pageLoadNumberForSearch = 0;
         [self fetchPeopleWithSearchWord:searchBar.searchTxt.text];
     }
-    
 }
 
 - (void)fetchPeopleWithSearchWord:(NSString *)searchWord
@@ -123,7 +119,7 @@
     modelClass.delegate = self;
     
     [modelClass showLoadView];
-    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchType:nil  searchWord:searchWord range:pageLoadNumberForSearch];
+    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchWord:searchWord range:pageLoadNumberForSearch];
 }
 
 - (void)loadNextPageOfPeopleList:(DPeopleListComponent *)peopleListComp
@@ -180,29 +176,17 @@
     else {
         [_peoplelistView loadMorePeople:pepoleListArray];
     }
-    
-//    NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
-//    self.searchListArray = [[NSMutableArray alloc]init];
-//    for (NSMutableDictionary* dataDic in peopleArray) {
-//        SearchPeopleData * searchData = [[SearchPeopleData alloc]initWithDictionary:dataDic[@"DescribeSearchResultsByPeople"]];
-//        [self.searchListArray addObject:searchData];
-//    }
-//    
-//    backButton.userInteractionEnabled = YES;
-//    [_peoplelistView setBackgroundColor:[UIColor clearColor]];
-//    [_peoplelistView reloadTableView:self.searchListArray];
 }
 
--(void)removeTheSearchViewFromSuperview
+- (void)removeTheSearchViewFromSuperview
 {
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"refreshTheView"
      object:self];
     [self.navigationController popViewControllerAnimated:YES];
-    
 }
 
--(void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
+- (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
 {
     SearchPeopleData *people = self.searchListArray[index];    
     DProfileDetailsViewController *profileDetailViewController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];

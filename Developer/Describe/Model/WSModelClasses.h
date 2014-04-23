@@ -101,7 +101,6 @@ typedef enum {
 
 #pragma mark Searchby people
 - (void)getSearchDetailsUserID:(NSString*)inUserID
-                    searchType:(NSString*)inSearchType
                     searchWord:(NSString*)inSearchString
                          range:(NSInteger)pageNo;
 

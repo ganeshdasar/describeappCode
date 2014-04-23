@@ -199,7 +199,7 @@ static WSModelClasses *_sharedInstance;
 }
 
 
--(void)signInWithSocialNetwork:(NSString*)inGateWay
+- (void)signInWithSocialNetwork:(NSString*)inGateWay
               andGateWauTokern:(NSString *)inGatewayToken;
 {
     
@@ -227,7 +227,7 @@ static WSModelClasses *_sharedInstance;
     
 }
 #pragma mark BasicInfo
--  (void)postBasicInfoWithUserUID:(NSString*)inUID
+- (void)postBasicInfoWithUserUID:(NSString*)inUID
                      userBioData:(NSString*)inBioData
                         userCity:(NSString*)inUserCity
                          userDob:(NSString*)inUserDob
@@ -292,8 +292,7 @@ static WSModelClasses *_sharedInstance;
 
 #pragma mrak SearchResult
 - (void)getSearchDetailsUserID:(NSString*)inUserID
-                   searchType:(NSString*)inSearchType
-                   searchWord:(NSString*)inSearchString
+                    searchWord:(NSString*)inSearchString
                          range:(NSInteger)pageNo;
 {
     if (![self checkTheInterConnection]) return;
