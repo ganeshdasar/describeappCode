@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -9,11 +9,7 @@
             <connections>
                 <outlet property="_headerView" destination="Jbf-vv-UMd" id="Ha4-ss-uR5"/>
                 <outlet property="cameraContainerView" destination="cqC-D7-OTq" id="AGy-ek-xhG"/>
-                <outlet property="cancelButton" destination="Yve-zQ-0cG" id="o6v-aN-3xg"/>
-                <outlet property="listButton" destination="XC6-8B-kJH" id="lyF-hP-r4M"/>
-                <outlet property="nextButton" destination="b78-go-sOB" id="6Mc-J8-MI0"/>
                 <outlet property="photoCollectionView" destination="1U2-ND-EhZ" id="b8O-Fr-yZi"/>
-                <outlet property="prevButton" destination="Hf3-RY-R7e" id="4rs-Ct-J6d"/>
                 <outlet property="selectedImageView" destination="JeS-NX-ZG9" id="sU4-mv-JhC"/>
                 <outlet property="videoPreviewView" destination="3lA-Km-r4t" id="9mn-eQ-s6y"/>
                 <outlet property="videoProgressIndicator" destination="6ul-Ig-Stx" id="HQN-bz-HXr"/>
@@ -41,76 +37,10 @@
                         <outlet property="delegate" destination="-1" id="aD5-b7-NRR"/>
                     </connections>
                 </collectionView>
-                <view contentMode="scaleToFill" id="Yah-v1-PLx">
+                <view contentMode="scaleToFill" id="Jbf-vv-UMd" customClass="DHeaderView">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <imageView contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg_nav_comp.png" id="jKG-dP-8QQ">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" Record" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="vCK-5T-sOZ">
-                            <rect key="frame" x="0.0" y="20" width="100" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XC6-8B-kJH">
-                            <rect key="frame" x="182" y="24" width="35" height="35"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <state key="normal" backgroundImage="btn_nav_comp_menu.png">
-                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="listOptionClicked:" destination="-1" eventType="touchUpInside" id="nRK-vY-Zmc"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Hf3-RY-R7e">
-                            <rect key="frame" x="230" y="24" width="35" height="35"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <state key="normal" backgroundImage="btn_nav_comp_back.png">
-                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="prevButtonSelected:" destination="-1" eventType="touchUpInside" id="Fua-7X-x86"/>
-                            </connections>
-                        </button>
-                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="b78-go-sOB">
-                            <rect key="frame" x="230" y="24" width="35" height="35"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <state key="normal" backgroundImage="btn_nav_comp_next.png">
-                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="nextOptionClicked:" destination="-1" eventType="touchUpInside" id="S55-BO-BcU"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Yve-zQ-0cG">
-                            <rect key="frame" x="273" y="24" width="35" height="35"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <state key="normal" backgroundImage="btn_nav_std_cancel.png">
-                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="dissmissOptionClicked:" destination="-1" eventType="touchUpInside" id="NVL-UM-RiU"/>
-                            </connections>
-                        </button>
-                        <view contentMode="scaleToFill" id="Jbf-vv-UMd" customClass="DHeaderView">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        </view>
-                    </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                 </view>
                 <view multipleTouchEnabled="YES" contentMode="scaleToFill" id="cqC-D7-OTq">
                     <rect key="frame" x="0.0" y="84" width="320" height="320"/>
@@ -154,11 +84,4 @@
             </connections>
         </tapGestureRecognizer>
     </objects>
-    <resources>
-        <image name="bg_nav_comp.png" width="320" height="64"/>
-        <image name="btn_nav_comp_back.png" width="35" height="35"/>
-        <image name="btn_nav_comp_menu.png" width="35" height="35"/>
-        <image name="btn_nav_comp_next.png" width="35" height="35"/>
-        <image name="btn_nav_std_cancel.png" width="35" height="35"/>
-    </resources>
 </document>

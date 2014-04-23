@@ -113,7 +113,18 @@
         cropRect.origin.y /= screenScaleValue;
         cropRect.size.width /= screenScaleValue;
         cropRect.size.height /= screenScaleValue;
-        [_imageContentScrollView zoomToRect:cropRect animated:NO];
+        
+//        [_imageContentScrollView zoomToRect:cropRect animated:NO];
+        // commented the above line of zoomToRect; since it was giving slide effect when zooming to the cropRect even after passing the animated parameter as NO
+        // so doing the zoomRect functionality by calculating the zoomVal from cropRect
+        // and also finding the contentOffset to accomplish the zoomRect behaviour
+        
+        CGFloat zoomVal = CGRectGetWidth(_imageContentScrollView.frame) / CGRectGetWidth(cropRect);
+        cropRect.origin.x *= zoomVal;
+        cropRect.origin.y *= zoomVal;
+        
+        [_imageContentScrollView setZoomScale:zoomVal animated:NO];
+        [_imageContentScrollView setContentOffset:cropRect.origin animated:NO];
     }
     else {
         // find contentOffset for bringing center of image into visible area

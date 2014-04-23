@@ -19,13 +19,29 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Components/Classes/Controller/NotificationsViewController.m"
-            timestampString = "419859932.225263"
+            filePath = "Components/Classes/Controller/CMRecordViewController.m"
+            timestampString = "419949611.399297"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "283"
-            endingLineNumber = "283"
-            landmarkName = "-didFinishFetchingNotification:error:"
+            startingLineNumber = "376"
+            endingLineNumber = "376"
+            landmarkName = "-prevButtonSelected:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/Controller/CMViewController.m"
+            timestampString = "419949790.611459"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "525"
+            endingLineNumber = "525"
+            landmarkName = "-goToVideoRecordingScreen"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

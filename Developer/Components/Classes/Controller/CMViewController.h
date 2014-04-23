@@ -33,5 +33,6 @@
 - (IBAction)nextOptionClicked:(id)sender;
 - (IBAction)backOptionClicked:(id)sender;
 - (void)refreshSelectedImageViewContainer;
+- (void)showCameraOverlayView;
 
 @end
