@@ -837,7 +837,7 @@ typedef enum {
     return YES;
 }
 
--(void)textViewDidBeginEditing:(UITextView *)textView
+- (void)textViewDidBeginEditing:(UITextView *)textView
 {
     _currentTextField = textView;
     _profilePicOverlayView.hidden = YES;
@@ -871,7 +871,7 @@ typedef enum {
 // /   _currentTextField = textView;
 }
 
--(void)textViewDidEndEditing:(UITextView *)textView
+- (void)textViewDidEndEditing:(UITextView *)textView
 {
     _currentTextField = nil;
     

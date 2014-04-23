@@ -199,7 +199,7 @@ static WSModelClasses *_sharedInstance;
 }
 
 
--(void)signInWithSocialNetwork:(NSString*)inGateWay
+- (void)signInWithSocialNetwork:(NSString*)inGateWay
               andGateWauTokern:(NSString *)inGatewayToken;
 {
     
@@ -227,7 +227,7 @@ static WSModelClasses *_sharedInstance;
     
 }
 #pragma mark BasicInfo
--  (void)postBasicInfoWithUserUID:(NSString*)inUID
+- (void)postBasicInfoWithUserUID:(NSString*)inUID
                      userBioData:(NSString*)inBioData
                         userCity:(NSString*)inUserCity
                          userDob:(NSString*)inUserDob
@@ -292,12 +292,12 @@ static WSModelClasses *_sharedInstance;
 
 #pragma mrak SearchResult
 - (void)getSearchDetailsUserID:(NSString*)inUserID
-                   searchType:(NSString*)inSearchType
-                   searchWord:(NSString*)inSearchString;
+                    searchWord:(NSString*)inSearchString
+                         range:(NSInteger)pageNo;
 {
     if (![self checkTheInterConnection]) return;
     //http://mirusstudent.com/service/describe-service/getSearchPeople/format=json/UserUID=1/SearchWord=a
-    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@", BaseURLString,[WSModelClasses sharedHandler].loggedInUserModel.userID,inSearchString];
+    NSString *ur = [NSString stringWithFormat:@"%@/getSearchPeople/format=json/UserUID=%@/SearchWord=%@/range=%ld", BaseURLString,[WSModelClasses sharedHandler].loggedInUserModel.userID,inSearchString, (long)pageNo];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:ur
       parameters:nil
@@ -1117,7 +1117,6 @@ static WSModelClasses *_sharedInstance;
 
 - (void)followAllActionUserID:(NSString*)userId
                     followAll:(BOOL)followAll
-                   forGateway:(NSString *)gatewayStr
                     rageValue:(NSString*)rangeValue
                      responce:(void(^)(BOOL success, id responce))responce
 {
@@ -1126,8 +1125,8 @@ static WSModelClasses *_sharedInstance;
         followStr = @"TRUE";
     }
     
-    //http://mirusstudent.com/service/describe-service/getBeAFollower/format=json/UserUID=4/FollowAllSts=TRUE/GateWay=fb/range=0/
-    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/format=json/UserUID=%@/FollowAllSts=%@/GateWay=%@/range=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID, followStr, gatewayStr, rangeValue];
+    //http://mirusstudent.com/service/describe-service/getBeAFollower/format=json/UserUID=3/FollowAllSts=TRUE/range=1/
+    NSString *url = [NSString stringWithFormat:@"%@/getBeAFollower/format=json/UserUID=%@/FollowAllSts=%@/range=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID, followStr, rangeValue];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
       parameters:nil

@@ -302,7 +302,7 @@
         [self removeCameraView];
         
         // set default rect for selectedImageView
-        [_aspectFillImageController resetImageContentToEmpty];
+//        [_aspectFillImageController resetImageContentToEmpty];
         [_aspectFillImageController placeSelectedImage:modelObj.originalImage withCropRect:modelObj.cropRect];
         self.selectedImageIndex = index;
         
@@ -507,16 +507,17 @@
 {
 //    NSLog(@"Navigate to the video composition screen for images");
     [self showSelectedPhoto:0];
+    [self showDeleteButton:NO];
     
-    [[WSModelClasses sharedHandler] showLoadView];
-//    [UIView animateWithDuration:1.0 animations:^{
-//        CGRect frame = self.cameraOverlayView.frame;
-//        frame.origin.x = -320.0f;
-//        self.cameraOverlayView.frame = frame;
-//    } completion:^(BOOL finished) {
-//        [self goToVideoRecordingScreen];
-//    }];
-    [self performSelector:@selector(goToVideoRecordingScreen) withObject:nil afterDelay:0.3];
+//    [[WSModelClasses sharedHandler] showLoadView];
+    [UIView animateWithDuration:1.0 animations:^{
+        CGRect frame = self.cameraOverlayView.frame;
+        frame.origin.x = -320.0f;
+        self.cameraOverlayView.frame = frame;
+    } completion:^(BOOL finished) {
+        [self goToVideoRecordingScreen];
+    }];
+//    [self performSelector:@selector(goToVideoRecordingScreen) withObject:nil afterDelay:0.3];
 }
 
 - (void)goToVideoRecordingScreen
@@ -526,6 +527,19 @@
     recordController.parentController = self;
     [self.navigationController pushViewController:recordController animated:NO];
     recordController = nil;
+}
+
+- (void)showCameraOverlayView
+{
+    [UIView animateWithDuration:1.0
+                     animations:^{
+                         CGRect frame = self.cameraOverlayView.frame;
+                         frame.origin.x = 0.0f;
+                         self.cameraOverlayView.frame = frame;
+                     }
+                     completion:^(BOOL finished) {
+//                         [self showDeleteButton:YES];
+                     }];
 }
 
 - (IBAction)backOptionClicked:(id)sender

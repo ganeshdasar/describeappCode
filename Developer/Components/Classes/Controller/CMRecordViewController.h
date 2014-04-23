@@ -16,10 +16,10 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *photoCollectionView;
 @property (weak, nonatomic) IBOutlet UIView *cameraContainerView;
 @property (weak, nonatomic) IBOutlet UIImageView *selectedImageView;
-@property (weak, nonatomic) IBOutlet UIButton *listButton;
-@property (weak, nonatomic) IBOutlet UIButton *nextButton;
-@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
-@property (weak, nonatomic) IBOutlet UIButton *prevButton;
+//@property (weak, nonatomic) IBOutlet UIButton *listButton;
+@property (weak, nonatomic) UIButton *nextButton;
+@property (weak, nonatomic) UIButton *cancelButton;
+@property (weak, nonatomic) UIButton *prevButton;
 @property (weak, nonatomic) IBOutlet UIProgressView *videoProgressIndicator;
 @property (weak, nonatomic) IBOutlet UIView *videoPreviewView;
 
@@ -27,7 +27,7 @@
 
 @property (nonatomic, strong) NSMutableArray *capturedPhotoList;
 
-- (IBAction)listOptionClicked:(id)sender;
+//- (IBAction)listOptionClicked:(id)sender;
 - (IBAction)nextOptionClicked:(id)sender;
 - (IBAction)dissmissOptionClicked:(id)sender;
 - (IBAction)prevButtonSelected:(id)sender;

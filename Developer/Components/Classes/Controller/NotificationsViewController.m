@@ -15,16 +15,19 @@
 #import "DesSearchPeopleViewContrlooerViewController.h"
 #import "DESSettingsViewController.h"
 #import "DescAddpeopleViewController.h"
+#import "DProfileDetailsViewController.h"
 
 @interface NotificationsViewController () <WSModelClassDelegate, DHeaderViewDelegate>
 {
-
+    NSInteger pageNumber;
+    BOOL shouldLoadNextPage;
+    
+    BOOL isLoadingMain;
 }
 
 @property (nonatomic, strong) NSMutableArray *notificationListArray;
 @property (assign) BOOL isRefresh;
 @property (assign) NSInteger selectedRow;
-@property (assign) NSInteger similarCount;
 @property (assign) NSInteger mainPageNumber;
 @property (assign) NSInteger childPageNumber;
 
@@ -48,6 +51,9 @@
     self.navigationController.navigationBarHidden = YES;
     
     _selectedRow = -1;   // default value, when no row is selected
+    pageNumber = 0;
+    shouldLoadNextPage = NO;
+    isLoadingMain = NO;
     
 //    NSLog(@"FontFamily = %@", [UIFont fontNamesForFamilyName:@"Helvetica Neue"]);
     
@@ -57,7 +63,7 @@
     [self designHeaderView];
 }
 
--(void)designHeaderView
+- (void)designHeaderView
 {
     UIButton  *reloadButton, *moreButton;
     
@@ -74,7 +80,7 @@
 
 }
 
--(NSArray *)menuButtonsList
+- (NSArray *)menuButtonsList
 {
     UIButton *homeButton, *profileButton,  *searchButton, *addPeople, *settingsButton, *closeButton;
     
@@ -113,6 +119,18 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)loadNextPage
+{
+    @synchronized(self) {
+        if(shouldLoadNextPage == YES) {
+            shouldLoadNextPage = NO;
+            pageNumber += 1;
+            isLoadingMain = YES;
+            [self getNotificationListWithNotificationID:nil ofPageNumber:pageNumber];
+        }
+    }
+}
+
 - (IBAction)refreshNotificationData:(id)sender
 {
 //TODO - REMOVE TEMP CODE
@@ -128,7 +146,10 @@
 //    [_notificationTableview reloadData];
     
     _selectedRow = -1;
-    [self getNotificationListWithNotificationID:nil];
+    pageNumber = 0;
+    shouldLoadNextPage = NO;
+    isLoadingMain = YES;
+    [self getNotificationListWithNotificationID:nil ofPageNumber:pageNumber];
 }
 
 - (IBAction)showMenuOptions:(id)sender
@@ -171,6 +192,43 @@
     return aCell;
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGPoint offset = scrollView.contentOffset;
+    CGRect bounds = scrollView.bounds;
+    CGSize size = scrollView.contentSize;
+    UIEdgeInsets inset = scrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    
+    //    NSLog(@"offset = %@, bounds = %@, size = %@, inset = %@", NSStringFromCGPoint(offset), NSStringFromCGRect(bounds), NSStringFromCGSize(size), NSStringFromUIEdgeInsets(inset));
+    
+    float reload_distance = 500.0f;//100;
+    if(y > (h - reload_distance)) {
+        // Call the method to load nextPage if its available
+        [self loadNextPage];
+        return;
+    }
+    
+}
+
+#pragma mark - UITableView Delegate Methods
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"%s", __func__);
+    NotificationModel *model = (NotificationModel *)_notificationListArray[indexPath.row];
+    if(model.notificationType == kNotificationTypeComment || model.notificationType == kNotificationTypeLike) {
+        
+    }
+    else {
+        if(model.fromUserId) {
+            DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+            profileController.profileId = [model.fromUserId stringValue];
+            [self.navigationController pushViewController:profileController animated:YES];
+        }
+    }
+}
+
 #pragma mark - NotificationCell delegate methods
 
 - (void)notificationImageSelectedAtIndexpath:(NSIndexPath *)indexpath
@@ -183,27 +241,16 @@
 {
     NSLog(@"%s", __func__);
     NotificationModel *model = _notificationListArray[indexpath.row];
-    if([model.similarCount integerValue] > 1 ) {
+    if(model.shouldLoadNextPage == YES) {   // ([model.similarCount integerValue] > 1 )
         _selectedRow = indexpath.row;
-        _similarCount = model.similarCount.integerValue;
-        [self getNotificationListWithNotificationID:model.notificationId];
-//        NSInteger startInsertIndex = indexpath.row + 1;
-//        NSMutableArray *fadeRowIndexpathArray = [[NSMutableArray alloc] initWithCapacity:0];
-//        for(NotificationModel *modelObj in model.similarData) {
-//            [_notificationListArray insertObject:modelObj atIndex:startInsertIndex];
-//            [fadeRowIndexpathArray addObject:[NSIndexPath indexPathForRow:startInsertIndex inSection:0]];
-//            startInsertIndex++;
-//        }
-//        
-//        model.similarData = nil;
-//        model.similarCount = [NSNumber numberWithInteger:1];
-//        
-//        [_notificationTableview beginUpdates];
-//        
-//        [_notificationTableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:indexpath.row inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-//        [_notificationTableview insertRowsAtIndexPaths:fadeRowIndexpathArray withRowAnimation:UITableViewRowAnimationFade];
-//        
-//        [_notificationTableview endUpdates];
+        isLoadingMain = NO;
+
+        if(model.pageLoadNotificationId != nil) {
+            [self getNotificationListWithNotificationID:model.pageLoadNotificationId ofPageNumber:model.pageNumber];
+        }
+        else {
+            [self getNotificationListWithNotificationID:model.notificationId ofPageNumber:model.pageNumber];
+        }
     }
     
 }
@@ -211,43 +258,65 @@
 - (void)notificationFriendsJoinedSelectedAtIndexpath:(NSIndexPath *)indexpath
 {
     NSLog(@"%s", __func__);
-
+    NotificationModel *model = (NotificationModel *)_notificationListArray[indexpath.row];
+    if(model.fromUserId) {
+        DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
+        profileController.profileId = [model.fromUserId stringValue];
+        [self.navigationController pushViewController:profileController animated:YES];
+    }
 }
 
 #pragma mark - Fetching Notification from API
 
-- (void)getNotificationListWithNotificationID:(NSNumber *)notificationId
+- (void)getNotificationListWithNotificationID:(NSNumber *)notificationId ofPageNumber:(NSInteger)pageNo
 {
     WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     modelClass.delegate = self;
-    
-    [modelClass getNotificationListForUser:[[WSModelClasses sharedHandler] loggedInUserModel].userID withSubId:notificationId andPageNumber:[NSNumber numberWithInteger:0]];
+    [modelClass showLoadView];
+    [modelClass getNotificationListForUser:[[WSModelClasses sharedHandler] loggedInUserModel].userID withSubId:notificationId andPageNumber:[NSNumber numberWithInteger:pageNo]];
 }
 
 - (void)didFinishFetchingNotification:(NSArray *)responseList error:(NSError *)error
 {
-    if(_selectedRow != -1) {
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    
+    if(isLoadingMain == NO && _selectedRow != -1) {
+        NotificationModel *model = (NotificationModel *)_notificationListArray[_selectedRow];
+        model.similarCount = [NSNumber numberWithInteger:1];
+        
+        // check if responseObject count is 11, if yes then discard last object and thn take 10th object from responseList
+        // store the pageLoadNotificationId with notificationId of selectedRow model and
+        // also store the pageNumber with increasing pageNumber value of selectedRow model and
+        // also make the shouldLoadMorePage flag as YES
+        NSMutableArray *responseListArr = [[NSMutableArray alloc] initWithArray:responseList];
+
+        if(responseListArr.count == 11) {
+            [responseListArr removeLastObject];
+            
+            NotificationModel *modelObj = (NotificationModel *)[responseListArr lastObject]; //responseListArr[4];//
+            modelObj.pageLoadNotificationId = model.pageLoadNotificationId ? model.pageLoadNotificationId : model.notificationId;
+            modelObj.shouldLoadNextPage = YES;
+            modelObj.pageNumber = model.pageNumber + 1;
+        }
+        
+        if(model.pageNumber == 0) {   // deleting first object of page:1, because it is duplicate of the main notification
+            [responseListArr removeObjectAtIndex:0];
+        }
+        
+        if(model.pageLoadNotificationId != nil) {
+            model.pageLoadNotificationId = nil;
+        }
+        
+        model.shouldLoadNextPage = NO;
+        
         NSInteger startInsertIndex = _selectedRow + 1;
         NSMutableArray *fadeRowIndexpathArray = [[NSMutableArray alloc] initWithCapacity:0];
-        for(NotificationModel *modelObj in responseList) {
+        for(NotificationModel *modelObj in responseListArr) {
             [_notificationListArray insertObject:modelObj atIndex:startInsertIndex];
             [fadeRowIndexpathArray addObject:[NSIndexPath indexPathForRow:startInsertIndex inSection:0]];
             startInsertIndex++;
         }
         
-        NotificationModel *model = (NotificationModel *)_notificationListArray[_selectedRow];
-        model.similarCount = [NSNumber numberWithInteger:1];
-        
-        _similarCount = _similarCount - fadeRowIndexpathArray.count;
-        
-        if(_similarCount < 2) {
-            _selectedRow = -1;
-            _similarCount = -1;
-        }
-        else {
-            [self getNotificationListWithNotificationID:model.notificationId];
-        }
-
         [_notificationTableview beginUpdates];
 
         [_notificationTableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_selectedRow inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
@@ -256,9 +325,17 @@
         [_notificationTableview endUpdates];
     }
     else {  // will come here if its firstTime or refreshButton is pressed
-        [_notificationListArray removeAllObjects];
+        if(pageNumber == 0) {
+            [_notificationListArray removeAllObjects];
+        }
+        
         for(NotificationModel *modelObj in responseList) {
             [_notificationListArray addObject:modelObj];
+        }
+        
+        if(responseList.count == 11) {
+            shouldLoadNextPage = YES;
+            [_notificationListArray removeLastObject];
         }
         
         if(_notificationListArray.count == 0) {
@@ -275,7 +352,7 @@
 }
 
 #pragma mark Header View Delegate Methods -
--(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+- (void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
 {
     HeaderButtonType buttonType = [headerButton tag];
     switch (buttonType)

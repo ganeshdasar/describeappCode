@@ -20,7 +20,6 @@
 #import "MBProgressHUD.h"
 #import "DSocialMediaListView.h"
 #import "DESocialConnectios.h"
-#import "DesSearchPeopleViewContrlooerViewController.h"
 #import "DESSettingsViewController.h"
 #import "DProfileDetailsViewController.h"
 #import "DESAppDelegate.h"
@@ -41,7 +40,6 @@
     IBOutlet DSegmentComponent * _segmentComponent;
     IBOutlet DSearchBarComponent * _searchBarComponent;
     IBOutlet DSocialComponent * socialComponent;
-    DesSearchPeopleViewContrlooerViewController *searchViewCntrl;
     __weak IBOutlet UIView *followAndInviteView;
     __weak IBOutlet UIButton *followAndInviteImgView;
     
@@ -53,13 +51,16 @@
     NSInteger pageLoadNumberInvite;
     NSMutableArray *invitationList;
     
+    BOOL shouldLoadMoreSearch;
+    NSInteger pageLoadNumberSearch;
+    
     NSInteger selecedSocialBtnTag;
 }
+
 @end
 
 @implementation DescAddpeopleViewController
 @synthesize selectedType;
-@synthesize peopleListArray;
 @synthesize searchListArray;
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -79,16 +80,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    if (isiPhone5)
-    {
+    // Do any additional setup after loading the view from its nib.
+
+    if (isiPhone5) {
         self.backGroundImg.image = [UIImage imageNamed:@"bg_std_4in.png"];
     }
-    else
-    {
+    else {
         self.backGroundImg.image = [UIImage imageNamed:@"bg_std_3.5in.png"];
-        
-        //Iphone  3.5 inch
     }
+    
     self.selectedType.selected = NO;
     selecedSocialBtnTag = -1;
     
@@ -96,6 +96,10 @@
     shouldLoadMoreRecommend = NO;
     pageLoadNumberInvite = 0;
     pageLoadNumberRecommend = 0;
+    
+    shouldLoadMoreSearch = NO;
+    pageLoadNumberSearch = 0;
+    
     werecommendedList = [[NSMutableArray alloc] initWithCapacity:0];
     invitationList = [[NSMutableArray alloc] initWithCapacity:0];
     self.searchListArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -111,12 +115,16 @@
                                                  name:@"refreshTheView"
                                                object:nil];
    
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 //HeadderView
@@ -130,24 +138,24 @@
     //back button
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
-    //[backButton addTarget:self action:@selector(goToBack:) forControlEvents:UIControlEventTouchUpInside];
     [backButton setTag:HeaderButtonTypePrev];
-    if([[self.navigationController viewControllers] count] == 2)
+    if([[self.navigationController viewControllers] count] == 2) {
         [backButton setHidden:YES];
-    else
+    }
+    else {
         [backButton setHidden:NO];
-    
+    }
     
     nextButton = [[UIButton alloc] init];
     [nextButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_next.png"] forState:UIControlStateNormal];
-    //[nextButton addTarget:self action:@selector(goToFeedScreen:) forControlEvents:UIControlEventTouchUpInside];
     [nextButton setTag:HeaderButtonTypeNext];
     
-    
-    if(self.isCommmingFromFeed)
+    if(self.isCommmingFromFeed) {
         [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton]];
-    else
+    }
+    else {
         [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
+    }
     [_headerView setDelegate:self];
 }
 
@@ -176,29 +184,17 @@
     weRecommendBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [weRecommendBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [weRecommendBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
-   // [weRecommendBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_1.png"] forState:UIControlStateNormal];
     weRecommendBtn.selected = YES;
     [weRecommendBtn addTarget:self action:@selector(getTheWeRecommendDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
     
     invitationsBtn = [[UIButton alloc] init];
-   // [invitationsBtn setBackgroundImage:[UIImage imageNamed:@"seg_2_2.png"] forState:UIControlStateNormal];
     [invitationsBtn setTitle: @"Invitations" forState: UIControlStateNormal];
     invitationsBtn.titleLabel.font  = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16];
     [invitationsBtn addTarget:self action:@selector(getTheInvitationsDataFromServer:) forControlEvents:UIControlEventTouchUpInside];
     [invitationsBtn setTitleColor:[UIColor textPlaceholderColor] forState:UIControlStateNormal];
     [invitationsBtn setTitleColor:[UIColor segmentButtonSelectedColor] forState:UIControlStateSelected];
     invitationsBtn.selected = NO;
-//    BOOL iskeyAvilable;
-//    if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
-//        iskeyAvilable = YES;
-//    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
-//        iskeyAvilable = YES;
-//    }else {
-//        iskeyAvilable = NO;
-//    }
-//    if (!iskeyAvilable) {
-//        invitationsBtn.userInteractionEnabled = NO;
-//    }
+
     _searchBarComponent.tag = 2;
     [_segmentComponent designSegmentControllerWithButtons:@[weRecommendBtn,invitationsBtn]];
 }
@@ -424,10 +420,12 @@
     if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
         gateWay = @"fb";
         accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
-    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+    }
+    else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
         gateWay = @"gplus";
         accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
-    }else {
+    }
+    else {
         gateWay =@"";
         accessToken = @"";
     }
@@ -449,10 +447,12 @@
     if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
         gateWay = @"fb";
         accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
-    }else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+    }
+    else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
         gateWay = @"gplus";
         accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
-    }else {
+    }
+    else {
         gateWay = @"";
         accessToken = @"";
     }
@@ -481,22 +481,23 @@
         [self showStatusView:YES];
         return;
     }
+    
     switch (serviceType) {
         case kWebserviesType_addPeople_wRecommended:
         {
             [self parsingTheData:responseDict forInvitation:NO];
             break;
         }
+            
         case kWebserviesType_addPeople_wInvitations:
         {
             [self parsingTheData:responseDict forInvitation:YES];
             break;
         }
+            
         default:
             break;
     }
-    
-    
 }
 
 - (void)parsingTheData:(NSDictionary*)responceDict forInvitation:(BOOL)isInvitation
@@ -580,8 +581,6 @@
 #pragma serchThe People
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar
 {
-    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
-    modelClass.delegate = self;
     if (isSearching) {
         isSearching = NO;
         [_headerView removeSubviewFromHedderView];
@@ -602,17 +601,44 @@
 
         [self showStatusView:NO];
     }
-    else{
+    else {
         if ([searchBar.searchTxt.text length]!=0) {
-            [modelClass getSearchDetailsUserID:@"1" searchType:nil  searchWord:searchBar.searchTxt.text];
+            shouldLoadMoreSearch = NO;
+            pageLoadNumberSearch = 0;
+            
+            [self fetchSearchPeopleForWord:searchBar.searchTxt.text];
         }
     }
 }
 
+- (void)fetchSearchPeopleForWord:(NSString *)searchWord
+{
+    [[WSModelClasses sharedHandler] showLoadView];
+    
+    backButton.userInteractionEnabled = NO;
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    modelClass.delegate = self;
+    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchWord:searchWord range:pageLoadNumberSearch];
+}
+
 - (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error
 {
-    [self.searchListArray removeAllObjects];
+    if(isSearching) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
+        backButton.userInteractionEnabled = YES;
+        return;
+    }
+    
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    
+    if(pageLoadNumberSearch == 0) {
+        [self.searchListArray removeAllObjects];
+    }
+    
     NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
+    
+    NSMutableArray *pepoleListArray = [[NSMutableArray alloc] init];
+    
     for (NSMutableDictionary* dataDic in peopleArray) {
         SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
         searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
@@ -624,12 +650,25 @@
         searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
         searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
         searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
-        [self.searchListArray addObject:searchData];
+        [pepoleListArray addObject:searchData];
     }
+    
+    if(pepoleListArray.count > 50) {
+        shouldLoadMoreSearch = YES;
+        [pepoleListArray removeLastObject];
+    }
+    
+    [self.searchListArray addObjectsFromArray:pepoleListArray];
     
     backButton.userInteractionEnabled = YES;
     [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = NO;
-    [_peoplelistView reloadTableView:self.searchListArray];
+    
+    if(pageLoadNumberSearch == 0) {
+        [_peoplelistView reloadTableView:self.searchListArray];
+    }
+    else {
+        [_peoplelistView loadMorePeople:pepoleListArray];
+    }
 }
 
 - (void)removeTheSearchViewFromSuperview:(id)inSender
@@ -660,7 +699,6 @@
     [self designHeaderView];
 
     [self showStatusView:YES];
-//    [self.view bringSubviewToFront:followAndInviteView];
 }
 
 - (void)showLoadView
@@ -676,7 +714,8 @@
 {
     if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
         [self inviteAllAction];
-    }else{
+    }
+    else {
         [self followAllAction];
     }
 }
@@ -685,7 +724,6 @@
 {
     [[WSModelClasses sharedHandler] followAllActionUserID:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue]
                                                 followAll:YES
-                                               forGateway:@""
                                                 rageValue:[NSString stringWithFormat:@"%ld", (long)pageLoadNumberRecommend]
                                                  responce:^(BOOL success, id responce) {
                                                      if (success) {
@@ -717,9 +755,14 @@
 }
 
 #pragma mark - DPeopleListComponentDelegate Method
-- (void)loadNextPage
+- (void)loadNextPageOfPeopleList:(DPeopleListComponent *)peopleListComp
 {
     if(isSearching == NO) {
+        if(shouldLoadMoreSearch) {
+            shouldLoadMoreSearch = NO;
+            pageLoadNumberSearch += 1;
+            [self fetchSearchPeopleForWord:_searchBarComponent.searchTxt.text];
+        }
         return;
     }
     

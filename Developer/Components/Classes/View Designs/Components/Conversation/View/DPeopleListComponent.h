@@ -36,7 +36,7 @@
 - (void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger;
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 - (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger )index;
-- (void)loadNextPage;
+- (void)loadNextPageOfPeopleList:(DPeopleListComponent *)peopleListComp;
 - (void)statusChange;
 
 @end

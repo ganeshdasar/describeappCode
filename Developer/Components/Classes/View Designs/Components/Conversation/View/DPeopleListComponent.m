@@ -234,8 +234,8 @@
     float reload_distance = 200.0f;//100;
     if(y > (h - reload_distance)) {
         // Call the method.
-        if((_delegate != nil && [_delegate respondsToSelector:@selector(loadNextPage)])) {
-            [_delegate performSelector:@selector(loadNextPage) withObject:nil];
+        if((_delegate != nil && [_delegate respondsToSelector:@selector(loadNextPageOfPeopleList:)])) {
+            [_delegate performSelector:@selector(loadNextPageOfPeopleList:) withObject:self];
         }
         
         return;

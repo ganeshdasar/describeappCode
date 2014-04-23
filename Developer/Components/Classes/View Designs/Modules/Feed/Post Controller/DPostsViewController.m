@@ -465,7 +465,11 @@ static DPostsViewController *sharedFeedController;
     
     if(buttonIndex == 0) {
         // remove the previous images and video from path
+#if !(TARGET_IPHONE_SIMULATOR)
+        
         [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:nil];
+        
+#endif
         if(compositionDict != nil && compositionDict[COMPOSITION_VIDEO_PATH_KEY]) {
             NSString *videoPath = compositionDict[COMPOSITION_VIDEO_PATH_KEY];
             if([[NSFileManager defaultManager] fileExistsAtPath:videoPath]) {
@@ -571,7 +575,7 @@ static DPostsViewController *sharedFeedController;
 }
 
 
-- (void)loadNextPage
+- (void)loadNextPageOfPost:(DPostListView *)postListView
 {
     if(YES == shouldLoadMore) {
         shouldLoadMore = NO;

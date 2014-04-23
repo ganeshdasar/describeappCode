@@ -33,6 +33,10 @@ typedef enum {
 @property (nonatomic, strong) NSNumber *serverTimeStamp;
 @property (nonatomic, assign) BOOL readStatus;
 
+@property (assign) NSInteger pageNumber;
+@property (assign) BOOL shouldLoadNextPage;
+@property (nonatomic, strong) NSNumber *pageLoadNotificationId;
+
 - (id)initWithDictionary:(NSDictionary *)notificationDict;
 + (BOOL)isValidValue:(id)value;
 

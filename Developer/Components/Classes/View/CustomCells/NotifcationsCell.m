@@ -47,7 +47,9 @@
 //    NSLog(@"%s", __func__);
     if(_delegate != nil && [_delegate respondsToSelector:@selector(notificationTitleSelectedAtIndexpath:)]) {
         NSIndexPath *indexpath = [NotifcationsCell getIndexPathFromCell:self];
-        [_delegate notificationTitleSelectedAtIndexpath:indexpath];
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+            [_delegate notificationTitleSelectedAtIndexpath:indexpath];
+//        });
     }
 }
 
@@ -67,38 +69,46 @@
     _notificationModel = dataModel;
     
     if(_notificationModel.notificationType == kNotificationTypeFollowing || _notificationModel.notificationType == kNotificationTypeFBFriendJoined || _notificationModel.notificationType == kNotificationTypeGPFriendsJoined) {
-        // the imageView should be circle
-        self.imageView.layer.cornerRadius = CGRectGetHeight(self.imageView.frame)/2.0f;
+        // the notificationImageView should be circle
+        self.notificationImageView.layer.cornerRadius = CGRectGetHeight(self.notificationImageView.frame)/2.0f;
     }
     else {
-        self.imageView.layer.cornerRadius = 0.0f;
+        self.notificationImageView.layer.cornerRadius = 0.0f;
     }
     
-    self.imageView.layer.masksToBounds = YES;
-    self.imageView.layer.borderColor = [UIColor colorWithRed:220.0f/255.0f green:220.0f/255.0f blue:220.0f/255.0f alpha:1.0].CGColor;
-    self.imageView.layer.borderWidth = 0.5f;
+    self.notificationImageView.layer.masksToBounds = YES;
+    self.notificationImageView.layer.borderColor = [UIColor colorWithRed:220.0f/255.0f green:220.0f/255.0f blue:220.0f/255.0f alpha:1.0].CGColor;
+    self.notificationImageView.layer.borderWidth = 0.5f;
     
     if(_notificationModel.imageUrlString && [_notificationModel.imageUrlString length] > 0) {
-        [self.imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimagessmall/%@",_notificationModel.imageUrlString]]
-                              completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-                                  self.imageView.image = image;
-                              }
-            usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        [self.notificationImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimagessmall/%@",_notificationModel.imageUrlString]]
+                                   placeholderImage:[UIImage imageNamed:@"thumb_user_std_null.png"]
+                                          completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+                                              self.notificationImageView.image = image;
+                                          }
+                        usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     }
-    
-//    self.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_notificationModel.imageUrlString]]];
-//    [self setThumbnailUrlString:_notificationModel.imageUrlString];
     
     [self setTitleFromDataModel];
     [self setSubTitlefromDataModel];
     
     _timeLabel.text = [_notificationModel.timeStamp stringValue];
+    
+    if(_notificationModel.shouldLoadNextPage == YES && _notificationModel.pageLoadNotificationId) {
+        [self performSelector:@selector(notificationTitleLabelTapped:) withObject:nil afterDelay:0.0];
+    }
 }
 
 - (void)setTitleFromDataModel
 {
     // check the type of notification and form the string and place it on titleLabel
     if(_notificationModel.notificationType == kNotificationTypeFBFriendJoined  || _notificationModel.notificationType == kNotificationTypeGPFriendsJoined) {
+        _titleLabel.hidden = YES;
+        _titleLabel.text = @"";
+        return;
+    }
+    
+    if(_notificationModel.fromUserName == nil) {
         _titleLabel.hidden = YES;
         _titleLabel.text = @"";
         return;
@@ -117,7 +127,7 @@
         {
             if(_notificationModel.similarCount && [_notificationModel.similarCount integerValue] > 1) {
                 NSInteger value = [_notificationModel.similarCount integerValue] - 1;
-                NSAttributedString *moreString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %ld %@", (long)value,
+                NSAttributedString *moreString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" and %ld %@", (long)value,
                                                                                              value > 1 ? NSLocalizedString(@"others", nil):NSLocalizedString(@"other", nil)]
                                                                                  attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:200.0f/255.0f green:200.0f/255.0f blue:200.0f/255.0f alpha:1.0f]}];
                 [titleString appendAttributedString:moreString];

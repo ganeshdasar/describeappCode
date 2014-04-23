@@ -23,6 +23,7 @@
     
     BOOL isRecordingCompleted;
     IBOutlet DHeaderView *_headerView;
+    CGRect prevBtnActualRect;
 }
 
 @property (assign) NSInteger selectedImageIndex;
@@ -51,13 +52,13 @@
         
         if([self isLastPhotoRecording]) {
             [UIView animateWithDuration:0.3 animations:^{
-                CGRect frame = self.listButton.frame;
-                self.prevButton.frame = frame;
-                
-                frame.origin.x = 139.0;
-                self.listButton.frame = frame;
-                
-                self.nextButton.hidden = NO;
+//                CGRect frame = self.listButton.frame;
+//                self.prevButton.frame = frame;
+//                
+//                frame.origin.x = 139.0;
+//                self.listButton.frame = frame;
+//                
+//                self.nextButton.hidden = NO;
             }];
         }
     }
@@ -72,7 +73,7 @@
 {
     if(self.parentController != nil) {
         [[WSModelClasses sharedHandler] removeLoadingView];
-        [self.parentController refreshSelectedImageViewContainer];
+//        [self.parentController refreshSelectedImageViewContainer];
     }
 }
 
@@ -80,6 +81,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
     [self designHeaderView];
     self.navigationController.navigationBarHidden = YES;
     
@@ -110,47 +112,55 @@
     [self.photoCollectionView setContentOffset:CGPointMake(0.0, 20.0) animated:NO];
 }
 
-
--(void)designHeaderView
+- (void)designHeaderView
 {
-    
     UIButton *closeButton = [[UIButton alloc] init];
     [closeButton setTag:HeaderButtonTypeClose];
     [closeButton setImage:[UIImage imageNamed:@"btn_nav_std_cancel.png"] forState:UIControlStateNormal];
-    
     
     UIButton *backButton = [[UIButton alloc] init];
     [backButton setTag:HeaderButtonTypePrev];
     [backButton setImage:[UIImage imageNamed:@"btn_nav_comp_back.png"] forState:UIControlStateNormal];
     
-    
     UIButton *nextButton = [[UIButton alloc] init];
     [nextButton setTag:HeaderButtonTypeNext];
     [nextButton setImage:[UIImage imageNamed:@"btn_nav_comp_next.png"] forState:UIControlStateNormal];
-    [nextButton setHidden:YES];
     
     [_headerView designHeaderViewWithTitle:@"Record" andWithButtons:@[backButton, nextButton, closeButton]];
     [_headerView setDelegate:self];
     [_headerView setbackgroundImage:[UIImage imageNamed:@"bg_nav_comp.png"]];
     
-    
-    [_headerView hideButton:nextButton];
+//    [_headerView hideButton:nextButton];
     self.nextButton = nextButton;
+    self.prevButton = backButton;
+    self.cancelButton = closeButton;
+    
+    prevBtnActualRect = self.prevButton.frame;
+    self.prevButton.frame = self.nextButton.frame;
 }
 
--(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
+- (void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
 {
     HeaderButtonType buttonType = headerButton.tag;
     switch (buttonType) {
         case HeaderButtonTypeClose:
+        {
             [self dissmissOptionClicked:headerButton];
             break;
+        }
+            
         case HeaderButtonTypeNext:
+        {
             [self nextOptionClicked:headerButton];
             break;
+        }
+            
         case HeaderButtonTypePrev:
+        {
             [self prevButtonSelected:headerButton];
             break;
+        }
+            
         default:
             break;
     }
@@ -244,7 +254,6 @@
 }
 
 #pragma mark - UICollectionView Datasource methods
-
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
@@ -334,8 +343,8 @@
     
 //    [UIView animateWithDuration:0.3 animations:^{
         CGRect frame = self.prevButton.frame;
-        self.listButton.frame = frame;
-        
+//        self.listButton.frame = frame;
+    
         frame = self.nextButton.frame;
         self.prevButton.frame = frame;
         
@@ -368,6 +377,7 @@
 #endif
     
     [self.navigationController popViewControllerAnimated:NO];
+    [self.parentController showCameraOverlayView];
 }
 
 - (IBAction)startOrPauseVideoRecording:(id)sender
@@ -518,13 +528,13 @@
     
     if([self isLastPhotoRecording]) {
         [UIView animateWithDuration:0.3 animations:^{
-            CGRect frame = self.listButton.frame;
-            self.prevButton.frame = frame;
-            
-            frame.origin.x = 139.0;
-            self.listButton.frame = frame;
-            
-            self.nextButton.hidden = NO;
+//            CGRect frame = self.listButton.frame;
+//            self.prevButton.frame = frame;
+//            
+//            frame.origin.x = 139.0;
+//            self.listButton.frame = frame;
+//            
+//            self.nextButton.hidden = NO;
         }];
     }
     

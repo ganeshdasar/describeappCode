@@ -223,6 +223,7 @@ typedef enum {
 //    NSLog(@"buttonIndex = %d", buttonIndex);
     if(buttonIndex == 1) {
         if(alertView.tag == ALERT_TAG_MOVEBACK) {
+#if !(TARGET_IPHONE_SIMULATOR)
             NSString *path = [[CMAVCameraHandler sharedHandler] videoFilenamePath];
             if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
                 NSError *err;
@@ -233,6 +234,8 @@ typedef enum {
             }
             
             [[CMAVCameraHandler sharedHandler] setVideoFilenamePath:nil];
+#endif
+            
             for(CMPhotoModel *modelObj in self.capturedPhotoList) {
                 if(modelObj.originalImagePath) {
                     [modelObj resetRecordingValues];

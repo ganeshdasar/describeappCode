@@ -15,13 +15,15 @@
 #import "Constant.h"
 #import "DESocialConnectios.h"
 #import "WSModelClasses.h"
+#import "DESAppDelegate.h"
+
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
 
 #define HEADER_FONT_COLOR  [UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1];
 
-@interface DESSettingsViewController ()<UITableViewDataSource,UITableViewDelegate,DESocialConnectiosDelegate>
+@interface DESSettingsViewController ()<UITableViewDataSource,UITableViewDelegate,DESocialConnectiosDelegate, WSModelClassDelegate>
 {
     IBOutlet DHeaderView * _headerView;
     UIButton    *backButton;
@@ -448,17 +450,74 @@
 
 - (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray*)inFriendsList
 {
-    [self.settingTableView reloadSections:[NSIndexSet indexSetWithIndex:DSettingSocialServices] withRowAnimation:UITableViewRowAnimationNone];
-    [self removeLoadingView];
+    if(responseDict == nil) {
+        [self.settingTableView reloadSections:[NSIndexSet indexSetWithIndex:DSettingNetwork] withRowAnimation:UITableViewRowAnimationNone];
+        [self removeLoadingView];
+        return;
+    }
+    
+    WSModelClasses * dataClass = [WSModelClasses sharedHandler];
+    dataClass.delegate = self;
+    
+    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+    if (delegate.isFacebook) {
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"fb" andCheckValue:[responseDict valueForKey:@"id"]];
+    }
+    else if (delegate.isGooglePlus){
+        [dataClass checkTheSocialIDwithDescriveServerCheckType:@"gplus" andCheckValue:[responseDict valueForKey:@"id"]];
+    }
 }
 
--(void)showLoadingView
+- (void)chekTheExistingUser:(NSDictionary *)responseDict error:(NSError *)error
+{
+    DESAppDelegate * delegate = (DESAppDelegate*)[UIApplication sharedApplication ].delegate;
+    [self removeLoadingView];
+    
+    if ([[[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
+        // make either facebook / Gplus button as ON
+        [self.settingTableView reloadSections:[NSIndexSet indexSetWithIndex:DSettingNetwork] withRowAnimation:UITableViewRowAnimationNone];
+    }
+    else {
+        [self.settingTableView reloadSections:[NSIndexSet indexSetWithIndex:DSettingNetwork] withRowAnimation:UITableViewRowAnimationNone];
+        NSString * messageStr = @"";
+        if (delegate.isFacebook) {
+            messageStr = NSLocalizedString(@"This Facebook account is already associated with another Describe account.", @"");
+            [[DESocialConnectios sharedInstance] logoutFacebook];
+        }
+        else if (delegate.isGooglePlus){
+            messageStr = NSLocalizedString(@"This Google+ account is already associated with another Describe account.", @"");
+            [[DESocialConnectios sharedInstance] logoutGooglePlus];
+        }
+        
+        [self showAlertWithTitle:NSLocalizedString(@"Describe", @"") message:messageStr tag:0 delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    }
+}
+
+- (void)showAlertWithTitle:(NSString *)titleString message:(NSString *)message tag:(NSUInteger)tagValue delegate:(id /*<UIAlertViewDelegate>*/)target cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:message delegate:target cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+    
+    // get the variable arguments into argumentList(va_list) using va_start and then iterate through list to get all the button titles
+    // add the button titles to the alert
+    va_list args;
+    va_start(args, otherButtonTitles);
+    for(NSString *arg = otherButtonTitles; arg != nil; arg = va_arg(args, NSString*)) {
+        [alert addButtonWithTitle:arg];
+    }
+    va_end(args);
+    
+    alert.tag = tagValue;
+    [alert show];
+}
+
+- (void)showLoadingView
 {
     [[WSModelClasses sharedHandler] showLoadView];
 }
 
--(void)removeLoadingView
+- (void)removeLoadingView
 {
     [[WSModelClasses sharedHandler] removeLoadingView];
 }
+
 @end

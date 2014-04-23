@@ -21,7 +21,8 @@ typedef enum accountType
     DMaleTag = 100,
     DdateTag = 101,
     DGenderLblTag = 200,
-    DdateLblTag = 300
+    DdateLblTag = 210,
+    DUsernameTag = 220,
 
 }editAccountTyopes;
 @class DESAboutTextView;

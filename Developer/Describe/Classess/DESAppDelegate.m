@@ -184,7 +184,7 @@
             // If the user cancelled login, do nothing
             if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
                 NSLog(@"User cancelled login");
-                
+                return;
                 // Handle session closures that happen outside of the app
             } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
                 alertTitle = @"Session Error";

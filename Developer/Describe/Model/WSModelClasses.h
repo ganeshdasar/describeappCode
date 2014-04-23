@@ -101,8 +101,8 @@ typedef enum {
 
 #pragma mark Searchby people
 - (void)getSearchDetailsUserID:(NSString*)inUserID
-                    searchType:(NSString*)inSearchType
-                    searchWord:(NSString*)inSearchString;
+                    searchWord:(NSString*)inSearchString
+                         range:(NSInteger)pageNo;
 
 #pragma mark CheckTheSocialId with DescriveServer
 - (void)checkTheSocialIDwithDescriveServerCheckType:(NSString*) inCheckType
@@ -189,7 +189,7 @@ typedef enum {
 - (void)getFeedForThisTag:(NSString *)tag forUser:(NSString *)userId andRange:(NSInteger)range response:(void (^)(BOOL success, id response))response;
 
 #pragma mark followAllAndInviteAll
-- (void)followAllActionUserID:(NSString*)userId followAll:(BOOL)followAll forGateway:(NSString *)gatewayStr rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
+- (void)followAllActionUserID:(NSString*)userId followAll:(BOOL)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
 
 -(void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce;
 

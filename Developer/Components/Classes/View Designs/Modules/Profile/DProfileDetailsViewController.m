@@ -29,7 +29,7 @@
     IBOutlet DPostView *_postView;
     IBOutlet DSegmentViewList *_segmentListView;
     
-    NSArray *_posts, *_followers, *_followings;
+    NSMutableArray *_posts, *_followers, *_followings;
     BOOL _holdingFingerOnPostListView;
     BOOL _isSegmentControllerIsVisible;
     CGPoint _currentContentOffset;
@@ -46,6 +46,15 @@
     
     DPostListView *_listView2;
     IBOutlet UIView *_contentView;
+    
+    BOOL shouldLoadMorePosts;
+    NSInteger pageNumberOfPosts;
+    
+    BOOL shouldLoadMoreFollowers;
+    NSInteger pageNumberOfFollowers;
+    
+    BOOL shouldLoadMoreFollowings;
+    NSInteger pageNumberOfFollowings;
 }
 @end
 
@@ -66,14 +75,19 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib...
-    [self designHeaderView];
-    [self designPostListView];
-    [self designSegmentListView];
+    shouldLoadMorePosts = NO;
+    pageNumberOfPosts = 0;
     
+    _posts = [[NSMutableArray alloc] initWithCapacity:0];
+    _followers = [[NSMutableArray alloc] initWithCapacity:0];
+    _followings = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    [self designHeaderView];
+    [self fetchPostListView];
+    [self designSegmentListView];
     
     _profileController.profileUserID = [NSNumber numberWithInteger:[self.profileId integerValue]];
     [self .view addSubview:_profileController.view];
-    
     
     [self fetchUserModelForUserId:self.profileId];
 }
@@ -189,12 +203,21 @@
 
 - (void)getPostDetailsResponse:(NSDictionary *)response withError:(NSError *)error
 {
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    
     NSArray *postList = response[@"DataTable"];
     NSLog(@"Post Details Reponse: %@",response);
     
     NSMutableArray *postModelList = [[NSMutableArray alloc] init];
-    int count = [postList count] ;
-    for (int  i=0; i<count; i ++ )
+    NSInteger count = [postList count];
+    
+    // here check if count is 11, then decrease count by1, since last object indicates that there are more posts which would be coming form server
+    if(count == 11) {
+        count -= 1;
+        shouldLoadMorePosts = YES;
+    }
+    
+    for (int i = 0; i < count; i++)
     {
         //Post lists...
         NSDictionary  *post = postList[i];
@@ -219,7 +242,7 @@
                     }
                     
                     //Will create and add each photo as model and adding them to the list.
-                    int postImagesCount = [postDetails[@"PostImageCount"] integerValue];
+                    NSInteger postImagesCount = [postDetails[@"PostImageCount"] integerValue];
                     postImagesCount = postImagesCount + 1;
                     //postImagesCount = 10;
                     
@@ -302,13 +325,29 @@
     }
     
     _postDetails = postModelList;
-    _posts= postModelList;
+    if(pageNumberOfPosts == 0) {
+        [_posts removeAllObjects];
+    }
+
+    [_posts addObjectsFromArray:postModelList];
+
+    if(_listView == nil) {
+        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList withHeaderView:[[UIView alloc] init]];
+        [_listView setDelegate:self];
+        [_contentView addSubview:_listView];
+    }
     
-    _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:postModelList withHeaderView:[[UIView alloc] init]];
-    [_listView setDelegate:self];
-    [_contentView addSubview:_listView];
-    [_contentView bringSubviewToFront:_segmentListView];
-    [_contentView bringSubviewToFront:_headerView];
+    if([_listView superview] != nil) {
+        [_contentView bringSubviewToFront:_segmentListView];
+        [_contentView bringSubviewToFront:_headerView];
+        if(pageNumberOfPosts == 0) {
+            [_listView reloadData:postModelList];
+        }
+        else {
+            [_listView appendMorePosts:postModelList];
+        }
+    }
+    
     //[_contentView sendSubviewToBack:_listView];
     
     //[[self segmentViewDidSelected:nil atIndex:[NSNumber numberWithInt:1]];
@@ -318,24 +357,48 @@
 
 - (void)segmentViewDidSelected:(DSegmentView *)segmentView atIndex:(NSNumber *)index
 {
-    int indexx = [index integerValue];
+    NSInteger indexx = [index integerValue];
     switch (indexx) {
         case 0:
+        {
             [self removeViewFromSuperView:_followersList];
             [self removeViewFromSuperView:_followingList];
-            [self designListView:_posts];
+            if(_posts.count == 0) {
+                [self fetchPostListView];
+            }
+            else {
+                [self designListView:_posts];
+            }
+            
             break;
+        }
+            
         case 1:
+        {
             [self removePostsListView];
             [self removeViewFromSuperView:_followersList];
-            [self getFollowingList];
+            if(_followings.count == 0) {
+                [self getFollowingList];
+            }
+            else {
+                [self designFollowingList];
+            }
             break;
+        }
+            
         case 2:
+        {
             [self removePostsListView];
             [self removeViewFromSuperView:_followingList];
-            [self getFollowersList];
+            if(_followers.count == 0) {
+                [self getFollowersList];
+            }
+            else {
+                [self desingFollwerList];
+            }
 
             break;
+        }
             
         default:
             break;
@@ -400,6 +463,12 @@
     
     NSArray *peopleList = response[@"DataTable"];
     NSInteger count = peopleList.count;
+    
+    if(count == 51) {
+        count -= 1;
+        shouldLoadMoreFollowings = YES;
+    }
+    
     for (int i=0; i<count; i++) {
         NSDictionary *dict = peopleList[i];
         NSDictionary *people = dict[@"DescribeUserProfileFollowings"];
@@ -418,6 +487,12 @@
     
     NSArray *peopleList = response[@"DataTable"];
     NSInteger count = peopleList.count;
+    
+    if(count == 51) {
+        count -= 1;
+        shouldLoadMoreFollowers = YES;
+    }
+    
     for (int i=0; i<count; i++) {
         NSDictionary *dict = peopleList[i];
         NSDictionary *people = dict[@"DescribeUserProfileFollowers"];
@@ -426,27 +501,6 @@
     }
     
     return list;
-}
-
-- (void)designFollowingList
-{
-    if(_followingList != nil)
-    {
-        [_followingList removeFromSuperview];
-        _followingList = nil;
-    }
-    
-    if(_followingList == nil)
-    {
-        _followingList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followings];
-        [_followingList addHeaderViewForTable:[[UIView alloc] init]];
-        [_followingList setDelegate:self];
-        [_followingList setTag:111];
-        [_contentView addSubview:_followingList];
-    }
-    
-    [_contentView bringSubviewToFront:_segmentListView];
-    [_contentView bringSubviewToFront:_headerView];
 }
 
 - (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
@@ -474,14 +528,41 @@
 {
     NSString *currentUserId = [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue];
     NSString *profileId = self.profileId;
-    NSInteger pageNumber = 0;
+//    NSInteger pageNumber = 0;
     
-    [[WSModelClasses sharedHandler] getFollowingListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumber response:^(BOOL success, id response) {
+    [[WSModelClasses sharedHandler] showLoadView];
+    [[WSModelClasses sharedHandler] getFollowingListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumberOfFollowings response:^(BOOL success, id response) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
         if(success) {
             //Need to parse the data...
             NSLog(@"Follwing List:%@",response);
-            _followings = [self parseFollowingsList:response];
-            [self designFollowingList];
+            NSArray *parsedList = [self parseFollowingsList:response];
+            if(pageNumberOfFollowings == 0) {
+                [_followings removeAllObjects];
+            }
+            [_followings addObjectsFromArray:parsedList];
+            
+            if(_followingList == nil)
+            {
+                _followingList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followings];
+                [_followingList addHeaderViewForTable:[[UIView alloc] init]];
+                [_followingList setDelegate:self];
+                [_followingList setTag:111];
+                [_contentView addSubview:_followingList];
+            }
+            
+            if([_followingList superview] != nil) {
+                if(pageNumberOfFollowings == 0) {
+                    [_followingList reloadTableView:_followings];
+                }
+                else {
+                    [_followingList loadMorePeople:parsedList];
+                }
+                
+                [_contentView bringSubviewToFront:_segmentListView];
+                [_contentView bringSubviewToFront:_headerView];
+            }
+//            [self designFollowingList];
         }
         else {
             //Failed to get the details of the following list...
@@ -494,14 +575,41 @@
 {
     NSString *currentUserId = [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] stringValue];
     NSString *profileId = self.profileId;
-    NSInteger pageNumber = 0;
+//    NSInteger pageNumber = 0;
     
-    [[WSModelClasses sharedHandler] getFollowersListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumber response:^(BOOL success, id response) {
+    [[WSModelClasses sharedHandler] showLoadView];
+    [[WSModelClasses sharedHandler] getFollowersListForUserId:currentUserId ofPersons:profileId pageNumber:pageNumberOfFollowers response:^(BOOL success, id response) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
         if(success) {
             //Need to parse the data...
             NSLog(@"Followers List:%@",response);
-            _followers = [self parseFollowersList:response];
-            [self desingFollwerList];
+            NSArray *parsedList = [self parseFollowersList:response];
+            if(pageNumberOfFollowers == 0) {
+                [_followers removeAllObjects];
+            }
+            [_followers addObjectsFromArray:parsedList];
+            
+            if(_followersList == nil)
+            {
+                _followersList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followers];
+                [_followersList addHeaderViewForTable:[[UIView alloc] init]];
+                [_followersList setDelegate:self];
+                [_contentView addSubview:_followersList];
+            }
+            
+            if([_followersList superview] != nil) {
+                if(pageNumberOfFollowers == 0) {
+                    [_followersList reloadTableView:_followers];
+                }
+                else {
+                    [_followersList loadMorePeople:parsedList];
+                }
+                
+                [_contentView bringSubviewToFront:_segmentListView];
+                [_contentView bringSubviewToFront:_headerView];
+            }
+
+//            [self desingFollwerList];
         }
         else {
             //Failed to get the details of the following list...
@@ -510,31 +618,64 @@
     }];
 }
 
-- (void)desingFollwerList
+- (void)designFollowingList
 {
-    if(_followersList != nil)
+//    if(_followingList != nil)
+//    {
+//        [_followingList removeFromSuperview];
+//        _followingList = nil;
+//    }
+    
+    if(_followingList == nil)
     {
-        [_followersList removeFromSuperview];
-        _followersList = nil;
+        _followingList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followings];
+        [_followingList addHeaderViewForTable:[[UIView alloc] init]];
+        [_followingList setDelegate:self];
+        [_followingList setTag:111];
     }
     
-    if(_followersList == nil)
-    {
-        _followersList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followers];
-        [_followersList addHeaderViewForTable:[[UIView alloc] init]];
-        [_followersList setDelegate:self];
-        [_contentView addSubview:_followersList];
+    if([_followingList superview] == nil) {
+        [_contentView addSubview:_followingList];
     }
+    
+    [_followingList reloadTableView:_followings];
     
     [_contentView bringSubviewToFront:_segmentListView];
     [_contentView bringSubviewToFront:_headerView];
 }
 
-- (void)designPostListView
+- (void)desingFollwerList
+{
+//    if(_followersList != nil)
+//    {
+//        [_followersList removeFromSuperview];
+//        _followersList = nil;
+//    }
+//    
+    if(_followersList == nil)
+    {
+        _followersList = [[DPeopleListComponent alloc] initWithFrame:_postView.frame andPeopleList:_followers];
+        [_followersList addHeaderViewForTable:[[UIView alloc] init]];
+        [_followersList setDelegate:self];
+    }
+    
+    if([_followersList superview] == nil) {
+        [_contentView addSubview:_followersList];
+    }
+    
+    [_followersList reloadTableView:_followers];
+    
+    [_contentView bringSubviewToFront:_segmentListView];
+    [_contentView bringSubviewToFront:_headerView];
+}
+
+- (void)fetchPostListView
 {
     WSModelClasses *sharedInstance = [WSModelClasses sharedHandler];
     [sharedInstance setDelegate:self];
-    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] anotherUserId:self.profileId pageNumber:0 response:^(BOOL success, id response) {
+    [sharedInstance showLoadView];
+    
+    [sharedInstance getPostDetailsOfUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] anotherUserId:self.profileId pageNumber:pageNumberOfPosts response:^(BOOL success, id response) {
         if(success)
         {
             //Success the ...
@@ -549,17 +690,52 @@
 
 - (void)designListView:(NSArray *)array
 {
-    if(_listView != nil)
+    if(_listView == nil)
     {
-        [_listView removeFromSuperview];
-        _listView = nil;
+        _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:array withHeaderView:[[UIView alloc] init]];
+        [_listView setDelegate:self];
     }
     
-    _listView = [[DPostListView alloc] initWithFrame:_postView.frame andPostsList:array withHeaderView:[[UIView alloc] init]];
-    [_listView setDelegate:self];
-    [_contentView addSubview:_listView];
+    if([_listView superview] == nil) {
+        [_contentView addSubview:_listView];
+    }
+    
+    [_listView reloadData:array];
 }
 
+#pragma mark - DPostListViewDelegate Methods
+- (void)loadNextPageOfPost:(DPostListView *)postListView
+{
+    if(shouldLoadMorePosts) {
+        shouldLoadMorePosts = NO;
+        pageNumberOfPosts += 1;
+        
+        [self fetchPostListView];
+    }
+}
+
+#pragma mark - DPeopleListComponentDelegate Methods
+- (void)loadNextPageOfPeopleList:(DPeopleListComponent *)peopleListComp
+{
+    if(peopleListComp == _followersList) {
+        if(shouldLoadMoreFollowers) {
+            shouldLoadMoreFollowers = NO;
+            pageNumberOfFollowers += 1;
+            
+            [self getFollowersList];
+        }
+    }
+    else {
+        if(shouldLoadMoreFollowings) {
+            shouldLoadMoreFollowings = NO;
+            pageNumberOfFollowings += 1;
+            
+            [self getFollowingList];
+        }
+    }
+}
+
+#pragma mark - UIScrollViewDelegate Methods
 - (void)scrollView:(UIScrollView *)scrollView didHoldingFinger:(NSString *)finger
 {
     if([finger isEqualToString:@"HOLDING"]) {

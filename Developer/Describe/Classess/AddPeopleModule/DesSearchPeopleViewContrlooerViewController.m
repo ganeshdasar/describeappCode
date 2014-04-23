@@ -22,18 +22,22 @@
     UIButton * backButton;
     IBOutlet DSearchBarComponent * _searchBarComponent;
 
-
+    BOOL shouldLoadMoreForSearch;
+    NSInteger pageLoadNumberForSearch;
 }
+
 @end
 
 @implementation DesSearchPeopleViewContrlooerViewController
 @synthesize _peoplelistView;
 @synthesize searchListArray;
 @synthesize backGroundImg;
--(UIStatusBarStyle)preferredStatusBarStyle
+
+- (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
 }
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -45,6 +49,13 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    
+    shouldLoadMoreForSearch = NO;
+    pageLoadNumberForSearch = 0;
+    searchListArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
     [self designSerchList];
     [self designHeadderView];
     [self addSearchBar];
@@ -59,8 +70,6 @@
         
         //Iphone  3.5 inch
     }
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)didReceiveMemoryWarning
@@ -69,16 +78,16 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)designSerchList
+- (void)designSerchList
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     self._peoplelistView = [[DPeopleListComponent alloc]initWithFrame:CGRectMake(0, _peoplelistView.frame.origin.y, 320, screenRect.size.height-108) andPeopleList:nil];
     [self._peoplelistView setDelegate:self];
+    [_peoplelistView setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:self._peoplelistView];
-    
 }
 
--(void)designHeadderView
+- (void)designHeadderView
 {
     backButton = [[UIButton alloc] init];
     [backButton setBackgroundImage:[UIImage imageNamed:@"btn_nav_std_back.png"] forState:UIControlStateNormal];
@@ -86,50 +95,98 @@
     [_headerView designHeaderViewWithTitle:@"Search" andWithButtons:@[backButton]];
 }
 
-
--(void)addSearchBar
+- (void)addSearchBar
 {
     [_searchBarComponent designSerachBar];
     _searchBarComponent.searchDelegate =self;
     [_searchBarComponent setBackgroundColor:[UIColor whiteColor]];
-
 }
 
 - (void)searchBarSearchButtonClicked:(DSearchBarComponent *)searchBar
 {
-    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
     if ([searchBar.searchTxt.text length]!=0) {
-        modelClass.delegate = self;
-      [modelClass getSearchDetailsUserID:@"" searchType:nil  searchWord:searchBar.searchTxt.text];
-        backButton.userInteractionEnabled = NO;
+        shouldLoadMoreForSearch = NO;
+        pageLoadNumberForSearch = 0;
+        [self fetchPeopleWithSearchWord:searchBar.searchTxt.text];
     }
-    
 }
 
+- (void)fetchPeopleWithSearchWord:(NSString *)searchWord
+{
+    backButton.userInteractionEnabled = NO;
+    
+    WSModelClasses * modelClass = [WSModelClasses sharedHandler];
+    modelClass.delegate = self;
+    
+    [modelClass showLoadView];
+    [modelClass getSearchDetailsUserID:[[modelClass loggedInUserModel].userID stringValue] searchWord:searchWord range:pageLoadNumberForSearch];
+}
+
+- (void)loadNextPageOfPeopleList:(DPeopleListComponent *)peopleListComp
+{
+    if(shouldLoadMoreForSearch == YES) {
+        shouldLoadMoreForSearch = NO;
+        pageLoadNumberForSearch += 1;
+        [self fetchPeopleWithSearchWord:_searchBarComponent.searchTxt.text];
+    }
+}
 
 #pragma mark serachResult
-- (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error{
-    NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
-    self.searchListArray = [[NSMutableArray alloc]init];
-    for (NSMutableDictionary* dataDic in peopleArray) {
-        SearchPeopleData * searchData = [[SearchPeopleData alloc]initWithDictionary:dataDic[@"DescribeSearchResultsByPeople"]];
-        [self.searchListArray addObject:searchData];
+- (void)getSearchDetails:(NSDictionary *)responseDict error:(NSError *)error
+{
+    [[WSModelClasses sharedHandler] removeLoadingView];
+    if(responseDict == nil) {
+        return;
     }
     
+    if(pageLoadNumberForSearch == 0) {
+        [searchListArray removeAllObjects];
+    }
+    
+    NSArray * peopleArray = [responseDict valueForKey:@"DataTable"];
+    
+    NSMutableArray *pepoleListArray = [[NSMutableArray alloc] init];
+    
+    for (NSMutableDictionary* dataDic in peopleArray) {
+        SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
+        searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
+        searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
+        searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
+        searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
+        searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
+        searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
+        searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
+        searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
+        searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
+        [pepoleListArray addObject:searchData];
+    }
+    
+    if(pepoleListArray.count > 50) {
+        shouldLoadMoreForSearch = YES;
+        [pepoleListArray removeLastObject];
+    }
+    
+    [self.searchListArray addObjectsFromArray:pepoleListArray];
+    
     backButton.userInteractionEnabled = YES;
-    [_peoplelistView setBackgroundColor:[UIColor clearColor]];
-    [_peoplelistView reloadTableView:self.searchListArray];
+    
+    if(pageLoadNumberForSearch == 0) {
+        [_peoplelistView reloadTableView:self.searchListArray];
+    }
+    else {
+        [_peoplelistView loadMorePeople:pepoleListArray];
+    }
 }
--(void)removeTheSearchViewFromSuperview
+
+- (void)removeTheSearchViewFromSuperview
 {
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"refreshTheView"
      object:self];
     [self.navigationController popViewControllerAnimated:YES];
-    
 }
 
--(void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
+- (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
 {
     SearchPeopleData *people = self.searchListArray[index];    
     DProfileDetailsViewController *profileDetailViewController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
