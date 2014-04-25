@@ -7,6 +7,7 @@
 //
 
 #import "DHeaderView.h"
+#import "DESAnimation.h"
 
 #define WIDTH       35
 #define FREESPACE   5
@@ -104,7 +105,7 @@
     //  [self setTheBackgroundImage];
     [self createTitleLabel];
     [self designButtons];
-    
+    [self showDefaultButtons];
 }
 
 -(void)hideButton:(UIButton *)hideButton
@@ -289,8 +290,19 @@
 }
 
 
--(void)showButtons:(NSArray *)buttons
+- (void)showButtons:(NSArray *)buttons
 {
+    CFTimeInterval timeInterval = 0;
+    for (NSInteger index = buttons.count - 1; index >= 0; index--) {
+        UIView *aView = (UIView *)buttons[index];
+        [self bounceOutView:aView withDelay:timeInterval withKeypath:@"BounceOutAnimationKeypath"];
+        timeInterval += 0.3;
+    }
+    return;
+    
+    [self animateOnViews:buttons atIndex:buttons.count-1];
+    
+    return;
     for (int i =0; i<buttons.count; i++)
     {
         UIButton *button = buttons[i];
@@ -298,7 +310,45 @@
     }
 }
 
+- (void)showAlphaOfView:(UIView *)aView
+{
+    aView.alpha = 1.0;
+}
 
+- (void)bounceOutView:(UIView *)aView withDelay:(CFTimeInterval)time withKeypath:(NSString *)animationKeyPath
+{
+    aView.alpha = 0;
+    CFTimeInterval startTime = time;
+    
+    CABasicAnimation *scaleAnimation1 = [DESAnimation scaleFrom:1.0 to:0.6 duration:0.3 beginTime:startTime];// [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    
+    CABasicAnimation *fadeAnimation = [DESAnimation fadeFrom:0.0 to:1.0 duration:0.3 beginTime:startTime];//[CABasicAnimation animationWithKeyPath:@"opacity"];
+    startTime += 0.3;
+
+    [self performSelector:@selector(showAlphaOfView:) withObject:aView afterDelay:startTime];
+    
+    CABasicAnimation *scaleAnimation2 = [DESAnimation scaleFrom:0.6 to:1.1 duration:0.2 beginTime:startTime];
+    startTime += 0.2;
+    
+    CABasicAnimation *scaleAniamtion3 = [DESAnimation scaleFrom:1.1 to:1.0 duration:0.15 beginTime:startTime];
+    startTime += 0.15;
+    
+    CABasicAnimation *scaleAnimation4 = [DESAnimation scaleFrom:1.0 to:1.05 duration:0.1 beginTime:startTime];
+    startTime += 0.1;
+    
+    CABasicAnimation *scaleAnimation5 = [DESAnimation scaleFrom:1.05 to:1.0 duration:0.05 beginTime:startTime];
+    
+    CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
+    animationGroup.duration = startTime + 0.05;
+    animationGroup.delegate = self;
+    animationGroup.animations = [NSArray arrayWithObjects:scaleAnimation1, fadeAnimation, scaleAnimation2, scaleAniamtion3, scaleAnimation4, scaleAnimation5, nil];
+    
+    if([aView.layer animationForKey:animationKeyPath]) {
+        [aView.layer removeAnimationForKey:animationKeyPath];
+    }
+    
+    [aView.layer addAnimation:animationGroup forKey:animationKeyPath];
+}
 
 -(void)animateOnViews:(NSArray *)views atIndex:(NSUInteger )index
 {

@@ -133,6 +133,8 @@
         else {
          [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
         }
+         
+         [_statusButton addTarget:self action:@selector(inviteThePerson:) forControlEvents:UIControlEventTouchUpInside];
      }
      else {
          _subTitle.text = data.profileUserFullName ? data.profileUserFullName : @"";
@@ -153,12 +155,14 @@
         else {
             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
         }
+         
+         [_statusButton addTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
      }
 }
 
 
 
--(void)followAndUnfollowButtonAction:(id)inAction
+- (void)followAndUnfollowButtonAction:(id)inAction
 {
     if ([data.followingStatus isEqualToString:@"0"]) {
         [self follwingTheUser];
@@ -168,26 +172,24 @@
 }
 
 
--(void)follwingTheUser
+- (void)follwingTheUser
 {
     [WSModelClasses sharedHandler].delegate =self;
     [[WSModelClasses sharedHandler]followingTheUseruserId:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID otherUserId:data.profileUserUID];
 }
 
 
--(void)unfollowTherUser
+- (void)unfollowTherUser
 {
     [WSModelClasses sharedHandler].delegate =self;
     [[WSModelClasses sharedHandler]unfollowingTheUseruserId:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID otherUserId:data.profileUserUID];
-    
 }
 
 
--(void)inviteThePerson:(id)inAction
+- (void)inviteThePerson:(id)inAction
 {
-    [WSModelClasses sharedHandler].delegate =self;
-    [[WSModelClasses sharedHandler]sendGateWayInvitationUserId:@"" gateWayType:data.gateWayType gateWayToken:data.gateWayToken userName:@""];
-    
+    [WSModelClasses sharedHandler].delegate = self;
+    [[WSModelClasses sharedHandler] sendGateWayInvitationUserId:@"" gateWayType:data.gateWayType gateWayToken:data.gateWayToken userName:@""];
 }
 
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict

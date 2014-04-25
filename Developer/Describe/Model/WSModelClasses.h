@@ -135,8 +135,6 @@ typedef enum {
 //http://mirusstudent.com/service/describe-service/getUserProfile/format=json/UserUID=1/ProfileUserUID=4
 
 - (void)getProfileDetailsForUserID:(NSString *)profileUserID;
--(void)getWeRecommendedpeople:(NSString*)inUSerId
-                     AndRange:(NSString*)inRange;
 
 - (void)saveUserProfile:(UsersModel *)userDetail
              profilePic:(UIImage *)profileImg
