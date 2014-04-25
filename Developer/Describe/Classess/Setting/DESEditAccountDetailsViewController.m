@@ -17,10 +17,7 @@
 #import "DescWelcomeViewController.h"
 #import "DESocialConnectios.h"
 #import "DESAboutTextView.h"
-<<<<<<< HEAD
-=======
 
->>>>>>> FETCH_HEAD
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -811,38 +808,6 @@
     [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, -50, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
     return YES;
 }
-
-<<<<<<< HEAD
-=======
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
-    if ([text isEqualToString:@"\n"]) {
-         [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
-        [textView resignFirstResponder];
-
-        return NO; // or true, whetever you's like
-    }
-    
-    NSString *string = [textView.text stringByReplacingCharactersInRange:range withString:text];
-    UIFont *font = textView.font;
-    
-    CGSize maximumSize = textView.frame.size;
-    maximumSize.width -= 10.0f;
-    NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject:textView.font forKey: NSFontAttributeName];
-    CGSize expectedLabelSize2 = [string boundingRectWithSize:maximumSize
-                                                     options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
-                                                  attributes:stringAttributes context:nil].size;
-    
-    float numberOfLines = expectedLabelSize2.height / font.lineHeight;
-//    NSLog(@"numberOfLines = %f", numberOfLines);
-    if(numberOfLines > 3.0) {
-        return NO;
-    }
-    
-    return YES;
-}
->>>>>>> FETCH_HEAD
 
 -(void)tableViewAnimatedWhileTypingTheDataWithFrame:(CGRect)rect
 {
