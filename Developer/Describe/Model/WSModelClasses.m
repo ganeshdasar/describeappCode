@@ -706,7 +706,7 @@ static WSModelClasses *_sharedInstance;
          }
          failure:^(AFHTTPRequestOperation *operation,  id responseObject) {
              //NSLog(@"Feed Details Failed: %@", responseObject);
-                          response(NO, responseObject);
+             response(NO, responseObject);
          }
      ];
 }
@@ -947,7 +947,7 @@ static WSModelClasses *_sharedInstance;
 }
 
 //http://www.mirusstudent.com/service/describe-service/makeBlockTheComment/format=json/UserUID=45/CommentID=412
--(void)reportComment:(NSString *)commentId forUser:(NSString *)userId response:(void (^)(BOOL success, id response))response
+- (void)reportComment:(NSString *)commentId forUser:(NSString *)userId response:(void (^)(BOOL success, id response))response
 {
     NSString *url = [NSString stringWithFormat:@"%@/makeBlockTheComment/format=json/UserUID=%@/CommentID=%@", BaseURLString,commentId, userId];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -965,7 +965,7 @@ static WSModelClasses *_sharedInstance;
 
 
 
--(void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName
+- (void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName
 {
     NSString *url = [NSString stringWithFormat:@"%@/sendGateWayInvitation/UserUID=%@/GateWay=%@/GateWayToken=%@/GateWayUsername=%@", BaseURLString,userid,gateWayType,gateWayToken,userName];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
