@@ -44,9 +44,6 @@
 
 -(void)designConversationListView
 {
-    
-    
-    
     _userCommentViewHeight = 60;
     [self createConversationListView];
     //[self registerKeyboardNotifications];
@@ -224,7 +221,7 @@
     }
     
     
-    cell.contentView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.8];
+    cell.contentView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.8];
     
     return cell;
 }
@@ -260,7 +257,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    float height = (indexPath.row == 0)?34:80;
+    float height = (indexPath.row == 0)?16:80;
     
     DConversation *conversation = _conversationList[indexPath.row];
     switch (conversation.type)
@@ -280,6 +277,7 @@
         case DConversationTypeComment:
         {
 
+            height = 28;
             UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0];
             
             CGRect rect = [conversation.comment boundingRectWithSize:CGSizeMake(224, 60) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font} context:nil];
@@ -299,10 +297,12 @@
                 }
                 else
                 {
-                    height = height + commentSize.height;
+                    height = height + commentSize.height + 30;
                 }
                 
             }
+            
+            NSLog(@"Text:%@ Height:%f",conversation.comment, height);
         }
             break;
         default:

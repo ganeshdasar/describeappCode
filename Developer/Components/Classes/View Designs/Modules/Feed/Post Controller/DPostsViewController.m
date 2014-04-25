@@ -856,23 +856,39 @@ static DPostsViewController *sharedFeedController;
             {
                 NSDictionary *postDetails = postData[@"PostDetails"];
                 NSMutableArray *promters = [[NSMutableArray alloc] init];
+                
                 for (int j=1; j<10; j++)
                 {
                     NSString *imageUrl = postDetails[[NSString stringWithFormat:@"Image%d",j]];
                     if(imageUrl== nil || !imageUrl.length)
                         break;
                     
-                    
                     DPrompterProfile *photoModel = [[DPrompterProfile alloc] init];
                     [photoModel setProfilePromterImageName:[NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",postDetails[[NSString stringWithFormat:@"Image%d",j]]]];
                     [promters addObject:photoModel];
                 }
                 
+                
+                
+                if(promters.count > 1)
+                {
+                    DPrompterProfile *firstProfile = promters[0];
+                    DPrompterProfile *lastProfile = promters[promters.count-1];
+                    
+                    NSString *firstImageUrl= [[NSString alloc] initWithString:firstProfile.profilePromterImageName];
+                    NSString *lastImageUrl = [[NSString alloc] initWithString:lastProfile.profilePromterImageName];
+                    
+                    DPrompterProfile *first = [[DPrompterProfile alloc] init];
+                    [first setProfilePromterImageName:firstImageUrl];
+                    
+                    DPrompterProfile *last = [[DPrompterProfile alloc] init];
+                    [last setProfilePromterImageName:lastImageUrl];
+                    
+                    [promters insertObject:last atIndex:0];
+                    [promters addObject:first];
+                }
                 [postModel setPrompters:promters];
             }
-
-            
-            
             [postModelList addObject:postModel];
         }
     }

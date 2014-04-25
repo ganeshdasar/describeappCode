@@ -67,7 +67,7 @@
         _textViewMinimumHeight = 30;
         _textViewCurrentHeight = _textViewMinimumHeight;
         
-        self.backgroundColor = [UIColor clearColor];
+        self.backgroundColor = [UIColor whiteColor];
         [self createContentView];
     }
     return self;
@@ -122,10 +122,10 @@
 
 -(void)createMoreButton
 {
-    CGRect moreFrame = CGRectMake(290, _elapsedYPostion+8, 19, 5);
+    CGRect moreFrame = CGRectMake(290, _elapsedYPostion-10, 19, 40);
     
     _moreButton = [[UIButton alloc] initWithFrame:moreFrame];
-    [_moreButton setBackgroundImage:[UIImage imageNamed:@"btn_overflow.png"] forState:UIControlStateNormal];
+    [_moreButton setImage:[UIImage imageNamed:@"btn_overflow.png"] forState:UIControlStateNormal];
     [_moreButton addTarget:self action:@selector(moreButton:) forControlEvents:UIControlEventTouchUpInside];
     [_contentView addSubview:_moreButton];
 }
@@ -255,10 +255,10 @@
 
 -(void)createElapsedTime:(NSString *)elapsedTime
 {
-    _elapsedTimeLbl = [self createLabelOnView:_contentView withText:elapsedTime atRect:CGRectMake(70,_elapsedYPostion,200,20)];
+    _elapsedTimeLbl = [self createLabelOnView:_contentView withText:elapsedTime atRect:CGRectMake(70,_elapsedYPostion,200,16)];
     [_elapsedTimeLbl setTextColor:[UIColor lightGrayColor]];
     [_elapsedTimeLbl setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:10.0]];
-    
+    [_elapsedTimeLbl setBackgroundColor:[[UIColor redColor] colorWithAlphaComponent:0.2]];
     
 //    NSDate * originalDate = [NSDate date];
 //    NSTimeInterval interval = [elapsedTime doubleValue];
@@ -382,9 +382,9 @@
 
 -(void)calculateGeometryCalculations
 {
-    CGSize commentSize = [_conversation.comment sizeWithFont:SUBTITLE_FONT
-                                           constrainedToSize:CGSizeMake(230, 1500)
-                                               lineBreakMode:UILineBreakModeWordWrap];
+    UIFont *font = SUBTITLE_FONT;
+    CGRect rect = [_conversation.comment boundingRectWithSize:CGSizeMake(224, 60) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font} context:nil];
+    CGSize commentSize = rect.size;
     if(!_conversation.showFullConversation)
     {
         if(commentSize.height > _commentTextHeight)
@@ -400,12 +400,12 @@
         _commentTextHeight = commentSize.height;
     
     
-    _elapsedYPostion = _commentTextHeight + _subTitleYPosition  ;
+    _elapsedYPostion = _commentTextHeight + _subTitleYPosition+6;
 
     if(_isNeedToShowSeeMoreButton)
     {
         _seeMoreButtonYPosition = _elapsedYPostion;
-        _elapsedYPostion = _elapsedYPostion  + 16;
+        _elapsedYPostion = _elapsedYPostion  + 26;
     }
 }
 
@@ -423,18 +423,21 @@
             break;
         case DConversationTypeComment:
         {
-            CGSize commentSize = [_conversation.comment sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:11.0] constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:NSLineBreakByWordWrapping];
-
+            UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0];
+            
+            CGRect rect = [_conversation.comment boundingRectWithSize:CGSizeMake(224, 60) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font} context:nil];
+            CGSize commentSize = rect.size;
+            
             if(_conversation.showFullConversation)
             {
                 //Caliculate the full conversation length...
-                height = commentSize.height + 56;
+                height = commentSize.height + 20;
             }
             else
             {
                 if(commentSize.height > 45)
                 {
-                    height = height + 20;
+                    height = height + 20 ;
                 }
             }
             
@@ -540,7 +543,11 @@
 -(void)textViewDidChangedText:(NSNotification *)notification
 {
     UITextView *textView = (UITextView *)[notification object];
-    CGSize commentSize = [textView.text sizeWithFont:SUBTITLE_FONT constrainedToSize:CGSizeMake(230, 1500) lineBreakMode:NSLineBreakByWordWrapping];
+    
+    UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0];
+    CGRect rect = [textView.text boundingRectWithSize:CGSizeMake(224, 60) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font} context:nil];
+    
+    CGSize commentSize = rect.size;
     float height = 0;
     if(commentSize.height > _textViewMinimumHeight)
     {
@@ -557,6 +564,8 @@
     {
         if(self.delegate != nil && [self.delegate respondsToSelector:@selector(conversationView:expandCommentView:)])
         {
+            self.conversation.elapsedTime = @"0 m";
+            self.conversation.comment = textView.text;
             [self.delegate performSelector:@selector(conversationView:expandCommentView:) withObject:self withObject:[NSNumber numberWithFloat:height+10]];
         }
     }

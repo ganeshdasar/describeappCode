@@ -49,6 +49,14 @@
     
     SDWebImagePrefetcher *_prefetcher;
     CGFloat _onePercentage;
+    
+    
+    
+    
+    NSUInteger  _runningSeconds;
+    NSUInteger  _totalTime;
+    NSTimer     *_scheduleTimer;
+    BOOL        _isPlaying;
 }
 
 @end
@@ -82,6 +90,7 @@
         //        [_backImageView setImage:[UIImage imageNamed:_images[1]]];
         //        [_frontImageView setImage:[UIImage imageNamed:_images[0]]];
         
+        _runningSeconds = 0;
         [self createVideoPlayer];
     }
     return self;
@@ -109,7 +118,7 @@
         [self createBackImageView];
         [self createFrontImageView];
         
-        
+        _runningSeconds = 0;
         _index = 0;
         
         //Temporarly placing the place holder images will remove later on
@@ -156,6 +165,8 @@
 
 -(void)setPostImage:(DPostImage *)postImage
 {
+    
+    _runningSeconds = 0;
     _postImage = postImage;
     _images = _postImage.images;
     
@@ -169,25 +180,18 @@
     [_backImageView setImage:secondImage.editedImage];
     [_frontImageView setImage:firstImage.editedImage];
     
-    
-    
-    
-    
     if(secondImage != nil && secondImage.imageUrl != nil) {
         [_backgroundView setImageWithURL:[NSURL URLWithString:secondImage.imageUrl]];
     }
     if(firstImage != nil && firstImage.imageUrl != nil) {
         [_frontImageView setImageWithURL:[NSURL URLWithString:firstImage.imageUrl]];
     }
-    
-   // [_frontImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",1]]];
-   // [_backgroundView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"22_%d.png",2]]];
     [_contentView bringSubviewToFront:_frontImageView];
-    //[_frontImageView setBackgroundColor:[[UIColor orangeColor] colorWithAlphaComponent:0.4]];
-    
-    
     [_videoPlayer setVideo:_postImage.video];
     
+    
+    _totalTime = [self totalImageDuartions];
+    _scheduleTimer = [NSTimer scheduledTimerWithTimeInterval:0.95 target:self selector:@selector(scheduleTimer:) userInfo:nil repeats:YES];
 }
 
 -(void)addSingleTapGesture
@@ -481,6 +485,13 @@
 
 -(void)didStartPlayingVideo
 {
+    if(_runningSeconds == 0)
+    {
+        [_scheduleTimer fire];
+    }
+    
+    
+    return;
     //Start image animations....
     if(!_isNeedToPlayImages)
     {
@@ -780,7 +791,6 @@
 
 -(void)dealloc
 {
-    
     _backgroundView = nil;
     _contentView = nil;
     
@@ -792,7 +802,25 @@
     _doubleTapGesture = nil;
     
     _videoPlayer = nil;
-    
 }
+
+
+#pragma mark Timer Methods -
+
+-(void)scheduleTimer:(NSTimer *)timer
+{
+    //Schedule timer running...
+    _runningSeconds++;
+    
+    if(_isPlaying)
+    {
+        //Playing the video...
+    }
+    else
+    {
+        //Pause the video...
+    }
+}
+
 
 @end

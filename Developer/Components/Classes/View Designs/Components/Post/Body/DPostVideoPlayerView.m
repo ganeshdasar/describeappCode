@@ -112,33 +112,47 @@
     _isPlaying = NO;
     
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerItemDidReachEnd:)
-                                                 name:AVPlayerItemDidPlayToEndTimeNotification
-                                               object:[avPlayer currentItem]];
-    
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(playerItemDidReachEnd:)
+//                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+//                                               object:[avPlayer currentItem]];
+    [avPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
 }
 
-
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
-                        change:(NSDictionary *)change context:(void *)context {
-    if (object == avPlayer && [keyPath isEqualToString:@"status"])
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"rate"])
     {
-        if (avPlayer.status == AVPlayerStatusReadyToPlay) {
-            
-            NSLog(@"Ready to play this video");
-            
-            //[self playVideo];
-//            if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didStartPlayingVideo)])
-//            {
-//                [self.delegate performSelector:@selector(didStartPlayingVideo)];
-//            }
-        } else if (avPlayer.status == AVPlayerStatusFailed) {
-            // something went wrong. player.error should contain some information
+        if ([avPlayer rate])
+        {
+            // This changes the button to Pause
+            [self pauseVideo];
         }
+        else {
+            // This changes the button to Play
+        }
+        NSLog(@"++++++++++++++ Rate:%f +++++++++++++++",[avPlayer rate]);
     }
 }
+
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+//                        change:(NSDictionary *)change context:(void *)context {
+//    if (object == avPlayer && [keyPath isEqualToString:@"status"])
+//    {
+//        if (avPlayer.status == AVPlayerStatusReadyToPlay) {
+//            
+//            NSLog(@"Ready to play this video");
+//            
+//            //[self playVideo];
+////            if(self.delegate != nil && [self.delegate respondsToSelector:@selector(didStartPlayingVideo)])
+////            {
+////                [self.delegate performSelector:@selector(didStartPlayingVideo)];
+////            }
+//        } else if (avPlayer.status == AVPlayerStatusFailed) {
+//            // something went wrong. player.error should contain some information
+//        }
+//    }
+//}
 
 -(void)layoutSubviews
 {

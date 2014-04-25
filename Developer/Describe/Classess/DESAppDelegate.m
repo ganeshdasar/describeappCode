@@ -26,9 +26,7 @@
     [GPPDeepLink setDelegate:self];
     [GPPDeepLink readDeepLinkAfterInstall];
     
-    [[UIBarButtonItem appearanceWhenContainedIn:[UISearchBar class], nil] setTitle:@""];
-    [[UIBarButtonItem appearanceWhenContainedIn:[UISearchBar class], nil] setImage:[UIImage imageNamed:@"btn_cancel.png"]];
-
+ 
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     DescWelcomeViewController * welComeView = [[DescWelcomeViewController alloc]initWithNibName:@"DescWelcomeViewController" bundle:Nil];

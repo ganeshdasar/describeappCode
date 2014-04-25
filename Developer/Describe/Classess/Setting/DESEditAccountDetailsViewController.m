@@ -17,10 +17,7 @@
 #import "DescWelcomeViewController.h"
 #import "DESocialConnectios.h"
 #import "DESAboutTextView.h"
-<<<<<<< HEAD
-=======
 
->>>>>>> FETCH_HEAD
 #define LABLERECT  CGRectMake(0, 0, 320, 40);
 #define ELEMENT_FONT_COLOR  [UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:1];
 #define ElEMENT_FONT_NAME [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -37,7 +34,9 @@
     NSString *userbirtdayString;
     int gender;
     BOOL isChangedUserData;
-
+    NSIndexPath *_indexPath;
+    
+    float _cityTableViewHeight;
 }
 
 @end
@@ -75,7 +74,9 @@
     self.acountDetailsTableView.backgroundColor = [UIColor clearColor];
     self.acountDetailsTableView.showsVerticalScrollIndicator = NO;
     userbirtdayString =  [NSString convertTheepochTimeToDate:[[WSModelClasses sharedHandler].loggedInUserModel.dobDate doubleValue]];
+    _cityTableViewHeight = 40.;
     isChangedUserData = NO;
+    [self registerKeyboardNotifications];
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
@@ -201,11 +202,19 @@
             }
             case DUserCity:
             {
-                UITextField * city = [self createDetailTextField:cell AndTag:DUserCity];
-                city.textColor = [UIColor textFieldTextColor];
-                city.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
-                [cell.contentView addSubview:city];
-                
+                UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 90, 36)];
+                [contentView setBackgroundColor:[[UIColor orangeColor] colorWithAlphaComponent:0.2]];
+                [contentView setTag:2222];
+                if(contentView != nil)
+                {
+                    UILabel *cityLabel = [self createLableTitle:@"City" fontName:@"HelveticaNeue-Thin"  textSize:20.f tag:111];
+                    [contentView addSubview:cityLabel];
+                    
+                    UITextField * city = [self createDetailTextField:cell AndTag:DUserCity];
+                    city.textColor = [UIColor textFieldTextColor];
+                    city.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
+                    [contentView addSubview:city];
+                }
                 break;
             }
                 
@@ -252,8 +261,10 @@
         
     }
     
-    switch (indexPath.section) {
-        case DUserInformation:{
+    switch (indexPath.section)
+    {
+        case DUserInformation:
+        {
             cell.textLabel.text = _userInfoArray[indexPath.row];
             cell.textLabel.textColor = [UIColor textPlaceholderColor];
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -379,7 +390,6 @@
 
 - (void)addTheWelcomesViewControllerToWindow
 {
-    
     [self.navigationController popToRootViewControllerAnimated:YES];
     
 //    DESAppDelegate *_appDelegate = (DESAppDelegate*)[UIApplication sharedApplication].delegate;
@@ -396,10 +406,13 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.section) {
+    switch (indexPath.section)
+    {
         case DUserBio:
             return 123;
             break;
+        case DUserCity:
+            return _cityTableViewHeight;
         default:
             return 40;
             break;
@@ -633,7 +646,7 @@
     NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateStyle:NSDateFormatterLongStyle];
     [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-   userbirtdayString=[dateFormatter stringFromDate:[self.datePicker date]];
+    userbirtdayString=[dateFormatter stringFromDate:[self.datePicker date]];
     isChangedUserData = YES;
     [self.acountDetailsTableView reloadData];
 }
@@ -743,6 +756,31 @@
 }
 
 
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+
+    
+    if(textField.tag == DUserCity)
+    {
+        
+    }
+    
+    return YES;
+}
+
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    //[self showTableviewHalf];
+    if(textField.tag == DUserCity)
+    {
+        _indexPath = [NSIndexPath indexPathForRow:0 inSection:1];
+        _cityTableViewHeight = 200;
+        [self.acountDetailsTableView reloadData];
+    }
+    else if(textField.tag == DUsernameTag)
+        _indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+}
+
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 {
     if ([string isEqualToString:@""]) {
@@ -760,14 +798,41 @@
         [WSModelClasses sharedHandler].loggedInUserModel.userName = textField.text;
     }else if (textField.tag  == DUserGenderTxt ){
         }
+    else if(textField.tag == DUserCity)
+    {
+        _cityTableViewHeight = 40.;
+        [self.acountDetailsTableView reloadData];
+    }
+    
+    //[self showTableViewFull];
 }
+
+
+-(void)showTableviewHalf
+{
+    CGRect tableFrame = self.acountDetailsTableView.frame;
+    tableFrame.size.height = ScreenHeight - (tableFrame.origin.y + 218.);
+    [self.acountDetailsTableView setFrame:tableFrame];
+   
+    [self.acountDetailsTableView scrollToRowAtIndexPath:_indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+}
+
+-(void)showTableViewFull
+{
+    CGRect tableFrame = self.acountDetailsTableView.frame;
+    tableFrame.size.height = ScreenHeight - (tableFrame.origin.y);
+    [self.acountDetailsTableView setFrame:tableFrame];
+    
+    [self.acountDetailsTableView scrollToRowAtIndexPath:_indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+}
+
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
     if ([text isEqualToString:@"\n"]) {
         // Be sure to test for equality using the "isEqualToString" message
-        [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
+        //[self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
         [textView resignFirstResponder];
         // Return FALSE so that the final '\n' character doesn't get added
         return NO;
@@ -802,47 +867,85 @@
     }];
 }
 
+-(BOOL)textViewShouldBeginEditing:(UITextView *)textView
+{
+    _indexPath = [NSIndexPath indexPathForRow:0 inSection:DUserBio];
+    return YES;
+}
+
+-(void)textViewDidBeginEditing:(UITextView *)textView
+{
+    //[self showTableviewHalf];
+}
 - (void)textViewDidEndEditing:(UITextView *)textView;
 {
-    
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
-}
-- (BOOL) textViewShouldBeginEditing:(UITextView *)textView {
-    [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, -50, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
-    return YES;
+    //[self showTableViewFull];
+    
+    //_indexPath = nil;
 }
 
-<<<<<<< HEAD
-=======
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+
+-(void)registerKeyboardNotifications
 {
-    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
-    if ([text isEqualToString:@"\n"]) {
-         [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
-        [textView resignFirstResponder];
-
-        return NO; // or true, whetever you's like
-    }
+    // Add two notifications for the keyboard. One when the keyboard is shown and one when it's about to hide.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShown:) name:UIKeyboardDidShowNotification object:nil];
     
-    NSString *string = [textView.text stringByReplacingCharactersInRange:range withString:text];
-    UIFont *font = textView.font;
-    
-    CGSize maximumSize = textView.frame.size;
-    maximumSize.width -= 10.0f;
-    NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject:textView.font forKey: NSFontAttributeName];
-    CGSize expectedLabelSize2 = [string boundingRectWithSize:maximumSize
-                                                     options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
-                                                  attributes:stringAttributes context:nil].size;
-    
-    float numberOfLines = expectedLabelSize2.height / font.lineHeight;
-//    NSLog(@"numberOfLines = %f", numberOfLines);
-    if(numberOfLines > 3.0) {
-        return NO;
-    }
-    
-    return YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
->>>>>>> FETCH_HEAD
+
+-(void)keyboardWillShown:(NSNotification *)notification
+{
+    id object = [notification object];
+    NSLog(@"Notification:%@",object);
+    
+    [self showTableviewHalf];
+}
+
+-(void)keyboardWillHide:(NSNotification *)notification
+{
+    id object = [notification object];
+    NSLog(@"Notification 222:%@",object);
+    
+    [self showTableViewFull];
+}
+
+
+//- (BOOL) textViewShouldBeginEditing:(UITextView *)textView {
+//    //[self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, -50, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
+//    return YES;
+//}
+
+//
+//- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+//{
+//    [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
+//    if ([text isEqualToString:@"\n"]) {
+//         [self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];
+//        [textView resignFirstResponder];
+//
+//        return NO; // or true, whetever you's like
+//    }
+//    
+//    NSString *string = [textView.text stringByReplacingCharactersInRange:range withString:text];
+//    UIFont *font = textView.font;
+//    
+//    CGSize maximumSize = textView.frame.size;
+//    maximumSize.width -= 10.0f;
+//    NSDictionary *stringAttributes = [NSDictionary dictionaryWithObject:textView.font forKey: NSFontAttributeName];
+//    CGSize expectedLabelSize2 = [string boundingRectWithSize:maximumSize
+//                                                     options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
+//                                                  attributes:stringAttributes context:nil].size;
+//    
+//    float numberOfLines = expectedLabelSize2.height / font.lineHeight;
+////    NSLog(@"numberOfLines = %f", numberOfLines);
+//    if(numberOfLines > 3.0) {
+//        return NO;
+//    }
+//    
+//    return YES;
+//}
+
 
 -(void)tableViewAnimatedWhileTypingTheDataWithFrame:(CGRect)rect
 {
@@ -860,6 +963,5 @@
     [[DESocialConnectios sharedInstance]logoutGooglePlus];
     [[DESocialConnectios sharedInstance]logoutFacebook];
     [[NSUserDefaults standardUserDefaults]synchronize ];
-
 }
 @end
