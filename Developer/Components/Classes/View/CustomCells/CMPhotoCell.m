@@ -7,8 +7,13 @@
 //
 
 #import "CMPhotoCell.h"
-
+#import "UIColor+DesColors.h"
 @implementation CMPhotoCell
+-(void)awakeFromNib
+{
+    self.capturedImageView.layer.borderWidth = 0.5;
+    self.capturedImageView.layer.borderColor = [UIColor colorWithRed:220/255.0 green:220/255.0 blue:220/255.0 alpha:1.0].CGColor;
+}
 
 - (void)setDataModel:(CMPhotoModel *)dataModel
 {
