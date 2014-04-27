@@ -303,22 +303,19 @@
         }
         case DUserBio:{
             
-            UITextView * textview = [[UITextView alloc]initWithFrame:CGRectMake(0, 0, 320, 123)];
+            UITextView * textview = [[UITextView alloc]initWithFrame:CGRectMake(10, 0, 310, 123)];
             textview.backgroundColor = [UIColor clearColor];
             UIImageView * image = [self createBackGroundImageView:[UIImage imageNamed:@"set_about.png"]];
             cell.backgroundView = image;
             textview.delegate =self;
             textview.scrollEnabled = NO;
-            textview.text = [WSModelClasses sharedHandler].loggedInUserModel.biodata;
+            //textview.text = [WSModelClasses sharedHandler].loggedInUserModel.biodata;
             textview.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
             self.bioTxt = (DESAboutTextView*)textview;
             self.bioTxt.returnKeyType = UIReturnKeyDone;
             [self lineSpacingFroTextView:self.bioTxt];
             [cell.contentView addSubview:textview];
-        
-            
             break;
-            
         }
         case DUserSecurity:{
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.f];
@@ -352,7 +349,7 @@
                           };
     
     lab.attributedText = [[NSAttributedString alloc] initWithString:string attributes:ats];
-    lab.text = @"";
+    lab.text = [WSModelClasses sharedHandler].loggedInUserModel.biodata;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -830,6 +827,7 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     [WSModelClasses sharedHandler].loggedInUserModel.biodata = textView.text;
+    isChangedUserData = YES;
     if ([text isEqualToString:@"\n"]) {
         // Be sure to test for equality using the "isEqualToString" message
         //[self tableViewAnimatedWhileTypingTheDataWithFrame:CGRectMake(0, 65, self.acountDetailsTableView.frame.size.width, self.acountDetailsTableView.frame.size.height)];

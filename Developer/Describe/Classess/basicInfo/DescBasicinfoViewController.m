@@ -111,6 +111,7 @@ typedef enum {
     
 //    self.btnmale.selected = YES;
     self.cityTxt.returnKeyType = UIReturnKeyDone;
+    [self.cityTxt setTextColor:[UIColor textFieldTextColor]];
     self.bioTxt.returnKeyType = UIReturnKeyDone;
 
     [self lineSpacingFroTextView];
@@ -640,6 +641,7 @@ typedef enum {
             NSMutableArray * array =(NSMutableArray*)places;
             if (places.count ==5) {
                 [array removeLastObject];
+                [array removeLastObject];
             }
             searchResultPlaces = array;
             
@@ -1017,6 +1019,7 @@ typedef enum {
     // Configure the cell...
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.0];
     cell.textLabel.text = [self placeAtIndexPath:indexPath].name;
+    cell.textLabel.textColor = [UIColor textFieldTextColor];
     return cell;
 }
 
@@ -1045,6 +1048,7 @@ typedef enum {
         [field setEnabled:NO];
         field.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.0];
         field.text = [NSString stringWithFormat:@"Add - '%@' ",self.cityTxt.text];//self.cityTxt.text;
+        [field setTextColor:[UIColor textFieldTextColor]];
         [footer addSubview:field];
         [field addTarget:self action:@selector(footerSelected) forControlEvents:UIControlEventAllTouchEvents];
     }

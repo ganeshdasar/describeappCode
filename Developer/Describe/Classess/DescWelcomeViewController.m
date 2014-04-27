@@ -65,6 +65,9 @@
 {
     NSMutableDictionary *dic = (NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USERSAVING_DATA_KEY];
     NSDictionary*dataDic = [dic valueForKeyPath:@"ResponseData.DataTable.UserData"][0];
+    if (!dataDic) {
+        dataDic =  [dic valueForKeyPath:@"DataTable.UserData"][0];
+    }
     if (dataDic[USER_MODAL_KEY_UID]) {
         UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:dataDic];
         [WSModelClasses sharedHandler].loggedInUserModel = [[UsersModel alloc]init];

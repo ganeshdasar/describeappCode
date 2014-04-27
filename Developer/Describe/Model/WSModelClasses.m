@@ -177,6 +177,10 @@ static WSModelClasses *_sharedInstance;
     [manager POST:[NSString stringWithFormat:@"%@/postUserSignup", BaseURLString]
        parameters:userDetails
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSDictionary *responseDict = (NSDictionary *)responseObject;
+              NSDictionary *userDataDict = (NSDictionary *)responseDict[@"DataTable"][0][@"UserData"];
+              UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:userDataDict];
+              _loggedInUserModel = userModelObj;
               [self postSignUpResult:responseObject error:Nil];
           }
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
