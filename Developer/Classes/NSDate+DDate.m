@@ -13,18 +13,17 @@
 +(NSDate *)dateFromString:(NSString *)dateString
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MMMM DD, yyyy"];
+    [dateFormatter setDateFormat:@"MMMM dd, yyyy"];
     NSDate *requiredDate = [dateFormatter dateFromString:dateString];
     
     return requiredDate;
 }
 
--(NSString *)dateString
+- (NSString *)dateString
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MMMM DD, yyyy"];
+    [dateFormatter setDateFormat:@"MMMM dd, yyyy"];
     return [dateFormatter stringFromDate:(NSDate *)self];
 }
-
 
 @end

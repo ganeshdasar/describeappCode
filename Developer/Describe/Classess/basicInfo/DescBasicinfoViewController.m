@@ -21,6 +21,7 @@
 #import "ProfileViewController.h"
 #import "DESSettingsViewController.h"
 #import "NSDate+DDate.h"
+#import "UIView+FindFirstResponder.h"
 
 #define CITYTEXTFRAME CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height-44)
 #define MALEBTNFRAME
@@ -55,12 +56,16 @@ typedef enum {
     BOOL _isDatePickerVisble;
     
     UserGender userGender;
+    
+    UIView *tableFooterView;
+    UITextField *tableFooterField;
 }
 
 @property (nonatomic, strong) UIImage *previousPicRef;
 
--(IBAction)dateSelected:(id)sender;
--(IBAction)dateCancelButtonClicked:(id)sender;
+- (IBAction)dateSelected:(id)sender;
+- (IBAction)dateCancelButtonClicked:(id)sender;
+
 @end
 
 @implementation DescBasicinfoViewController
@@ -101,40 +106,17 @@ typedef enum {
     self.datePicker.maximumDate=[NSDate date];
     isEditingPic = NO;  // by default profile pic editing is NO
     
-    
-    
     [self designTheView];
     [self createProfilePicAspectView];
     
     shouldHideStatusBar = NO;
     
-    
-//    self.btnmale.selected = YES;
     self.cityTxt.returnKeyType = UIReturnKeyDone;
     [self.cityTxt setTextColor:[UIColor textFieldTextColor]];
     self.bioTxt.returnKeyType = UIReturnKeyDone;
 
     [self lineSpacingFroTextView];
-    
-    
-    
-    return;
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.lineHeightMultiple = 50.0f;
-    paragraphStyle.maximumLineHeight = 50.0f;
-    paragraphStyle.minimumLineHeight = 50.0f;
-    NSString *string = @"if you want reduce or increase space between lines in uitextview ,you can do this with this,but donot set font on this paragraph , set this on uitextveiw.";
-    
-    NSDictionary *ats = @{
-                          NSParagraphStyleAttributeName : paragraphStyle,
-                          };
-    
-    [self.bioTxt setFont:[UIFont fontWithName:@"Arial" size:20.0f]];
-    self.bioTxt.attributedText = [[NSAttributedString alloc] initWithString:string attributes:ats];
-    
-    
 }
-
 
 - (void)lineSpacingFroTextView
 {
@@ -154,14 +136,13 @@ typedef enum {
     lab.text = @"";
 }
 
-
--  (void)didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
--  (void)designTheView
+- (void)designTheView
 {
     UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(35, 131, 250, 200) style:UITableViewStylePlain];
     self.cityTableView = tableView;
@@ -170,20 +151,16 @@ typedef enum {
     self.cityTableView.dataSource = self;
     self.cityTableView.delegate = self;
     self.cityTableView.hidden = YES;
+    
     [self setNeedsStatusBarAppearanceUpdate];
     [self fillTheBasicInfoDataInFields];
+    
     self.bioTxt.delegate =self;
-//    self.bioTxt.layoutManager.delegate = self;
-//    self.bioTxt.textContainer.lineFragmentPadding = 0;
-//    self.bioTxt.contentInset=UIEdgeInsetsZero;
     self.bioTxt.scrollEnabled = NO;
-    //self.cityTableView.backgroundColor = [[UIColor blueColor] colorWithAlphaComponent:0.2];
-    //self.bioTxt.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20];
 }
 
 - (void)createProfilePicAspectView
 {
-    
     _profileimgbtn.layer.cornerRadius = CGRectGetHeight(_profilePicContainerView.frame)/2.0f;
     _profileimgbtn.layer.masksToBounds = YES;
     _profileimgbtn.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -360,11 +337,10 @@ typedef enum {
     
 }
 
--(void)dateSelected:(id)sender
+- (void)dateSelected:(id)sender
 {
     UIDatePicker *datePicker = (UIDatePicker *)sender;
     self.birthdayTxt.text = [[datePicker date] dateString];
-
 }
 
 -(IBAction)dateCancelButtonClicked:(id)sender
@@ -391,16 +367,11 @@ typedef enum {
 
 }
 
-
-
 - (IBAction)dateDoneClicked:(id)sender
 {
     self.birthdayTxt.text = [[self.datePicker date] dateString];
     
     _selectedDob = self.birthdayTxt.text;
-    
-    
-   
     
     dispatch_async(dispatch_get_main_queue(), ^{
         CGRect datePickerFrame = self.datePickerView.frame;
@@ -656,13 +627,11 @@ typedef enum {
 }
 
 
--(void)showSearchTableView:(NSArray *)searchResults
+- (void)showSearchTableView:(NSArray *)searchResults
 {
 
     self.cityTableView.hidden= NO;
     [self.cityTableView reloadData];
-    
-
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
@@ -752,7 +721,7 @@ typedef enum {
             CGRect contentViewFrame = _contentView.frame;
             contentViewFrame.origin.y = 2.f;
             CGRect subContentFrame = _subContentView.frame;
-            subContentFrame.origin.y    =  174.f;
+            subContentFrame.origin.y =  174.f;
             
             
             CGRect tableViewFrame = self.cityTableView.frame;
@@ -765,6 +734,8 @@ typedef enum {
                 
             } completion:^(BOOL finished) {
                 //Animatin finished...
+                [tableFooterField resignFirstResponder];
+                [self.cityTxt resignFirstResponder];
             }];
             
         });
@@ -1027,6 +998,7 @@ typedef enum {
 {
     self.cityTxt.text = [self placeAtIndexPath:indexPath].name;
     tableView.hidden = YES;
+//    [self.cityTxt resignFirstResponder];
     [self textFieldAnimation:NO];
 }
 
@@ -1037,22 +1009,28 @@ typedef enum {
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section;
 {
-    UIView* footer = [[UIView alloc] initWithFrame:CGRectMake(self.cityTableView.frame.origin.x
-                                                              , self.cityTableView.frame.origin.y, 250, 30)];
-    footer.backgroundColor = [UIColor whiteColor];
+    if(tableFooterView == nil) {
+        tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(self.cityTableView.frame.origin.x
+                                                                  , self.cityTableView.frame.origin.y, 250, 30)];
+        tableFooterView.backgroundColor = [UIColor whiteColor];
+    }
     
     if(self.cityTxt.text.length)
     {
-        UITextField* field = [[UITextField alloc] initWithFrame:CGRectMake(10, 0, 250, 30)];
-        [field setBorderStyle:UITextBorderStyleNone];
-        [field setEnabled:NO];
-        field.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.0];
-        field.text = [NSString stringWithFormat:@"Add - '%@' ",self.cityTxt.text];//self.cityTxt.text;
-        [field setTextColor:[UIColor textFieldTextColor]];
-        [footer addSubview:field];
-        [field addTarget:self action:@selector(footerSelected) forControlEvents:UIControlEventAllTouchEvents];
+        if(tableFooterField == nil) {
+            tableFooterField = [[UITextField alloc] initWithFrame:CGRectMake(10, 0, 250, 30)];
+            [tableFooterField setBorderStyle:UITextBorderStyleNone];
+            [tableFooterField setEnabled:YES];
+            tableFooterField.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:16.0];
+            [tableFooterField setTextColor:[UIColor textFieldTextColor]];
+            [tableFooterView addSubview:tableFooterField];
+            [tableFooterField addTarget:self action:@selector(footerSelected) forControlEvents:UIControlEventAllEditingEvents];
+        }
+        
+        tableFooterField.text = [NSString stringWithFormat:@"Add - '%@' ",self.cityTxt.text];//self.cityTxt.text;
     }
-    return footer;
+    
+    return tableFooterView;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
@@ -1062,9 +1040,10 @@ typedef enum {
 
 - (void)footerSelected
 {
-    //self.cityTableView.hidden=YES;
-    [self.cityTxt resignFirstResponder];
-   // [self textFieldAnimation:NO];
+//    [self.cityTxt resignFirstResponder];
+//    [tableFooterField resignFirstResponder];
+    self.cityTableView.hidden=YES;
+    [self textFieldAnimation:NO];
 }
 
 - (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect
