@@ -10,7 +10,7 @@
 
 @interface CMShareTagCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIView *seperatorLineView;
 @property (weak, nonatomic) IBOutlet UITextField *tagTxtfld;
+@property (weak, nonatomic) IBOutlet UIImageView *seperatorLine;
 
 @end

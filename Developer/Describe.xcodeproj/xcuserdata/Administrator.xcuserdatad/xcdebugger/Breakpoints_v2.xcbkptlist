@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Components/Classes/Controller/CMRecordViewController.m"
-            timestampString = "419949611.399297"
+            timestampString = "420307699.595321"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
+            startingLineNumber = "382"
+            endingLineNumber = "382"
             landmarkName = "-prevButtonSelected:"
             landmarkType = "5">
          </BreakpointContent>
@@ -122,6 +122,38 @@
             startingLineNumber = "465"
             endingLineNumber = "465"
             landmarkName = "-fetchInvitationList"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/External Library/GooglePlaceFinding/SPGooglePlacesAutocompleteViewController.m"
+            timestampString = "420300572.665843"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "-viewDidLoad"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Components/Classes/Controller/CMShareViewController.m"
+            timestampString = "420309898.336287"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "632"
+            endingLineNumber = "632"
+            landmarkName = "-textFieldDidChange:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -50,8 +50,8 @@
             isRecordingCompleted = NO;
         }
         
-        if([self isLastPhotoRecording]) {
-            [UIView animateWithDuration:0.3 animations:^{
+//        if([self isLastPhotoRecording]) {
+//            [UIView animateWithDuration:0.3 animations:^{
 //                CGRect frame = self.listButton.frame;
 //                self.prevButton.frame = frame;
 //                
@@ -59,8 +59,8 @@
 //                self.listButton.frame = frame;
 //                
 //                self.nextButton.hidden = NO;
-            }];
-        }
+//            }];
+//        }
     }
 
     [self showCameraView];
@@ -135,8 +135,8 @@
     self.prevButton = backButton;
     self.cancelButton = closeButton;
     
-    prevBtnActualRect = self.prevButton.frame;
-    self.prevButton.frame = self.nextButton.frame;
+//    prevBtnActualRect = self.prevButton.frame;
+//    self.prevButton.frame = self.nextButton.frame;
 }
 
 - (void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
@@ -205,6 +205,10 @@
 {
     if(self.selectedImageIndex < 0) {
         return NO;
+    }
+    
+    if(self.selectedImageIndex >= self.capturedPhotoList.count) {
+        return YES;
     }
     
     CMPhotoModel *modelObj = self.capturedPhotoList[self.selectedImageIndex];
@@ -329,6 +333,8 @@
                 modelObj.isRecorded = YES;
                 NSLog(@"duration = %f", currentVideoTime - modelObj.startAppearanceTime - 0.1);
                 modelObj.duration = currentVideoTime - modelObj.startAppearanceTime - 0.1;  // we are removing 0.1 here because 0.1 is added to currentVideoTime before it came here; so getting actualValue
+                
+                [self.photoCollectionView reloadData];
             }
         }
         
@@ -405,6 +411,8 @@
         if(self.pauseStateIndex != self.selectedImageIndex) {
             CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[self.pauseStateIndex];
             modelObj.isRecorded = YES;
+            
+            [self.photoCollectionView reloadData];
             
             progressVal = 0.0;
             [self.videoProgressIndicator setProgress:0.0];
@@ -507,6 +515,8 @@
         modelObj.isRecorded = YES;
         NSLog(@"duration = %f", currentVideoTime - modelObj.startAppearanceTime - 0.1);
         modelObj.duration = currentVideoTime - modelObj.startAppearanceTime - 0.1;  // we are removing 0.1 here because 0.1 is added to currentVideoTime before it came here; so getting actualValue
+        
+        [self.photoCollectionView reloadData];
     }
     
     self.selectedImageIndex++;
@@ -526,8 +536,8 @@
         isRecordingCompleted = YES;
     }
     
-    if([self isLastPhotoRecording]) {
-        [UIView animateWithDuration:0.3 animations:^{
+//    if([self isLastPhotoRecording]) {
+//        [UIView animateWithDuration:0.3 animations:^{
 //            CGRect frame = self.listButton.frame;
 //            self.prevButton.frame = frame;
 //            
@@ -535,8 +545,8 @@
 //            self.listButton.frame = frame;
 //            
 //            self.nextButton.hidden = NO;
-        }];
-    }
+//        }];
+//    }
     
 #if !(TARGET_IPHONE_SIMULATOR)
 

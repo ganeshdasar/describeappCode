@@ -13,6 +13,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *capturedImageView;
 @property (weak, nonatomic) IBOutlet UILabel *numberLabel;
+@property (weak, nonatomic) IBOutlet UIView *whiteTransparentView;
 @property (nonatomic, strong) CMPhotoModel *dataModel;
 
 @end

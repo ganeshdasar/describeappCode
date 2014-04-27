@@ -9,6 +9,7 @@
 #import "SPGooglePlacesAutocompleteViewController.h"
 #import "SPGooglePlacesAutocompleteQuery.h"
 #import "SPGooglePlacesAutocompletePlace.h"
+#import "UIColor+DesColors.h"
 
 @interface SPGooglePlacesAutocompleteViewController ()
 
@@ -26,35 +27,18 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     self.searchDisplayController.searchBar.placeholder = @"add a location";
     
-//    [[UIButton appearanceWhenContainedIn:[MySearchBar class], nil] setBackgroundImage:... forState:UIControlStateNormal];
-    
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.minimumLineHeight = 0.0f;
-    paragraphStyle.maximumLineHeight = 16.f;
-    paragraphStyle.firstLineHeadIndent = 0.0;
-    paragraphStyle.paragraphSpacing = 0.0;
-    paragraphStyle.lineSpacing = 0.0;
-    paragraphStyle.headIndent = 0.0;
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-//    paragraphStyle.tailIndent = 305.0;
-    paragraphStyle.alignment = NSTextAlignmentLeft;
-    
-//    UIButton *deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [deleteBtn setImage:[UIImage imageNamed:@"btn_cancel.png"] forState:UIControlStateNormal];
-    
     UITextField *txfSearchField = [self.searchDisplayController.searchBar valueForKey:@"_searchField"];
-    [txfSearchField setBackgroundColor:[UIColor whiteColor]];
+    [txfSearchField setBackgroundColor:[UIColor clearColor]];
     [txfSearchField setLeftViewMode:UITextFieldViewModeNever];
-//    [txfSearchField setRightViewMode:UITextFieldViewModeNever];
-//    [txfSearchField setRightView:deleteBtn];
-    [txfSearchField setBackground:[UIImage imageNamed:@"txtfld_spl_search.png"]];
+//    [txfSearchField setBackground:[UIImage imageNamed:@"txtfld_spl_search.png"]];
     [txfSearchField setBorderStyle:UITextBorderStyleNone];
     [txfSearchField setTextAlignment:NSTextAlignmentLeft];
-    [txfSearchField setAttributedPlaceholder:[[NSAttributedString alloc] initWithString:@"add a location" attributes:@{NSParagraphStyleAttributeName: paragraphStyle}]];
-
+    [txfSearchField setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f]];
+    [txfSearchField setAttributedPlaceholder:[[NSAttributedString alloc] initWithString:@"add a location                                " attributes:@{NSForegroundColorAttributeName: [UIColor textPlaceholderColor], NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f]}]];
     //txfSearchField.layer.borderWidth = 8.0f;
     //txfSearchField.layer.cornerRadius = 10.0f;
     txfSearchField.layer.borderColor = [UIColor clearColor].CGColor;

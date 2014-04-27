@@ -113,6 +113,10 @@ typedef enum {
     [categoryController.view setFrame:CGRectMake(0, 0, 320, 41.0)];
     categoryController.delegate = self;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textFieldDidChange:)
+                                                 name:UITextFieldTextDidChangeNotification
+                                               object:nil];
 }
 
 - (void)createPostBodyView
@@ -483,11 +487,11 @@ typedef enum {
             tagCell.tagTxtfld.delegate = self;
             if(indexPath.row == 0) {
                 tagCell.tagTxtfld.placeholder = @"#FirstTag";
-                tagCell.seperatorLineView.hidden = NO;
+                tagCell.seperatorLine.hidden = NO;
             }
             else {
                 tagCell.tagTxtfld.placeholder = @"#SecondTag";
-                tagCell.seperatorLineView.hidden = YES;
+                tagCell.seperatorLine.hidden = YES;
             }
             
             break;
@@ -621,6 +625,15 @@ typedef enum {
     }
     
     return YES;
+}
+
+- (void)textFieldDidChange:(NSNotification *)notification
+{
+    UITextField *txtfld = (UITextField *)[notification object];
+    NSMutableAttributedString *coloredText = [[NSMutableAttributedString alloc] initWithString:txtfld.text];
+    [coloredText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithRed:150/255.0 green:150/255.0 blue:150/255.0 alpha:255/255.0] range:NSMakeRange(0, 1)];
+    
+    txtfld.attributedText = coloredText;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
