@@ -35,7 +35,6 @@
     return self;
 }
 
-
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -47,7 +46,7 @@
     return self;
 }
 
--(void)configureSettings
+- (void)configureSettings
 {
     _mediaItemSize = CGSizeMake(25.f, 25.f);
     _freeSpace = 10.f;
@@ -55,7 +54,7 @@
     
 }
 
--(void)setMedaiList:(NSArray *)medias
+- (void)setMedaiList:(NSArray *)medias
 {
     [_contentView removeFromSuperview];
     [self configureSettings];
@@ -63,8 +62,7 @@
     [self createContentView];
 }
 
-
--(void)createContentView
+- (void)createContentView
 {
     _contentView = [[UIView alloc] initWithFrame:self.bounds];
     [self addSubview:_contentView];
@@ -72,9 +70,8 @@
     [self designContentView];
 }
 
--(void)designContentView
+- (void)designContentView
 {
-    
     {
         _titleLbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, self.bounds.size.width, 30.f)];
         [_titleLbl setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:13.0f]];
@@ -83,8 +80,6 @@
         [_contentView addSubview:_titleLbl];
         [_titleLbl setTextColor:[UIColor colorWithRed:180.f/255.0 green:180.f/255.0 blue:180.f/255.0 alpha:1.0]];
     }
-    
-    
     
     int count = _mediaList.count;
     CGFloat mediaItemsOccupingWidth = count*_mediaItemSize.width + (count -1)*_freeSpace;
@@ -108,9 +103,8 @@
 
 - (void)mediaItemSelected:(UIButton *)sender
 {
-//    sender.selected = YES;
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(socailMediaDidSelectedItemAtIndex:)]) {
-        [self.delegate socailMediaDidSelectedItemAtIndex:[sender tag]];
+        [self.delegate socailMediaDidSelectedItemAtIndex:sender];
     }
 }
 

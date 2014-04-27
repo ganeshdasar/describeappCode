@@ -819,11 +819,12 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
--(void)getInvitationListpeople:(NSString*)userId GateWay:(NSString*)inGateWay Accesstoken:(NSString*)accessToken AndRange:(NSInteger)inRange;
+- (void)getInvitationListpeople:(NSString*)userId FBAccesstoken:(NSString*)fbToken GPAccessToken:(NSString *)gpToken AndRange:(NSInteger)inRange
 {
     if (![self checkTheInterConnection]) return;
     
-    NSDictionary* userDetails = @{@"UserUID":userId, @"GateWay":inGateWay,@"accessToken":accessToken,@"range":[NSString stringWithFormat:@"%ld", (long)inRange]};
+    //http://mirusstudent.com/service/describe-service/getInvitationList/UserUID=XX/FBToken=XXXX/GPToken=YYYY/range=1
+    NSDictionary* userDetails = @{@"UserUID":userId, @"FBToken":fbToken, @"GPToken":gpToken, @"range":[NSString stringWithFormat:@"%ld", (long)inRange]};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:[NSString stringWithFormat:@"%@/getInvitationList", BaseURLString]
        parameters:userDetails
@@ -972,6 +973,7 @@ static WSModelClasses *_sharedInstance;
 - (void)sendGateWayInvitationUserId:(NSString*)userid gateWayType:(NSString*)gateWayType gateWayToken:(NSString*)gateWayToken userName:(NSString*)userName
 {
     NSString *url = [NSString stringWithFormat:@"%@/sendGateWayInvitation/UserUID=%@/GateWay=%@/GateWayToken=%@/GateWayUsername=%@", BaseURLString,userid,gateWayType,gateWayToken,userName];
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url
       parameters:nil
@@ -1143,9 +1145,25 @@ static WSModelClasses *_sharedInstance;
      ];
 }
 
-- (void)inviteAllActionUserID:(NSString*)userId inviteAllString:(NSString*)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
+- (void)inviteAllActionUserID:(NSString*)userId inviteAllString:(BOOL)followAll rageValue:(NSString*)rangeValue responce:(void(^)(BOOL success, id responce))responce
 {
+    NSString *followStr = @"FALSE";
+    if(followAll) {
+        followStr = @"TRUE";
+    }
     
-    
+    // http://mirusstudent.com/service/describe-service/sendGateWayInvitation/UserUID=4/InviteAllSts=TRUE/range=1/
+    NSString *url = [NSString stringWithFormat:@"%@/sendGateWayInvitation/UserUID=%@/InviteAllSts=%@/range=%@", BaseURLString, [WSModelClasses sharedHandler].loggedInUserModel.userID, followStr, rangeValue];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             responce(YES, responseObject);
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             responce(NO, error);
+         }
+     ];
 }
+
 @end

@@ -54,7 +54,7 @@
     BOOL shouldLoadMoreSearch;
     NSInteger pageLoadNumberSearch;
     
-    NSInteger selecedSocialBtnTag;
+    UIButton *selecedSocialBtnRef;
 }
 
 @end
@@ -90,7 +90,7 @@
     }
     
     self.selectedType.selected = NO;
-    selecedSocialBtnTag = -1;
+    selecedSocialBtnRef = nil;
     
     shouldLoadMoreInvite = NO;
     shouldLoadMoreRecommend = NO;
@@ -109,6 +109,8 @@
     [self fetchWerecommendList];
     [self addSearchBarView];
     [self designSocialComponent];
+    [self designPeopleListView:nil];
+    
     [self setNeedsStatusBarAppearanceUpdate];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshTheView)
@@ -154,7 +156,7 @@
         [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton]];
     }
     else {
-        [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[backButton,nextButton]];
+        [_headerView designHeaderViewWithTitle:@"Add People" andWithButtons:@[nextButton]];
     }
     [_headerView setDelegate:self];
 }
@@ -212,17 +214,18 @@
     [_mediaListView setMedaiList:@[mediaItem0, mediaItem1]];
 }
 
-- (void)socailMediaDidSelectedItemAtIndex:(NSInteger)index
+- (void)socailMediaDidSelectedItemAtIndex:(UIButton *)socialBtn
 {
     [_peoplelistView setBackgroundColor:[UIColor clearColor]];
+    NSInteger index = [socialBtn tag];
     switch (index)
     {
         case 0:
-            [self requestToFaceboookForFriendsList:nil];
+            [self requestToFaceboookForFriendsList:socialBtn];
             break;
             
         case 1:
-            [self requestToGooglePlusForFriendsList:nil];
+            [self requestToGooglePlusForFriendsList:socialBtn];
             break;
             
         default:
@@ -288,7 +291,7 @@
         inSender.selected = YES;
     }
     else {
-        selecedSocialBtnTag = [inSender tag];
+        selecedSocialBtnRef = inSender;
         [[WSModelClasses sharedHandler] showLoadView];
         [DESocialConnectios sharedInstance].delegate = self;
         [[DESocialConnectios sharedInstance] facebookSignIn];
@@ -301,7 +304,7 @@
         inSender.selected = YES;
     }
     else {
-        selecedSocialBtnTag = [inSender tag];
+        selecedSocialBtnRef = inSender;
         [[WSModelClasses sharedHandler] showLoadView];
         [[DESocialConnectios sharedInstance] googlePlusSignIn];
         [DESocialConnectios sharedInstance].delegate = self;
@@ -334,10 +337,12 @@
     
     if ([[[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
         // make either facebook / Gplus button as ON
-        [_mediaListView makeSocialBtnSelected:YES withTag:selecedSocialBtnTag];
+        [selecedSocialBtnRef setSelected:YES];
+//        [_mediaListView makeSocialBtnSelected:YES withTag:selecedSocialBtnTag];
     }
     else {
-        [_mediaListView makeSocialBtnSelected:YES withTag:selecedSocialBtnTag];
+        [selecedSocialBtnRef setSelected:NO];
+//        [_mediaListView makeSocialBtnSelected:YES withTag:selecedSocialBtnTag];
         NSString * messageStr = @"";
         if (delegate.isFacebook) {
             messageStr = NSLocalizedString(@"This Facebook account is already associated with another Describe account.", @"");
@@ -441,25 +446,25 @@
         [[WSModelClasses sharedHandler] showLoadView];
     }
     
-    NSString * gateWay;
-    NSString * accessToken;
+    NSString *fbAccessToken = @"";
+    NSString *gpAccessToken = @"";
     [WSModelClasses sharedHandler].delegate = self;
     if ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY]) {
-        gateWay = @"fb";
-        accessToken  = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
+        fbAccessToken = [[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY];
     }
-    else if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
-        gateWay = @"gplus";
-        accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
+    
+    if ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN]){
+        gpAccessToken = [[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN];
     }
-    else {
-        gateWay = @"";
-        accessToken = @"";
+    
+    if(fbAccessToken.length == 0 && gpAccessToken.length == 0) {
+        [[WSModelClasses sharedHandler] removeLoadingView];
+        return;
     }
     
     [WSModelClasses sharedHandler].loggedInUserModel.isInvitation = YES;
     [WSModelClasses sharedHandler].delegate = self;
-    [[WSModelClasses sharedHandler] getInvitationListpeople:(NSString*)[WSModelClasses sharedHandler].loggedInUserModel.userID GateWay:gateWay Accesstoken:accessToken AndRange:pageLoadNumberInvite];
+    [[WSModelClasses sharedHandler] getInvitationListpeople:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] FBAccesstoken:fbAccessToken GPAccessToken:gpAccessToken AndRange:pageLoadNumberInvite];
 }
 
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
@@ -515,7 +520,6 @@
         data.profileUserUID = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserUID"];
         data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
         [peopleArray addObject:data];
-        
     }
     
     BOOL reloadList = NO;
@@ -744,14 +748,23 @@
 
 - (void)inviteAllAction
 {
-    [[WSModelClasses sharedHandler]inviteAllActionUserID:@"" inviteAllString:@"" rageValue:@"" responce:^(BOOL success, id responce){
-        if (success) {
-            
-        }
-        else{
-            
-        }
-    }];
+    [[WSModelClasses sharedHandler] inviteAllActionUserID:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue]
+                                          inviteAllString:YES
+                                                rageValue:[NSString stringWithFormat:@"%ld", (long)pageLoadNumberRecommend]
+                                                 responce:^(BOOL success, id responce){
+                                                     if (success) {
+                                                         for(SearchPeopleData *peopleData in invitationList) {
+                                                             peopleData.followingStatus = @"1";
+                                                         }
+                                                         
+                                                         [_peoplelistView reloadTableView:invitationList];
+                                                         
+                                                         [self showStatusView:NO];
+                                                     }
+                                                     else {
+                                                         
+                                                     }
+                                                 }];
 }
 
 #pragma mark - DPeopleListComponentDelegate Method
@@ -789,7 +802,7 @@
 
 - (void)peopleListView:(DPeopleListComponent *)listView didSelectedItemIndex:(NSUInteger)index
 {
-    if(self.isCommmingFromFeed == YES) {
+    if(self.isCommmingFromFeed == YES && ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == NO)) {
         SearchPeopleData *peopleDetail = nil;
         if(isSearching) {
             if(weRecommendBtn.isSelected) {

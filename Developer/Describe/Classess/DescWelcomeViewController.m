@@ -194,12 +194,12 @@
                          }
                          completion:nil];
         
-        [self bounceOutAnimation:self.facebookBtn withDuration:0.25 withKeypath:FACEBOOK_BOUNCEOUT_KEYPATH];
-        [self bounceOutAnimation:self.googlePlusBtn withDuration:0.2 withKeypath:GOOGLEPLUS_BOUNCEOUT_KEYPATH];
-        [self bounceOutAnimation:self.emailBtn withDuration:0.3 withKeypath:EMAIL_BOUNCEOUT_KEYPATH];
+        [self bounceOutAnimation:self.facebookBtn withDuration:0.25 withKeypath:FACEBOOK_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
+        [self bounceOutAnimation:self.googlePlusBtn withDuration:0.2 withKeypath:GOOGLEPLUS_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
+        [self bounceOutAnimation:self.emailBtn withDuration:0.3 withKeypath:EMAIL_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
         
-        [self bounceOutAnimation:self.signUpBtn withDuration:0.5 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH];
-        [self bounceOutAnimation:self.signInBtn withDuration:0.5 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH];
+        [self bounceOutAnimation:self.signUpBtn withDuration:0.5 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
+        [self bounceOutAnimation:self.signInBtn withDuration:0.5 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
     }
     else {
         [UIView animateWithDuration:0.3
@@ -222,8 +222,8 @@
         [self bounceInAnimation:self.googlePlusBtn withDuration:0.1 withKeyPath:GOOGLEPLUS_BOUNCEIN_KEYPATH];
         [self bounceInAnimation:self.emailBtn withDuration:0.0 withKeyPath:EMAIL_BOUNCEIN_KEYPATH];
         
-        [self bounceOutAnimation:self.signUpBtn withDuration:0.6 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH];
-        [self bounceOutAnimation:self.signInBtn withDuration:0.6 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH];
+        [self bounceOutAnimation:self.signUpBtn withDuration:0.6 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
+        [self bounceOutAnimation:self.signInBtn withDuration:0.6 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
     }
     
 }
@@ -241,7 +241,7 @@
     aView.alpha = 1.0;
 }
 
-- (void)bounceOutAnimation:(UIView *)aView withDuration:(NSTimeInterval)time withKeypath:(NSString *)animationKeyPath
+- (void)bounceOutAnimation:(UIView *)aView withDuration:(NSTimeInterval)time withKeypath:(NSString *)animationKeyPath withFadeAniamtion:(BOOL)doFade
 {
     CFTimeInterval startTime = 0;
     
@@ -265,7 +265,12 @@
     CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
     animationGroup.duration = startTime + 0.1;
     animationGroup.delegate = self;
-    animationGroup.animations = [NSArray arrayWithObjects:scaleAnimation1, fadeAnimation, scaleAnimation2, scaleAniamtion3, scaleAnimation4, scaleAnimation5, nil];
+    if(doFade == YES) {
+        animationGroup.animations = [NSArray arrayWithObjects:scaleAnimation1, fadeAnimation, scaleAnimation2, scaleAniamtion3, scaleAnimation4, scaleAnimation5, nil];
+    }
+    else {
+        animationGroup.animations = [NSArray arrayWithObjects:scaleAnimation1, scaleAnimation2, scaleAniamtion3, scaleAnimation4, scaleAnimation5, nil];
+    }
     
     if([aView.layer animationForKey:animationKeyPath]) {
         [aView.layer removeAnimationForKey:animationKeyPath];

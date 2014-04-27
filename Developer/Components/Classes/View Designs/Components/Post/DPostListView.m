@@ -122,7 +122,7 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = [NSString stringWithFormat:@"identifier_%d_%d",indexPath.section, indexPath.row];
+    NSString *identifier = [NSString stringWithFormat:@"identifier_%ld_%ld",(long)indexPath.section, (long)indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if(cell == nil)
     {

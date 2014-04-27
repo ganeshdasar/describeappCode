@@ -13,7 +13,7 @@
 @protocol DSocialMediaListViewDelegate <NSObject>
 
 @optional
--(void)socailMediaDidSelectedItemAtIndex:(NSInteger )index;
+-(void)socailMediaDidSelectedItemAtIndex:(UIButton *)socialBtn;
 
 @end
 

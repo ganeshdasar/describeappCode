@@ -292,10 +292,12 @@
 
 - (void)showButtons:(NSArray *)buttons
 {
+    _contentView.userInteractionEnabled = NO;
+    
     CFTimeInterval timeInterval = 0;
     for (NSInteger index = buttons.count - 1; index >= 0; index--) {
         UIView *aView = (UIView *)buttons[index];
-        [self bounceOutView:aView withDelay:timeInterval withKeypath:@"BounceOutAnimationKeypath"];
+        [self bounceOutView:aView withDelay:timeInterval withKeypath:[NSString stringWithFormat:@"BounceOutAnimationKeypath%ld", (long)index] isLast:index == 0 ? YES : NO];
         timeInterval += 0.3;
     }
     return;
@@ -315,7 +317,7 @@
     aView.alpha = 1.0;
 }
 
-- (void)bounceOutView:(UIView *)aView withDelay:(CFTimeInterval)time withKeypath:(NSString *)animationKeyPath
+- (void)bounceOutView:(UIView *)aView withDelay:(CFTimeInterval)time withKeypath:(NSString *)animationKeyPath isLast:(BOOL)lastFlag
 {
     aView.alpha = 0;
     CFTimeInterval startTime = time;
@@ -342,12 +344,21 @@
     animationGroup.duration = startTime + 0.05;
     animationGroup.delegate = self;
     animationGroup.animations = [NSArray arrayWithObjects:scaleAnimation1, fadeAnimation, scaleAnimation2, scaleAniamtion3, scaleAnimation4, scaleAnimation5, nil];
+    [animationGroup setValue:[NSNumber numberWithBool:lastFlag] forKeyPath:@"IsLastAnimationFlag"];
     
     if([aView.layer animationForKey:animationKeyPath]) {
         [aView.layer removeAnimationForKey:animationKeyPath];
     }
     
     [aView.layer addAnimation:animationGroup forKey:animationKeyPath];
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+{
+    CAAnimationGroup *animGroup = (CAAnimationGroup *)anim;
+    if([[animGroup valueForKey:@"IsLastAnimationFlag"] boolValue] == YES) {
+        _contentView.userInteractionEnabled = YES;
+    }
 }
 
 -(void)animateOnViews:(NSArray *)views atIndex:(NSUInteger )index

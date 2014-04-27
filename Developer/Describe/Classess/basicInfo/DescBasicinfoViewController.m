@@ -323,7 +323,7 @@ typedef enum {
     }
     [self hideAndShowView:YES];
     _previousPicRef = profilePicAspectController.imageView.image;
-    UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"ChooseSource" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Remove Pic",@"Camera",@"PhotoLibrary", nil];
+    UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera",@"Photo Library", @"Remove Picture", nil];
     [chooseOption showInView:self.view];
     [chooseOption setTag:222];
 }
@@ -461,13 +461,13 @@ typedef enum {
     NSLog(@"profile image tag:%d",[_profileimgbtn tag]);
     if(_profileimgbtn.tag == 111)
     {
-        UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"ChooseSource" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera",@"PhotoLibrary", nil];
+        UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"Photo Library", nil];
         [chooseOption setTag:111];
         [chooseOption showInView:self.view];
     }
     else if(_profileimgbtn.tag == 222)
     {
-        UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"ChooseSource" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Delete Profile Pic",@"Camera",@"PhotoLibrary", nil];
+        UIActionSheet *chooseOption = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"Photo Library", @"Remove Picture", nil];
         [chooseOption setTag:222];
         [chooseOption showInView:self.view];
     }

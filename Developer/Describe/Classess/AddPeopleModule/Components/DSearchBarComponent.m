@@ -80,9 +80,9 @@
 }
 #pragma mark seachTextfield Delegate mathod
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-//    if([self.searchDelegate respondsToSelector:@selector(searchBarSearchButtonClicked:)]){
-//        [self.searchDelegate searchBarSearchButtonClicked:self];
-//    }
+    if([self.searchDelegate respondsToSelector:@selector(searchBarSearchButtonClicked:)]){
+        [self.searchDelegate searchBarSearchButtonClicked:self];
+    }
   
     return YES;
 }

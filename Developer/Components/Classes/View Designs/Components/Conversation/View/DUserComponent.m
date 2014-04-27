@@ -102,7 +102,6 @@
     _title = firsLineLbl;
     _subTitle = secondLineLbl;
     _statusButton = button;
-
 }
 
 - (void)updateContent:(SearchPeopleData *)userData
@@ -116,7 +115,7 @@
     
     _title.text = data.profileUserName ? data.profileUserName : @"";
      if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
-         _subTitle.text = data.gateWayType ? [data.gateWayType isEqualToString:@"fb"] ? @"facebook" : @"google+" : @"";
+         _subTitle.text = data.gateWayType ? [data.gateWayType intValue] == 1 ? @"facebook" : @"google+" : @"";
          
          _title.font = INVITATION_TITLE_FONT;
          _title.textColor = INVITATION_TITLE_COLOR;
@@ -134,6 +133,7 @@
          [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
         }
          
+         [_statusButton removeTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
          [_statusButton addTarget:self action:@selector(inviteThePerson:) forControlEvents:UIControlEventTouchUpInside];
      }
      else {
@@ -156,6 +156,7 @@
             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
         }
          
+         [_statusButton removeTarget:self action:@selector(inviteThePerson:) forControlEvents:UIControlEventTouchUpInside];
          [_statusButton addTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
      }
 }
@@ -189,7 +190,7 @@
 - (void)inviteThePerson:(id)inAction
 {
     [WSModelClasses sharedHandler].delegate = self;
-    [[WSModelClasses sharedHandler] sendGateWayInvitationUserId:@"" gateWayType:data.gateWayType gateWayToken:data.gateWayToken userName:@""];
+    [[WSModelClasses sharedHandler] sendGateWayInvitationUserId:[[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue] gateWayType:data.gateWayType gateWayToken:data.gateWayToken userName:data.profileUserName];
 }
 
 - (void)didFinishWSConnectionWithResponse:(NSDictionary *)responseDict
@@ -227,16 +228,12 @@
         case KWebserviesType_invitations:
         {
             
-            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Msg"]objectAtIndex:0] isEqualToString:@"You are successfully invited your friend."]) {
+            if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Status"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
                 [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"1";
-            }else{
-                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
-                data.followingStatus = @"0";
-                
             }
-            break;
             
+            break;
         }
 
         default:

@@ -525,12 +525,12 @@ static DPostsViewController *sharedFeedController;
     _isSelfPost = [currentUserId isEqualToString:postAuthId];
     if(_isSelfPost)
     {
-        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Delete",nil];
+        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Delete", nil];
         _moreActionSheet.tag = 111;
     }
     else
     {
-        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Report",nil];
+        _moreActionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Report", nil];
         _moreActionSheet.tag = 222;
     }
     
