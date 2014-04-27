@@ -184,6 +184,7 @@ static WSModelClasses *_sharedInstance;
               [self postSignUpResult:responseObject error:Nil];
           }
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              
               [self postSignUpResult:Nil error:error];
           }
      ];
@@ -257,6 +258,7 @@ static WSModelClasses *_sharedInstance;
                   NSDictionary *userDataDict = (NSDictionary *)basicInfodic[@"DataTable"][0][@"UserData"];
                   UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:userDataDict];
                   [self updateTheuserModelObject:userModelObj];
+                  [self saveUserDataInUserDefaults:responseObject];
                   [_delegate didFinishWSConnectionWithResponse:responseDict];
               }
           }
@@ -269,6 +271,14 @@ static WSModelClasses *_sharedInstance;
           }
      ];
 }
+
+- (void)saveUserDataInUserDefaults:(NSDictionary*)dictionary
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:dictionary forKeyPath:USERSAVING_DATA_KEY];
+    [[NSUserDefaults standardUserDefaults]synchronize ];
+}
+
 
 #pragma mark ResetPassword
 - (void)resetPassword:(NSString*)inUserEmailID

@@ -30,5 +30,6 @@ typedef enum {
 @property (retain, nonatomic)NSMutableArray *loginjsonArray;
 
 - (IBAction)forgetpwdClicked:(id)sender;
+- (void)showNextScreen:(NSDictionary*)userData;
 
 @end

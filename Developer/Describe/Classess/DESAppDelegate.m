@@ -10,6 +10,7 @@
 #import "DescBasicinfoViewController.h"
 #import <GooglePlus/GooglePlus.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
+#import "WSModelClasses.h"
 @implementation DESAppDelegate
 @synthesize isFacebook;
 @synthesize isGooglePlus;
@@ -25,8 +26,7 @@
     [GPPSignIn sharedInstance].clientID = kClientID;
     [GPPDeepLink setDelegate:self];
     [GPPDeepLink readDeepLinkAfterInstall];
-    
- 
+    [WSModelClasses sharedHandler];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     DescWelcomeViewController * welComeView = [[DescWelcomeViewController alloc]initWithNibName:@"DescWelcomeViewController" bundle:Nil];

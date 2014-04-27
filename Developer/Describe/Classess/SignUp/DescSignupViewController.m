@@ -96,7 +96,7 @@
 {
     DESAppDelegate * appDelegate = (DESAppDelegate*)[UIApplication sharedApplication].delegate;
     if (appDelegate.isFacebook == YES) {
-        self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
+        self.emailTxt.text = [self.userDataDic valueForKey:@"name"];
         
         NSString *firstName = [self.userDataDic valueForKey:@"first_name"];
         NSString *lastName = [self.userDataDic valueForKey:@"last_name"];
@@ -111,7 +111,7 @@
     }else if (appDelegate.isGooglePlus == YES){
         self.emailTxt.text = [self.userDataDic valueForKey:@"email"];
         
-        NSString *displayName = [self.userDataDic valueForKey:@"last_name"];
+        NSString *displayName = [self.userDataDic valueForKey:@"displayName"];
         if(displayName != nil)
             self.nameTxt.text = [NSString stringWithFormat:@"%@ ",displayName];
     }
@@ -279,15 +279,16 @@
 
 - (void)saveUserDetails:(NSDictionary *)dictionary
 {
+    NSDictionary *dic = [[NSDictionary alloc]initWithObjectsAndKeys:dictionary,@"ResponseData", nil];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSArray *username = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.Username"];
-    NSArray *userid = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserUID"];
-    NSArray *userprofilepic = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"];
+    NSArray *username = [dic valueForKeyPath:@"ResponseData.DataTable.UserData.Username"];
+    NSArray *userid = [dic valueForKeyPath:@"ResponseData.DataTable.UserData.UserUID"];
+    NSArray *userprofilepic = [dic valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"];
     
     [userDefaults setValue:(username.count)?username[0]:nil forKey:@"UserName"];
     [userDefaults setValue:(userid.count)?userid[0]:nil forKey:@"UserUID"];
     [userDefaults setValue:(userprofilepic.count)?userprofilepic[0]:nil forKey:@"UserProfilePicture"];
-    [self saveUserDataInUserDefaults:dictionary];
+    [self saveUserDataInUserDefaults:dic];
     
 }
 

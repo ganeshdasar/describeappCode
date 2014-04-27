@@ -67,6 +67,7 @@
     NSDictionary*dataDic = [dic valueForKeyPath:@"ResponseData.DataTable.UserData"][0];
     if (!dataDic) {
         dataDic =  [dic valueForKeyPath:@"DataTable.UserData"][0];
+
     }
     if (dataDic[USER_MODAL_KEY_UID]) {
         UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:dataDic];
@@ -135,11 +136,8 @@
     self.navigationController.navigationController.navigationBar.translucent = NO;
 
     if([self checkTheSessionId]) {
-        _postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
-        [_postViewController loadFeedDetails];
-        [self.navigationController pushViewController:_postViewController animated:YES];
+    [self showNextScreen:(NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USERSAVING_DATA_KEY]];
     }
-    
     if (self.facebookBtn.isHidden == YES) {
         CGRect windowFrame  = [[UIScreen mainScreen] bounds];
         self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SingUpButtonClosePersentage, 100, 36);
@@ -150,6 +148,62 @@
         self.emailBtn.frame = BUTTONFRAME;
     }
 
+}
+
+
+- (void)saveUserDataInUserDefaults:(NSDictionary*)dictionary
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:dictionary forKeyPath:USERSAVING_DATA_KEY];
+    [[NSUserDefaults standardUserDefaults]synchronize ];
+}
+
+- (void)showNextScreen:(NSDictionary*)userData
+{
+    
+    if(![self checkTheuserBasicInfoDataEmptyOrNot:userData])//Check for the condition where the basic info line is empty or not.
+    {
+        DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+        [self.navigationController pushViewController:basicInfo animated:YES];
+    }
+    else
+    {
+        if([self checkTheUserFollowingCount:userData])//is he is following any one or not?
+        {
+            DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
+            [postViewController loadFeedDetails];
+            [self.navigationController pushViewController:postViewController animated:YES];
+        }
+        else
+        {
+            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+            [self.navigationController pushViewController:addPeople animated:YES];
+            
+        }
+    }
+}
+
+- (BOOL)checkTheuserBasicInfoDataEmptyOrNot:(NSDictionary*)userData
+{
+    NSString * city = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserCity"]objectAtIndex:0];
+    NSString * imagedata = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"]objectAtIndex:0];
+    NSString * userBio = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserBiodata"]objectAtIndex:0];
+    NSString * birthday = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserDOB"]objectAtIndex:0];
+    if ([city isEqualToString:@""] || [imagedata isEqualToString:@""] ||[userBio isEqualToString:@""] ||[birthday isEqualToString:@""] )
+        return NO;
+    return YES;
+    
+}
+
+- (BOOL)checkTheUserFollowingCount:(NSDictionary*)userData
+{
+    NSString * followingCount = [[userData valueForKeyPath:@"ResponseData.DataTable.UserData.UserFollowingCount"]objectAtIndex:0];
+    if (!followingCount) {
+      followingCount = [[userData valueForKeyPath:@"DataTable.UserData.UserFollowingCount"]objectAtIndex:0];
+    }
+    if ([followingCount isEqualToString:@"0"])
+        return NO;
+    return YES;
 }
 
 #pragma mark Event Actions -
@@ -414,7 +468,7 @@
 
     NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
     [dic setValue: [inDic valueForKey:@"email"] forKey:USER_MODAL_KEY_EMAIL];
-    [dic setValue: [inDic valueForKey:@"name"] forKey:USER_MODAL_KEY_USERNAME];
+    [dic setValue: [inDic valueForKey:@"displayName"] forKey:USER_MODAL_KEY_USERNAME];
     [dic setValue: [inDic valueForKey:@"displayName"] forKey:USER_MODAL_KEY_FULLNAME];
     if ([[inDic valueForKey:@"gender"]isEqualToString:@"male"]) {
         [dic setValue:[NSNumber numberWithInteger:1] forKey:USER_MODAL_KEY_GENDER];

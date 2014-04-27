@@ -106,7 +106,7 @@
     
     [self designHeaderView];
     [self createSegmenComponent];
-    [self fetchWerecommendList];
+    [self performSelector:@selector(fetchWerecommendList) withObject:nil afterDelay:0.5];
     [self addSearchBarView];
     [self designSocialComponent];
     [self designPeopleListView:nil];
