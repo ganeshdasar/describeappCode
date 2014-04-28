@@ -207,7 +207,6 @@ typedef enum {
         profilePicStr = [NSString stringWithFormat:@"http://mirusstudent.com/service/postimages/%@",profilePicStr];
         [_profilePicImageViewController loadImageFromURLString:profilePicStr];
     }
-    
 //    [_profilePicImageViewController loadImageFromURLString:_profileUserModel.profileImageName];
     [_canvasImageViewController loadImageFromURLString:_profileUserModel.canvasImageName];
 }
@@ -345,7 +344,13 @@ typedef enum {
     // 2. Photo Library
     // 3. Cancel
     
-    UIActionSheet *actionSheet = [[UIActionSheet alloc]  initWithTitle:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Camera", nil), NSLocalizedString(@"Photo Library", nil), nil];
+       NSString *profilePicStr = _profileUserModel.profileImageName;
+    UIActionSheet *actionSheet ;
+      if(profilePicStr != nil && [profilePicStr length]) {
+     actionSheet = [[UIActionSheet alloc]  initWithTitle:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Camera", nil), NSLocalizedString(@"Photo Library", nil),@"Remove Picture", nil];
+      }else{
+   actionSheet = [[UIActionSheet alloc]  initWithTitle:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Camera", nil), NSLocalizedString(@"Photo Library", nil), nil];
+      }
     actionSheet.tag = PHOTO_SELECTION_ACTIONSHEET_TAG;
     [actionSheet showInView:self.view];
 }
@@ -402,7 +407,7 @@ typedef enum {
             _changeBtn.hidden = NO;
             _doneBtn.hidden = NO;
             _completeProfileView.hidden = YES;
-            _profilePicContainerView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
+            _profilePicContainerView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
             
             [_profilePicImageViewController enableTouches:YES];
             [_profilePicContainerView setDontPassTouch:YES];
@@ -494,7 +499,7 @@ typedef enum {
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if(actionSheet.tag == PHOTO_SELECTION_ACTIONSHEET_TAG && buttonIndex < 2) {
+    if(actionSheet.tag == PHOTO_SELECTION_ACTIONSHEET_TAG && buttonIndex < 3) {
         
         if(buttonIndex == 0 && ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"Device does not have camera.", @"") delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -517,6 +522,12 @@ typedef enum {
             {
                 picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
                 break;
+            }
+            case 2:
+            {
+                _profileUserModel.profileImageName =@"";
+                _profilePicImageViewController.imageView.image = nil;
+                return;
             }
                 
             default:
