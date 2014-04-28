@@ -64,6 +64,7 @@
     }
 
     [self showCameraView];
+    [self.photoCollectionView reloadData];
 //    [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -334,7 +335,8 @@
                 NSLog(@"duration = %f", currentVideoTime - modelObj.startAppearanceTime - 0.1);
                 modelObj.duration = currentVideoTime - modelObj.startAppearanceTime - 0.1;  // we are removing 0.1 here because 0.1 is added to currentVideoTime before it came here; so getting actualValue
                 
-                [self.photoCollectionView reloadData];
+                [self.photoCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedImageIndex inSection:0]]];
+//                [self.photoCollectionView reloadData];
             }
         }
         
@@ -412,7 +414,8 @@
             CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[self.pauseStateIndex];
             modelObj.isRecorded = YES;
             
-            [self.photoCollectionView reloadData];
+            [self.photoCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.pauseStateIndex inSection:0]]];
+//            [self.photoCollectionView reloadData];
             
             progressVal = 0.0;
             [self.videoProgressIndicator setProgress:0.0];
@@ -516,7 +519,8 @@
         NSLog(@"duration = %f", currentVideoTime - modelObj.startAppearanceTime - 0.1);
         modelObj.duration = currentVideoTime - modelObj.startAppearanceTime - 0.1;  // we are removing 0.1 here because 0.1 is added to currentVideoTime before it came here; so getting actualValue
         
-        [self.photoCollectionView reloadData];
+        [self.photoCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedImageIndex inSection:0]]];
+//        [self.photoCollectionView reloadData];
     }
     
     self.selectedImageIndex++;
@@ -524,6 +528,9 @@
         CMPhotoModel *modelObj = (CMPhotoModel *)self.capturedPhotoList[self.selectedImageIndex];
         if(modelObj.originalImage != nil) {
             self.selectedImageView.image = modelObj.editedImage;
+            if(!isiPhone5) {
+                [self.photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.selectedImageIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+            }
         }
         else {
             isRecordingDone = YES;

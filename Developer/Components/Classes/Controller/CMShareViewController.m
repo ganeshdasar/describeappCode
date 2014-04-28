@@ -19,6 +19,7 @@
 #import "DPostBodyView.h"
 #import "UIView+FindFirstResponder.h"
 #import "DESocialConnectios.h"
+#import "AFNetworking.h"
 
 #define LOCATION_CELLIDENTIFIER             @"LocationCell"
 #define COMPOSITION_CELLIDENTIFIER          @"CompositionCell"
@@ -56,6 +57,8 @@ typedef enum {
     
     BOOL fbSelected;
     BOOL gplusSelected;
+    
+    BOOL shareBtnSelected;
 }
 
 @property (nonatomic, strong) NSString *totalVideoDuration;
@@ -84,6 +87,7 @@ typedef enum {
     
     gplusSelected = NO;
     fbSelected = NO;
+    shareBtnSelected = NO;
     
     NSMutableArray *images = [[NSMutableArray alloc] init];
     for(CMPhotoModel *modelObj in _capturedPhotoList) {
@@ -117,6 +121,14 @@ typedef enum {
                                              selector:@selector(textFieldDidChange:)
                                                  name:UITextFieldTextDidChangeNotification
                                                object:nil];
+    
+    [[DESLocationManager sharedLocationManager] setDelegate:self];
+    [[DESLocationManager sharedLocationManager] initializeFetchingCurrentLocationAndStartUpdating:YES];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)createPostBodyView
@@ -325,6 +337,7 @@ typedef enum {
 - (IBAction)shareButtonClicked:(id)sender
 {
     NSLog(@"%s", __func__);
+    shareBtnSelected = YES;
     [[DESLocationManager sharedLocationManager] setDelegate:self];
     [[DESLocationManager sharedLocationManager] initializeFetchingCurrentLocationAndStartUpdating:YES];
 }
@@ -408,7 +421,37 @@ typedef enum {
 
 - (void)didUpdatedToNewLocation:(DESLocationManager *)locationManager
 {
-    [self postComposition];
+    if(shareBtnSelected == YES) {
+        shareBtnSelected = NO;
+        [self postComposition];
+    }
+    else {
+//        http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true_or_false
+        NSString *urlStr = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%lf,%lf&sensor=false", [[DESLocationManager sharedLocationManager] currentLocation].coordinate.latitude, [[DESLocationManager sharedLocationManager] currentLocation].coordinate.longitude];
+        [[DESLocationManager sharedLocationManager] stopFetchingCurrentLocation];
+
+        if (![[WSModelClasses sharedHandler] networkReachable]) {
+            return;
+        }
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager GET:urlStr
+          parameters:nil
+             success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                 NSLog(@"%@", responseObject);
+                 NSArray *addressList = [responseObject objectForKey:@"results"];
+                 if(addressList != nil && addressList.count > 0) {
+                     NSString *addressStr = addressList[0][@"formatted_address"];
+                     if(addressStr != nil && addressStr.length > 0) {
+                         googleSearchController.searchDisplayController.searchBar.text = addressStr;
+                     }
+                 }
+             }
+             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                 
+             }
+         ];
+    }
 }
 
 #pragma mark - UITableDatasource methods
@@ -759,7 +802,7 @@ typedef enum {
     for(CMPhotoModel *modelObj in _imagePost.images) {
         NSData *imageData = UIImagePNGRepresentation(modelObj.editedImage);
         NSString *encodedImgString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-        [argDict setObject:encodedImgString forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
+        [argDict setObject:encodedImgString forKey:[NSString stringWithFormat:@"imgFile%ld",(long)imgCount]];
         
         [imgTimeArray addObject:[NSString stringWithFormat:@"%0.2f", modelObj.duration]];
         
@@ -768,7 +811,7 @@ typedef enum {
     
     if(imgCount < 10) {
         for (; imgCount <= 10; imgCount++) {
-            [argDict setObject:@"" forKey:[NSString stringWithFormat:@"imgFile%d",imgCount]];
+            [argDict setObject:@"" forKey:[NSString stringWithFormat:@"imgFile%ld",(long)imgCount]];
         }
     }
     

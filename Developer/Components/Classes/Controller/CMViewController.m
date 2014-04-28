@@ -23,11 +23,15 @@
 #define IMAGE_FLASH_ON                      @"btn_black_trash.png"
 #define IMAGE_FLASH_OFF                     @"btn_black_flash_off.png"
 
+#define ALERT_PURCHASE_TAG                  11
+
 @interface CMViewController () <DBAspectFillViewControllerDelegate, DHeaderViewDelegate>
 {
     CameraDevice currentCameraMode;
     AVCaptureFlashMode currentFlashMode;
     IBOutlet DHeaderView *_headerView;
+    
+    NSInteger allowedPhotoCompositionCount;
 }
 
 @property (nonatomic, strong) NSMutableArray *capturedPhotoList;
@@ -55,6 +59,7 @@
     self.selectedImageIndex = -1;  // -1 indicates no image is selected
     currentCameraMode = kCameraDeviceRear;
     currentFlashMode = AVCaptureFlashModeAuto;
+    allowedPhotoCompositionCount = 3; // default value
     
     // place the DBAspectFillViewController.view on top of cameraContainerView and send view to back
     _aspectFillImageController = [[DBAspectFillViewController alloc] initWithNibName:@"DBAspectFillViewController" bundle:nil];
@@ -66,6 +71,12 @@
     
     self.capturedPhotoList = [self constructPhotoList];
     [self manageHeaderButtonVisibility];
+    if(_selectedImageCount > 6) {
+        allowedPhotoCompositionCount = 10;
+    }
+    else if(_selectedImageCount > 3) {
+        allowedPhotoCompositionCount = 6;
+    }
     
     LXReorderableCollectionViewFlowLayout *flowLayout = [[LXReorderableCollectionViewFlowLayout alloc] init];
     flowLayout.minimumLineSpacing = 5.0f;
@@ -113,7 +124,7 @@
 
 -(void)headerView:(DHeaderView *)headerView didSelectedHeaderViewButton:(UIButton *)headerButton
 {
-    HeaderButtonType buttonType = headerButton.tag;
+    HeaderButtonType buttonType = (HeaderButtonType)headerButton.tag;
     switch (buttonType) {
         case HeaderButtonTypeClose:
             [self backOptionClicked:headerButton];
@@ -143,6 +154,7 @@
 //        [self performSelector:@selector(showCameraView) withObject:nil afterDelay:0.1];
     }
     
+    [self.photoCollectionView reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -306,6 +318,10 @@
         [_aspectFillImageController placeSelectedImage:modelObj.originalImage withCropRect:modelObj.cropRect];
         self.selectedImageIndex = index;
         
+        if(!isiPhone5) {
+            [self.photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.selectedImageIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+        }
+        
         // now hide all the camera related buttons and show delete button on cameraOverlayView
         [self showDeleteButton:YES];
     }
@@ -438,6 +454,17 @@
 
 - (IBAction)galleryOptionClicked:(id)sender
 {
+    if(_selectedImageCount == allowedPhotoCompositionCount && allowedPhotoCompositionCount < MAX_IMAGE_SELECT_COUNT) {
+        NSString *message = [NSString stringWithFormat:@"Purchase %d more photo slots for post composition.", (_selectedImageCount == 3) ? 3 : 4];
+        [self showAlertWithTitle:NSLocalizedString(@"Describe", @"")
+                         message:message
+                             tag:ALERT_PURCHASE_TAG
+                        delegate:self
+               cancelButtonTitle:@"Cancel"
+               otherButtonTitles:@"Buy", nil];
+        return;
+    }
+    
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.delegate = self;
@@ -446,6 +473,17 @@
 
 - (IBAction)captureImageClicked:(id)sender
 {
+    if(_selectedImageCount == allowedPhotoCompositionCount && allowedPhotoCompositionCount < MAX_IMAGE_SELECT_COUNT) {
+        NSString *message = [NSString stringWithFormat:@"Purchase %d more photo slots for post composition.", (_selectedImageCount == 3) ? 3 : 4];
+        [self showAlertWithTitle:NSLocalizedString(@"Describe", @"")
+                         message:message
+                             tag:ALERT_PURCHASE_TAG
+                        delegate:self
+               cancelButtonTitle:@"Cancel"
+               otherButtonTitles:@"Buy", nil];
+        return;
+    }
+    
 #if !(TARGET_IPHONE_SIMULATOR)
 
     [[CMAVCameraHandler sharedHandler] captureStillImage];
@@ -552,6 +590,40 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+#pragma mark - UIAlertview show and action handling
+
+#pragma mark - Showing alert and managing its action
+- (void)showAlertWithTitle:(NSString *)titleString message:(NSString *)message tag:(NSUInteger)tagValue delegate:(id /*<UIAlertViewDelegate>*/)target cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:message delegate:target cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+    
+    // get the variable arguments into argumentList(va_list) using va_start and then iterate through list to get all the button titles
+    // add the button titles to the alert
+    va_list args;
+    va_start(args, otherButtonTitles);
+    for(NSString *arg = otherButtonTitles; arg != nil; arg = va_arg(args, NSString*)) {
+        [alert addButtonWithTitle:arg];
+    }
+    va_end(args);
+    
+    alert.tag = tagValue;
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(alertView.tag == ALERT_PURCHASE_TAG) {
+        if(buttonIndex == 1) {
+            if(allowedPhotoCompositionCount == 3) {
+                allowedPhotoCompositionCount = 6;
+            }
+            else if(allowedPhotoCompositionCount == 6) {
+                allowedPhotoCompositionCount = 10;
+            }
+        }
+    }
+}
+
 #pragma mark - UIImagePickerControllerDelegate Methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -575,6 +647,10 @@
     
     // update the collection tray with the image
     [self.photoCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:_selectedImageCount inSection:0]]];
+    if(!isiPhone5) {
+        [self.photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_selectedImageCount inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+    }
+    
     _selectedImageCount++;
     
     [self manageHeaderButtonVisibility];
@@ -609,6 +685,10 @@
     
     // update the collection tray with the image
     [self.photoCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:_selectedImageCount inSection:0]]];
+    if(!isiPhone5) {
+        [self.photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_selectedImageCount inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+    }
+    
     _selectedImageCount++;
     
     [self manageHeaderButtonVisibility];
