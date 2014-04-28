@@ -24,6 +24,7 @@
 - (id)initWithFrame:(CGRect)frame AndUserData:(SearchPeopleData*)inUserData;
 - (void)createUserComponent;
 - (void)updateContent:(SearchPeopleData *)userData;
+- (void)applyBounceAnimationForStatusButton;
 
 @end
 

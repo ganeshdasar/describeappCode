@@ -40,8 +40,6 @@
         self._peopleList = [[NSMutableArray alloc] initWithArray:list];
         [self createPeopleListView];
         self.backgroundColor = [UIColor clearColor];
-     
-    
     }
     return self;
 }
@@ -243,11 +241,19 @@
     
 }
 
-
 - (void)reloadTableView:(NSMutableArray*)inArray
 {
     self._peopleList = inArray;
     [_peopleListView reloadData];
+}
+
+- (void)animateVisibleCellsStatusButton
+{
+    NSArray *cellArray = [_peopleListView visibleCells];
+    for(UITableViewCell *cell in cellArray) {
+        DUserComponent * userDataView = (DUserComponent *)[cell.contentView viewWithTag:111];
+        [userDataView applyBounceAnimationForStatusButton];
+    }
 }
 
 -(void)dealloc

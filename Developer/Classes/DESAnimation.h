@@ -31,4 +31,8 @@
                        duration:(CFTimeInterval)duration
                       beginTime:(CFTimeInterval)beginTime;
 
++ (void)bounceEffecForFollowButton:(UIButton *)aButton
+                      withNewImage:(NSString *)newImgName
+                  animationKeyPath:(NSString *)animationKeyPath;
+
 @end

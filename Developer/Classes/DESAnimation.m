@@ -70,4 +70,56 @@
     return animation;
 }
 
++ (void)bounceEffecForFollowButton:(UIButton *)aButton
+                      withNewImage:(NSString *)newImgName
+                  animationKeyPath:(NSString *)animationKeyPath
+{
+    // 1. Scale from 1.0 to 1.1 in 0.18s
+    // 2. Scale from 1.1 to 0.95  in 0.18s
+    // 3. Call selector method to changeImage for the button
+    // 4. Scale from 0.95 to 1.05 in 0.18s
+    // 5. Scale from 1.05 to 1.0 in 0.18s
+    
+    CFTimeInterval startTime = 0.0;
+    CFTimeInterval duration = 0.12;
+    
+    CABasicAnimation *scale_1_1 = [DESAnimation scaleFrom:1.0 to:1.2 duration:duration beginTime:startTime];
+    
+    startTime += duration;
+    CABasicAnimation *scale_0_95 = [DESAnimation scaleFrom:1.2 to:0.9 duration:duration beginTime:startTime];
+    
+    startTime += duration;
+    
+    [UIView animateWithDuration:0.0
+                          delay:startTime
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         CGRect btnFrame = aButton.frame;
+                         btnFrame.origin.y -= 0.5;
+                         aButton.frame = btnFrame;
+                     }
+                     completion:^(BOOL finished) {
+                         CGRect btnFrame = aButton.frame;
+                         btnFrame.origin.y += 0.5;
+                         aButton.frame = btnFrame;
+                         [aButton setBackgroundImage:[UIImage imageNamed:newImgName] forState:UIControlStateNormal];
+                     }];
+    
+    CABasicAnimation *scale_1_05 = [DESAnimation scaleFrom:0.9 to:1.1 duration:duration beginTime:startTime];
+    
+    startTime += duration;
+    CABasicAnimation *scale_1_0 = [DESAnimation scaleFrom:1.1 to:1.0 duration:duration beginTime:startTime];
+    
+    CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
+    animationGroup.duration = startTime + duration;
+    animationGroup.delegate = self;
+    animationGroup.animations = [NSArray arrayWithObjects:scale_1_1, scale_0_95, scale_1_05, scale_1_0, nil];
+    
+    if([aButton.layer animationForKey:animationKeyPath]) {
+        [aButton.layer removeAnimationForKey:animationKeyPath];
+    }
+    
+    [aButton.layer addAnimation:animationGroup forKey:animationKeyPath];
+}
+
 @end

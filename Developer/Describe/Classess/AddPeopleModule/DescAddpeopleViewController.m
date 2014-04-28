@@ -761,7 +761,8 @@
                                                              peopleData.followingStatus = @"1";
                                                          }
                                                          
-                                                         [_peoplelistView reloadTableView:werecommendedList];
+//                                                         [_peoplelistView reloadTableView:werecommendedList];
+                                                         [_peoplelistView animateVisibleCellsStatusButton];
                                                          
                                                          [self showStatusView:NO];
                                                      }
@@ -783,7 +784,8 @@
                                                              peopleData.followingStatus = @"1";
                                                          }
                                                          
-                                                         [_peoplelistView reloadTableView:invitationList];
+//                                                         [_peoplelistView reloadTableView:invitationList];
+                                                         [_peoplelistView animateVisibleCellsStatusButton];
                                                          
                                                          [self showStatusView:NO];
                                                      }

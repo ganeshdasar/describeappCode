@@ -26,6 +26,8 @@
 
 - (void)loadMorePeople:(NSArray *)peopleList;
 
+- (void)animateVisibleCellsStatusButton;
+
 @end
 
 

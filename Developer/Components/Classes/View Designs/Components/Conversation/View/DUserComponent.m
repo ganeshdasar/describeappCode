@@ -9,6 +9,7 @@
 #import "DUserComponent.h"
 #import "UIImageView+AFNetworking.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import "DESAnimation.h"
 
 #define WERECOMMENDED_TITLE_COLOR           [UIColor colorWithRed:53/255.0 green:168/255.0 blue:157/255.0 alpha:1.0]
 #define WERECOMMENDED_SUBTITLE_COLOR        [UIColor colorWithRed:120/255.0 green:120/255.0 blue:120/255.0 alpha:1.0]
@@ -19,6 +20,8 @@
 #define INVITATION_SUBTITLE_COLOR           [UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1.0]
 #define INVITATION_TITLE_FONT               [UIFont fontWithName:@"HelveticaNeue-Thin" size:17.0]
 #define INVITATION_SUBTITLE_FONT            [UIFont fontWithName:@"HelveticaNeue" size:12.0]
+
+#define BOUNCE_EFFECT_FOLLOW_BUTTON_KEYPATH @"BounceEffectFollowButton"
 
 @interface DUserComponent ()
 {
@@ -161,8 +164,6 @@
      }
 }
 
-
-
 - (void)followAndUnfollowButtonAction:(id)inAction
 {
     if ([data.followingStatus isEqualToString:@"0"]) {
@@ -205,23 +206,26 @@
         case KWebserviesType_followand:
         {
             if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Msg"]objectAtIndex:0] isEqualToString:@"You are following this User now."]) {
-                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
+//                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"1";
+                [self applyBounceAnimationForStatusButton];
             }else{
-                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
+//                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"0";
+                [self applyBounceAnimationForStatusButton];
             }
             break;
         }
             case KWebserviesType_unfollowand:
         {
             if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Msg"]objectAtIndex:0] isEqualToString:@"You have unfollowed this User."]) {
-                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
+//                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_unfollow.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"0";
+                [self applyBounceAnimationForStatusButton];
             }else{
-                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
+//                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"1";
-
+                [self applyBounceAnimationForStatusButton];
             }
             break;
         }
@@ -229,8 +233,9 @@
         {
             
             if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.NewData.Status"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
-                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
+//                [_followUnfollowBtn setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
                 data.followingStatus = @"1";
+                [self applyBounceAnimationForStatusButton];
             }
             
             break;
@@ -244,6 +249,23 @@
         [_delegate statusChange];
     }
     
+}
+
+- (void)applyBounceAnimationForStatusButton
+{
+    if ([WSModelClasses sharedHandler].loggedInUserModel.isInvitation == YES) {
+        if([data.followingStatus integerValue] == 1) {
+            [DESAnimation bounceEffecForFollowButton:_followUnfollowBtn withNewImage:@"btn_txt_remind.png" animationKeyPath:BOUNCE_EFFECT_FOLLOW_BUTTON_KEYPATH];
+        }
+    }
+    else {
+        if([data.followingStatus integerValue] == 1) {
+            [DESAnimation bounceEffecForFollowButton:_followUnfollowBtn withNewImage:@"btn_line_follow.png" animationKeyPath:BOUNCE_EFFECT_FOLLOW_BUTTON_KEYPATH];
+        }
+        else {
+            [DESAnimation bounceEffecForFollowButton:_followUnfollowBtn withNewImage:@"btn_line_unfollow.png" animationKeyPath:BOUNCE_EFFECT_FOLLOW_BUTTON_KEYPATH];
+        }
+    }
 }
 
 - (void)downloadUserImageview:(NSString*)inUrlString{
