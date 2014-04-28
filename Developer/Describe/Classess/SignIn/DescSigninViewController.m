@@ -200,7 +200,7 @@
             }
             else {
                 if (signInType == SignInConnectionType_Facebook) {
-                    [self showAlertWithTitle:NSLocalizedString(@"Validation", @"")
+                    [self showAlertWithTitle:@""
                                      message:NSLocalizedString(@"There is no Describe Identity associated with this Facebook account. Would you like to Signup ?", @"")
                                          tag:ALERT_TAG_FACEBOOK
                                     delegate:self
@@ -208,7 +208,7 @@
                            otherButtonTitles:@"Signup", nil];
                 }
                 else if (signInType == SignInConnectionType_GooglePlus) {
-                    [self showAlertWithTitle:NSLocalizedString(@"Validation", @"")
+                    [self showAlertWithTitle:@""
                                      message:NSLocalizedString(@"There is no Describe Identity associated with this Google account. Would you like to Signup ?", @"")
                                          tag:ALERT_TAG_GOOGLEPLUS
                                     delegate:self
@@ -216,7 +216,7 @@
                            otherButtonTitles:@"Signup", nil];
                 }
                 else {
-                    [self showAlertWithTitle:NSLocalizedString(@"Validation", @"")
+                    [self showAlertWithTitle:@""
                                      message:NSLocalizedString(@"The username or password you have entered is incorrect.", @"")
                                          tag:0
                                     delegate:nil
@@ -423,10 +423,19 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 {
     if (textField.tag == 1) {
+        if ([string isEqualToString:@""]) {
+            return  YES;
+        }
+        
+        if ([textField.text length]==15) {
+            return NO;
+        }
+        
         NSCharacterSet *invalidCharSet = [[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"] invertedSet];
         NSString *filtered = [[string componentsSeparatedByCharactersInSet:invalidCharSet] componentsJoinedByString:@""];
         return [string isEqualToString:filtered];
     }
+    
     return YES;
 }
 

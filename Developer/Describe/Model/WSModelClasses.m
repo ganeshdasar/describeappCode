@@ -52,7 +52,7 @@ static WSModelClasses *_sharedInstance;
              NSDictionary *userDataDict = (NSDictionary *)responseDict[@"DataTable"][0][@"UserData"];
              UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:userDataDict];
              _loggedInUserModel = userModelObj;
-                 NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_SignIn]};
+             NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_SignIn]};
              [_delegate didFinishWSConnectionWithResponse:signInResponseDict];
              [self getTheUserPushNotification];
          }
@@ -177,10 +177,12 @@ static WSModelClasses *_sharedInstance;
     [manager POST:[NSString stringWithFormat:@"%@/postUserSignup", BaseURLString]
        parameters:userDetails
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSDictionary *responseDict = (NSDictionary *)responseObject;
-              NSDictionary *userDataDict = (NSDictionary *)responseDict[@"DataTable"][0][@"UserData"];
-              UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:userDataDict];
-              _loggedInUserModel = userModelObj;
+              if(_loggedInUserModel == nil) {
+                  NSDictionary *responseDict = (NSDictionary *)responseObject;
+                  NSDictionary *userDataDict = (NSDictionary *)responseDict[@"DataTable"][0][@"UserData"];
+                  UsersModel *userModelObj = [[UsersModel alloc] initWithDictionary:userDataDict];
+                  _loggedInUserModel = userModelObj;
+              }
               [self postSignUpResult:responseObject error:Nil];
           }
           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -194,8 +196,10 @@ static WSModelClasses *_sharedInstance;
 {
     
     //_loggedInUserModel = inResult;
-    _loggedInUserModel = [[UsersModel alloc] init];
-    [_loggedInUserModel setValue:[inResult valueForKey:@"DataTable.UserData.UserUID"] forKey:@"userID"];
+//    if(_loggedInUserModel == nil) {
+//        _loggedInUserModel = [[UsersModel alloc] init];
+//    }
+//    [_loggedInUserModel setValue:[inResult valueForKey:@"DataTable.UserData.UserUID"] forKey:@"userID"];
     
     if(_delegate && [_delegate respondsToSelector:@selector(signUpStatus:error:)])
     {
@@ -220,6 +224,7 @@ static WSModelClasses *_sharedInstance;
              _loggedInUserModel = userModelObj;
              NSDictionary *signInResponseDict = @{WS_RESPONSEDICT_KEY_RESPONSEDATA: responseObject, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_SignIn]};
              [_delegate didFinishWSConnectionWithResponse:signInResponseDict];
+             [self getTheUserPushNotification];
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
              NSDictionary *responseDict = @{WS_RESPONSEDICT_KEY_ERROR: error, WS_RESPONSEDICT_KEY_SERVICETYPE:[NSNumber numberWithInteger:kWebserviesType_SignIn]};

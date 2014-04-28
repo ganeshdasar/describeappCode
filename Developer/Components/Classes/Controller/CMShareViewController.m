@@ -342,6 +342,43 @@ typedef enum {
     [[DESLocationManager sharedLocationManager] initializeFetchingCurrentLocationAndStartUpdating:YES];
 }
 
+#pragma mark DESLocationManagerDelegate Method
+
+- (void)didUpdatedToNewLocation:(DESLocationManager *)locationManager
+{
+    if(shareBtnSelected == YES) {
+        shareBtnSelected = NO;
+        [self postComposition];
+    }
+    else {
+        //        http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true_or_false
+        NSString *urlStr = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%lf,%lf&sensor=false", [[DESLocationManager sharedLocationManager] currentLocation].coordinate.latitude, [[DESLocationManager sharedLocationManager] currentLocation].coordinate.longitude];
+        [[DESLocationManager sharedLocationManager] stopFetchingCurrentLocation];
+        
+        if (![[WSModelClasses sharedHandler] networkReachable]) {
+            return;
+        }
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager GET:urlStr
+          parameters:nil
+             success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//                 NSLog(@"%s %@", __func__, responseObject);
+                 NSArray *addressList = [responseObject objectForKey:@"results"];
+                 if(addressList != nil && addressList.count > 0) {
+                     NSString *addressStr = addressList[0][@"formatted_address"];
+                     if(addressStr != nil && addressStr.length > 0) {
+                         googleSearchController.searchDisplayController.searchBar.text = addressStr;
+                     }
+                 }
+             }
+             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                 NSLog(@"%s Error = %@", __func__, [error localizedDescription]);
+             }
+         ];
+    }
+}
+
 #pragma mark - DESocialConnectiosDelegate Method
 - (void)googlePlusResponce:(NSMutableDictionary *)responseDict andFriendsList:(NSMutableArray *)inFriendsList
 {
@@ -415,43 +452,6 @@ typedef enum {
     
     alert.tag = tagValue;
     [alert show];
-}
-
-#pragma mark DESLocationManagerDelegate Method
-
-- (void)didUpdatedToNewLocation:(DESLocationManager *)locationManager
-{
-    if(shareBtnSelected == YES) {
-        shareBtnSelected = NO;
-        [self postComposition];
-    }
-    else {
-//        http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true_or_false
-        NSString *urlStr = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%lf,%lf&sensor=false", [[DESLocationManager sharedLocationManager] currentLocation].coordinate.latitude, [[DESLocationManager sharedLocationManager] currentLocation].coordinate.longitude];
-        [[DESLocationManager sharedLocationManager] stopFetchingCurrentLocation];
-
-        if (![[WSModelClasses sharedHandler] networkReachable]) {
-            return;
-        }
-        
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-        [manager GET:urlStr
-          parameters:nil
-             success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                 NSLog(@"%@", responseObject);
-                 NSArray *addressList = [responseObject objectForKey:@"results"];
-                 if(addressList != nil && addressList.count > 0) {
-                     NSString *addressStr = addressList[0][@"formatted_address"];
-                     if(addressStr != nil && addressStr.length > 0) {
-                         googleSearchController.searchDisplayController.searchBar.text = addressStr;
-                     }
-                 }
-             }
-             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                 
-             }
-         ];
-    }
 }
 
 #pragma mark - UITableDatasource methods

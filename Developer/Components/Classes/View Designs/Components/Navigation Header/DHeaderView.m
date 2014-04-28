@@ -298,7 +298,7 @@
     for (NSInteger index = buttons.count - 1; index >= 0; index--) {
         UIView *aView = (UIView *)buttons[index];
         [self bounceOutView:aView withDelay:timeInterval withKeypath:[NSString stringWithFormat:@"BounceOutAnimationKeypath%ld", (long)index] isLast:index == 0 ? YES : NO];
-        timeInterval += 0.3;
+        timeInterval += 0.1;
     }
     return;
     
@@ -322,7 +322,7 @@
     aView.alpha = 0;
     CFTimeInterval startTime = time;
     
-    CABasicAnimation *scaleAnimation1 = [DESAnimation scaleFrom:1.0 to:0.6 duration:0.3 beginTime:startTime];// [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    CABasicAnimation *scaleAnimation1 = [DESAnimation scaleFrom:1.0 to:0.6 duration:0.0 beginTime:startTime];// [CABasicAnimation animationWithKeyPath:@"transform.scale"];
     
     CABasicAnimation *fadeAnimation = [DESAnimation fadeFrom:0.0 to:1.0 duration:0.3 beginTime:startTime];//[CABasicAnimation animationWithKeyPath:@"opacity"];
     startTime += 0.3;

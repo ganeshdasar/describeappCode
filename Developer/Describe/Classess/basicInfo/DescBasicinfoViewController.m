@@ -99,11 +99,10 @@ typedef enum {
 {
     [super viewDidLoad];
     
-    
     [self designHeaderView];
     [self setBackGroundimageView];
-    [self.datePicker  setDate:[NSDate dateFromString:DefaultDate] animated:NO];
-    self.datePicker.maximumDate=[NSDate date];
+    [self.datePicker setDate:[NSDate dateFromString:DefaultDate] animated:NO];
+    self.datePicker.maximumDate = [NSDate date];
     isEditingPic = NO;  // by default profile pic editing is NO
     
     [self designTheView];
@@ -199,7 +198,8 @@ typedef enum {
     }
     
     if (profileUserDetail.profileImageName){
-        [self downloadUserImageview:profileUserDetail.profileImageName];
+//        [self downloadUserImageview:profileUserDetail.profileImageName];
+        [profilePicAspectController.imageView setImageWithURL:[NSURL URLWithString:profileUserDetail.profileImageName]];
     }
     
     if ([profileUserDetail.gender isEqualToNumber:[NSNumber numberWithInt:1]]){
@@ -936,20 +936,6 @@ typedef enum {
         {
             DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
             [self.navigationController pushViewController:addPeople animated:NO];
-            return;
-            DESSettingsViewController * setting = [[DESSettingsViewController alloc]initWithNibName:@"DESSettingsViewController" bundle:nil];
-            [self.navigationController pushViewController:setting animated:NO];
-
-            return;
-            
-            //    NotificationsViewController *notificationController = [[NotificationsViewController alloc] initWithNibName:@"NotificationsViewController" bundle:nil];
-            //            [self.navigationController pushViewController:notificationController animated:YES];
-            
-            //            CMViewController *compositionViewController = [[CMViewController alloc] initWithNibName:@"CMViewController" bundle:nil];
-            //            [self.navigationController pushViewController:compositionViewController animated:YES];
-            return;
-            ProfileViewController *profileVC = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
-            [self.navigationController pushViewController:profileVC animated:YES];
             break;
         }
             

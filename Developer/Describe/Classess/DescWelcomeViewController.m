@@ -99,17 +99,62 @@
     self.googlePlusFriendsListArry = [[NSMutableArray alloc]init];
     [self setUpThePosttionOfbuttonsFrame];
     
-    if (isiPhone5) {
-        // this is iphone 4 inch
+    if (isiPhone5) {          // this is iphone 4 inch
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_4in.png"];
     }
-    else {
-//        self.welcomeScrennImage.frame = FRAME;
+    else {         //Iphone  3.5 inch
         self.welcomeScrennImage.image = [UIImage imageNamed:@"bg_wc_3.5in.png"];
-        //Iphone  3.5 inch
     }
    // [[UIApplication sharedApplication]setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    [self firstAppearanceAnimation];
+}
+
+- (void)firstAppearanceAnimation
+{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    // before starting animation 1.place describe logo label in center of screen
+    CGRect logoFrame = self.describeLogoImgview.frame;
+    self.describeLogoImgview.center = CGPointMake(CGRectGetWidth(screenRect)/2.0, CGRectGetHeight(screenRect)/2.0);
+    
+    // 2. hide signupBtn, signinBtn and taglineLabel
+    self.signUpBtn.alpha = 0.0f;
+    self.signInBtn.alpha = 0.0f;
+    self.taglineLabel.alpha = 0.0f;
+    
+    // Here we will start animation (frame rate is 1/30)
+    // 1. describeLogo label will start moving from center to its original position in 24frames (i.e 0.8s)
+    // 2. taglineLabel will scaleIn from 0.3 to 1.0 and simultaneoulsy it will fadeIn from 0 to 1.0; this will happen in 24frames (i.e 0.8s)
+    // 3. taglineLabel will scaleIn from 0.9 to 1.0 in 5.2s
+    // 4. signupBtn will start bounceOut animation from 20th frame (i.e 0.66s)
+    // 5. signInBtn will start bounceOut animation from 23rd frame (i.e 0.76s)
+    
+    [UIView animateWithDuration:0.8
+                          delay:2.0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.describeLogoImgview.frame = logoFrame;
+                     }
+                     completion:nil];
+    
+    CABasicAnimation *scaleOut_1 = [DESAnimation scaleFrom:0.3 to:1.0 duration:0.8 beginTime:2.0];
+    CABasicAnimation *fadeOut = [DESAnimation fadeFrom:0 to:1.0 duration:0.8 beginTime:2.0];
+//    CABasicAnimation *scaleOut_2 = [DESAnimation scaleFrom:0.9 to:1.0 duration:5.2 beginTime:0.8];
+    CAAnimationGroup *tagLineAnimGroup = [CAAnimationGroup animation];
+    tagLineAnimGroup.duration = 6.0;
+    tagLineAnimGroup.delegate = self;
+    tagLineAnimGroup.animations = [NSArray arrayWithObjects:scaleOut_1, fadeOut, nil];
+    if([self.taglineLabel.layer animationForKey:@"TagLineAnimation"]) {
+        [self.taglineLabel.layer removeAnimationForKey:@"TagLineAnimation"];
+    }
+    
+    [self performSelector:@selector(showAlphaOfView:) withObject:self.taglineLabel afterDelay:2.75];
+    
+    [self.taglineLabel.layer addAnimation:tagLineAnimGroup forKey:@"TagLineAnimation"];
+    
+    [self bounceOutAnimation:self.signUpBtn withDuration:2.66 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
+    [self bounceOutAnimation:self.signInBtn withDuration:2.76 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -125,9 +170,11 @@
     [HUD hide:YES];
 }
 
-- (BOOL)prefersStatusBarHidden {
+- (BOOL)prefersStatusBarHidden
+{
     return YES;
 }
+
 - (void)viewWillAppear:(BOOL)animated
 {
     self.view.backgroundColor = [UIColor whiteColor];
@@ -136,7 +183,7 @@
     self.navigationController.navigationController.navigationBar.translucent = NO;
 
     if([self checkTheSessionId]) {
-    [self showNextScreen:(NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USERSAVING_DATA_KEY]];
+        [self showNextScreen:(NSMutableDictionary*)[[NSUserDefaults standardUserDefaults]valueForKey:USERSAVING_DATA_KEY]];
     }
     if (self.facebookBtn.isHidden == YES) {
         CGRect windowFrame  = [[UIScreen mainScreen] bounds];
@@ -144,12 +191,25 @@
         self.signInBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonClosePersentage, 100, 36);
         
         self.facebookBtn.frame = BUTTONFRAME;
-        self.googlePlusBtn.frame = BUTTONFRAME;
+//        self.googlePlusBtn.frame = BUTTONFRAME;
         self.emailBtn.frame = BUTTONFRAME;
     }
 
 }
 
+//Instead of saving them in the user defaults lets save them in global object wich can access from the any globally...
+- (void)saveUserDetails:(NSDictionary *)dictionary
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSArray *username = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.Username"];
+    NSArray *userid = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserUID"];
+    NSArray *userprofilepic = [dictionary valueForKeyPath:@"ResponseData.DataTable.UserData.UserProfilePicture"];
+    
+    [userDefaults setValue:(username.count)?username[0]:nil forKey:@"UserName"];
+    [userDefaults setValue:(userid.count)?userid[0]:nil forKey:@"UserUID"];
+    [userDefaults setValue:(userprofilepic.count)?userprofilepic[0]:nil forKey:@"UserProfilePicture"];
+    [self saveUserDataInUserDefaults:dictionary];
+}
 
 - (void)saveUserDataInUserDefaults:(NSDictionary*)dictionary
 {
@@ -209,14 +269,15 @@
 #pragma mark Event Actions -
 - (IBAction)SigninClicked:(id)sender
 {
-    DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
-    [self.navigationController pushViewController:signin animated:NO];
+    [self firstAppearanceAnimation];
+//    DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
+//    [self.navigationController pushViewController:signin animated:YES];
 }
 
 - (void)buttonHidderAction:(BOOL)inHidden
 {
     self.facebookBtn.hidden = inHidden;
-    self.googlePlusBtn.hidden = inHidden;
+//    self.googlePlusBtn.hidden = inHidden;
     self.emailBtn.hidden = inHidden;
 }
 
@@ -225,43 +286,36 @@
     if (self.facebookBtn.isHidden == YES) {
         [self buttonHidderAction:NO];
         self.facebookBtn.alpha = 0.0;
-        self.googlePlusBtn.alpha = 0.0;
+//        self.googlePlusBtn.alpha = 0.0;
         self.emailBtn.alpha = 0.0;
-//        self.facebookBtn.transform = CGAffineTransformMakeScale(0.8, 0.8);
-//        self.googlePlusBtn.transform = CGAffineTransformMakeScale(0.8, 0.8);
-//        self.emailBtn.transform = CGAffineTransformMakeScale(0.8, 0.8);
-        
+
         [UIView animateWithDuration:0.5
                          animations:^{
-//                             self.facebookBtn.alpha = 1.0;
-//                             self.googlePlusBtn.alpha = 1.0;
-//                             self.emailBtn.alpha = 1.0;
-                             
                              CGRect windowFrame  = [[UIScreen mainScreen] bounds];
                              self.signUpBtn.frame = CGRectMake(110, CGRectGetHeight(windowFrame)*SignInButtonOpenPersentage, 100, 36);
                              
                              self.facebookBtn.frame = CGRectMake(125, CGRectGetMinY(self.signUpBtn.frame) + 46.0, 70, 26);
-                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetMinY(self.facebookBtn.frame) + 36.0, 70, 26);;
-                             self.emailBtn.frame = CGRectMake(125, CGRectGetMinY(self.googlePlusBtn.frame) + 36.0, 70, 26);
+//                             self.googlePlusBtn.frame = CGRectMake(125, CGRectGetMinY(self.facebookBtn.frame) + 36.0, 70, 26);;
+                             self.emailBtn.frame = CGRectMake(125, CGRectGetMinY(self.facebookBtn.frame) + 36.0, 70, 26);
                              
                              self.signInBtn.frame = CGRectMake(110, CGRectGetMinY(self.emailBtn.frame) + 66.0, 100, 36);
                          }
                          completion:nil];
         
-        [self bounceOutAnimation:self.facebookBtn withDuration:0.25 withKeypath:FACEBOOK_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
-        [self bounceOutAnimation:self.googlePlusBtn withDuration:0.2 withKeypath:GOOGLEPLUS_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
-        [self bounceOutAnimation:self.emailBtn withDuration:0.3 withKeypath:EMAIL_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
+        [self bounceOutAnimation:self.facebookBtn withDuration:0.33 withKeypath:FACEBOOK_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
+//        [self bounceOutAnimation:self.googlePlusBtn withDuration:0.2 withKeypath:GOOGLEPLUS_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
+        [self bounceOutAnimation:self.emailBtn withDuration:0.43 withKeypath:EMAIL_BOUNCEOUT_KEYPATH withFadeAniamtion:YES];
         
-        [self bounceOutAnimation:self.signUpBtn withDuration:0.5 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
-        [self bounceOutAnimation:self.signInBtn withDuration:0.5 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
+//        [self bounceOutAnimation:self.signUpBtn withDuration:0.53 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
+//        [self bounceOutAnimation:self.signInBtn withDuration:0.63 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
     }
     else {
-        [UIView animateWithDuration:0.3
-                              delay:0.2
+        [UIView animateWithDuration:0.5
+                              delay:0.23
                             options:UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              self.facebookBtn.frame = BUTTONFRAME;
-                             self.googlePlusBtn.frame = BUTTONFRAME;
+//                             self.googlePlusBtn.frame = BUTTONFRAME;
                              self.emailBtn.frame = BUTTONFRAME;
 
                              CGRect windowFrame  = [[UIScreen mainScreen] bounds];
@@ -272,12 +326,12 @@
                              [self buttonHidderAction:YES];
                          }];
         
-        [self bounceInAnimation:self.facebookBtn withDuration:0.05 withKeyPath:FACEBOOK_BOUNCEIN_KEYPATH];
-        [self bounceInAnimation:self.googlePlusBtn withDuration:0.1 withKeyPath:GOOGLEPLUS_BOUNCEIN_KEYPATH];
-        [self bounceInAnimation:self.emailBtn withDuration:0.0 withKeyPath:EMAIL_BOUNCEIN_KEYPATH];
+        [self bounceInAnimation:self.facebookBtn withDuration:0.0 withKeyPath:FACEBOOK_BOUNCEIN_KEYPATH];
+//        [self bounceInAnimation:self.googlePlusBtn withDuration:0.1 withKeyPath:GOOGLEPLUS_BOUNCEIN_KEYPATH];
+        [self bounceInAnimation:self.emailBtn withDuration:0.1 withKeyPath:EMAIL_BOUNCEIN_KEYPATH];
         
-        [self bounceOutAnimation:self.signUpBtn withDuration:0.6 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
-        [self bounceOutAnimation:self.signInBtn withDuration:0.6 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
+//        [self bounceOutAnimation:self.signUpBtn withDuration:0.53 withKeypath:SIGNUP_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
+//        [self bounceOutAnimation:self.signInBtn withDuration:0.63 withKeypath:SIGNIN_BOUNCEOUT_KEYPATH withFadeAniamtion:NO];
     }
     
 }
@@ -298,26 +352,27 @@
 - (void)bounceOutAnimation:(UIView *)aView withDuration:(NSTimeInterval)time withKeypath:(NSString *)animationKeyPath withFadeAniamtion:(BOOL)doFade
 {
     CFTimeInterval startTime = 0;
+    CFTimeInterval duration = 0.18;
     
-    CABasicAnimation *scaleAnimation1 = [DESAnimation scaleFrom:1.0 to:0.9 duration:time beginTime:startTime];// [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    CABasicAnimation *scaleAnimation1 = [DESAnimation scaleFrom:1.0 to:0.9 duration:0 beginTime:startTime];// [CABasicAnimation animationWithKeyPath:@"transform.scale"];
     startTime += time;
     
-    CABasicAnimation *fadeAnimation = [DESAnimation fadeFrom:0.0 to:1.0 duration:0.25 beginTime:startTime];//[CABasicAnimation animationWithKeyPath:@"opacity"];
-    [self performSelector:@selector(showAlphaOfView:) withObject:aView afterDelay:startTime+0.25];
+    CABasicAnimation *fadeAnimation = [DESAnimation fadeFrom:0.0 to:1.0 duration:duration beginTime:startTime];//[CABasicAnimation animationWithKeyPath:@"opacity"];
+    [self performSelector:@selector(showAlphaOfView:) withObject:aView afterDelay:(startTime + duration - 0.03)];
     
-    CABasicAnimation *scaleAnimation2 = [DESAnimation scaleFrom:0.9 to:1.1 duration:0.25 beginTime:startTime];
-    startTime += 0.25;
+    CABasicAnimation *scaleAnimation2 = [DESAnimation scaleFrom:0.9 to:1.1 duration:duration beginTime:startTime];
+    startTime += duration;
     
-    CABasicAnimation *scaleAniamtion3 = [DESAnimation scaleFrom:1.1 to:0.95 duration:0.15 beginTime:startTime];
-    startTime += 0.15;
+    CABasicAnimation *scaleAniamtion3 = [DESAnimation scaleFrom:1.1 to:0.95 duration:duration beginTime:startTime];
+    startTime += duration;
     
-    CABasicAnimation *scaleAnimation4 = [DESAnimation scaleFrom:0.95 to:1.05 duration:0.12 beginTime:startTime];
-    startTime += 0.12;
+    CABasicAnimation *scaleAnimation4 = [DESAnimation scaleFrom:0.95 to:1.05 duration:duration beginTime:startTime];
+    startTime += duration;
     
-    CABasicAnimation *scaleAnimation5 = [DESAnimation scaleFrom:1.05 to:1.0 duration:0.1 beginTime:startTime];
+    CABasicAnimation *scaleAnimation5 = [DESAnimation scaleFrom:1.05 to:1.0 duration:duration beginTime:startTime];
     
     CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
-    animationGroup.duration = startTime + 0.1;
+    animationGroup.duration = startTime + duration;
     animationGroup.delegate = self;
     if(doFade == YES) {
         animationGroup.animations = [NSArray arrayWithObjects:scaleAnimation1, fadeAnimation, scaleAnimation2, scaleAniamtion3, scaleAnimation4, scaleAnimation5, nil];
@@ -373,24 +428,24 @@
     CFTimeInterval startTime = 0;
     startTime += time;
     
-    CABasicAnimation *scaleAnimation5 = [DESAnimation scaleFrom:1.0 to:1.05 duration:0.1 beginTime:startTime];
-    startTime += 0.1;
+    CABasicAnimation *scaleAnimation5 = [DESAnimation scaleFrom:1.0 to:1.1 duration:0.23 beginTime:startTime];
+    startTime += 0.23;
     
-    CABasicAnimation *scaleAnimation4 = [DESAnimation scaleFrom:1.05 to:0.95 duration:0.12 beginTime:startTime];
-    startTime += 0.12;
+    CABasicAnimation *scaleAnimation4 = [DESAnimation scaleFrom:1.1 to:0.9 duration:0.23 beginTime:startTime];
+//    startTime += 0.23;
     
-    CABasicAnimation *scaleAniamtion3 = [DESAnimation scaleFrom:0.95 to:1.1 duration:0.15 beginTime:startTime];
-    startTime += 0.15;
+//    CABasicAnimation *scaleAniamtion3 = [DESAnimation scaleFrom:0.95 to:1.1 duration:0.23 beginTime:startTime];
+//    startTime += 0.23;
+//    
+//    CABasicAnimation *scaleAnimation2 = [DESAnimation scaleFrom:1.1 to:0.9 duration:0.23 beginTime:startTime];
     
-    CABasicAnimation *scaleAnimation2 = [DESAnimation scaleFrom:1.1 to:0.9 duration:0.25 beginTime:startTime];
-    
-    CABasicAnimation *fadeAnimation = [DESAnimation fadeFrom:1.0 to:0.0 duration:startTime+0.25 beginTime:time];//[CABasicAnimation animationWithKeyPath:@"opacity"];
-    [self performSelector:@selector(hideAlphaOfView:) withObject:aView afterDelay:startTime+0.25];
+    CABasicAnimation *fadeAnimation = [DESAnimation fadeFrom:1.0 to:0.0 duration:startTime beginTime:startTime];//[CABasicAnimation animationWithKeyPath:@"opacity"];
+    [self performSelector:@selector(hideAlphaOfView:) withObject:aView afterDelay:startTime+0.1];
     
     CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
-    animationGroup.duration = startTime + 0.1;
+    animationGroup.duration = startTime + 0.23;
     animationGroup.delegate = self;
-    animationGroup.animations = [NSArray arrayWithObjects:fadeAnimation, scaleAnimation5, scaleAnimation4, scaleAniamtion3, scaleAnimation2, nil];
+    animationGroup.animations = [NSArray arrayWithObjects:fadeAnimation, scaleAnimation5, scaleAnimation4, nil];
     
     if([aView.layer animationForKey:animationKeypath]) {
         [aView.layer removeAnimationForKey:animationKeypath];
@@ -455,8 +510,8 @@
         [dic setValue:[NSNumber numberWithInteger:0] forKey:USER_MODAL_KEY_GENDER];
     }
     
-    [dic setValue: [inDic valueForKey:@"location.name"] forKey:USER_MODAL_KEY_CITY];
-    [dic setValue: [NSString convertThesocialNetworkDateToepochtime:[dic valueForKey:@"birthday"]] forKey:USER_MODAL_KEY_DOB];
+    [dic setValue: [inDic valueForKeyPath:@"location.name"] forKey:USER_MODAL_KEY_CITY];
+    [dic setValue: [NSString convertThesocialNetworkDateToepochtime:[inDic valueForKey:@"birthday"]] forKey:USER_MODAL_KEY_DOB];
     [dic setValue: [inDic valueForKeyPath:@"picture.data.url"] forKey:USER_MODAL_KEY_PROFILEPIC];
     
     UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
@@ -477,7 +532,7 @@
     }
     [dic setValue: [inDic valueForKey:@"city"] forKey:USER_MODAL_KEY_CITY];
     [dic setValue: [inDic valueForKey:@"dob"] forKey:USER_MODAL_KEY_DOB];
-    [dic setValue: [inDic valueForKeyPath:@"url"] forKey:USER_MODAL_KEY_PROFILEPIC];
+    [dic setValue: [inDic valueForKey:@"url"] forKey:USER_MODAL_KEY_PROFILEPIC];
     UsersModel * data = [[UsersModel alloc]initWithDictionary:dic];
     [WSModelClasses sharedHandler].loggedInUserModel = data;
 }
@@ -561,7 +616,9 @@
         {
             [HUD hide:YES];
             if ([[[responseDict valueForKeyPath:@"ResponseData.DataTable.UserData.Msg"]objectAtIndex:0] isEqualToString:@"TRUE"]) {
-                [self gotoAddpeopleScreen];
+                //Have to store these details in the shared holder to call/access them globally...
+                [self saveUserDetails:responseDict];
+                [self showNextScreen:responseDict];
             }else{
                 
             }

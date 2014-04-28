@@ -179,11 +179,11 @@
     NSString * outhType =@"";
     NSString * outhID = @"";
     if (delegate.isFacebook) {
-        outhType     =@"fb";
-        outhID =[self.userDataDic valueForKey:@"id"];
+        outhType = @"fb";
+        outhID = [self.userDataDic valueForKey:@"id"];
     }else if (delegate.isGooglePlus){
         outhType =@"gplus";
-        outhID =[self.userDataDic valueForKey:@"id"];
+        outhID = [self.userDataDic valueForKey:@"id"];
     }
     [modelClass postSignUpWithUsername:userNameTxt.text password:pwdTxt.text email:emailTxt.text fullName:nameTxt.text OAuthType:outhType OAuthID:outhID];//FB,GP,
     HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
@@ -249,7 +249,6 @@
     return YES;
 }
 
-
 #pragma mark AlertView Method
 - (void)showAlert:(NSString *)inTitle message:(NSString*)inMessage
 {
@@ -257,14 +256,11 @@
     [alert show];
 }
 
-
 #pragma mark ServerResponce Delegate Method
 - (void)signUpStatus:(NSDictionary *)responseDict error:(NSError *)error
 {
-    
     NSString * message = [[responseDict valueForKeyPath:@"DataTable.UserData.Msg"]objectAtIndex:0];
     if ([message isEqualToString:@"TRUE"]) {
-        
         NSString *userId = [[responseDict valueForKeyPath:@"DataTable.UserData.UserUID"]objectAtIndex:0];        
         [[NSUserDefaults standardUserDefaults]setValue:userId forKey:@"USERID"];
         [[[WSModelClasses sharedHandler] loggedInUserModel] setUserID:[NSNumber numberWithInteger:[userId integerValue]]];
@@ -439,9 +435,12 @@
         if (textField.tag == USERNAME_TEXT_FIELD_TAG) {
             if ([self.userNameTxt.text length]==15) {
                 return NO;
-            }else{
-                return YES;
             }
+            NSCharacterSet *invalidCharSet = [[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"] invertedSet];
+            NSString *filtered = [[string componentsSeparatedByCharactersInSet:invalidCharSet] componentsJoinedByString:@""];
+            return [string isEqualToString:filtered];
+                
+//                return YES;
         }else if (textField.tag == PASSWORD_TEXT_FIELD_TAG){
             return YES;
         }else if (textField.tag == EMAIL_TEXT_FIELD_TAG){

@@ -147,18 +147,30 @@
     
     NSMutableArray *pepoleListArray = [[NSMutableArray alloc] init];
     
-    for (NSMutableDictionary* dataDic in peopleArray) {
-        SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
-        searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
-        searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
-        searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
-        searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
-        searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
-        searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
-        searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
-        searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
-        searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
-        [pepoleListArray addObject:searchData];
+    if(peopleArray != nil && peopleArray.count) {
+        BOOL peopleListAvailable = YES;
+        if (peopleArray.count == 1) {
+            NSDictionary *dict = peopleArray[0];
+            if([dict valueForKeyPath:@"DescribeSearchResultsByPeople.Msg"] && [[dict valueForKeyPath:@"DescribeSearchResultsByPeople.Msg"] isEqualToString:@"There are no results on this Search Criteria."]) {
+                peopleListAvailable = NO;
+            }
+        }
+        
+        if(peopleListAvailable == YES) {
+            for (NSMutableDictionary* dataDic in peopleArray) {
+                SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
+                searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
+                searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
+                searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
+                searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
+                searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
+                searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
+                searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
+                searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
+                searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
+                [pepoleListArray addObject:searchData];
+            }
+        }
     }
     
     if(pepoleListArray.count > 50) {

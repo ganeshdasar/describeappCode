@@ -111,7 +111,8 @@
 }
 - (void)initializeArrays
 {
-    socialAccountSectionsArray = [[NSArray alloc]initWithObjects:@"Facebook",@"Google+", nil];
+//    socialAccountSectionsArray = [[NSArray alloc]initWithObjects:@"Facebook",@"Google+", nil];
+    socialAccountSectionsArray = [[NSArray alloc]initWithObjects:@"Facebook", nil];
     autoPlaySectionArray = [[NSArray alloc]initWithObjects:@"Wi-Fi",@"Cellular network", nil];
     notificationsArray = [[NSArray alloc]initWithObjects:@"Push notifications",@"Email notifications", nil];
     socialAccessayviewArray = [[NSArray alloc]initWithObjects:@"Connected",@"Connect", nil];
@@ -364,7 +365,8 @@
             break;
         }
         case DSettingSocialServices:{
-            UILabel * label =[self createLableTitle:@"Manage access to your Facebook and Google+ accounts." fontName:@"HelveticaNeue-Light" textSize:10.0 tag:1];
+//            UILabel * label =[self createLableTitle:@"Manage access to your Facebook and Google+ accounts." fontName:@"HelveticaNeue-Light" textSize:10.0 tag:1];
+            UILabel * label =[self createLableTitle:@"Manage access to your Facebook account." fontName:@"HelveticaNeue-Light" textSize:10.0 tag:1];
             label.frame = CGRectMake(15, 0, 320, 20);
             [tempView addSubview:label];
             break;

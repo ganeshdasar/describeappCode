@@ -16,144 +16,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Components/Classes/Controller/CMRecordViewController.m"
-            timestampString = "420307699.595321"
+            filePath = "Describe/Classess/DescWelcomeViewController.m"
+            timestampString = "420376585.12183"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
-            landmarkName = "-prevButtonSelected:"
+            startingLineNumber = "501"
+            endingLineNumber = "501"
+            landmarkName = "-saveTheUserDetailsOfFacebook:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Components/Classes/Controller/CMViewController.m"
-            timestampString = "419949790.611459"
+            filePath = "Describe/Classess/SignUp/DescSignupViewController.m"
+            timestampString = "420363816.101136"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "525"
-            endingLineNumber = "525"
-            landmarkName = "-goToVideoRecordingScreen"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
+            landmarkName = "-signUpStatus:error:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Describe/Classess/AddPeopleModule/DescAddpeopleViewController.m"
-            timestampString = "420282394.9634"
+            filePath = "Describe/Classess/basicInfo/DescBasicinfoViewController.m"
+            timestampString = "420370281.657189"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
-            landmarkName = "-chekTheExistingUser:error:"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "-fillTheBasicInfoDataInFields"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Describe/Classess/AddPeopleModule/DSocialMediaListView.m"
-            timestampString = "420277708.75472"
+            filePath = "Describe/Classess/basicInfo/DescBasicinfoViewController.m"
+            timestampString = "420370479.879616"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
-            landmarkName = "-makeSocialBtnSelected:withTag:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Describe/Model/WSModelClasses.m"
-            timestampString = "420277878.038023"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "828"
-            endingLineNumber = "828"
-            landmarkName = "-getInvitationListpeople:FBAccesstoken:GPAccessToken:AndRange:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Describe/Model/WSModelClasses.m"
-            timestampString = "420277880.800668"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "832"
-            endingLineNumber = "832"
-            landmarkName = "-getInvitationListpeople:FBAccesstoken:GPAccessToken:AndRange:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Describe/Classess/AddPeopleModule/DescAddpeopleViewController.m"
-            timestampString = "420283120.567024"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "465"
-            endingLineNumber = "465"
-            landmarkName = "-fetchInvitationList"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Components/Classes/External Library/GooglePlaceFinding/SPGooglePlacesAutocompleteViewController.m"
-            timestampString = "420300572.665843"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Components/Classes/Controller/CMShareViewController.m"
-            timestampString = "420309898.336287"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "632"
-            endingLineNumber = "632"
-            landmarkName = "-textFieldDidChange:"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "-downloadUserImageview:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

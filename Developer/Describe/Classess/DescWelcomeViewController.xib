@@ -6,11 +6,13 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DescWelcomeViewController">
             <connections>
+                <outlet property="describeLogoImgview" destination="juS-AJ-1EV" id="T81-fa-2CV"/>
                 <outlet property="emailBtn" destination="bsN-Ft-WNd" id="obo-FI-vCS"/>
                 <outlet property="facebookBtn" destination="U31-jU-Q5g" id="rDs-Z3-gTX"/>
                 <outlet property="googlePlusBtn" destination="8kg-VU-aIt" id="X8q-fJ-27o"/>
                 <outlet property="signInBtn" destination="erG-HJ-iyw" id="SwJ-yV-304"/>
                 <outlet property="signUpBtn" destination="GSc-3a-20j" id="6DU-fV-ayF"/>
+                <outlet property="taglineLabel" destination="w68-Wk-HnY" id="q5B-ha-R8R"/>
                 <outlet property="view" destination="1" id="3"/>
                 <outlet property="welcomeScrennImage" destination="MNd-14-CBk" id="yAJ-pp-foV"/>
             </connections>

@@ -29,7 +29,8 @@
     NSDate *date = [dateFormat dateFromString:dateString];
     return  [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
 }
-+(NSString*)convertThesocialNetworkDateToepochtime:(NSString*)dateString
+
++ (NSString*)convertThesocialNetworkDateToepochtime:(NSString*)dateString
 {
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"MM/dd/yyyy"];

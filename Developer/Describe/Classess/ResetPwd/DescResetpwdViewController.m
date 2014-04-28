@@ -12,7 +12,7 @@
 #import "WSModelClasses.h"
 #import "MBProgressHUD.h"
 #import "Constant.h"
-
+#import "UIView+FindFirstResponder.h"
 
 @interface DescResetpwdViewController ()<WSModelClassDelegate>
 {
@@ -45,15 +45,31 @@
 {
     [self setNeedsStatusBarAppearanceUpdate];
     [super viewDidLoad];
+    
+    // registering the self.view to resign keyboard upon singleTap anywhere on the view
+    [self.view registerToResignKeyboard];
+    
     [self.txtemail becomeFirstResponder];
     [self setBackGroundimageView];
     [self designHeaderView];
     [self intilizTextFieldColors];
     // Do any additional setup after loading the view from its nib.
     
-    self.txtemail.returnKeyType = UIReturnKeyDone;
+    self.txtemail.returnKeyType = UIReturnKeyGo;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+    if ([self validateEmailWithString:self.txtemail.text]) {
+        [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton,nextButton]];
+    }
+}
 
 - (void)setBackGroundimageView
 {
@@ -113,17 +129,19 @@
     [HUD hide:YES];
     NSString * message = [[responseDict valueForKeyPath:@"DataTable.ReplyData.Msg"]objectAtIndex:0];
     if ([message isEqualToString:@"Your Email ID is not registered with us."]) {
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Message" message:@"There is no Describe Identity associated with this email address." delegate:self cancelButtonTitle:@"oK" otherButtonTitles:Nil, nil];
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"" message:@"There is no Describe account associated with this email address." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:Nil, nil];
         alert.tag = 120;
         [alert show];
     }else{
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Message" message:@"An email with instructions to reset the password has been sent to this email address." delegate:self cancelButtonTitle:@"oK" otherButtonTitles:Nil, nil];
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"" message:@"An email with instructions to reset the password has been sent to this email address." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:Nil, nil];
         alert.tag = 121;
         [alert show];
     }
   
 }
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
     switch (alertView.tag) {
         case 120:
             [self.txtemail becomeFirstResponder];
@@ -147,8 +165,9 @@
     if ([self validateEmailWithString:self.txtemail.text]) {
         [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton,nextButton]];
         [textField resignFirstResponder];
+        [self getThePaasword:nil];
     }else{
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Validation" message:@" Please enter a valid email address." delegate:self cancelButtonTitle:@"oK" otherButtonTitles:Nil, nil];
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"" message:@" Please enter a valid email address." delegate:self cancelButtonTitle:@"oK" otherButtonTitles:Nil, nil];
         [alert show];
         [self.txtemail becomeFirstResponder];
     }
@@ -170,7 +189,7 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 {
     if ([string isEqualToString:@""]) {
-    [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton]];
+        [_headerView designHeaderViewWithTitle:@"Reset Password" andWithButtons:@[backButton]];
     }
     return YES;
 }

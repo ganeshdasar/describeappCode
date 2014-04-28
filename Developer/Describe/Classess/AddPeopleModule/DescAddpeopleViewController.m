@@ -204,14 +204,15 @@
 //Social Component
 - (void)designSocialComponent
 {
-    NSString *gpSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN])?@"1":@"0";
+//    NSString *gpSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:GOOGLEPLUESACCESSTOKEN])?@"1":@"0";
     NSString *fbSelected =  ([[NSUserDefaults standardUserDefaults]valueForKey:FACEBOOKACCESSTOKENKEY])?@"1":@"0";
     
     NSDictionary *mediaItem0 = @{@"ImageNormal": @"btn_3rd_fb_nc.png", @"ImageSelected": @"btn_3rd_fb_on.png", @"Selected":fbSelected};
-    NSDictionary *mediaItem1 = @{@"ImageNormal": @"btn_3rd_goog_nc.png", @"ImageSelected": @"btn_3rd_goog_on.png", @"Selected":gpSelected};
+//    NSDictionary *mediaItem1 = @{@"ImageNormal": @"btn_3rd_goog_nc.png", @"ImageSelected": @"btn_3rd_goog_on.png", @"Selected":gpSelected};
     
     [_mediaListView setDelegate:self];
-    [_mediaListView setMedaiList:@[mediaItem0, mediaItem1]];
+    [_mediaListView setMedaiList:@[mediaItem0]];
+//    [_mediaListView setMedaiList:@[mediaItem0, mediaItem1]];
 }
 
 - (void)socailMediaDidSelectedItemAtIndex:(UIButton *)socialBtn
@@ -509,17 +510,30 @@
 {
     NSMutableArray  * peopleArray = [[NSMutableArray alloc]init];
     
-    for (NSMutableDictionary * dic in [responceDict valueForKeyPath:@"ResponseData.DataTable"]) {
-        SearchPeopleData * data =  [[SearchPeopleData alloc]init];
-        data.followingStatus = [dic valueForKeyPath:@"DescribeSuggestedUsers.FollowingStatus"];
-        data.gateWayToken = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayToken"];
-        data.gateWayType = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayType"];
-        data.profileUserEmail = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserEmail"];
-        data.profileUserFullName = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserFullName"];
-        data.profileUserProfilePicture = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserProfilePicture"];
-        data.profileUserUID = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserUID"];
-        data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
-        [peopleArray addObject:data];
+    NSArray *responseArr = [responceDict valueForKeyPath:@"ResponseData.DataTable"];
+    if(responseArr != nil && responseArr.count) {
+        BOOL peopleListAvailable = YES;
+        if (responseArr.count == 1) {
+            NSDictionary *dict = responseArr[0];
+            if([dict valueForKeyPath:@"DescribeSuggestedUsers.Msg"] && [[dict valueForKeyPath:@"DescribeSuggestedUsers.Msg"] isEqualToString:@"FALSE"]) {
+                peopleListAvailable = NO;
+            }
+        }
+        
+        if(peopleListAvailable == YES) {
+            for (NSMutableDictionary * dic in [responceDict valueForKeyPath:@"ResponseData.DataTable"]) {
+                SearchPeopleData * data =  [[SearchPeopleData alloc]init];
+                data.followingStatus = [dic valueForKeyPath:@"DescribeSuggestedUsers.FollowingStatus"];
+                data.gateWayToken = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayToken"];
+                data.gateWayType = [dic valueForKeyPath:@"DescribeSuggestedUsers.GateWayType"];
+                data.profileUserEmail = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserEmail"];
+                data.profileUserFullName = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserFullName"];
+                data.profileUserProfilePicture = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserProfilePicture"];
+                data.profileUserUID = [dic valueForKeyPath:@"DescribeSuggestedUsers.UserUID"];
+                data.profileUserName = [dic valueForKeyPath:@"DescribeSuggestedUsers.Username"];
+                [peopleArray addObject:data];
+            }
+        }
     }
     
     BOOL reloadList = NO;
@@ -643,18 +657,30 @@
     
     NSMutableArray *pepoleListArray = [[NSMutableArray alloc] init];
     
-    for (NSMutableDictionary* dataDic in peopleArray) {
-        SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
-        searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
-        searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
-        searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
-        searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
-        searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
-        searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
-        searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
-        searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
-        searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
-        [pepoleListArray addObject:searchData];
+    if(peopleArray != nil && peopleArray.count) {
+        BOOL peopleListAvailable = YES;
+        if (peopleArray.count == 1) {
+            NSDictionary *dict = peopleArray[0];
+            if([dict valueForKeyPath:@"DescribeSearchResultsByPeople.Msg"] && [[dict valueForKeyPath:@"DescribeSearchResultsByPeople.Msg"] isEqualToString:@"There are no results on this Search Criteria."]) {
+                peopleListAvailable = NO;
+            }
+        }
+        
+        if(peopleListAvailable == YES) {
+            for (NSMutableDictionary* dataDic in peopleArray) {
+                SearchPeopleData * searchData = [[SearchPeopleData alloc]init];
+                searchData.followingStatus = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.FollowingStatus"];
+                searchData.profileUserCity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserCity"];
+                searchData.profileUserEmail = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserEmail"];
+                searchData.profileUserFullName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserFullName"];
+                searchData.profileUserProfilePicture = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserProfilePicture"];
+                searchData.profileUserUID = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUserUID"];
+                searchData.profileUserName = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.ProfileUsername"];
+                searchData.userActCout = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.UserActCount"];
+                searchData.proximity = [dataDic valueForKeyPath:@"DescribeSearchResultsByPeople.proximity"];
+                [pepoleListArray addObject:searchData];
+            }
+        }
     }
     
     if(pepoleListArray.count > 50) {

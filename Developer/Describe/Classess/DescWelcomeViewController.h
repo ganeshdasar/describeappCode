@@ -36,10 +36,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *emailBtn;
 @property (weak, nonatomic) IBOutlet UIButton *googlePlusBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *welcomeScrennImage;
+@property (weak, nonatomic) IBOutlet UIImageView *describeLogoImgview;
 
 @property (nonatomic,strong) NSMutableArray * facebookFriendsListArray;
 @property (nonatomic,strong) NSMutableDictionary *socialUserDataDic;
 @property (nonatomic,strong) NSMutableArray * googlePlusFriendsListArry;
+@property (weak, nonatomic) IBOutlet UILabel *taglineLabel;
 
 - (IBAction)SigninClicked:(id)sender;
 - (IBAction)signUpTheUser:(id)sender;
