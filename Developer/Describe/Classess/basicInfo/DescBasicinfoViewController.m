@@ -198,7 +198,6 @@ typedef enum {
     }
     
     if (profileUserDetail.profileImageName){
-//        [self downloadUserImageview:profileUserDetail.profileImageName];
         [profilePicAspectController.imageView setImageWithURL:[NSURL URLWithString:profileUserDetail.profileImageName]];
     }
     
@@ -210,8 +209,8 @@ typedef enum {
         [self femaleClicked:nil];
     }
     
-    if (profileUserDetail.dobDate){
-        self.birthdayTxt.text =[NSString convertTheepochTimeToDate:[profileUserDetail.dobDate doubleValue]];
+    if (profileUserDetail.dobDate) {
+        self.birthdayTxt.text = [NSString convertTheepochTimeToDate:[profileUserDetail.dobDate doubleValue]];
     }
     
     if (profileUserDetail.biodata) {
@@ -472,7 +471,7 @@ typedef enum {
     }
     else
     {
-        if(buttonIndex == 0)
+        if(buttonIndex == 2)
         {
             //Remove the pic...
             profilePicAspectController.imageView.image = nil;
@@ -481,7 +480,7 @@ typedef enum {
             [_profileimgbtn setBackgroundImage:[UIImage imageNamed:@"thumb_user_basic_info.png"] forState:UIControlStateNormal];
 
         }
-        else if(buttonIndex==1) {
+        else if(buttonIndex==0) {
             if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 UIImagePickerController *openLibrary = [[UIImagePickerController alloc] init];
                 openLibrary.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -490,7 +489,7 @@ typedef enum {
                 [self presentViewController:openLibrary animated:YES completion:nil];
             }
         }
-        else if(buttonIndex==2) {
+        else if(buttonIndex==1) {
             UIImagePickerController *openLibrary = [[UIImagePickerController alloc] init];
             openLibrary.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
             openLibrary.delegate = self;
@@ -917,7 +916,7 @@ typedef enum {
     modelClass.delegate = self;
     NSString * gender = [NSString stringWithFormat:@"%ld", (long)userGender];
     
-    [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [NSString convertTheDateToepochtime:(NSString*)self.birthdayTxt.text ]  userGender:gender profilePic:profilePicAspectController.imageView.image];
+    [modelClass postBasicInfoWithUserUID: [NSString stringWithFormat:@"%@",profileUserDetail.userID] userBioData:self.bioTxt.text userCity:self.cityTxt.text   userDob: [NSString convertTheDateToepochtime:(NSString*)self.birthdayTxt.text ]  userGender:gender profilePic:[_profileimgbtn backgroundImageForState:UIControlStateNormal]];
     
 }
 

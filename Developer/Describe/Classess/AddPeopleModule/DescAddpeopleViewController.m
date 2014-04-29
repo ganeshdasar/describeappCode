@@ -845,7 +845,7 @@
         }
         
         DProfileDetailsViewController *profileController = [[DProfileDetailsViewController alloc] initWithNibName:@"DProfileDetailsViewController" bundle:nil];
-        profileController.profileId = [[[WSModelClasses sharedHandler] loggedInUserModel].userID stringValue];
+        profileController.profileId = peopleDetail.profileUserUID;
         [self.navigationController pushViewController:profileController animated:YES];
     }
 }

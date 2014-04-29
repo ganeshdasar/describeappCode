@@ -79,8 +79,8 @@ typedef enum {
     _canvasImageViewController = [[DBAspectFillViewController alloc] initWithNibName:@"DBAspectFillViewController" bundle:nil];
     [_canvasImageViewController.view setFrame:_canvasChangeOverlayView.frame];
     [_canvasImageViewController setScreenSize:_canvasChangeOverlayView.frame.size];
-    [self.view addSubview:_canvasImageViewController.view];
-    [self.view sendSubviewToBack:_canvasImageViewController.view];
+    [_canvasContainerView addSubview:_canvasImageViewController.view];
+    [_canvasContainerView sendSubviewToBack:_canvasImageViewController.view];
     
     _profilePicImageViewController = [[DBAspectFillViewController alloc] initWithNibName:@"DBAspectFillViewController" bundle:nil];
     [_profilePicImageViewController.view setFrame:_profileImageHolderView.bounds];
@@ -90,27 +90,96 @@ typedef enum {
     
     [_profilePicImageViewController.imageView addGestureRecognizer:_profilePicTapGesture];
     
-    [_canvasImageViewController placeSelectedImage:[UIImage imageNamed:@"profileSampleImage.png"] withCropRect:CGRectNull];
+//    [_canvasImageViewController placeSelectedImage:[UIImage imageNamed:@"profileSampleImage.png"] withCropRect:CGRectNull];
 //    [self profileModeChangedTo:kProfileModeNormal];
     
     [self addSwipeViewController];
 
 }
 
--(void)addSwipeViewController
+- (void)handlePan:(UIPanGestureRecognizer*)recognizer
 {
-    UISwipeGestureRecognizer *rightSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(rightSwipeGesture:)];
-    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
-    [self.view addGestureRecognizer:rightSwipeGesture];
+    if(_currentProfileMode != kProfileModeNormal) {
+        return;
+    }
     
-
-    UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
-    [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
-    [self.view addGestureRecognizer:leftSwipeGesture];
+    CGPoint translation = [recognizer translationInView:recognizer.view];
+    CGFloat xVal = recognizer.view.center.x+translation.x;
+    CGFloat yVal = recognizer.view.center.y;
     
+    if(xVal > recognizer.view.bounds.size.width/2.0) {
+        xVal = recognizer.view.bounds.size.width/2.0;
+    }
+    
+    if(recognizer.state == UIGestureRecognizerStateEnded) {
+        CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
+        if(xVal > (screenWidth/2.0 - (screenWidth*0.3))) {
+            // push the view back to its place
+            [UIView animateWithDuration:0.3 animations:^{
+                CGRect profileFrame = self.view.frame;
+                profileFrame.origin.x = 0;
+                [self.view setFrame:profileFrame];
+//                self.view.alpha = 1.0;
+                [self changeAplhaOfSubviewsForTransition:1.0];
+            } completion:^(BOOL finished) {
+                //Show profile details here...
+            }];
+        }
+        else {
+            // call showNextScreen
+            if(_delegate != nil && [_delegate respondsToSelector:@selector(showNextScreen:)]) {
+                [_delegate showNextScreen:self];
+            }
+        }
+    }
+    else {
+        recognizer.view.center = CGPointMake(xVal, yVal);
+        [recognizer setTranslation:CGPointMake(0, 0) inView:recognizer.view];
+        
+        // calculateAlpha value
+        CGFloat xPos = xVal - [[UIScreen mainScreen] bounds].size.width/2.0;
+        if(xPos < 0) {
+            xPos = xPos * -1;
+        }
+        
+        CGFloat alphaVal = 1 - (1/([[UIScreen mainScreen] bounds].size.width/2.5) * xPos);
+        
+        [self changeAplhaOfSubviewsForTransition:alphaVal];
+    }
 }
 
--(void)rightSwipeGesture:(UISwipeGestureRecognizer *)gesture
+- (void)changeAplhaOfSubviewsForTransition:(CGFloat)alphaVal
+{
+    if(alphaVal > 1.0) {
+        alphaVal = 1.0;
+    }
+    
+    if(alphaVal < 0) {
+        alphaVal = 0.0;
+    }
+    
+    _completeProfileView.alpha = alphaVal;
+    _profilePicContainerView.alpha = alphaVal;
+    _headerView.alpha = alphaVal;
+}
+
+- (void)addSwipeViewController
+{
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+    [panGesture setDelegate:self];
+    [panGesture setMaximumNumberOfTouches:1];
+    [self.view addGestureRecognizer:panGesture];
+    
+//    UISwipeGestureRecognizer *rightSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(rightSwipeGesture:)];
+//    [rightSwipeGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+//    [self.view addGestureRecognizer:rightSwipeGesture];
+//
+//    UISwipeGestureRecognizer *leftSwipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipeGesture:)];
+//    [leftSwipeGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+//    [self.view addGestureRecognizer:leftSwipeGesture];
+}
+
+- (void)rightSwipeGesture:(UISwipeGestureRecognizer *)gesture
 {
     if(_delegate != nil && [_delegate respondsToSelector:@selector(showNextScreen:)])
     {
@@ -118,12 +187,10 @@ typedef enum {
     }
 }
 
--(void)leftSwipeGesture:(UISwipeGestureRecognizer *)gesture
+- (void)leftSwipeGesture:(UISwipeGestureRecognizer *)gesture
 {
     [self menuOptionSelected:nil];
 }
-
-
 
 - (void)didReceiveMemoryWarning
 {
@@ -217,12 +284,12 @@ typedef enum {
 {
 //    [self showAcionSheetForPhotoSelection];
     if(_currentProfileMode == kProfileModeCanvasEditing) {
+        [_canvasImageViewController resetImageContentToEmpty];
         [_canvasImageViewController.imageView setImage:_canvasImg];
-//        [_canvasImageViewController placeSelectedImage:_canvasImg withCropRect:CGRectNull];
     }
     else if(_currentProfileMode == kProfileModeProfilePicEditing) {
+        [_profilePicImageViewController resetImageContentToEmpty];
         [_profilePicImageViewController.imageView setImage:_profilePicImg];
-//        [_profilePicImageViewController placeSelectedImage:_profilePicImg withCropRect:CGRectNull];
     }
     
     [self profileModeChangedTo:kProfileModeEditing];

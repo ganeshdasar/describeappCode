@@ -122,7 +122,12 @@
 
 + (BOOL)isValidValue:(id)value
 {
-    if([value isKindOfClass:[NSNull class]] || value == [NSNull null] || ([value isKindOfClass:[NSString class]] && [value isEqualToString:@"<null>"]) || ([value isKindOfClass:[NSString class]] && [value isEqualToString:@"(null)"])) {
+    if([value isKindOfClass:[NSNull class]] ||
+       value == [NSNull null] ||
+       ([value isKindOfClass:[NSString class]] && [value isEqualToString:@"<null>"]) ||
+       ([value isKindOfClass:[NSString class]] && [value isEqualToString:@"(null)"]) ||
+       ([value isKindOfClass:[NSString class]] && [value length] == 0))
+    {
         return NO;
     }
     else{

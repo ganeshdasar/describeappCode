@@ -128,12 +128,13 @@
         CGRect statusFrame = CGRectZero;
         statusFrame = CGRectMake(250, 9, 60, 26);
         [_statusButton setFrame:statusFrame];
+         _statusButton.hidden = NO;
 
         if ([data.followingStatus isEqualToString:@"1"]) {
-         [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
+            [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_remind.png"] forState:UIControlStateNormal];
         }
         else {
-         [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
+            [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_txt_invite.png"] forState:UIControlStateNormal];
         }
          
          [_statusButton removeTarget:self action:@selector(followAndUnfollowButtonAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -151,6 +152,12 @@
         statusFrame = CGRectMake(275, 9, 30, 30);
         [_statusButton setFrame:statusFrame];
          
+         if([data.profileUserUID integerValue] == [[[[WSModelClasses sharedHandler] loggedInUserModel] userID] integerValue]) {
+             _statusButton.hidden = YES;
+         }
+         else {
+             _statusButton.hidden = NO;
+         }
         //Updating the details on the content...
         if ([data.followingStatus isEqualToString:@"1"]) {
             [_statusButton setBackgroundImage:[UIImage imageNamed:@"btn_line_follow.png"] forState:UIControlStateNormal];

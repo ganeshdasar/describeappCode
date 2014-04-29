@@ -955,11 +955,11 @@
 
 -(void)removeTheKeysInUserDefaults
 {
-   [[NSUserDefaults standardUserDefaults]removeObjectForKey:USERSAVING_DATA_KEY];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USER_PUSHNOTIFICATIONS];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:USER_EMAILNOTIFICAIONS];
-    [[DESocialConnectios sharedInstance]logoutGooglePlus];
-    [[DESocialConnectios sharedInstance]logoutFacebook];
-    [[NSUserDefaults standardUserDefaults]synchronize ];
+   [[NSUserDefaults standardUserDefaults] removeObjectForKey:USERSAVING_DATA_KEY];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:USER_PUSHNOTIFICATIONS];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:USER_EMAILNOTIFICAIONS];
+    [[DESocialConnectios sharedInstance] logoutGooglePlus];
+    [[DESocialConnectios sharedInstance] logoutFacebook];
+    [[NSUserDefaults standardUserDefaults] synchronize ];
 }
 @end

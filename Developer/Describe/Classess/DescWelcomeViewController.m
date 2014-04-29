@@ -221,26 +221,26 @@
 - (void)showNextScreen:(NSDictionary*)userData
 {
     
-    if(![self checkTheuserBasicInfoDataEmptyOrNot:userData])//Check for the condition where the basic info line is empty or not.
-    {
-        DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
-        [self.navigationController pushViewController:basicInfo animated:YES];
-    }
-    else
-    {
-        if([self checkTheUserFollowingCount:userData])//is he is following any one or not?
-        {
+//    if(![self checkTheuserBasicInfoDataEmptyOrNot:userData])//Check for the condition where the basic info line is empty or not.
+//    {
+//        DescBasicinfoViewController * basicInfo = [[DescBasicinfoViewController alloc]initWithNibName:@"DescBasicinfoViewController" bundle:nil];
+//        [self.navigationController pushViewController:basicInfo animated:YES];
+//    }
+//    else
+//    {
+//        if([self checkTheUserFollowingCount:userData])//is he is following any one or not?
+//        {
             DPostsViewController *postViewController = [[DPostsViewController alloc] initWithNibName:@"DPostsViewController" bundle:nil];
             [postViewController loadFeedDetails];
             [self.navigationController pushViewController:postViewController animated:YES];
-        }
-        else
-        {
-            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
-            [self.navigationController pushViewController:addPeople animated:YES];
-            
-        }
-    }
+//        }
+//        else
+//        {
+//            DescAddpeopleViewController * addPeople = [[DescAddpeopleViewController alloc]initWithNibName:@"DescAddpeopleViewController" bundle:nil];
+//            [self.navigationController pushViewController:addPeople animated:YES];
+//            
+//        }
+//    }
 }
 
 - (BOOL)checkTheuserBasicInfoDataEmptyOrNot:(NSDictionary*)userData
@@ -269,9 +269,8 @@
 #pragma mark Event Actions -
 - (IBAction)SigninClicked:(id)sender
 {
-    [self firstAppearanceAnimation];
-//    DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
-//    [self.navigationController pushViewController:signin animated:YES];
+    DescSigninViewController * signin = [[DescSigninViewController alloc]initWithNibName:@"DescSigninViewController" bundle:Nil];
+    [self.navigationController pushViewController:signin animated:YES];
 }
 
 - (void)buttonHidderAction:(BOOL)inHidden

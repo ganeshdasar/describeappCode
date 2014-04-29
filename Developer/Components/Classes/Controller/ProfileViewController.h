@@ -53,6 +53,7 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet CMPassTouchesView *canvasChangeOverlayView;
 @property (weak, nonatomic) IBOutlet CMPassTouchesView *profilePicContainerView;
 @property (weak, nonatomic) IBOutlet UIView *profileImageHolderView;
+@property (weak, nonatomic) IBOutlet CMPassTouchesView *canvasContainerView;
 @property (weak, nonatomic) IBOutlet UIButton *changeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *doneBtn;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *profilePicTapGesture;
@@ -75,6 +76,7 @@ typedef enum {
 - (IBAction)panGestureDetected:(id)sender;
 - (IBAction)snippetPanGestureDetected:(id)sender;
 
--(void)loadProfileDetails:(NSDictionary *)dictionary;
+- (void)loadProfileDetails:(NSDictionary *)dictionary;
+- (void)changeAplhaOfSubviewsForTransition:(CGFloat)alphaVal;
 
 @end

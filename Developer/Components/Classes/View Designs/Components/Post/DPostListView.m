@@ -68,9 +68,12 @@
 {
     self.backgroundColor = [UIColor clearColor];
     _postListView = [[UITableView alloc] initWithFrame:self.bounds];
+    _postListView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [_postListView setDataSource:self];
     [_postListView setDelegate:self];
     [_postListView setBackgroundColor:[UIColor clearColor]];
+    _postListView.backgroundView =[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"bg_std_4in.png"]];
+    _postListView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:_postListView];
     
     [headerView setFrame:CGRectMake(0, 0, self.frame.size.width, 50)];

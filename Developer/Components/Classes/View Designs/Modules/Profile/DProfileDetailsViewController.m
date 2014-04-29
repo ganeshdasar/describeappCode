@@ -137,6 +137,8 @@
             CGRect profileFrame = _profileController.view.frame;
             profileFrame.origin.x = +320;
             [_profileController.view setFrame:profileFrame];
+//            _profileController.view.alpha = 1.0;
+            [_profileController changeAplhaOfSubviewsForTransition:1.0];
             
         } completion:^(BOOL finished) {
             //Show profile details here...
@@ -443,7 +445,9 @@
                 CGRect profileFrame = _profileController.view.frame;
                 profileFrame.origin.x = 0;
                 [_profileController.view setFrame:profileFrame];
-                
+//                _profileController.view.alpha = 1.0;
+                [_profileController changeAplhaOfSubviewsForTransition:1.0];
+
             } completion:^(BOOL finished) {
                 //Show profile details here...
             }];
@@ -469,11 +473,21 @@
         shouldLoadMoreFollowings = YES;
     }
     
-    for (int i=0; i<count; i++) {
-        NSDictionary *dict = peopleList[i];
-        NSDictionary *people = dict[@"DescribeUserProfileFollowings"];
-        SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
-        [list addObject:peopleInfo];
+    BOOL peopleListAvailable = YES;
+    if (peopleList.count == 1) {
+        NSDictionary *dict = peopleList[0];
+        if([dict valueForKeyPath:@"DescribeUserProfileFollowings.Msg"] && [[dict valueForKeyPath:@"DescribeUserProfileFollowings.Msg"] isEqualToString:@"0 Followings on this User."]) {
+            peopleListAvailable = NO;
+        }
+    }
+    
+    if(peopleListAvailable) {
+        for (int i=0; i<count; i++) {
+            NSDictionary *dict = peopleList[i];
+            NSDictionary *people = dict[@"DescribeUserProfileFollowings"];
+            SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
+            [list addObject:peopleInfo];
+        }
     }
     
     return list;
@@ -493,11 +507,21 @@
         shouldLoadMoreFollowers = YES;
     }
     
-    for (int i=0; i<count; i++) {
-        NSDictionary *dict = peopleList[i];
-        NSDictionary *people = dict[@"DescribeUserProfileFollowers"];
-        SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
-        [list addObject:peopleInfo];
+    BOOL peopleListAvailable = YES;
+    if (peopleList.count == 1) {
+        NSDictionary *dict = peopleList[0];
+        if([dict valueForKeyPath:@"DescribeUserProfileFollowers.Msg"] && [[dict valueForKeyPath:@"DescribeUserProfileFollowers.Msg"] isEqualToString:@"0 Posts on this User."]) {
+            peopleListAvailable = NO;
+        }
+    }
+    
+    if(peopleListAvailable) {
+        for (int i=0; i<count; i++) {
+            NSDictionary *dict = peopleList[i];
+            NSDictionary *people = dict[@"DescribeUserProfileFollowers"];
+            SearchPeopleData *peopleInfo = [[SearchPeopleData alloc] initWithDictionary:people];
+            [list addObject:peopleInfo];
+        }
     }
     
     return list;

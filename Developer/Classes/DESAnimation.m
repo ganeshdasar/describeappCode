@@ -83,10 +83,10 @@
     CFTimeInterval startTime = 0.0;
     CFTimeInterval duration = 0.12;
     
-    CABasicAnimation *scale_1_1 = [DESAnimation scaleFrom:1.0 to:1.2 duration:duration beginTime:startTime];
+    CABasicAnimation *scale_1_2 = [DESAnimation scaleFrom:1.0 to:1.2 duration:duration beginTime:startTime];
     
     startTime += duration;
-    CABasicAnimation *scale_0_95 = [DESAnimation scaleFrom:1.2 to:0.9 duration:duration beginTime:startTime];
+    CABasicAnimation *scale_0_9 = [DESAnimation scaleFrom:1.2 to:0.9 duration:duration beginTime:startTime];
     
     startTime += duration;
     
@@ -105,7 +105,7 @@
                          [aButton setBackgroundImage:[UIImage imageNamed:newImgName] forState:UIControlStateNormal];
                      }];
     
-    CABasicAnimation *scale_1_05 = [DESAnimation scaleFrom:0.9 to:1.1 duration:duration beginTime:startTime];
+    CABasicAnimation *scale_1_1 = [DESAnimation scaleFrom:0.9 to:1.1 duration:duration beginTime:startTime];
     
     startTime += duration;
     CABasicAnimation *scale_1_0 = [DESAnimation scaleFrom:1.1 to:1.0 duration:duration beginTime:startTime];
@@ -113,7 +113,7 @@
     CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
     animationGroup.duration = startTime + duration;
     animationGroup.delegate = self;
-    animationGroup.animations = [NSArray arrayWithObjects:scale_1_1, scale_0_95, scale_1_05, scale_1_0, nil];
+    animationGroup.animations = [NSArray arrayWithObjects:scale_1_2, scale_0_9, scale_1_1, scale_1_0, nil];
     
     if([aButton.layer animationForKey:animationKeyPath]) {
         [aButton.layer removeAnimationForKey:animationKeyPath];
